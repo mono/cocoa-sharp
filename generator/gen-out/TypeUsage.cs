@@ -26,7 +26,41 @@ namespace CocoaSharp {
 			return new TypeUsage(Type.FromDecl(objcDecl), mods);
 		}
 
+		public bool Merge(TypeUsage machoType) {
+			this.typeModifiers = machoType.TypeModifiers;
+			if ((this.Name == "BOOL" || this.Name == "Boolean") && (machoType.Type.OCType == OCType.@char || machoType.Type.OCType == OCType.unsigned_char))
+				return true;
+			else if (this.Type.OCType == OCType.id && machoType.Type.OCType == OCType.pointer)
+				return true;
+			else {
+				if (this.GlueType != machoType.GlueType)
+					return false;
+				if (this.Type.OCType != machoType.Type.OCType)
+					return false;
+				return true;
+			}
+		}
+
 		// -- Public Properties --
+		public string Name { get { return type.Name; } }
+		public string TypeStr {
+			get {
+				string mod = string.Empty;
+				if ((this.typeModifiers & TypeModifiers.@const) != 0)
+					mod += "r";
+				if ((this.typeModifiers & TypeModifiers.@in) != 0)
+					mod += "n";
+				if ((this.typeModifiers & TypeModifiers.inout) != 0)
+					mod += "N";
+				if ((this.typeModifiers & TypeModifiers.@out) != 0)
+					mod += "o";
+				if ((this.typeModifiers & TypeModifiers.bycopy) != 0)
+					mod += "O";
+				if ((this.typeModifiers & TypeModifiers.oneway) != 0)
+					mod += "V";
+				return mod + type.TypeStr;
+			}
+		}
 		public Type Type { get { return type; } }
 		public TypeModifiers TypeModifiers { get { return typeModifiers; } }
 		public string GlueType { get { return Type.GlueType; } }

@@ -41,14 +41,16 @@ namespace CocoaSharp {
 			return (ParameterInfo[])ret.ToArray(typeof(ParameterInfo));
 		}
 
-		internal Method ToMethod(string nameSpace) {
-			return new Method(name.Trim(':').Replace(":","_"),name,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
+		internal Method ToMethod(string nameSpace, bool isClassMethod) {
+			string _csName = name.Trim(':').Replace(":","_");
+			string selector = (isClassMethod ? "+" : "-") + name;
+			return new Method(_csName,selector,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
 		}
 
-		static internal ICollection ToMethods(string nameSpace,ICollection methods) {
+		static internal ICollection ToMethods(string nameSpace, bool isClassMethod, ICollection methods) {
 			ArrayList ret = new ArrayList();
 			foreach (MachOMethod method in methods)
-				ret.Add(method.ToMethod(nameSpace));
+				ret.Add(method.ToMethod(nameSpace, isClassMethod));
 			return ret;
 		}
 

@@ -36,11 +36,36 @@ namespace CocoaSharp {
 		public void Initialize(Class parent, 
 			ICollection protocols, ICollection variables, 
 			ICollection instanceMethods, ICollection classMethods) {
-			this.parent = parent;
-			this.protocols = protocols != null ? protocols : new ArrayList();
-			this.variables = variables != null ? variables : new ArrayList();
-			this.instanceMethods = instanceMethods != null ? instanceMethods : new ArrayList();
-			this.classMethods = classMethods != null ? classMethods : new ArrayList();
+
+			bool first = this.instanceMethods == null;
+
+			if (first) {
+				this.parent = parent;
+				this.protocols = protocols != null ? protocols : new ArrayList();
+				this.variables = variables != null ? variables : new ArrayList();
+				this.instanceMethods = instanceMethods != null ? instanceMethods : new ArrayList();
+				this.classMethods = classMethods != null ? classMethods : new ArrayList();
+			} else {
+				System.Diagnostics.Debug.Assert(this.parent == parent);
+				if (this.variables.Count == 0 && variables.Count > 0)
+					this.variables = variables;
+				else
+					System.Diagnostics.Debug.Assert(this.variables.Count == variables.Count);
+				this.instanceMethods = MergeMethods(this.instanceMethods, instanceMethods);
+				this.classMethods = MergeMethods(this.classMethods, classMethods);
+			}
+		}
+
+		static ICollection MergeMethods(ICollection headerMethods, ICollection machoMethods) {
+			IDictionary header = new Hashtable();
+			foreach (Method m in headerMethods)
+				header[m.Selector] = m;
+			foreach (Method m in machoMethods)
+				if (header.Contains(m.Selector))
+					((Method)header[m.Selector]).Merge(m);
+				else
+					header[m.Selector] = m;
+			return header.Values;
 		}
 
 		// -- Public Properties --
@@ -87,9 +112,9 @@ namespace CocoaSharp {
 
 			// Load the overrides for this Interface
 			Overrides _overrides = null;
-			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, Name))) {
+			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", string.Empty)/*FIXME*/, Name))) {
 				XmlSerializer _s = new XmlSerializer(typeof(Overrides));
-				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, Name));
+				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", string.Empty)/*FIXME*/, Name));
 				_overrides = (Overrides)_s.Deserialize(_xmlreader);
 				_xmlreader.Close();
 			}
@@ -110,7 +135,7 @@ namespace CocoaSharp {
 			if(Parent != null)
 				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, string.Join(", I", ProtocolNames).Trim());
 			if(Parent == null && Protocols.Count > 0)
-				_cs.Write(" : {1}I{0}", string.Join(", I", ProtocolNames), (Name != "NSObject" ? "NSObject," : ""));
+				_cs.Write(" : {1}I{0}", string.Join(", I", ProtocolNames), (Name != "NSObject" ? "NSObject," : string.Empty));
             if(Parent == null && Protocols.Count == 0 && Name != "NSObject")
                 _cs.Write(" : NSObject");
 			_cs.WriteLine(" {");

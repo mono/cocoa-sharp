@@ -34,7 +34,9 @@ namespace CocoaSharp {
 		}
 
 		internal Protocol ToProtocol(string nameSpace) {
-			mProtocol.Initialize(MachOMethod.ToMethods(nameSpace, instanceMethods), MachOMethod.ToMethods(nameSpace, classMethods));
+			mProtocol.Initialize(
+				MachOMethod.ToMethods(nameSpace, false, instanceMethods),
+				MachOMethod.ToMethods(nameSpace, true, classMethods));
 			return mProtocol;
 		}
 

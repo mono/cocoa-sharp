@@ -12,12 +12,19 @@ using System;
 
 namespace CocoaSharp {
 	public class Pointer : Type {
-		public Pointer(Type reference) : base(reference.Name + " *",null,"IntPtr/*FIXME*/",typeof(IntPtr),OCType.pointer) {
+		public Pointer(string name, Type reference) : base(name,null,"IntPtr/*FIXME*/",typeof(IntPtr),OCType.pointer) {
+			System.Diagnostics.Debug.Assert(reference.OCType != OCType.id || name.Split('*').Length > 2 || reference.Name == "id");
 			this.reference = reference;
 		}
 
 		// -- Public Properties --
 		public Type Reference { get { return reference; } }
+
+		public override string TypeStr {
+			get {
+				return "^" + this.Reference.TypeStr;
+			}
+		}
 
 		// -- Members --
 		private Type reference;

@@ -38,6 +38,7 @@ namespace CocoaSharp {
 			mItems = (EnumItem[])items.ToArray(typeof(EnumItem));
 		}
 
+		public Enum EnumType { get { return this.mEnum; } }
 		public override OutputElement ToOutput() {
 			mEnum.Initialize(mItems);
 			return mEnum;

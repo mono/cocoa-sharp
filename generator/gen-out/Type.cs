@@ -21,9 +21,17 @@ namespace CocoaSharp {
 			return nameSpace == null || nameSpace.Length == 0 ? name : nameSpace + "." + name;
 		}
 
+		public static void AddTypedef(string name, Type refType) {
+			Type cur = (Type)mTypeByName[name];
+			if (cur != null)
+				return;
+//			Console.WriteLine("Add typedef " + refType.Name + " " + name + ";");
+			mTypeByName[name] = refType;
+		}
+
 		public static Type RegisterType(string name, string nameSpace, System.Type newType) {
 			string fullName = FullName(name, nameSpace);
-			Type ret = (Type)mTypeByName[fullName];
+			Type ret = (Type)mTypeByName[name];
 			if (ret != null) {
 				System.Diagnostics.Debug.Assert(newType.IsInstanceOfType(ret));
 				return ret;
@@ -41,10 +49,10 @@ namespace CocoaSharp {
 					break;
 				default:
 					if (name != "?") {
-						System.Diagnostics.Debug.Assert(!mTypeByName.Contains(FullName(name, nameSpace)));
+						//System.Diagnostics.Debug.Assert(!mTypeByName.Contains(FullName(name, nameSpace)));
 						System.Diagnostics.Debug.Assert(!mTypeByName.Contains(name));
 //Console.WriteLine("Register type: " + FullName(name, nameSpace) + ": apiType=" + apiType + ", glueType=" + glueType.FullName + ", ocType=" + ocType);
-						mTypeByName[FullName(name, nameSpace)] = this;
+						//mTypeByName[FullName(name, nameSpace)] = this;
 						mTypeByName[name] = this;
 					}
 					break;
@@ -101,95 +109,44 @@ namespace CocoaSharp {
 			OCType ocType = OCType.@void;
 			switch (objcDecl) {
 				case "Boolean":
-				case "BOOL": { apiType = "bool"; glueType = typeof(bool); ocType = OCType.@bool; break; }
+				case "BOOL": { apiType = "bool"; glueType = typeof(bool); ocType = OCType.@char; break; }
 				case "SEL": { apiType = "string"; glueType = typeof(IntPtr); ocType = OCType.SEL; break; }
 				case "IMP": { apiType = "IntPtr"; glueType = typeof(IntPtr); ocType = OCType.pointer; break; }
 				case "Class": { apiType = "Foundation.Class"; glueType = typeof(IntPtr); ocType = OCType.Class; break; }
 				case "Protocol": { apiType = "object"; glueType = typeof(IntPtr); ocType = OCType.id; break; }
 				case "id": { apiType = "object"; glueType = typeof(IntPtr); ocType = OCType.id; break; }
 				case "void": { apiType = "void"; glueType = typeof(void); ocType = OCType.@void; break; }
-				case "char *": { apiType = "string"; glueType = typeof(IntPtr); ocType = OCType.char_ptr; break; }
 
-				case "uint8_t":
 				case "unsigned char":
 					{ apiType = "byte"; glueType = typeof(byte); ocType = OCType.unsigned_char; break; }
 				case "char": { apiType = "char"; glueType = typeof(byte); ocType = OCType.@char; break; }
 				case "float": { apiType = "float"; glueType = typeof(float); ocType = OCType.@float; break; }
 				case "double": { apiType = "double"; glueType = typeof(double); ocType = OCType.@double; break; }
-				case "OSErr":
 				case "short": { apiType = "short"; glueType = typeof(short); ocType = OCType.@short; break; }
 				case "unichar":
 				case "unsigned short": { apiType = "ushort"; glueType = typeof(ushort); ocType = OCType.unsigned_short; break; }
-				case "int32_t":
-				case "SInt32":
 				case "int": { apiType = "int"; glueType = typeof(int); ocType = OCType.@int; break; }
-				case "UInt32":
-				case "UTF32Char":
 				case "unsigned int":
 				case "unsigned":
 					{ apiType = "uint"; glueType = typeof(uint); ocType = OCType.unsigned_int; break; }
 				case "long int":
 				case "long": { apiType = "int"; glueType = typeof(int); ocType = OCType.@long; break; }
 				case "unsigned long": { apiType = "uint"; glueType = typeof(uint); ocType = OCType.unsigned_long; break; }
-				case "int64_t":
 				case "long long": { apiType = "long"; glueType = typeof(long); ocType = OCType.long_long; break; }
 				case "unsigned long long": { apiType = "ulong"; glueType = typeof(ulong); ocType = OCType.unsigned_long_long; break; }
 
-				// -- hack starts here --
-				// typedef unsigned int NSDragOperation;
-				case "NSDragOperation": { apiType = "uint"; glueType = typeof(uint); ocType = OCType.unsigned_int; break; }
-				case "AEDesc":
-				case "AEEventClass":
-				case "AEEventID":
-				case "AEKeyword":
-				case "AEReturnID":
-				case "AETransactionID":
-				case "AppleEvent":
-				case "CFRunLoopRef":
-				case "DescType":
-				case "NSAppleEventManagerSuspensionID":
-				case "NSApplicationDelegateReply":
-				case "NSComparisonResult":
-				case "NSFontTraitMask":
-				case "NSGlyph":
-				case "NSInsertionPosition":
-				case "NSKeyValueObservingOptions":
-				case "NSModalSession":
-				case "NSPointArray":
-				case "NSPointPointer":
-				case "NSRangePointer":
-				case "NSRectArray":
-				case "NSRectPointer":
-				case "NSRequestUserAttentionType":
-				case "NSRoundingMode":
-				case "NSSizePointer":
-				case "NSSocketNativeHandle":
-				case "NSStringEncoding":
-				case "NSTableViewDropOptions":
-				case "NSTableViewDropOperation":
-				case "NSTimeInterval":
-				case "NSToolTipTag":
-				case "NSToolbarDisplayMode":
-				case "NSToolbarSizeMode":
-				case "NSTrackingRectTag":
-				case "NSTypesetterGlyphInfo":
-				case "NSWindowDepth":
-				case "NSWorkspaceLaunchOptions":
-				case "_NSZone": case "NSZone":						// typedef struct _NSZone NSZone;
-				{ apiType = "IntPtr"; glueType = typeof(System.ValueType); ocType = OCType.structure; break; }
-
-				case "OSType": { apiType = "uint"; glueType = typeof(uint); ocType = OCType.unsigned_int; break; }
-				case "va_list": { apiType = "IntPtr"; glueType = typeof(IntPtr); ocType = OCType.unsigned_int; break; }
-				// -- hack ends here --
-
 				default:
 					if (objcDecl.EndsWith("*")) {
-						apiType = objcDecl.Trim('*', ' ', '\t');
+						apiType = objcDecl.Substring(0, objcDecl.Length-1).Trim();
 						found = FromDecl(apiType);
-						return new Pointer(found);
+						if (found.OCType == OCType.@char || found.OCType == OCType.unsigned_char)
+							return new Type(objcDecl, nameSpace, "string", typeof(IntPtr), OCType.char_ptr);
+						if (!apiType.EndsWith("*") && found.OCType == OCType.id && apiType != "id")
+							return found;
+						return new Pointer(objcDecl, found);
 					}
 					else if (objcDecl.EndsWith("]")) {
-						Regex arrayRegex = new Regex(@"^\s*(?<type>(\s*.+?\s*)+)(\s*\[(?<size>\w+|\d+)\])");
+						Regex arrayRegex = new Regex(@"^\s*(?<type>(\s*.+?\s*)+)(\s*\[(?<size>[\w_]+|-?\d+)\])");
 						Match m = arrayRegex.Match(objcDecl);
 						string type = m.Groups["type"].Value;
 						string dim = m.Groups["size"].Value;
@@ -198,9 +155,9 @@ namespace CocoaSharp {
 						string[] splt = objcDecl.Split(new char[]{':'}, 2);
 						return new BitField(int.Parse(splt[1]));
 					} else if (objcDecl.StartsWith("struct ")) {
-						return new Struct(objcDecl.Substring("struct ".Length), null);
+						return new Struct(objcDecl, null);
 					} else if (objcDecl.StartsWith("union ")) {
-						return new Type(objcDecl.Substring("struct ".Length), null, "object", typeof(IntPtr), OCType.union);
+						return new Type(objcDecl, null, "object", typeof(IntPtr), OCType.union);
 					} else {
 						ocType = OCType.@void;
 					}
@@ -298,6 +255,36 @@ namespace CocoaSharp {
 				case OCType.union:
 				default:
 					return null;
+			}
+		}
+
+		public virtual string TypeStr {
+			get {
+				switch (ocType) {
+					case OCType.id: return "@" + (this.Name != "id" ? "\"" + this.Name + "\"" : string.Empty);
+					case OCType.Class: return "#";
+					case OCType.SEL: return ":";
+					case OCType.@void: return "v";
+					case OCType.@char: return "c";
+					case OCType.unsigned_char: return "C";
+					case OCType.@short: return "s";
+					case OCType.unsigned_short: return "S";
+					case OCType.@int: return "i";
+					case OCType.unsigned_int: return "I";
+					case OCType.@long: return "l";
+					case OCType.unsigned_long: return "L";
+					case OCType.long_long: return "q";
+					case OCType.unsigned_long_long: return "Q";
+					case OCType.@float: return "f";
+					case OCType.@double: return "d";
+					case OCType.@bool: return "B";
+					case OCType.char_ptr: return "*";
+					case OCType.undefined_type: return "?";
+					case OCType.structure: return "{" + "}";
+					case OCType.union: return "(" + ")";
+					default:
+						return null;
+				}
 			}
 		}
 

@@ -22,6 +22,12 @@ namespace CocoaSharp {
 		public Type ElementType { get { return elementType; } }
 		public int Dim { get { return dim; } }
 
+		public override string TypeStr {
+			get {
+				return "[" + this.Dim + this.ElementType.TypeStr + "]";
+			}
+		}
+
 		// -- Members --
 		private Type elementType;
 		private int dim;

@@ -105,6 +105,8 @@ namespace CocoaSharp {
 			Type type = Type.FromOcType(this.kind, this.name);
 			if (type == null) {
 				string decl = this.DeclType;
+				if (this.kind == OCType.pointer)
+					decl = decl.Trim();
 				if (decl != null)
 					type = Type.FromDecl(decl);
 				else
@@ -114,12 +116,12 @@ namespace CocoaSharp {
 		}
 
 		public override string ToString() {
-			string detail = reference != null ? reference.ToString() : "";
+			string detail = reference != null ? reference.ToString() : string.Empty;
 			switch (kind) {
 				case OCType.structure:
 				case OCType.union:
 					foreach (MachOType field in fields) {
-						if (detail != "") detail += ",";
+						if (detail != string.Empty) detail += ",";
 						detail += field.ToString();
 					}
 					break;
@@ -135,7 +137,7 @@ namespace CocoaSharp {
 				ret = name + "=" + ret;
 			if (modifiers != 0)
 				ret += " " + modifiers;
-			if (detail != "")
+			if (detail != string.Empty)
 				ret += " (" + detail + ")";
 			if (offset != 0)
 				ret += " offset=" + offset;
@@ -191,11 +193,11 @@ namespace CocoaSharp {
 		}
 
 		static int ParseInt(string type,ref int read) {
-			string intStr = "";
+			string intStr = string.Empty;
 			while (read < type.Length && char.IsDigit(type[read]))
 				intStr += type[read++];
 
-			if (intStr != "")
+			if (intStr != string.Empty)
 				return int.Parse(intStr);
 			return 0;
 		}

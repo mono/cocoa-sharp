@@ -8,15 +8,18 @@ namespace CocoaSharp {
 	public class ObjCClassInspector {
 		#region -- Public API --
 		public static void AddBundle(string bundleName) {
+#if !WINDOWS
 			if(!ObjCBundles.Contains(bundleName)) {
 				IntPtr objcBundleName = CreateObjCString("/System/Library/Frameworks/" + bundleName + ".framework");
 				IntPtr bundle = objc_msgSend(objc_getClass("NSBundle"), sel_registerName("bundleWithPath:"), objcBundleName);
 				objc_msgSend(bundle, sel_registerName("load"));
 				ObjCBundles[bundleName] = true;
 			}
+#endif
 		}
 
 		public static bool IsObjCClass(string className) {
+#if !WINDOWS
 			if(ObjCClasses.Contains(className))
 				return (bool)ObjCClasses[className];
 
@@ -24,6 +27,9 @@ namespace CocoaSharp {
 
 			ObjCClasses[className] = classPtr != IntPtr.Zero;
 			return classPtr != IntPtr.Zero;
+#else
+			return true;
+#endif
 		}
 
 		public static string GetSignature(string className,string selector) {

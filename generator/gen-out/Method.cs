@@ -115,11 +115,29 @@ namespace CocoaSharp {
 			this.returnType = returnType;
 			this.parameters = parameters;
 		}
-		public Method(string className, string name,string selector,string types,TypeUsage returnType, ParameterInfo[] parameters) : this (name, selector, types, returnType, parameters) {
+		public Method(string className, string name, string selector, TypeUsage returnType, ParameterInfo[] parameters, string declaration) 
+			: this (name, selector, null, returnType, parameters) {
+			this.declaration = declaration;
 #if !WINDOWS
-			if (types == null)
-				this.types = ObjCClassInspector.GetSignature(className,selector);
+			this.types = ObjCClassInspector.GetSignature(className,selector);
+#else
+			this.types = returnType.TypeStr + ":@";
+			foreach (ParameterInfo p in this.parameters)
+				this.types += p.Type.TypeStr;
 #endif
+		}
+
+		public void Merge(Method machoMethod) {
+			bool match = this.returnType.Merge(machoMethod.ReturnType);
+			int ndx = 0;
+			foreach (ParameterInfo p in this.parameters)
+				if (!p.Merge(machoMethod.parameters[ndx++]))
+					match = false;
+			if (!match) {
+				Console.WriteLine("objC	 method = " + this.Selector + " types=" + this.Types + ", decl=" + this.declaration);
+				Console.WriteLine("machO method = " + machoMethod.Selector + " types=" + machoMethod.Types);
+			}
+			this.types = machoMethod.types;
 		}
 
 		// -- Public Properties --
@@ -155,7 +173,7 @@ namespace CocoaSharp {
 		}
 
 		// -- Members --
-		private string name, selector, types;
+		private string name, selector, types, declaration;
 		private TypeUsage returnType;
 		private ParameterInfo[] parameters;
 		private bool mCSAPIDone;
@@ -257,8 +275,8 @@ namespace CocoaSharp {
 				w.WriteLine("        // getSelector: {0}", get.Selector);
 
             w.Write("        {0}{1}{2} {3} {{",
-				isProtocol ? "" : "public ",
-				isClassMethod ? "static " : "", t, propName);
+				isProtocol ? string.Empty : "public ",
+				isClassMethod ? "static " : string.Empty, t, propName);
 			
 			if (!isProtocol)
 				w.WriteLine();
@@ -333,8 +351,8 @@ namespace CocoaSharp {
 		public void GenerateMethod(bool isClassMethod,string className,System.IO.TextWriter w,string methodName, bool isProtocol) {
 			w.WriteLine("        // {0}", Selector);
 			w.WriteLine("        {0}{1}{2} {3} ({4}) {5}", 
-				isProtocol ? "" : "public ",
-				isClassMethod ? "static " : "", 
+				isProtocol ? string.Empty : "public ",
+				isClassMethod ? "static " : string.Empty, 
 				ReturnType.ApiType, MakeCSMethodName(isClassMethod,methodName), ParametersString(),
 				isProtocol ? ";" : "{");
 			if (!isProtocol) {
@@ -621,6 +639,10 @@ namespace CocoaSharp {
 
 	public class ParameterInfo {
 		public ParameterInfo(string name, TypeUsage type) { this.name = name; this.type = type; }
+
+		public bool Merge(ParameterInfo macho) {
+			return this.type.Merge(macho.Type);
+		}
 
 		// -- Public Properties --
 		public TypeUsage Type { get { return type; } }

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOCategory.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
+// $Id$
 //
 
 using System;
@@ -36,8 +36,8 @@ namespace CocoaSharp {
 
 		internal Category ToCategory(string nameSpace) {
 			return new Category(name, nameSpace, Class.GetClass(class_name), 
-				MachOMethod.ToMethods(nameSpace, instanceMethods), 
-				MachOMethod.ToMethods(nameSpace, classMethods));
+				MachOMethod.ToMethods(nameSpace, false, instanceMethods), 
+				MachOMethod.ToMethods(nameSpace, true, classMethods));
 		}
 	}
 

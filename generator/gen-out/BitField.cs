@@ -19,6 +19,12 @@ namespace CocoaSharp {
 		// -- Public Properties --
 		public int Bits { get { return bits; } }
 
+		public override string TypeStr {
+			get {
+				return "b" + this.Bits;
+			}
+		}
+
 		// -- Members --
 		private int bits;
 	}

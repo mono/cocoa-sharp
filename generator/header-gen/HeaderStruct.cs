@@ -30,7 +30,7 @@ namespace CocoaSharp {
 			ArrayList items = new ArrayList();
 			foreach (string line in _struct.Split(';')) {
 				string l = line.Trim();
-				if (l == "")
+				if (l == string.Empty)
 					continue;
 				string[] lineSplit = l.Split(' ','\t');
 				string type = lineSplit[0];
@@ -44,6 +44,8 @@ namespace CocoaSharp {
 			}
 			mItems = (StructItem[])items.ToArray(typeof(StructItem));
 		}
+
+		public Struct StructType { get { return this.mStruct; } }
 
 		public override OutputElement ToOutput() {
 			mStruct.Initialize(mItems);

@@ -70,7 +70,8 @@ namespace CocoaSharp {
 			mClass.Initialize(Class.GetClass(superClass), 
 				MachOProtocol.ToProtocols(protocols.Values),
 				MachOIvar.ToVariables(nameSpace, ivars),
-				MachOMethod.ToMethods(nameSpace,methods),MachOMethod.ToMethods(nameSpace,classMethods));
+				MachOMethod.ToMethods(nameSpace,false, methods),
+				MachOMethod.ToMethods(nameSpace,true, classMethods));
 			return mClass;
 		}
 

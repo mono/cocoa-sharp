@@ -22,6 +22,31 @@ using System.Text.RegularExpressions;
 namespace CocoaSharp {
 
 	public class ObjCManagedExporter {
+		static ObjCManagedExporter() {
+			Type.AddTypedef("uint8_t", Type.FromDecl("unsigned char"));
+			Type.AddTypedef("OSErr", Type.FromDecl("short"));
+			Type.AddTypedef("int32_t", Type.FromDecl("int"));
+			Type.AddTypedef("SInt32", Type.FromDecl("long"));
+			Type.AddTypedef("UInt32", Type.FromDecl("unsigned long"));
+			Type.AddTypedef("UTF32Char", Type.FromDecl("unsigned long"));
+			Type.AddTypedef("int64_t", Type.FromDecl("long long"));
+
+			Type.AddTypedef("AEDesc",Type.FromDecl("int"));
+			Type.AddTypedef("AEEventClass",Type.FromDecl("unsigned long"));
+			Type.AddTypedef("AEEventID",Type.FromDecl("unsigned long"));
+			Type.AddTypedef("AEKeyword",Type.FromDecl("unsigned long"));
+			Type.AddTypedef("AEReturnID",Type.FromDecl("short"));
+			Type.AddTypedef("AETransactionID",Type.FromDecl("long"));
+			Type.AddTypedef("AppleEvent",Type.FromDecl("int"));
+			Type.AddTypedef("CFRunLoopRef",Type.FromDecl("struct __CFRunLoop *"));
+			Type.AddTypedef("DescType",Type.FromDecl("unsigned long"));
+			Type.AddTypedef("NSApplicationDelegateReply",Type.FromDecl("int"));
+			Type.AddTypedef("NSRequestUserAttentionType",Type.FromDecl("int"));
+			Type.AddTypedef("SOCKET",Type.FromDecl("int"));
+			Type.AddTypedef("OSType",Type.FromDecl("unsigned long"));
+			Type.AddTypedef("va_list",Type.FromDecl("char *"));
+		}
+
 		private string mOutputFlag = string.Empty;
 		private Configuration mConfig;
 
@@ -59,6 +84,27 @@ namespace CocoaSharp {
 			this.mConfig = config;
 		}
 
+		static Regex _enumRegex = new Regex(@"enum\s+(?<name>[\w_]+?\s+?)?{(?<enum>.+?)}", RegexOptions.Multiline | RegexOptions.Singleline);
+		static Regex _structRegex = new Regex(@"struct\s+(?<name>[\w_]+?\s+)?{(?<struct>.+?)}", RegexOptions.Multiline | RegexOptions.Singleline);
+		const string _typedef = @"typedef\s+(?<type>.+[\s\*]+)(?<name>[\w_]+)\s*;";
+		static Regex _typedefRegex = new Regex(_typedef, RegexOptions.Multiline | RegexOptions.Singleline);
+		static Regex _importRegex = new Regex(@"#import <(.+?)>|#include <(.+?)>");
+		static Regex _ifdefRegex = new Regex(
+			@"(#if .+)|(#ifdef .*)|(#elif .*)|(#else.*)|(#end.*)|(#pragma .+)|(#warning .+)|(#define .+)|(#undef .+)"
+		);
+#if REGEX_COMMENT
+		static Regex _commentRegex1 = new Regex(@"(/\*([^\*]+)\*/$)", RegexOptions.Multiline | RegexOptions.Singleline);
+#endif
+		static Regex _commentRegex2 = new Regex(@"//.+");
+		static Regex _interfaceRegex = new Regex(@"@interface\s+([\w_]+)(\s*:\s*([\w_]+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+		static Regex _protocolRegex = new Regex(@"@protocol\s+([\w_]+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+		static Regex _categoryRegex = new Regex(@"@interface\s+([\w_]+)\s*\(([\w_]+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+		static Regex _classForwardDeclRegex = new Regex(@"@class\s+(?<name>[,\w_\s]+);");
+		static Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+(?<name>[,\w_\s]+);");
+		static Regex _funcPtrRegex = new Regex(
+			@"typedef\s+(?<retType>[\w_]+)\s*\(\s*\*\s*(?<funcPtrName>[\w_]+)\s*\)\s*\((\s*(?<args>[\w_]+)\s*,?)*\)\s*;"
+		);
+
 		private void ParseFile(FileSystemInfo _toParse, Framework f) {
 			IDictionary _imports = new Hashtable();
 			_imports[string.Format("{0}/{1}", f.Name, _toParse.Name)] = true;
@@ -66,50 +112,58 @@ namespace CocoaSharp {
 			if(!_toParse.Name.EndsWith(".h")) 
 				return;
 
-			Regex _importRegex = new Regex(@"#import <(.+?)>|#include <(.+?)>");
-			Regex _ifdefRegex = new Regex(
-				@"(#if .*$)|(#ifdef .*$)|(#elif .*$)|(#else.*$)|(#end.*$)", RegexOptions.Multiline
-			);
-			Regex _commentRegex = new Regex(@"(/\*([^\*]+)\*/$)|(//.+$)", RegexOptions.Multiline);
-			Regex _interfaceRegex = new Regex(@"@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _protocolRegex = new Regex(@"@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _categoryRegex = new Regex(@"@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(\w+?\s+)?{(\w+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+\s*=\s*\w+,?.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _structRegex = new Regex(@"typedef\s+struct\s+(\w+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _classForwardDeclRegex = new Regex(@"@class\s+[,\w\s]+;");
-			Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+[,\w\s]+;");
-
-#if FUNC_PTR
-	new Regex(@"^\s*(?<ret>\w+)\s*\*?\s*\(\*(?<name>\w+)\)\s*\((?<args>.+?)\);", RegexOptions.Multiline | RegexOptions.Singleline);
-	foreach(Match m in _enumRegex.Matches(_headerData))
-		Console.WriteLine ("ret := {0} name := {1} args := {2}", m.Groups["ret"], m.Groups["name"], m.Groups["args"]);
-#endif
-
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
 			string _headerData = _fileReader.ReadToEnd();
+			int pos;
 
 			// Strip out the comments
-			foreach(Match m in _commentRegex.Matches(_headerData))
-				_headerData = _headerData.Replace(m.Value, "");
+#if REGEX_COMMENT
+			foreach(Match m in _commentRegex1.Matches(_headerData))
+				RemoveString(ref _headerData, m.Value);
+#else
+			while (true) {
+				pos = _headerData.IndexOf("/*");
+				if (pos < 0)
+					break;
+
+				string tmp = _headerData.Substring(pos);
+				int endPos = tmp.IndexOf("*/", 2);
+				if (endPos < 0)
+					break;
+
+				string comment = tmp.Substring(0, endPos+2);
+				RemoveString(ref _headerData, comment);
+			}
+#endif
+			foreach(Match m in _commentRegex2.Matches(_headerData))
+				RemoveString(ref _headerData, m.Value);
 
 			foreach (Match m in _ifdefRegex.Matches(_headerData)) {
-				_headerData = _headerData.Replace(m.Value, "");
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach(Match m in _classForwardDeclRegex.Matches(_headerData)) {
 				//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": class: " + m.Value);
-				_headerData = _headerData.Replace(m.Value, "");
+				foreach (string name_ in m.Groups["name"].Value.Split(',')) {
+					string name = name_.Trim();
+					Type.RegisterType(name, f.NameSpace, typeof(Class));
+				}
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach(Match m in _protocolForwardDeclRegex.Matches(_headerData)) {
 				//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": protocol: " + m.Value);
-				_headerData = _headerData.Replace(m.Value, "");
+				foreach (string name_ in m.Groups["name"].Value.Split(',')) {
+					string name = name_.Trim();
+					Type.RegisterType(name, f.NameSpace, typeof(Protocol));
+				}
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach(Match m in _importRegex.Matches(_headerData)) {
 				_imports[m.Groups[1].Value] = true;
 				//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": import: " + m.Groups[1].Value);
-				_headerData = _headerData.Replace(m.Value, "");
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach (Match m in _protocolRegex.Matches(_headerData)) {
@@ -120,7 +174,7 @@ namespace CocoaSharp {
 					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @protocol: " + _p.Name + " is already defined.");
 				else
 					Protocols[_p.Name] = _p;
-				_headerData = _headerData.Replace(m.Value, "");
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach (Match m in _categoryRegex.Matches(_headerData)) {
@@ -132,7 +186,7 @@ namespace CocoaSharp {
 					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @category: " + _c.Name + " is already defined.");
 				else
 					Categories[string.Format("{0}_{1}", _c.Name, _c.Class)] = _c;
-				_headerData = _headerData.Replace(m.Value, "");
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			foreach (Match m in _interfaceRegex.Matches(_headerData)) {
@@ -144,31 +198,114 @@ namespace CocoaSharp {
 					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @interface: " + _i.Name + " is already defined.");
 				else
 					Interfaces[_i.Name] = _i;
-				_headerData = _headerData.Replace(m.Value, "");
+				RemoveString(ref _headerData, m.Value);
+			}
+
+			foreach (Match m in _funcPtrRegex.Matches(_headerData)) {
+				Console.WriteLine("DEBUG: typedef detected: retType=" + m.Groups["retType"].Value + ", funcPtrName=" + m.Groups["funcPtrName"].Value);
+				RemoveString(ref _headerData, m.Value);
+			}
+
+			while (true) {
+				pos = _headerData.IndexOf("typedef");
+				if (pos < 0)
+					break;
+
+				string tmp = _headerData.Substring(pos);
+
+				int endPos = 0, open = 0;
+				while (true) {
+					int start = endPos;
+					endPos = tmp.IndexOf(";", endPos+1);
+					if (endPos < 0)
+						break;
+					string tmpStr = tmp.Substring(start+1, endPos-start);
+					open += tmpStr.Split('{').Length-1;
+					open -= tmpStr.Split('}').Length-1;
+					if (open == 0)
+						break;
+				}
+				if (endPos < 0)
+					break;
+
+				string typedef = tmp.Substring(0, endPos+1);
+				RemoveString(ref _headerData, typedef);
+
+				Match m = _typedefRegex.Match(typedef);
+				System.Diagnostics.Debug.Assert(m.Success);
+				string name = m.Groups["name"].Value.Trim();
+				string type = m.Groups["type"].Value.Trim();
+				if (type.Length > 0) {
+					Match subMatch = _enumRegex.Match(type);
+					if (subMatch.Success) {
+						string subName = subMatch.Groups["name"].Value.Trim();
+						string enumStr = subMatch.Groups["enum"].Value.Trim();
+						AddEnum(name, subName, enumStr, f.Name, _toParse.Name);
+					} else {
+						subMatch = _structRegex.Match(type);
+						if (subMatch.Success) {
+							string subName = subMatch.Groups["name"].Value.Trim();
+							string structStr = subMatch.Groups["struct"].Value.Trim();
+							AddStruct(name, subName, structStr, f.Name, _toParse.Name);
+						} else {
+							Type.AddTypedef(name, TypeUsage.FromDecl(type).Type);
+						}
+					}
+				} else {
+					Console.WriteLine("Ignore unknown typedef pattern: " + typedef);
+				}
 			}
 
 			foreach (Match m in _enumRegex.Matches(_headerData)) {
-				// We found an enum
-				HeaderEnum _s = new HeaderEnum(m.Groups[3].Value, m.Groups[2].Value, f.Name);
-				if (Enums.Contains(_s.Name))
-					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @enum: " + _s.Name + " is already defined.");
-				else
-					Enums[m.Groups[3].Value] = _s;
-				_headerData = _headerData.Replace(m.Value, "");
-			}
-			foreach (Match m in _structRegex.Matches(_headerData)) {
-				// We found an struct
-				HeaderStruct _s = new HeaderStruct(m.Groups[3].Value, m.Groups[2].Value, f.Name);
-				if (Interfaces.Contains(_s.Name))
-					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @struct: " + _s.Name + " is already defined.");
-				else
-					Structs[m.Groups[3].Value] = _s;
-				_headerData = _headerData.Replace(m.Value, "");
+				string subName = m.Groups["name"].Value.Trim();
+				string enumStr = m.Groups["enum"].Value.Trim();
+				AddEnum(null, subName, enumStr, f.Name, _toParse.Name);
+				RemoveString(ref _headerData, m.Value);
 			}
 
 			_headerData = _headerData.Trim();
-			System.Diagnostics.Debug.Assert(_headerData.IndexOf("NSSliderType") < 0);
+			if (_headerData.Length > 0) {
+				_headerData = _headerData.Trim();
+			}
+
 			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
+		}
+		static void RemoveString(ref string baseStr, string replaceStr) {
+			int len = baseStr.Length;
+			baseStr = baseStr.Replace(replaceStr, string.Empty);
+			System.Diagnostics.Debug.Assert(baseStr.Length == len - replaceStr.Length);
+			baseStr = baseStr.Trim();
+		}
+
+		static int anonymousEnum = 0;
+		private void AddEnum(string name, string subName, string enumStr, string frameworkName, string fileName) {
+			if (name == null) {
+				if (subName.Length == 0)
+					subName = "_noname_" + anonymousEnum++;
+				name = "enum " + subName;
+				subName = string.Empty;
+			}
+			HeaderEnum _s = new HeaderEnum(name, enumStr, frameworkName);
+			if (subName.Length > 0)
+				Type.AddTypedef("enum " + subName, _s.EnumType);
+			if (Enums.Contains(_s.Name))
+				Console.WriteLine("ERROR: " + frameworkName + "/" + fileName + ": @enum: " + _s.Name + " is already defined.");
+			else
+				Enums[name] = _s;
+		}
+		private void AddStruct(string name, string subName, string structStr, string frameworkName, string fileName) {
+			if (name == null) {
+				System.Diagnostics.Debug.Assert(subName.Length > 0);
+				name = "struct " + subName;
+				subName = string.Empty;
+			}
+			HeaderStruct _s = new HeaderStruct(name, structStr, frameworkName);
+			if (subName.Length > 0)
+				Type.AddTypedef("struct " + subName, _s.StructType);
+			if (Interfaces.Contains(_s.Name))
+				Console.WriteLine("ERROR: " + frameworkName + "/" + fileName + ": @struct: " + _s.Name + " is already defined.");
+			else
+				Structs[name] = _s;
 		}
 
 		private string LocateFramework(Framework _tolocate) {
