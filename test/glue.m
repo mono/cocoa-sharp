@@ -116,10 +116,7 @@ id DotNetForwarding_initWithManagedDelegate(id THIS, managedDelegate delegate) {
     return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
 }
 
-Class CreateClassDefinition(const char * name, const char * superclassName/*,int numOfMethods,const char **methods,const char **signatures*/) {
-    int numOfMethods = 2;
-    const char *methods[] = {"_stop","_swap"};
-    const char *signatures[] = { "v@:", "v@:" };
+Class CreateClassDefinition(const char * name, const char * superclassName,int numOfMethods,const char **methods,const char **signatures) {
     NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
     //
