@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.9 2004/09/07 12:33:39 urs Exp $
+// $Id: SegmentCommand.cs,v 1.10 2004/09/07 20:51:21 urs Exp $
 //
 
 using System;

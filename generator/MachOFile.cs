@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.12 2004/09/07 20:07:40 urs Exp $
+// $Id: MachOFile.cs,v 1.13 2004/09/07 20:51:21 urs Exp $
 //
 
 using System;

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.12 2004/06/29 03:32:58 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.13 2004/09/07 20:51:21 urs Exp $
 //
 
 using System;
@@ -89,9 +89,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.13  2004/09/07 20:51:21  urs
+//	Fix line endings
+//
 //	Revision 1.12  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
-//
+//	
 //	Revision 1.11  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
 //	

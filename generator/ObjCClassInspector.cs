@@ -73,8 +73,14 @@ namespace ObjCManagedExporter
 		#endregion
 
 		#region -- Objective-C structures --
-		public struct objc_method		{		   public IntPtr /*(SEL)*/ method_name;		   public IntPtr /*(char *)*/ method_types;		   public IntPtr /*(IMP)*/ method_imp;		}
-		#endregion
+		public struct objc_method
+		{
+		   public IntPtr /*(SEL)*/ method_name;
+		   public IntPtr /*(char *)*/ method_types;
+		   public IntPtr /*(IMP)*/ method_imp;
+		}
+		#endregion
+
 		#region -- PInvoke bindings --
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr /*(Class)*/ objc_getClass(string className);

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.39 2004/07/01 12:41:33 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.40 2004/09/07 20:51:21 urs Exp $
 //
 
 using System;
@@ -421,10 +421,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.40  2004/09/07 20:51:21  urs
+//	Fix line endings
+//
 //	Revision 1.39  2004/07/01 12:41:33  urs
 //	- Better verbose support, individual verbose ignore per selector and per interface
 //	- Minor improvements with monodoc
-//
+//	
 //	Revision 1.38  2004/06/30 19:29:22  urs
 //	Cleanup
 //	

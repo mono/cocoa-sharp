@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.47 2004/07/01 16:01:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.48 2004/09/07 20:51:21 urs Exp $
 //
 
 using System;
@@ -936,10 +936,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.48  2004/09/07 20:51:21  urs
+//	Fix line endings
+//
 //	Revision 1.47  2004/07/01 16:01:41  urs
 //	Fix some GC issues, but mostly just do stuff more explicit
 //	Still not working with GC on
-//
+//	
 //	Revision 1.46  2004/07/01 12:41:33  urs
 //	- Better verbose support, individual verbose ignore per selector and per interface
 //	- Minor improvements with monodoc
