@@ -312,6 +312,7 @@ namespace ObjCManagedExporter
 					return "int";
 				case "unsigned": case "unsigned int": case "unsigned long int": 
 					return "uint";
+				case "unsigned long": return "ulong";
 				case "long long": case "int64_t": return "Int64";
 				case "unsigned long long": return "UInt64";
 
@@ -319,6 +320,7 @@ namespace ObjCManagedExporter
 				case "IMP":
 					return "IntPtr /*(" + type + ")*/";
 			}
+
 			return type;
 		}
 
@@ -334,6 +336,8 @@ namespace ObjCManagedExporter
 						return "IntPtr /*(" + type + ")*/";
 					break;
 			}
+			if(type.Trim().Equals(""))
+				return "void";
 			return type;
 		}
 
@@ -350,6 +354,8 @@ namespace ObjCManagedExporter
 						return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
 					break;
 			}
+			if(type.Trim().Equals(""))
+				return "void";
 			return type;
 		}
 	}

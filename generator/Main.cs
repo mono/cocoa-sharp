@@ -111,37 +111,42 @@ namespace ObjCManagedExporter
 			while(_structenum.MoveNext())
 			{
 				Struct s = (Struct)_structenum.Value;
-		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, s.Framework, s.Name)));
-				_cs.WriteLine(s.CSStruct);
-				_cs.Close();
+				if(s.Framework.Equals(_toprocess.Name)) {
+			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, s.Name)));
+					_cs.WriteLine(s.CSStruct);
+					_cs.Close();
+				}
 			}
 			IDictionaryEnumerator _protoenum = Protocols.GetEnumerator();
 			while(_protoenum.MoveNext())
 			{
 				ArrayList _addedMethods = new ArrayList();
 				Protocol p = (Protocol)_protoenum.Value;
-		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}I{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
-				_cs.WriteLine("using System;");
-				_cs.WriteLine("using System.Runtime.InteropServices;");
-				if(!p.Framework.Equals("Foundation")) 
+				if(p.Framework.Equals(_toprocess.Name)) {
+			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}I{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
+					_cs.WriteLine("using System;");
+					_cs.WriteLine("using System.Runtime.InteropServices;");
 					_cs.WriteLine("using Apple.Foundation;");
-				_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
-				_cs.WriteLine("{");
- 				_cs.Write("    public interface I{0}", p.Name);
-				_cs.WriteLine("    {");
-				IDictionaryEnumerator _methodEnum = p.Methods.GetEnumerator();
-				while(_methodEnum.MoveNext()) {
-					Method _toOutput = (Method)_methodEnum.Value;
-					String _methodSig = _toOutput.GlueMethodName;
-					if(!_addedMethods.Contains((string)_methodSig)) 
-					{ 
-						_addedMethods.Add((string)_methodSig);
-						_toOutput.CSInterfaceMethod(p.Name, _cs);
+					if(!p.Framework.Equals("Foundation")) 
+						_cs.WriteLine("using Apple.{0};", p.Framework);
+					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+					_cs.WriteLine("{");
+ 					_cs.Write("    public interface I{0}", p.Name);
+					_cs.WriteLine("    {");
+					IDictionaryEnumerator _methodEnum = p.Methods.GetEnumerator();
+					while(_methodEnum.MoveNext()) {
+						Method _toOutput = (Method)_methodEnum.Value;
+						String _methodSig = _toOutput.GlueMethodName;
+						if(!_addedMethods.Contains((string)_methodSig)) 
+						{ 
+							_addedMethods.Add((string)_methodSig);
+							_toOutput.CSInterfaceMethod(p.Name, _cs);
+						}
 					}
+					_cs.WriteLine("    }");
+					_cs.WriteLine("}");
+					_cs.Close();
 				}
-				_cs.WriteLine("    }");
-				_cs.WriteLine("}");
-				_cs.Close();
 			}
 			IDictionaryEnumerator _enum = Interfaces.GetEnumerator();
 			while(_enum.MoveNext()) 
@@ -203,8 +208,9 @@ namespace ObjCManagedExporter
 					TextWriter _cs = new StreamWriter(File.Create(string.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
 					_cs.WriteLine("using System;");
 					_cs.WriteLine("using System.Runtime.InteropServices;");
+					_cs.WriteLine("using Apple.Foundation;");
 					if(_toprocess.Name != "Foundation") 
-						_cs.WriteLine("using Apple.Foundation;");
+						_cs.WriteLine("using Apple.{0};", _toprocess.Name);
 					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
 					_cs.WriteLine("{");
 
@@ -216,7 +222,7 @@ namespace ObjCManagedExporter
 					_cs.WriteLine("    {");
 
 					_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
-					_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\") return _{0}_class; }} }}",i.Name);
+					_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
 					_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
 					_cs.WriteLine();
 					_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
