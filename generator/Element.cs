@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Element.cs,v 1.2 2004/06/23 15:29:29 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Element.cs,v 1.3 2004/06/23 17:14:20 gnorton Exp $
 //
 
 using System;
@@ -36,6 +36,7 @@ namespace ObjCManagedExporter
 		public string Name 
 		{
 			get { return mName; }
+			set { mName = value; }
 		}
 
 		public string Framework 
@@ -64,14 +65,30 @@ namespace ObjCManagedExporter
 			return OpenFile("src{0}Apple.{1}", this.FileNameFormat, Framework, Name);
 		}
 
-		public void WriteFile()
+		public void WriteFile(Configuration config)
 		{
 			TextWriter _cs = OpenFile();
-			WriteCS(_cs);
+			WriteCS(_cs, config);
 			_cs.Close();
 		}
 
-		public abstract void WriteCS(TextWriter _cs);
+		public abstract void WriteCS(TextWriter _cs, Configuration config);
+
+		public void ProcessAddin(TextWriter _cs, Configuration config)
+		{
+			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Framework, Name))) 
+			{
+				_cs.WriteLine("\t\t#region -- Generator Addins --");
+				StreamReader _addinReader = new StreamReader(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Framework, Name));
+				String _addinLine;
+				while( (_addinLine = _addinReader.ReadLine()) != null )
+				{
+					_cs.WriteLine(_addinLine);
+				}
+				_addinReader.Close();
+				_cs.WriteLine("\t\t#endregion");
+			}
+		}
 	}
 
 	public abstract class ElementWithMethods : Element
@@ -101,9 +118,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Element.cs,v $
+//	Revision 1.3  2004/06/23 17:14:20  gnorton
+//	Custom addins supported on a per file basis.
+//
 //	Revision 1.2  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
-//
+//	
 //	Revision 1.1  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)

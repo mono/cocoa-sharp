@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.6 2004/06/23 15:29:29 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.7 2004/06/23 17:14:20 gnorton Exp $
 //
 
 using System;
@@ -39,7 +39,7 @@ namespace ObjCManagedExporter
 			get { return "{1}{0}I{2}.gen.cs"; }
 		}
 
-		public override void WriteCS(TextWriter _cs)
+		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
 			IDictionary _addedMethods = new Hashtable();
 			_cs.WriteLine("using System;");
@@ -63,6 +63,11 @@ namespace ObjCManagedExporter
 					_toOutput.CSInterfaceMethod(Name, _cs);
 				}
 			}
+
+			string _realName = Name;
+			Name = "I" + Name;
+			ProcessAddin(_cs, config);
+			Name = _realName;
 			_cs.WriteLine("    }");
 			_cs.WriteLine("}");
 		}
@@ -70,9 +75,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.7  2004/06/23 17:14:20  gnorton
+//	Custom addins supported on a per file basis.
+//
 //	Revision 1.6  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
-//
+//	
 //	Revision 1.5  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)

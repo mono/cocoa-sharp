@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.20 2004/06/23 15:29:29 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.21 2004/06/23 17:14:20 gnorton Exp $
 //
 
 using System;
@@ -145,15 +145,15 @@ namespace ObjCManagedExporter
 			{
 				foreach(CEnum e in Enums.Values)
 					if(e.Framework == _toprocess.Name)
-						e.WriteFile();
+						e.WriteFile(mConfig);
 
 				foreach (Struct s in Structs.Values)
 					if(s.Framework == _toprocess.Name) 
-						s.WriteFile();
+						s.WriteFile(mConfig);
 
 				foreach (Protocol p in Protocols.Values)
 					if(p.Framework == _toprocess.Name) 
-						p.WriteFile();
+						p.WriteFile(mConfig);
 			}
 
 			foreach (Interface i in Interfaces.Values) 
@@ -180,7 +180,7 @@ namespace ObjCManagedExporter
 					}
 
 					if (OutputCS)
-						i.WriteFile();
+						i.WriteFile(mConfig);
 				}
 			}
 		}
@@ -291,6 +291,10 @@ namespace ObjCManagedExporter
 		public Framework[] Frameworks;
 		[XmlElement("searchpath")]
 		public string[] SearchPaths;
+		[XmlElement("addinpath")]
+		public string AddinPath;
+		[XmlElement("overridepath")]
+		public string OverridePath;
 	}
         
 	public class Framework 
@@ -303,9 +307,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.21  2004/06/23 17:14:20  gnorton
+//	Custom addins supported on a per file basis.
+//
 //	Revision 1.20  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
-//
+//	
 //	Revision 1.19  2004/06/22 19:54:21  urs
 //	Add property support
 //	
