@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.17 2004/06/22 13:38:59 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.18 2004/06/22 15:13:18 urs Exp $
 //
 
 using System;
@@ -233,11 +233,11 @@ namespace ObjCManagedExporter
 							_cs.Write(" : I{0}", string.Join(", I", i.Protocols));
 						_cs.WriteLine("    {");
 
-						_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
-						_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == IntPtr.Zero) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
+						_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",i.Name);
+						_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",i.Name);
 						_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
 						_cs.WriteLine();
-						_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
+						_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_classPtr),true) {{}}",i.Name);
 						_cs.WriteLine();
 					}
 
@@ -350,10 +350,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.18  2004/06/22 15:13:18  urs
+//	New fixing
+//
 //	Revision 1.17  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)
-//
+//	
 //	Revision 1.16  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
 //	

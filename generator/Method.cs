@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.17 2004/06/22 14:16:20 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.18 2004/06/22 15:13:18 urs Exp $
 //
 
 using System;
@@ -246,7 +246,7 @@ namespace ObjCManagedExporter
 			ArrayList _csparams = new ArrayList();
 
 			if (mIsClassMethod)
-				_csparams.Add(name + "_class");
+				_csparams.Add(name + "_classPtr");
 			else
 				_csparams.Add("Raw");
 			
@@ -301,6 +301,7 @@ namespace ObjCManagedExporter
 		{
 			switch (name) 
 			{
+				case "new":
 				case "delegate":
 				case "this":
 				case "base":
@@ -333,7 +334,7 @@ namespace ObjCManagedExporter
 				case "default":
 				case "continue":
 				case "break":
-					return "_" + name;
+					return name + "_";
 			}
 			return name;
 		}
@@ -349,14 +350,14 @@ namespace ObjCManagedExporter
 				case "double": return "double";
 				case "unichar": return "char";
 				case "char": return "sbyte";
-				case "unsigned char": return "byte";
+				case "unsigned char": case "uint8_t": return "byte";
 				case "short": case "short int":
 					return "short";
 				case "unsigned short": case "unsigned short int":
 					return "ushort";
 				case "int": case "int32_t": case "SInt32":
 					return "int";
-				case "unsigned": case "unsigned int": case "UInt32": 
+				case "unsigned": case "unsigned int": case "UInt32": case "UTF32Char":
 					return "uint";
 				case "long": case "long int":
 					return "long";
@@ -406,7 +407,7 @@ namespace ObjCManagedExporter
 				default:
 					if (type.EndsWith("*"))
 						if (type.StartsWith("NS"))
-							return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
+							return type.StartsWith("NSString") ? "string" : type.Replace("*", "").Trim();
 						else
 							return "IntPtr /*(" + type + ")*/";
 					break;
@@ -417,9 +418,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.18  2004/06/22 15:13:18  urs
+//	New fixing
+//
 //	Revision 1.17  2004/06/22 14:16:20  urs
 //	Minor fix
-//
+//	
 //	Revision 1.16  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)
