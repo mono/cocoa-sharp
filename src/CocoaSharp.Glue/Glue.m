@@ -5,21 +5,6 @@
 #import <Foundation/NSMethodSignature.h>
 #import <AppKit/NSTextField.h>
 
-#if false
-@interface ConverterController : NSObject {
-    id converter;
-    NSTextField* dollarField; 
-    NSTextField* rateField; 
-    NSTextField* totalField; 
-}
-
-//- (void)convert: (id) sender;
-@end
-
-@implementation ConverterController
-@end
-#endif
-
 // This is needed until bug #61033 is fixed
 #define JIT_HACK 1
 
@@ -36,7 +21,7 @@ typedef void (*getManagedDelegate)(id THIS);
 
 constructorDelegate sConstructorDelegate = nil;
 getManagedDelegate sGetManagedDelegate = nil;
-BOOL sIsGlueVerbose = YES;
+BOOL sIsGlueVerbose = NO;
 
 BOOL IsGlueVerbose() { return sIsGlueVerbose; }
 void SetGlueVerbose(BOOL verbose) { sIsGlueVerbose = verbose; }
@@ -338,20 +323,12 @@ Class CreateClassDefinition(const char * name, const char * superclassName,
         meta_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
         *meta_class->methodLists = (struct objc_method_list*)-1;
 
-        if (strcmp(name,"ConverterController") == 0)
-            AddInstanceVariables(
-                new_class, 
-                numOfVars,varNames,varTypes,varSizes,
-                1,
-                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
-            );
-        else
-            AddInstanceVariables(
-                new_class, 
-                0, nil, nil, nil,
-                1,
-                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
-            );
+        AddInstanceVariables(
+            new_class, 
+            numOfVars,varNames,varTypes,varSizes,
+            1,
+            "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
+        );
     
         // Finally, register the class with the runtime.
         objc_addClass( new_class );
