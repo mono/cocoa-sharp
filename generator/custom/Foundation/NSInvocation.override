@@ -1,5 +1,5 @@
 <overrides>
-        <method sel="-getArgument:atIndex:">
+		<method sel="-getArgument:atIndex:">
 		public object getArgument(int i, Type t) {
 			object retVal = null;
 			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
@@ -8,17 +8,17 @@
 			Marshal.FreeHGlobal(argPtr);
 			return retVal;
 		}
-        </method>
+		</method>
 
-        <method sel="-setReturnValue:">
-        public object /*(void *)*/ returnValue {
-            set
-            {
-            	if (methodSignature.methodReturnLength == 0)
-            		return;
+		<method sel="-setReturnValue:">
+		public object /*(void *)*/ returnValue {
+			set
+			{
+				if (methodSignature.methodReturnLength == 0)
+					return;
 				bool isNull = value == null;
 				Type valueType = isNull ? null : value.GetType();
-				bool isValueType = !isNull && valueType.IsPrimitive;
+				bool isValueType = !isNull &amp;&amp; valueType.IsPrimitive;
 				IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
 //Console.WriteLine("DEBUG: NSInvocation: (-setReturnValue:) [value=" + value + "] isValueType=" + isValueType + ", ptr=" + retVal);
 				if(isNull)
@@ -39,9 +39,9 @@
 						Console.WriteLine("ERROR: NSInvocation: (-setReturnValue:): did not handle valuetype with size: " + Marshal.SizeOf(value));
 				} else
 					Marshal.WriteIntPtr(retVal,Net2NS(value));
-            	NSInvocation_setReturnValue1(Raw,retVal);
+				NSInvocation_setReturnValue1(Raw,retVal);
 				Marshal.FreeHGlobal(retVal);
-            }
-        }
-        </method>
+			}
+		}
+		</method>
 </overrides>
