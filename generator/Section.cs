@@ -1,5 +1,5 @@
 //
-// $Id: Section.cs,v 1.6 2004/09/03 21:46:29 urs Exp $
+// $Id: Section.cs,v 1.7 2004/09/03 22:21:46 urs Exp $
 //
 
 using System;
@@ -62,7 +62,7 @@ namespace CocoaSharp {
 				mfile.Pointer += (int)Marshal.SizeOf (sec);
 			}
 
-			Console.WriteLine ("\t\tSectName: {0}", sectname);
+			MachOFile.DebugOut(0,"\t\tSectName: {0}", sectname);
 		}
 	}
 

@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.7 2004/09/03 21:46:29 urs Exp $
+// $Id: MachOFile.cs,v 1.8 2004/09/03 22:21:46 urs Exp $
 //
 
 using System;
@@ -139,11 +139,11 @@ namespace CocoaSharp {
 				return null;
 			SegmentCommand segment = this.SegmentContainingAddress(offset);
 			if (segment == null) {
-				DebugOut(0,"Segment for offset {0} not found",offset);
+				DebugOut(0,"ERROR: Segment for offset {0} not found",offset);
 				return null;
 			}
 			if (segName != null && segment.Name != segName) {
-				DebugOut(0,"Segment has wrong name {0} != {1}",segment.Name,segName);
+				DebugOut(0,"ERROR: Segment has wrong name {0} != {1}",segment.Name,segName);
 				return null;
 			}
 			return HeadPointer + (int)(offset - segment.VMAddr + segment.FileOffset);

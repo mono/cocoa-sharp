@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.6 2004/09/03 21:46:29 urs Exp $
+// $Id: SegmentCommand.cs,v 1.7 2004/09/03 22:21:46 urs Exp $
 //
 
 using System;
@@ -89,7 +89,7 @@ namespace CocoaSharp {
 				name = Utils.GetString(mfile.Pointer, 16);
 				mfile.Pointer += (int)Marshal.SizeOf(scmd);
 			}
-			Console.WriteLine ("\tSegment Name: {0}", name);
+			MachOFile.DebugOut(0,"\tSegment Name: {0}", name);
 
 			ProcessSections ();
 		}
