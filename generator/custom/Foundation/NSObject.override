@@ -7,7 +7,7 @@
 	</method>
 
 	<method instance="true" sel="class" >
-                public Class Class {
+                public Class class_ {
                         get { return new Class(NSObject_class0(Raw),false); }
                 }
 	</method>

@@ -1,16 +1,21 @@
 <conversions>
 	<type native="void" api="void" glue="void" />
+
 	<type native="BOOL" api="bool" glue="bool" format="%i" />
+
 	<type native="float" api="float" glue="float" format="%f" />
 	<type native="double" api="double" glue="double" format="%lf" />
+
 	<type native="unichar" api="char" glue="char" format="%c" />
 	<type native="char" api="sbyte" glue="sbyte" format="%i" />
 	<type native="unsigned char" api="byte" glue="byte" format="%u" />
 	<type native="uint8_t" api="byte" glue="byte" format="%u" />
+
 	<type native="short" api="short" glue="short" format="%i" />
 	<type native="short int" api="short" glue="short" format="%i" />
 	<type native="unsigned short" api="ushort" glue="ushort" format="%u" />
 	<type native="unsigned short int" api="ushort" glue="ushort" format="%u" />
+
 	<type native="int" api="int" glue="int" format="%i" />
 	<type native="int32_t" api="int" glue="int" format="%i" />
 	<type native="SInt32" api="int" glue="int" format="%i" />
@@ -22,18 +27,22 @@
 	<type native="long int" api="int" glue="int" format="%li" />
 	<type native="unsigned long" api="uint" glue="uint" format="%lu" />
 	<type native="unsigned long int" api="uint" glue="uint" format="%lu" />
+
 	<type native="long long" api="Int64" glue="Int64" format="%lld" />
 	<type native="int64_t" api="Int64" glue="Int64" format="%lld" />
 	<type native="SInt64" api="Int64" glue="Int64" format="%lld" />
 	<type native="unsigned long long" api="UInt64" glue="UInt64" format="%llu" />
 	<type native="UInt64" api="UInt64" glue="UInt64" format="%llu" />
+
 	<type native="OSErr" api="Int16" glue="Int16" format="%i" />
 	<type native="OSType" api="int" glue="int" format="%i" />
 	<type native="va_list" api="IntPtr" glue="IntPtr" format="%p" />
+
 	<type native="IMP" api="IntPtr" glue="IntPtr" format="%p" />
 	<type native="id" api="object" glue="IntPtr" />
 	<type native="Class" api="Class" glue="IntPtr" />
 	<type native="SEL" api="string" glue="IntPtr" />
+
 	<type native="NSWorkspaceLaunchOptions" api="uint" glue="uint" format="%i" />
 	<type native="NSGlyph" api="uint" glue="uint" format="%i" />
 	<type native="NSFontTraitMask" api="uint" glue="uint" format="%i" />
@@ -56,9 +65,8 @@
 	<type native="CFRunLoopRef" api="IntPtr" glue="IntPtr" format="%p" />
 	<type native="id*" glue="IntPtr" api="IntPtr" format="%p" />
 	<type native="SEL*" glue="IntPtr" api="IntPtr" format="%p" />
+
 	<regex native="char\s*\*" glue="IntPtr" gluearg="string" api="string" />
 	<regex native="NSString\s*\*" glue="IntPtr" api="string" />
-	<regex native="^[^NS]{2}.+\s*\*" glue="IntPtr" api="IntPtr" />
-	<regex native="NS.+\s*\*" glue="IntPtr"/>
-	<replace type="api" regex="NS.+\s*\*" old="*" new="" />
+	<regex native="\w+\s*\*" glue="IntPtr" api="{detect}" />
 </conversions>

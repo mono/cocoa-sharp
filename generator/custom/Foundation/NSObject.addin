@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.5 2004/06/27 20:41:45 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.6 2004/06/28 19:18:31 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -78,7 +78,7 @@
 					NSInvocation invocation = new NSInvocation(arg,false);
 					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
 					
-					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
+					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
 					if(ret != null)
 						if(ret.GetType() == typeof(int)) {
 							retVal = Marshal.AllocHGlobal(4);
@@ -87,7 +87,7 @@
 							retVal = ((NSObject)ret).Raw;
 						}
 					if(retVal != IntPtr.Zero)
-						invocation.setReturnValue(retVal);
+						invocation.returnValue = retVal;
 					break;
 				}
 			}
@@ -103,7 +103,7 @@
 			Type myType = this.GetType();
 			IntPtr cls = IntPtr.Zero;
 			if (!NSClasses.Contains(myType)) {
-				cls = Class.Get(myType.Name);
+				cls = Apple.Foundation.Class.Get(myType.Name);
 				if (cls == IntPtr.Zero)
 					cls = NSRegisterClass(myType);
 				
@@ -140,14 +140,12 @@
 			get { return new NSString(NSObject_className0(Raw),false).ToString(); }
 		}
 
-		// Satisfy INSObject
-		public Class class_ () {
-			return (Class)NSObject.NS2Net(NSObject_class0(Raw));
-		}
-
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.6  2004/06/28 19:18:31  urs
+// Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 // Revision 1.5  2004/06/27 20:41:45  gnorton
 // Support for NSBrowser and int args/rets
 //

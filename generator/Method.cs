@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.36 2004/06/25 22:30:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.37 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -196,10 +196,8 @@ namespace ObjCManagedExporter
 			mGlueMethodName = string.Empty;
 			mCSMethodName = MakeCSMethodName(/*mMessageParts[0]*/ string.Join("_", mMessageParts));
 			if (mIsClassMethod)
-			{
-				mCSMethodName = mCSMethodName.Substring(0,1).ToUpper() + mCSMethodName.Substring(1);
 				mGlueMethodName += "_";
-			}
+
 			mGlueMethodName += string.Join("_",mMessageParts) + mArgumentNames.Length;
 		}
 		#endregion
@@ -231,7 +229,7 @@ namespace ObjCManagedExporter
 	
 				ArrayList argTypes = new ArrayList();
 				for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-					argTypes.Add(mArgumentAPITypes[i]);
+					argTypes.Add(StripComments(mArgumentAPITypes[i]));
 	
 				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
 			}
@@ -400,18 +398,45 @@ namespace ObjCManagedExporter
 		#region -- C# Public API --
 		public bool IsGetMethod(string type)
 		{
-			if (type != mReturnAPIType)
+			if ("void" == mReturnAPIType)
 				return false;
 			if (mArgumentDeclarationTypes.Length > 0)
 				return false;
 			mCSAPIDone = true;
 			return true;
 		}
+		
+		public Method GetGetMethod(IDictionary methods, out string propName)
+		{
+			propName = mCSMethodName.Substring(3);
+
+			Method get = (Method)methods[propName.Substring(0,1).ToLower() + propName.Substring(1) + "0"];
+			
+			if (get == null)
+				get = (Method)methods["is" + propName + "0"];
+			if (get == null)
+				get = (Method)methods[propName + "0"];
+			
+			propName = MakeCSMethodName(propName);
+			return get;
+		}
 	
 		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o)
 		{
 			if (mIsUnsupported)
 				return;
+			if (mCSAPIDone)
+				return;
+
+			// Check to see if we're overridden
+			if(_o != null && _o.Methods != null)
+				foreach(MethodOverride _mo in _o.Methods) 
+					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
+						w.WriteLine("        //{0} is overridden", Selector);
+						w.WriteLine(_mo.Method);
+						mCSAPIDone = true;
+						return;
+					}
 
 			string _type = mReturnAPIType;
 			BuildArgs(name);
@@ -419,18 +444,12 @@ namespace ObjCManagedExporter
 			string glueArgsStr = string.Join(", ", mCSGlueArguments);
 			bool isVoid = _type == "void";
 			
-			if (!mCSAPIDone && isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
+			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
 			{
-				string t = mArgumentAPITypes[0];
-				string propName = mCSMethodName.Substring(3);
-
-				Method get = (Method)methods[propName.Substring(0,1).ToLower() + propName.Substring(1) + "0"];
+				string t = mArgumentAPITypes[0], propName;
+				Method get = GetGetMethod(methods, out propName);
 				
-				if (get == null)
-					get = (Method)methods["is" + propName + "0"];
-				if (get == null)
-					get = (Method)methods[propName + "0"];
-				
+				w.WriteLine("        // {0}", mMethodDeclaration);
 				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
 				if (get != null && get.IsGetMethod(t))
 					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
@@ -449,15 +468,22 @@ namespace ObjCManagedExporter
 			if (propOnly)
 				return;
 
-			// Check to see if we're overridden
-			if(_o != null && _o.Methods != null)
-				foreach(MethodOverride _mo in _o.Methods) 
-					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
-						w.WriteLine("        //{0} is overridden", Selector);
-						w.WriteLine(_mo.Method);
-						return;
-					}
+			if (!mIsClassMethod && !isVoid && mArgumentDeclarationTypes.Length == 0)
+			{
+				string t = _type, propName = mCSMethodName;
+				
+			    propName = MakeCSMethodName(propName);
+				
+				w.WriteLine("        // {0}", mMethodDeclaration);
+				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
+				w.WriteLine("            get {{ {0}; }}", ReturnExpression(
+					mReturnDeclarationType,mReturnGlueType,mReturnAPIType,
+					string.Format("{0}_{1}({2})",name, GlueMethodName, mCSGlueArguments[0])));
+				w.WriteLine("        }");
+			    return;
+			}
 
+			w.WriteLine("        // {0}", mMethodDeclaration);
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
 			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,mReturnGlueType,mReturnAPIType,
 				string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
@@ -503,14 +529,40 @@ namespace ObjCManagedExporter
 		#endregion
 
 		#region -- C# Interface --
-		public void CSInterfaceMethod(string name,System.IO.TextWriter w)
+		public void CSInterfaceMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
 		{
-			if (mIsUnsupported)
-				return;
-			if (mIsClassMethod)
+			if (mIsUnsupported || mIsClassMethod || mCSAPIDone)
 				return;
 
 			string _type = mReturnAPIType;
+
+			if (_type == "void" && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set")) {
+				string t = mArgumentAPITypes[0], propName;
+				Method get = GetGetMethod(methods, out propName);
+				
+				w.Write("        {0} {1} {{", t, propName);
+				if (get != null && get.IsGetMethod(t))
+					w.Write(" get;");
+
+				w.WriteLine(" set; }");
+				mCSAPIDone = true;
+				
+				return;
+			}
+			
+			if (propOnly)
+				return;
+
+			if (_type != "void" && mArgumentDeclarationTypes.Length == 0) {
+				string t = _type, propName = mCSMethodName;
+				
+				propName = MakeCSMethodName(propName);
+
+				w.WriteLine("        // {0}", mMethodDeclaration);
+				w.WriteLine("        {0} {1} {{ get; }}", t, propName);
+			    return;
+			}
+
 			ArrayList _params = new ArrayList();
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
@@ -520,13 +572,19 @@ namespace ObjCManagedExporter
 			}
 
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
+			w.WriteLine("        // {0}", mMethodDeclaration);
 			w.WriteLine("        {0} {1} ({2}); ", _type, mCSMethodName, paramsStr);
 		}
 		#endregion
 
 		#region -- Private Functions --
-		private static string MakeCSMethodName(string name)
+		private string MakeCSMethodName(string name)
 		{
+			if (mIsClassMethod)
+				name = name.Substring(0,1).ToUpper() + name.Substring(1);
+			else
+				name = name.Substring(0,1).ToLower() + name.Substring(1);
+
 			switch (name) 
 			{
 				case "new": case "override": case "virtual": case "typeof":
@@ -571,14 +629,16 @@ namespace ObjCManagedExporter
 					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
 			}
 
-			foreach (NativeData nd in sConversions.Regexs)
-				if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
-					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
+			if (sConversions.Regexs != null)
+    			foreach (NativeData nd in sConversions.Regexs)
+    				if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
+    					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
 
-			foreach (ReplaceData rd in sConversions.Replaces)
-				if(rd.Type == "glue")
-					if(new Regex(rd.Regex).IsMatch(type))
-						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
+            if (sConversions.Replaces != null)
+    			foreach (ReplaceData rd in sConversions.Replaces)
+    				if(rd.Type == "glue")
+    					if(new Regex(rd.Regex).IsMatch(type))
+    						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
 			
 			return type;
 		}
@@ -592,15 +652,26 @@ namespace ObjCManagedExporter
 					return nd.Api;
 			}
 
-			foreach (NativeData nd in sConversions.Regexs)
-				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null)
-					return nd.Api;
+			if (sConversions.Regexs != null)
+    			foreach (NativeData nd in sConversions.Regexs)
+    				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null) {
+    				    if (nd.Api == "{detect}") {
+    				        string cls = type.Substring(0,type.Length-1).Replace(" ",string.Empty);
+    				        if (cls.StartsWith("NS") && !cls.EndsWith("*"))
+    				            return cls;
+    				        else if (ObjCClassInspector.IsObjCClass(cls))
+    				            return cls;
+    				        return "IntPtr /*(" + type + ")*/";
+    				    }
+    					return nd.Api;
+    				}
 
-			foreach (ReplaceData rd in sConversions.Replaces)
-				if(rd.Type == "api")
-					if(new Regex(rd.Regex).IsMatch(type))
-						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
-			
+            if (sConversions.Replaces != null)
+    			foreach (ReplaceData rd in sConversions.Replaces)
+    				if(rd.Type == "api")
+    					if(new Regex(rd.Regex).IsMatch(type))
+    						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
+
 			return type;
 		}
 		#endregion
@@ -608,9 +679,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.37  2004/06/28 19:18:31  urs
+//	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 //	Revision 1.36  2004/06/25 22:30:07  urs
 //	Add better logging
-//
+//	
 //	Revision 1.35  2004/06/25 17:39:10  urs
 //	Handle char* as argument and return value
 //	

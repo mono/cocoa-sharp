@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.3 2004/06/27 20:41:45 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.4 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -49,7 +49,7 @@ namespace Apple.Tools
 
 		public static object[] ProcessInvocation(Type type, NSInvocation invocation) 
 		{
-			string method = SelectorToMethodName(type, invocation.Selector);
+			string method = SelectorToMethodName(type, invocation.selector);
 
 			ArrayList retArgs = new ArrayList();
 			int i = 0;
@@ -164,6 +164,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.4  2004/06/28 19:18:31  urs
+// Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 // Revision 1.3  2004/06/27 20:41:45  gnorton
 // Support for NSBrowser and int args/rets
 //

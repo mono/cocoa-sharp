@@ -7,63 +7,52 @@ namespace ObjCManagedExporter
 {
 	public class ObjCClassInspector {
 		[DllImport("libobjc.dylib")]
-		public static extern int objc_getClass(string className);
+		public static extern IntPtr objc_getClass(string className);
 		[DllImport("libobjc.dylib")]
-		public static extern int objc_msgSend(int classPtr, int command);
+		public static extern IntPtr objc_msgSend(IntPtr classPtr, IntPtr command);
 		[DllImport("libobjc.dylib")]
-		public static extern int objc_msgSend(int classPtr, int command, int argument);
+		public static extern IntPtr objc_msgSend(IntPtr classPtr, IntPtr command, IntPtr argument);
 		[DllImport("libobjc.dylib")]
-		public static extern int objc_msgSend(int classPtr, int command, string argument);
+		public static extern IntPtr objc_msgSend(IntPtr classPtr, IntPtr command, string argument);
 		
 		[DllImport("libobjc.dylib")]
-		public static extern int sel_registerName(string selectorName);
+		public static extern IntPtr sel_registerName(string selectorName);
 
 		[DllImport("/System/Library/Frameworks/Cocoa.framework/Cocoa")]
-		protected static extern int NSClassFromString(int classPtr);
-
+		protected static extern IntPtr NSClassFromString(IntPtr classPtr);
 
 		private static IDictionary ObjCClasses;
 		private static IDictionary ObjCBundles;
-		private static int sBundle;
-		private static int sPool;
+		private static IntPtr sNSBundle, sPool, sNSString;
 
 		static ObjCClassInspector() {
 			ObjCClasses = new Hashtable();
 			ObjCBundles = new Hashtable();
-			sPool = objc_getClass("NSAutoreleasePool");
-			sPool = objc_msgSend(sPool, sel_registerName("new"));
-			sBundle = objc_getClass("NSBundle");
+			sPool = objc_msgSend(objc_getClass("NSAutoreleasePool"), sel_registerName("new"));
 		}
 		
-		private static int CreateObjCString(string toConvert) {
-			int objcString = objc_getClass("NSString");
-			return objc_msgSend(objcString, sel_registerName("stringWithCString:"), toConvert);
+		private static IntPtr CreateObjCString(string toConvert) {
+			return objc_msgSend(objc_getClass("NSString"), sel_registerName("stringWithCString:"), toConvert);
 		}
-	
-		private static void ReleaseObjCObject(int toRelease) {
+		private static void ReleaseObjCObject(IntPtr toRelease) {
 			objc_msgSend(toRelease, sel_registerName("release"));
 		}
 		public static void AddBundle(string bundleName) {
-			if(ObjCBundles[bundleName] == null) {
-				int objcBundleName = CreateObjCString("/System/Library/Frameworks/" + bundleName + ".framework");
-				sBundle = objc_msgSend(sBundle, sel_registerName("bundleWithPath:"), objcBundleName);
-				sBundle = objc_msgSend(sBundle, sel_registerName("load"));
-				ReleaseObjCObject(objcBundleName);
+			if(!ObjCBundles.Contains(bundleName)) {
+				IntPtr objcBundleName = CreateObjCString("/System/Library/Frameworks/" + bundleName + ".framework");
+				IntPtr bundle = objc_msgSend(objc_getClass("NSBundle"), sel_registerName("bundleWithPath:"), objcBundleName);
+				objc_msgSend(bundle, sel_registerName("load"));
+				ObjCBundles[bundleName] = true;
 			}
 		}
 		public static bool IsObjCClass(string className) {
-			if(ObjCClasses[className] != null)
-				return true;
+			if(ObjCClasses.Contains(className))
+				return (bool)ObjCClasses[className];
 
-			int classAsObjCString = CreateObjCString(className);
-			int isClass = NSClassFromString(classAsObjCString);
-			ReleaseObjCObject(classAsObjCString);
-			if(isClass != 0) {
-				ObjCClasses[className] = 1;
-			}
-			ReleaseObjCObject(isClass);
+			IntPtr isClass = NSClassFromString(CreateObjCString(className));
 
-			return (ObjCClasses[className] != null ? true : false);
+			ObjCClasses[className] = isClass != IntPtr.Zero;
+			return isClass != IntPtr.Zero;
 		}
 	}
 }

@@ -16,12 +16,15 @@
 		}
 		
 		public override string ToString() {
-			return cString();
+			return cString;
 		}
 
 //***************************************************************************
 //
 // $Log: NSString.addin,v $
+// Revision 1.5  2004/06/28 19:18:31  urs
+// Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 // Revision 1.4  2004/06/25 17:39:10  urs
 // Handle char* as argument and return value
 //

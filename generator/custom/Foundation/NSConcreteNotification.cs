@@ -9,7 +9,7 @@ namespace Apple.Foundation {
     public class NSConcreteNotification : NSNotification {
         #region -- Internal Members --
         protected internal static IntPtr _NSConcreteNotification_classPtr;
-        protected internal static IntPtr NSConcreteNotification_classPtr { get { if (_NSConcreteNotification_classPtr == IntPtr.Zero) _NSConcreteNotification_classPtr = Class.Get("NSConcreteNotification"); return _NSConcreteNotification_classPtr; } }
+        protected internal static IntPtr NSConcreteNotification_classPtr { get { if (_NSConcreteNotification_classPtr == IntPtr.Zero) _NSConcreteNotification_classPtr = Apple.Foundation.Class.Get("NSConcreteNotification"); return _NSConcreteNotification_classPtr; } }
         #endregion
 
         #region -- Properties --

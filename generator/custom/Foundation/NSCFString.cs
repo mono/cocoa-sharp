@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSCFString.cs,v 1.1 2004/06/24 03:47:30 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSCFString.cs,v 1.2 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 
 namespace Apple.Foundation {
 	public class NSCFString : NSString {
-		public static IntPtr NSCFString_class = Class.Get("NSCFString");
+		public static IntPtr NSCFString_class = Apple.Foundation.Class.Get("NSCFString");
 
 		protected internal NSCFString(IntPtr raw,bool release) : base(raw,release) {}
 
@@ -28,6 +28,9 @@ namespace Apple.Foundation {
 //***************************************************************************
 //
 // $Log: NSCFString.cs,v $
+// Revision 1.2  2004/06/28 19:18:31  urs
+// Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 // Revision 1.1  2004/06/24 03:47:30  urs
 // initial custom stuff
 //

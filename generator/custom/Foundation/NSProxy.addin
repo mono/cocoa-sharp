@@ -3,56 +3,6 @@
 		protected bool _release;
 		static Hashtable Objects = new Hashtable();
 
-		#region -- Glue --
-		[DllImport("Glue")]
-		protected internal static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
-
-		[DllImport("Glue")]
-		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName, int nummethods, IntPtr[] methods, IntPtr[] signatures);
-
-		[DllImport("Glue")]
-		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
-		#endregion
-
-		protected enum GlueDelegateWhat {
-			methodSignatureForSelector = 0,
-			forwardInvocation = 1,
-		}
-		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
-		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type, String superclass) {
-			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
-			IntPtr retval = IntPtr.Zero;
-
-			IntPtr[] methods = new IntPtr[r.NumMethods];
-			IntPtr[] signatures = new IntPtr[r.NumMethods];
-
-			for(int i = 0; i < r.NumMethods; i++) {
-				methods[i] = Marshal.StringToCoTaskMemAnsi(r.Methods[i]);
-				signatures[i] = Marshal.StringToCoTaskMemAnsi(r.Signatures[i]);
-			}
-			retval = CreateClassDefinition(type.Name, superclass, r.NumMethods, methods, signatures); 
-			for(int i = 0; i < r.NumMethods; i++) {
-				Marshal.FreeCoTaskMem(methods[i]);
-				Marshal.FreeCoTaskMem(signatures[i]);
-			}
-			return retval;
-		}
-		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr arg) {
-			switch (what) {
-				case GlueDelegateWhat.methodSignatureForSelector:
-					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
-				case GlueDelegateWhat.forwardInvocation:
-				{
-					NSInvocation invocation = new NSInvocation(arg,false);
-					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
-					
-					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
-					break;
-				}
-			}
-			return IntPtr.Zero;
-		}
-
 		~NSProxy() {
 			if (Raw != IntPtr.Zero && _release)
 				release();
@@ -74,10 +24,5 @@
 			_release = release;
 		}
 		
-		[DllImport("FoundationGlue")]
-        	protected internal static extern IntPtr NSObject__alloc0 (IntPtr CLASS);
-
-
-
 
 //***************************************************************************

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.33 2004/06/27 20:27:48 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.34 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -41,7 +41,9 @@ namespace ObjCManagedExporter
 			Categories = new Hashtable();
 			Enums = new Hashtable();
 			Structs = new Hashtable();
-            
+
+			ObjCClassInspector.IsObjCClass("NSString");
+
 			foreach (string arg in args) 
 				if(arg.IndexOf("-xml:") >= 0)
 					mXmlFile = arg.Substring("-xml:".Length);
@@ -62,32 +64,48 @@ namespace ObjCManagedExporter
                 
 			Regex _importRegex = new Regex(@"#import <(.+?)>");
 			Regex _commentRegex = new Regex(@"(/\*([^\*]+)\*/$)|(//.+$)", RegexOptions.Multiline);
-			Regex _interfaceRegex = new Regex(@"^@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _categoryRegex = new Regex(@"^@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _interfaceRegex = new Regex(@"@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _protocolRegex = new Regex(@"@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _categoryRegex = new Regex(@"@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
-            
+			Regex _classForwardDeclRegex = new Regex(@"@class\s+\w+;");
+			Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+\w+;");
+
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
 			string _headerData = _fileReader.ReadToEnd();
             
 			// Strip out the comments
 			foreach(Match m in _commentRegex.Matches(_headerData))
 				_headerData = _headerData.Replace(m.Value, "");
+
+			foreach(Match m in _classForwardDeclRegex.Matches(_headerData)) {
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": class: " + m.Value);
+				_headerData = _headerData.Replace(m.Value, "");
+			}
             
-			foreach(Match m in _importRegex.Matches(_headerData)) 
+			foreach(Match m in _protocolForwardDeclRegex.Matches(_headerData)) {
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": protocol: " + m.Value);
+				_headerData = _headerData.Replace(m.Value, "");
+			}
+            
+			foreach(Match m in _importRegex.Matches(_headerData)) {
 				_imports.Add(m.Groups[1].Value);
-			foreach (Match m in _protocolRegex.Matches(_headerData)) 
-			{
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": import: " + m.Groups[1].Value);
+				_headerData = _headerData.Replace(m.Value, "");
+			}
+
+			foreach (Match m in _protocolRegex.Matches(_headerData)) {
 				Protocol _p = new Protocol(m.Groups[1].Value, m.Groups[3].Value, f.Name);
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @protocol: " + _p.Name + ", " + f.Name + ", value=" + m.Value.Replace("\n","\\n"));
 				_p.AddMethods(m.Groups[4].Value);
 				Protocols.Add(_p.Name, _p);
 				_headerData = _headerData.Replace(m.Value, "");
 			}
             
-			foreach (Match m in _categoryRegex.Matches(_headerData)) 
-			{
+			foreach (Match m in _categoryRegex.Matches(_headerData)) {
 				Category _c = new Category(m.Groups[2].Value, m.Groups[1].Value, f.Name);
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @category: " + _c.Name + ", " + f.Name);
 				_c.AddMethods(m.Groups[3].Value);
 				_c.Imports = (string[])_imports.ToArray(typeof(string));
 				Categories.Add(string.Format("{0}_{1}", _c.Name, _c.Class), _c);
@@ -97,6 +115,7 @@ namespace ObjCManagedExporter
 			foreach (Match m in _interfaceRegex.Matches(_headerData)) 
 			{
 				Interface _i = new Interface(m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value, f.Name);
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @interface: " + _i.Name + ", " + f.Name);
 				_i.AddMethods(m.Groups[6].Value);
 				_i.Imports = (string[])_imports.ToArray(typeof(string));
 				Interfaces.Add(_i.Name, _i);
@@ -108,13 +127,16 @@ namespace ObjCManagedExporter
 				// We found an enum
 				CEnum _s = new CEnum(m.Groups[3].Value, m.Groups[2].Value, f.Name);
 				Enums.Add(m.Groups[3].Value, _s);
+				_headerData = _headerData.Replace(m.Value, "");
 			}
 			foreach (Match m in _structRegex.Matches(_headerData)) 
 			{
 				// We found an struct
 				Struct _s = new Struct(m.Groups[3].Value, m.Groups[2].Value, f.Name);
 				Structs.Add(m.Groups[3].Value, _s);
+				_headerData = _headerData.Replace(m.Value, "");
 			}
+//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
 		}
         
 		private string LocateFramework(Framework _tolocate) 
@@ -146,7 +168,6 @@ namespace ObjCManagedExporter
 
 			if (OutputCS)
 			{
-
 				foreach(CEnum e in Enums.Values)
 					if(e.Framework == _toprocess.Name)
 						e.WriteFile(mConfig);
@@ -166,27 +187,24 @@ namespace ObjCManagedExporter
 				if(i.Framework != _toprocess.Name)
 					continue;
 
-				if(i.AllMethods.Count > 0) 
+				TextWriter _gs = null;
+
+				if (OutputOC)
 				{
-					TextWriter _gs = null;
+					_gs = Element.OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
 
-					if (OutputOC)
-					{
-						_gs = Element.OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
+					foreach(string import in i.Imports)
+						_gs.WriteLine("#import <{0}>", import);
 
-						foreach(string import in i.Imports)
-							_gs.WriteLine("#import <{0}>", import);
+					_gs.WriteLine();
 
-						_gs.WriteLine();
-
-						foreach (Method _toOutput in i.AllMethods.Values)
-							_toOutput.ObjCMethod(i.ExtrasName, _gs);
-						_gs.Close();
-					}
-
-					if (OutputCS)
-						i.WriteFile(mConfig);
+					foreach (Method _toOutput in i.AllMethods.Values)
+						_toOutput.ObjCMethod(i.ExtrasName, _gs);
+					_gs.Close();
 				}
+
+				if (OutputCS)
+					i.WriteFile(mConfig);
 
 				Console.Write("\b\b\b{0:00}%", count++/(float)Interfaces.Count*100);
 			}
@@ -207,6 +225,7 @@ namespace ObjCManagedExporter
 
 		private void ProcessFramework(Framework _toprocess) 
 		{
+            ObjCClassInspector.AddBundle(_toprocess.Name);
 			Console.Write("Processing framework ({0}): ", _toprocess.Name);
 			DirectoryInfo _frameworkDirectory = new DirectoryInfo(LocateFramework(_toprocess));
 			FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
@@ -396,9 +415,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.34  2004/06/28 19:18:31  urs
+//	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 //	Revision 1.33  2004/06/27 20:27:48  gnorton
 //	Turn conditional output support back on
-//
+//	
 //	Revision 1.32  2004/06/25 17:39:10  urs
 //	Handle char* as argument and return value
 //	

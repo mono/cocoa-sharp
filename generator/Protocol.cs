@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.9 2004/06/25 02:49:14 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.10 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -41,30 +41,39 @@ namespace ObjCManagedExporter
 
 		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
-			IDictionary _addedMethods = new Hashtable();
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
 			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
-                        if (frmwrk != null && frmwrk.Dependencies != null)
-                                foreach (string dependency in frmwrk.Dependencies)
-                                        _cs.WriteLine("using Apple.{0};",dependency);
-                        _cs.WriteLine();
+			if (frmwrk != null && frmwrk.Dependencies != null)
+				foreach (string dependency in frmwrk.Dependencies)
+					_cs.WriteLine("using Apple.{0};",dependency);
+			_cs.WriteLine();
 
 			_cs.WriteLine("namespace Apple.{0} {{", Framework);
 			_cs.WriteLine("    public interface I{0} {{", Name);
 
-			foreach (Method _toOutput in Methods.Values) 
-			{
-				if (_toOutput.IsUnsupported)
+			IDictionary allMethods = new Hashtable();
+			foreach (Method method in Methods.Values) {
+				if (method.IsUnsupported)
 					continue;
 
-				string _methodSig = _toOutput.GlueMethodName;
-				if(!_addedMethods.Contains(_methodSig)) 
-				{
-					_addedMethods[_methodSig] = true;
-					_toOutput.CSInterfaceMethod(Name, _cs);
-				}
+				string _methodSig = method.GlueMethodName;
+				if(!allMethods.Contains(_methodSig)) 
+					allMethods[_methodSig] = method;
+				else 
+					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 			}
+
+			_cs.WriteLine("        #region -- Properties --");
+			foreach (Method _toOutput in allMethods.Values)
+				_toOutput.CSInterfaceMethod(Name,allMethods, true, _cs);
+			_cs.WriteLine("        #endregion");
+			_cs.WriteLine();
+
+			_cs.WriteLine("        #region -- Public API --");
+			foreach (Method _toOutput in allMethods.Values)
+				_toOutput.CSInterfaceMethod(Name,allMethods, false, _cs);
+			_cs.WriteLine("        #endregion");
 
 			string _realName = Name;
 			Name = "I" + Name;
@@ -77,9 +86,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.10  2004/06/28 19:18:31  urs
+//	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 //	Revision 1.9  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
-//
+//	
 //	Revision 1.8  2004/06/24 18:56:53  gnorton
 //	AppKit compiles
 //	Foundation compiles

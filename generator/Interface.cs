@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.20 2004/06/26 06:57:20 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.21 2004/06/28 19:18:31 urs Exp $
 //
 
 using System;
@@ -121,7 +121,7 @@ namespace ObjCManagedExporter
 			{
 				_cs.WriteLine("        #region -- Internal Members --");
 				_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",Name);
-				_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
+				_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Apple.Foundation.Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
 				_cs.WriteLine("        #endregion");
 				_cs.WriteLine();
 			}
@@ -185,9 +185,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.21  2004/06/28 19:18:31  urs
+//	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
+//
 //	Revision 1.20  2004/06/26 06:57:20  urs
 //	Fix constructors
-//
+//	
 //	Revision 1.19  2004/06/26 06:52:32  urs
 //	Remove hardcoding in TypeConvertor, and autoregister new classes
 //	
