@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.10 2004/07/01 16:01:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.11 2004/07/01 20:09:57 urs Exp $
 //
 
 using System;
@@ -23,7 +23,7 @@ namespace Apple.Foundation
 		public static IDictionary Name2Type = new Hashtable();
 		private static bool Name2Type_init = true;
 		[DllImport("Glue")]
-		private static extern IntPtr GetObjectClassName(IntPtr /*(id)*/ THIS);
+		protected internal static extern IntPtr GetObjectClassName(IntPtr /*(id)*/ THIS);
 
 		public static object NS2Net(IntPtr raw) 
 		{
@@ -93,6 +93,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.11  2004/07/01 20:09:57  urs
+// Fix GC issues
+//
 // Revision 1.10  2004/07/01 16:01:41  urs
 // Fix some GC issues, but mostly just do stuff more explicit
 // Still not working with GC on

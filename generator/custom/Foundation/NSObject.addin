@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.15 2004/07/01 16:01:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.16 2004/07/01 20:09:57 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -84,11 +84,12 @@
 		}
 
 		~NSObject() {
-Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			// this will leak memory, but we have to synchronize managed and objc runtime
-#if RELEASE_MEM
-			if (Raw != IntPtr.Zero && _release)
+#if true || RELEASE_MEM
+			if (Raw != IntPtr.Zero && _release) {
+Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 				release();
+			}
 #endif
 			SetRaw(IntPtr.Zero,false);
 		}
@@ -124,29 +125,36 @@ Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 		}
 
 		public void SetRaw(IntPtr raw,bool release) {
-			_release = release;
 			if (raw == _obj)
 				return;
-			lock (Objects) {
-				if (_obj != IntPtr.Zero) {
+
+//Console.WriteLine("DEBUG: Change Raw for {0}[{1}]: 0x{2,8:x} -> 0x{3,8:x}", this.GetType().Name, release, (int) _obj, (int) raw);
+			if (_release && _obj != IntPtr.Zero)
+				lock (Objects) {
 Console.WriteLine("DEBUG: Remove Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
 					Objects.Remove(_obj);
 				}
-				_obj = raw;
-				if (_obj != IntPtr.Zero) {
+
+			_obj = raw;
+			_release = release;
+
+			if (_release && _obj != IntPtr.Zero)
+				lock (Objects) {
 Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
 					Objects.Add(_obj, new WeakReference(this));
 				}
-			}
 		}
 
 		public string ClassName {
-			get { return new NSString(NSObject_className0(Raw),false).ToString(); }
+			get { return Marshal.PtrToStringAnsi(TypeConverter.GetObjectClassName(Raw)); }
 		}
 
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.16  2004/07/01 20:09:57  urs
+// Fix GC issues
+//
 // Revision 1.15  2004/07/01 16:01:41  urs
 // Fix some GC issues, but mostly just do stuff more explicit
 // Still not working with GC on
