@@ -20,21 +20,14 @@ class CSControl : NSObject {
 	}
 
 	public void displayWindow() {
-		const int NSBorderlessWindowMask	= 0;
-		const int NSTitledWindowMask		= 1 << 0;
-		const int NSClosableWindowMask		= 1 << 1;
-		const int NSMiniaturizableWindowMask	= 1 << 2;
-		const int NSResizableWindowMask		= 1 << 3;
-		
-		const int NSBackingStoreBuffered	= 2;
 
 		NSApplication.SharedApplication().setApplicationIconImage((NSImage)NSImage.ImageNamed("mono.icns"));
 
 		NSRect contentRect = new NSRect(200, 180, 400, 300);
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 400, 300),
-					       ((uint)NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
-					       NSBackingStore.NSBackingStoreBuffered,
+					       (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
+					       NSBackingStoreType.NSBackingStoreBuffered,
 					       false);
 		window.Title = "Hi Mono";
 
