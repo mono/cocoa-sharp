@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.7 2004/09/03 22:21:46 urs Exp $
+// $Id: SegmentCommand.cs,v 1.8 2004/09/04 04:18:32 urs Exp $
 //
 
 using System;
@@ -28,7 +28,8 @@ namespace CocoaSharp {
 		}
 
 		public bool ContainsAddress(uint offset) {
-			return (offset >= scmd.vmaddr) && (offset < scmd.vmaddr + scmd.vmsize);
+			int off = (int)(offset-scmd.vmaddr);
+			return (off >= 0) && (off < scmd.vmsize);
 		}
 
 		public Section SectionContainingVMAddr(uint offset) {
@@ -89,7 +90,7 @@ namespace CocoaSharp {
 				name = Utils.GetString(mfile.Pointer, 16);
 				mfile.Pointer += (int)Marshal.SizeOf(scmd);
 			}
-			MachOFile.DebugOut(0,"\tSegment Name: {0}", name);
+			MachOFile.DebugOut(0,"\tSegment Name: {0} addr={1,8:x} size={2}", name, scmd.vmaddr, scmd.vmsize);
 
 			ProcessSections ();
 		}

@@ -1,5 +1,5 @@
 //
-// $Id: Section.cs,v 1.7 2004/09/03 22:21:46 urs Exp $
+// $Id: Section.cs,v 1.8 2004/09/04 04:18:32 urs Exp $
 //
 
 using System;
@@ -38,7 +38,8 @@ namespace CocoaSharp {
 		}
 
 		public bool ContainsAddress(uint offset) {
-			return (offset >= Addr) && (offset < Addr + Size);
+			int off = (int)(offset-Addr);
+			return (off >= 0) && (off < Size);
 		}
 
 		public uint SegmentOffsetForVMAddr(uint offset) {

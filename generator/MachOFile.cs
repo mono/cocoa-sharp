@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.8 2004/09/03 22:21:46 urs Exp $
+// $Id: MachOFile.cs,v 1.9 2004/09/04 04:18:32 urs Exp $
 //
 
 using System;
@@ -239,30 +239,14 @@ namespace CocoaSharp {
 		}
 
 		private void ProcessModules () {
-			SegmentCommand objcSegment = null;
-			Section moduleSection = null;
-			ArrayList modules;
-			foreach (ICommand cmd in commands) 
-				if (cmd is SegmentCommand) {
-					SegmentCommand scmd = cmd as SegmentCommand;
-					if (scmd.Name.Equals("__OBJC"))
-						objcSegment = cmd as SegmentCommand;
-				}
-
+			SegmentCommand objcSegment = this.SegmentWithName("__OBJC");
 			if (objcSegment == null)
 				throw new Exception ("ERROR: __OBJC segment not found in MachOFile");
-			foreach (Section sec in objcSegment.Sections)
-				if (sec.Name == "__module_info")
-					moduleSection = sec;
-			
+			Section moduleSection = objcSegment.SectionWithName("__module_info");
 			if (moduleSection == null)
 				throw new Exception ("ERROR: __module_info not found in __OBJC segment");
 
-			unsafe {
-				objc_module ocmodule = new objc_module ();
-				uint count = moduleSection.Size / 16;
-				modules = Module.ParseModules (moduleSection, this, count);
-			}
+			ArrayList modules = Module.ParseModules (moduleSection, this);
 		}
 
 		public void Parse () {

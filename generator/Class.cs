@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.8 2004/09/04 02:26:31 urs Exp $
+// $Id: Class.cs,v 1.9 2004/09/04 04:18:32 urs Exp $
 //
 
 using System;
@@ -12,6 +12,7 @@ namespace CocoaSharp {
 		
 		private objc_class occlass;
 		private string superClass, name;
+		private bool isClass;
 		private ArrayList ivars = new ArrayList();
 		private ArrayList methods, classMethods;
 	
@@ -28,10 +29,11 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref occlass.methodLists);
 			superClass = file.GetString(occlass.super_class);
 			name = file.GetString(occlass.name);
-			MachOFile.DebugOut(0,"Class: {0} : {1} iSize={2}", name, superClass,occlass.instance_size);
+			isClass = (occlass.info & 1) != 0;
+			MachOFile.DebugOut(0,"Class: {0} : {1} iSize={2} info={3,8:x} isClass={4}",name,superClass,occlass.instance_size,occlass.info,isClass);
 
 			// Process ivars
-			if (occlass.ivars != 0) {
+			if (isClass && occlass.ivars != 0) {
 				byte* ivarsPtr = file.GetPtr(occlass.ivars);
 				objc_ivar_list ocivars = *(objc_ivar_list*)ivarsPtr;
 				Utils.MakeBigEndian(ref ocivars.ivar_count);
@@ -45,20 +47,18 @@ namespace CocoaSharp {
 
 			methods = ProcessMethods(occlass.methodLists,file);
 
-			// Process meta class
-			objc_class metaClass = *(objc_class *)file.GetPtr(occlass.isa);
-			Utils.MakeBigEndian(ref metaClass.methodLists);
-			classMethods = ProcessMethods(metaClass.methodLists,file);
-#if false
-			{
-				// Process class methods
-				[aClass setClassMethods:[self processMethods:metaClassPtr->methods]];
+			if (isClass) {
+				// Process meta class
+				objc_class metaClass = *(objc_class *)file.GetPtr(occlass.isa);
+				Utils.MakeBigEndian(ref metaClass.methodLists);
+				classMethods = ProcessMethods(metaClass.methodLists,file);
 			}
-
+#if false
 			// Process protocols
 			[aClass addProtocolsFromArray:[self processProtocolList:classPtr->protocols]];
 #endif
 		}
+
 		static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
 			ArrayList ret = new ArrayList();
 			if (methodLists != 0) {
@@ -83,7 +83,7 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref method.types);
 			name = file.GetString(method.name);
 			types = file.GetString(method.types);
-			MachOFile.DebugOut(0,"\tmethod: {0} types={1}", name, types);
+			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
 		}
 	}
 
@@ -98,7 +98,7 @@ namespace CocoaSharp {
 			name = file.GetString(ivar.name);
 			type = file.GetString(ivar.type);
 			offset = ivar.offset;
-			MachOFile.DebugOut(0,"\tvar: {0} type={1} offset={2}", name, type, offset);
+			MachOFile.DebugOut(1,"\tvar: {0} type={1} offset={2}", name, type, offset);
 		}
 	}
 
