@@ -73,7 +73,7 @@ class Test
 		monoButton.initWithFrame(new NSRect(20, 20, 74, 25));
 		monoButton.setTitle(new NSString("Dismiss"));
 		monoButton.setTarget(NSApplication.sharedApplication());
-		monoButton.setAction(NSString.NSSelector("stopModalWithCode"));
+		monoButton.setAction(NSString.NSSelector("stopModal"));
 		monoButton.setBezelStyle(NSBezelStyle.NSRoundedBezelStyle);
 
 		NSButton drawer1Button = new NSButton();
