@@ -14,7 +14,6 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/assembly.h>
-#include <mono/metadata/tabledefs.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -55,7 +54,7 @@ int main(int argc, const char* argv[]) {
 		exit(1);
 	}
 
-	MonoImage *image = assembly->image;
+	MonoImage *image = mono_assembly_get_image(assembly);
 
 	if(image == NULL) {
 	    printf("ERROR: No assembly image: %s\n",realFile);
