@@ -13,8 +13,8 @@ EXTRA_DIST= \
 	generator-run.stamp \
 	generator.xml
 
-CLEANFILES=$(ASSEMBLY) $(EXTRA_DIST) 
-DISTCLEANFILES=$(EXTRA_DIST)
+CLEANFILES=$(ASSEMBLY) 
+DISTCLEANFILES=
 
 sources = \
 	header-gen/Main.cs \
