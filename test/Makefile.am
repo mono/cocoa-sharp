@@ -2,6 +2,16 @@ SUBDIRS=..
 
 all: Test.exe 2ndTest.exe Loader test-4 test-4.exe libWebKitGlue.dylib
 
+clean:
+	rm -f *.dylib
+	rm -f *.exe
+	rm -f *.dll
+	rm -f Loader
+	rm -rf *.app
+	rm -f test-4
+	rm -f *.so
+	rm -f *.o
+
 CoreFoundation: /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation
 	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation CoreFoundation
 

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.8 2004/06/29 20:32:05 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.9 2004/06/30 13:21:19 urs Exp $
 //
 
 using System;
@@ -38,9 +38,13 @@ namespace Apple.Tools
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
                         foreach(MethodInfo m in ms) 
                                 foreach (Attribute attr in Attribute.GetCustomAttributes(m))
-                                        if (attr is ObjCExportAttribute) 
-						if ( ((ObjCExportAttribute)attr).Selector == selector )
+				{
+					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+                                        if (exprtAttr != null) 
+						if (exprtAttr.Selector != null && exprtAttr.Selector == selector)
 							return m.Name;
+				}
+
 			string methodName = selector;
 
 			if(methodName.IndexOf(":") > 0)
@@ -200,7 +204,18 @@ namespace Apple.Tools
 			PopulateObjCMethodSignatures(t, r);
 			return r;	
 		}
-		
+
+		private static string SelectorFromMethod(MethodInfo m)
+		{
+			string name = m.Name;
+			ParameterInfo[] parms = GetParameterInfosByMethod(m);
+			if(parms.Length >= 1)
+				name += ":";
+			for(int i = 1; i < parms.Length; i++)
+				name += parms[i].Name + ":";
+			return name;
+		}
+
 		private static void PopulateObjCClassRepresentationMethods(Type t, ObjCClassRepresentation r) 
 		{
 			ArrayList a = new ArrayList();
@@ -208,24 +223,18 @@ namespace Apple.Tools
 			foreach(MethodInfo m in ms) 
 			{
 				bool addedByAttribute = false;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) 
-					if (attr is ObjCExportAttribute) {
-						a.Add(((ObjCExportAttribute)attr).Selector);
+				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) {
+					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+					if (exprtAttr != null) {
+						a.Add(exprtAttr.Selector != null ? exprtAttr.Selector : SelectorFromMethod(m));
 						addedByAttribute = true;
 						break;
 					}
+				}
 
 #if REGISTER_ALL_METHODS
-				if(!addedByAttribute) { 
-					string name = m.Name;
-					ParameterInfo[] parms = GetParameterInfosByMethod(m);
-					if(parms.Length >= 1)
-						name += ":";
-					for(int i = 1; i < parms.Length; i++)
-						name += parms[i].Name + ":";
-	
-					a.Add(name);
-				}
+				if(!addedByAttribute) 
+					a.Add(SelectorFromMethod(m));
 #endif
 			}
 			r.Methods = (String[])a.ToArray(typeof(String));
@@ -258,6 +267,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.9  2004/06/30 13:21:19  urs
+// Make tree green again
+//
 // Revision 1.8  2004/06/29 20:32:05  urs
 // More cleanup
 //

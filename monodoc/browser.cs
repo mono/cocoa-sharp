@@ -150,12 +150,13 @@ class Browser : NSObject {
 		NSOutlineView ov = new NSOutlineView(new NSRect(new NSPoint(0,0),sv.contentSize));
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		sv.documentView = ov;
-		ov.addTableColumn(new NSTableColumn("0"));
-		ov.addTableColumn(new NSTableColumn("1"));
-		ov.addTableColumn(new NSTableColumn("2"));
-		ov.addTableColumn(new NSTableColumn("3"));
-		ov.addTableColumn(new NSTableColumn("4"));
-		ov.addTableColumn(new NSTableColumn("5"));
+		NSTableColumn c = new NSTableColumn("0");
+		c.width = 100;
+		c.editable = false;
+		c.resizable = true;
+		((NSCell)c.headerCell).stringValue = "Header";
+
+		ov.addTableColumn(c);
 		ov.dataSource = browserController;
  		
 		tabViewItem = new NSTabViewItem("Index");
