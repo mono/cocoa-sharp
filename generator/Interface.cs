@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.11 2004/06/23 22:10:19 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.12 2004/06/24 03:48:26 urs Exp $
 //
 
 using System;
@@ -132,7 +132,8 @@ namespace ObjCManagedExporter
 			_cs.WriteLine();
 
 			_cs.WriteLine("        #region -- Constructors --");
-			_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
+			if (Name != "NSObject")
+				_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
 			_cs.WriteLine();
 			if (mExtrasFor != null)
 				_cs.WriteLine("        public {0}({1} o) : base(o.Raw,false) {{}}",Name,mExtrasFor);
@@ -177,9 +178,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.12  2004/06/24 03:48:26  urs
+//	minor fix for NSObject
+//
 //	Revision 1.11  2004/06/23 22:10:19  urs
 //	Adding support for out of dependecy categories, generating a new class named $(class)$(categoryFramework)Extras with a the methods of all categories in same framework
-//
+//	
 //	Revision 1.10  2004/06/23 18:31:51  urs
 //	Add dependency for frameworks
 //	
