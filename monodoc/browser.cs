@@ -110,9 +110,11 @@ public class Controller : NSObject {
 		drawer.open();
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
-//		Node match;
-//		string content = help_tree.RenderUrl("root:", out match);
-//		webView.mainFrame.loadHTMLString_baseURL(content, null);
+		Node match;
+		string content = help_tree.RenderUrl("root:", out match);
+		content=content.Replace("a href='", "a href='http://monodoc/load?");
+		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+		webView.mainFrame.loadHTMLString_baseURL(content, null);
 	}
 	
 	[ObjCExport("doubleAction")]
