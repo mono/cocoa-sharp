@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.7 2004/07/02 13:29:30 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.8 2004/07/02 14:34:58 urs Exp $
 #
 
 AC_INIT(README)
@@ -45,7 +45,7 @@ if test "x$PKG_CONFIG" = "xno"; then
 fi
 AC_SUBST(MONO)
 
-PKG_CHECK_MODULES(MONO, mono >= 0.90)
+PKG_CHECK_MODULES(MONO, mono >= 1.0)
 AC_SUBST(MONO_CFLAGS)
 AC_SUBST(MONO_LIBS)
 
@@ -100,6 +100,9 @@ src/WebKit.Glue/Makefile
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.8  2004/07/02 14:34:58  urs
+# Bump version of mono dep to 1.0
+#
 # Revision 1.7  2004/07/02 13:29:30  urs
 # Cleanup build process again, and checkin bin's for monodoc (as temp solution)
 #
