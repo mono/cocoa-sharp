@@ -6,13 +6,15 @@ using Apple.Foundation;
 using Apple.AppKit;
 
 class CSControl : NSObject {
-	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl));
+	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl), "NSObject");
 	
 	NSButton swap1;
+	CSTextControl textController;
 	BridgeDelegate CSControlDelegate;
 	public CSControl() : this(NSObject__alloc(CSControl_class),true) {}
 
 	protected internal CSControl(IntPtr raw,bool release) : base(raw,release) {
+		textController = new CSTextControl();
 		CSControlDelegate = new BridgeDelegate(this.MethodInvoker);
 		SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,CSControlDelegate),release);
 	}
@@ -49,9 +51,10 @@ class CSControl : NSObject {
 		swap1.Action = "_swap";
 
 		NSTextField text = new NSTextField(new NSRect(100, 200, 78, 25));
-		text.Editable = false;
+		text.Editable = true;
 		text.Bezeled = true;
 		text.StringValue = "Hello, Mono";
+		text.Delegate = textController;
 
 		((NSView)window.contentView()).addSubview(monoButton);
 		((NSView)window.contentView()).addSubview(swap1);

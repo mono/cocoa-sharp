@@ -15,10 +15,19 @@ namespace Apple.Tools {
 		}
 
 		public static object InvokeMethodByObject(Object s, String m, Object[] a) {
+			// We need to chop back to the real .Net Method Name
+			if(m.IndexOf(":") >= 0) 
+				m = m.Substring(0, m.IndexOf(":"));
+			// HACK: We're not passing arg info in yet
+			if(s.GetType().GetMethod(m).GetParameters().Length > 0)
+				a = new Object[s.GetType().GetMethod(m).GetParameters().Length];
 			return s.GetType().InvokeMember(m, BindingFlags.Default | BindingFlags.InvokeMethod, null, s, a);
 		}
 
 		public static string GenerateMethodSignature(Type t, String m) {
+			// We need to chop back to the real .Net Method Name
+			if(m.IndexOf(":") >= 0)
+				m = m.Substring(0, m.IndexOf(":"));
 			string types = "";
 
 			if(GetMethodByTypeAndName(t, m).ReturnType == typeof(void))
@@ -44,15 +53,24 @@ namespace Apple.Tools {
 		private static void PopulateObjCClassRepresentationMethods(Type t, ObjCClassRepresentation r) {
 			ArrayList a = new ArrayList();
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-			foreach(MethodInfo m in ms) 
-				a.Add(m.Name);
+			foreach(MethodInfo m in ms) {
+				string name = m.Name;
+				ParameterInfo[] parms = GetParameterInfosByMethod(m);
+				if(parms.Length >= 1)
+					name += ":";
+				for(int i = 1; i < parms.Length; i++)
+					name += parms[i].Name + ":";
+
+				a.Add(name);
+			}
 			r.Methods = (String[])a.ToArray(typeof(String));
 		}
 		
 		private static void PopulateObjCMethodSignatures(Type t, ObjCClassRepresentation r) {
 			ArrayList a = new ArrayList();
-			foreach(string method in r.Methods)
-				a.Add(GenerateMethodSignature(t, method));
+			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+			foreach(MethodInfo m in ms)
+				a.Add(GenerateMethodSignature(t, m.Name));
 			r.Signatures = (String[])a.ToArray(typeof(String));
 		}
 	}

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.8 2004/06/17 17:41:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.9 2004/06/18 20:13:00 gnorton Exp $
 //
 
 using System;
@@ -21,11 +21,14 @@ namespace Apple.AppKit
 {
 	public class NSTextField : NSControl {
 		protected internal static IntPtr NSTextField_class = Class.Get("NSTextField");
+		private NSObject mDelegate;
 
 		[DllImport("AppKitGlue")]
 		protected internal static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
 		protected internal static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
+		[DllImport("AppKitGlue")]
+		protected internal static extern void NSTextField_setDelegate(IntPtr THIS, IntPtr aDelegate);
 
 		public NSTextField() : this(NSObject__alloc(NSTextField_class),true) {}
 		protected NSTextField(IntPtr raw,bool release) : base(raw,release) {}
@@ -41,12 +44,20 @@ namespace Apple.AppKit
 		public bool Bezeled {
 			set { NSTextField_setBezeled(Raw, value); }
 		}
+		
+		public NSObject Delegate {
+			get { return mDelegate; }
+			set { mDelegate = value; NSTextField_setDelegate(Raw, value.Raw); }
+		}
 	}
 }
 
 //***************************************************************************
 //
 // $Log: NSTextField.cs,v $
+// Revision 1.9  2004/06/18 20:13:00  gnorton
+// Support for multi-argument method signatures/calling in .Net
+//
 // Revision 1.8  2004/06/17 17:41:20  gnorton
 // API modification.
 //

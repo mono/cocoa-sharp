@@ -22,7 +22,7 @@ Test.exe: test.cs ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Fou
 	cp ../build/*.dll .
 
 2ndTest.exe: test-2.cs CSControl.cs libGlue.so ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
-	mcs -g test-2.cs CSControl.cs -out:2ndTest.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
+	mcs -g test-2.cs CSTextControl.cs CSControl.cs -out:2ndTest.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
 	cp ../build/*.dll .
 
 test-4: test-4.c
