@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: TypeUsage.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id$
 //
 
 using System;
@@ -15,6 +15,10 @@ namespace CocoaSharp {
 		public TypeUsage(Type type, TypeModifiers typeModifiers) {
 			this.type = type;
 			this.typeModifiers = typeModifiers;
+		}
+
+		public static TypeUsage FromDecl(string objcDecl) {
+			return new TypeUsage(Type.FromDecl(objcDecl), TypeModifiers.none);
 		}
 
 		// -- Public Properties --
@@ -30,6 +34,7 @@ namespace CocoaSharp {
 
 	[Flags]
 	public enum TypeModifiers {
+		none = 0,
 		@const 	= 1 << 1,
 		@in 	= 1 << 2,
 		inout 	= 1 << 3,

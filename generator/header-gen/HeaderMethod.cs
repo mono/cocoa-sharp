@@ -24,17 +24,12 @@ namespace CocoaSharp {
 	public class HeaderMethod {
 		#region -- Members --
 		private string mMethodDeclaration;
-		private string mGlueMethodName;
 		private string mCSMethodName;
 		private string[] mMessageParts;
 		private string[] mArgumentNames;
 		private string[] mArgumentDeclarationTypes;
-		private string[] mArgumentGlueTypes;
-		private string[] mArgumentAPITypes;
 		private bool mIsClassMethod, mIsUnsupported;
 		private string mReturnDeclarationType;
-		private string mReturnGlueType;
-		private string mReturnAPIType;
 
 		private static Regex[] sUnsupported = new Regex[] {
 			new Regex(@"<.*>"),
@@ -74,8 +69,6 @@ namespace CocoaSharp {
 			mReturnDeclarationType = Method.StripComments(match.Groups[2].Value.Trim());
 			if (mReturnDeclarationType.Length == 0)
 				mReturnDeclarationType = "id";
-			mReturnGlueType = Method.ConvertTypeGlue(mReturnDeclarationType,false);
-			mReturnAPIType = Method.ConvertType(mReturnDeclarationType,false);
 			string remainder = match.Groups[3].Value;
 
 			mIsClassMethod = methodType == "+";
@@ -97,8 +90,6 @@ namespace CocoaSharp {
 				messageParts.Add(match.Groups[1].Value);
 				mArgumentNames = new string[0];
 				mArgumentDeclarationTypes = new string[0];
-				mArgumentGlueTypes = new string[0];
-				mArgumentAPITypes = new string[0];
 			} 
 			else if(arg_rx.IsMatch(remainder)) {
 				while(arg_rx.IsMatch(remainder)) {
@@ -125,12 +116,6 @@ namespace CocoaSharp {
 				}
 				mArgumentNames = (string[])argNames.ToArray(typeof(string));
 				mArgumentDeclarationTypes = (string[])argTypes.ToArray(typeof(string));
-				mArgumentGlueTypes = new string[mArgumentDeclarationTypes.Length];
-				mArgumentAPITypes = new string[mArgumentDeclarationTypes.Length];
-				for (int i = 0; i < mArgumentDeclarationTypes.Length; ++i) {
-					mArgumentGlueTypes[i] = Method.ConvertTypeGlue(mArgumentDeclarationTypes[i],true);
-					mArgumentAPITypes[i] = Method.ConvertType(mArgumentDeclarationTypes[i],true);
-				}
 			} 
 			else {
 				// If we can't parse the method, complain
@@ -140,25 +125,15 @@ namespace CocoaSharp {
 
 			mMessageParts = (string[])messageParts.ToArray(typeof(string));
 			
-			mGlueMethodName = string.Empty;
 			mCSMethodName = Method.MakeCSMethodName(mIsClassMethod,/*mMessageParts[0]*/ string.Join("_", mMessageParts));
-			if (mIsClassMethod)
-				mGlueMethodName += "_";
-
-			mGlueMethodName += string.Join("_",mMessageParts) + mArgumentNames.Length;
 		}
 		#endregion
 
 		#region -- Properties --
 		public bool IsUnsupported { get { return mIsUnsupported; } }
 		public bool IsClassMethod { get { return mIsClassMethod; } }
-		public string GlueMethodName { get { return mGlueMethodName; } }
 		public string MethodDeclaration { get { return mMethodDeclaration; } }
-		
 		public string ReturnDeclarationType { get { return mReturnDeclarationType; } }
-		public string ReturnGlueType { get { return mReturnGlueType; } }
-		public string ReturnAPIType { get { return mReturnAPIType; } }
-
 		public string Selector {
 			get {
 				string ret = mIsClassMethod ? "+" : "-";
@@ -200,14 +175,23 @@ namespace CocoaSharp {
 		}
 
 		public Method ToOutput() {
-			return new Method(this.mCSMethodName,this.Selector,null,null,null);
+			if (this.IsUnsupported)
+				return null;
+			ParameterInfo[] paramInfos = new ParameterInfo[this.mArgumentNames.Length];
+			for (int i = 0; i < paramInfos.Length; ++i)
+				paramInfos[i] = new ParameterInfo(this.mArgumentNames[i], TypeUsage.FromDecl(this.mArgumentDeclarationTypes[i]));
+			return new Method(this.mCSMethodName,this.Selector,null,
+				TypeUsage.FromDecl(this.mReturnDeclarationType),paramInfos);
 		}
 
 		public static ICollection ToMethods(ICollection methods,bool classMethod) {
 			IList ret = new ArrayList();
 			foreach (HeaderMethod m in methods)
-				if (m.IsClassMethod == classMethod)
-					ret.Add(m.ToOutput());
+				if (m.IsClassMethod == classMethod) {
+					Method o = m.ToOutput();
+					if (o != null)
+						ret.Add(o);
+				}
 			return ret;
 		}
 	}

@@ -43,7 +43,7 @@ namespace CocoaSharp {
 
 		public static ICollection ToOutput(ICollection collection) {
 			IList ret = new ArrayList();
-			foreach (HeaderStruct s in collection)
+			foreach (Element s in collection)
 				ret.Add(s.ToOutput());
 			return ret;
 		}

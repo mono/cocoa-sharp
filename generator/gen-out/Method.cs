@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Method.cs,v 1.7 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -106,11 +106,14 @@ namespace CocoaSharp {
 	}
 
 	public class Method {
-		public Method(string name,string selector, string types,TypeUsage returnType, ParameterInfo[] parameters) {
+		public Method(string name,string selector,string types,TypeUsage returnType, ParameterInfo[] parameters) {
 			this.name = name;
 			this.selector = selector;
 			System.Diagnostics.Debug.Assert(this.Selector.Length > 0);
-			this.types = types != null ? types : ObjCClassInspector.GetSignature(name,selector);
+			try {
+				this.types = types != null ? types : ObjCClassInspector.GetSignature(name,selector);
+			}
+			catch {}
 			this.returnType = returnType;
 			this.parameters = parameters;
 		}

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOType.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -95,64 +95,15 @@ namespace CocoaSharp {
 
 		internal System.Type GlueType {
 			get {
-				switch (this.kind) {
-					case OCType.array: return typeof(Array);
-					case OCType.bit_field: return typeof(int);
-					case OCType.@bool: return typeof(bool);
-					case OCType.@char: return typeof(sbyte);
-					case OCType.char_ptr: return typeof(string);
-					case OCType.Class: return typeof(IntPtr);
-					case OCType.@double: return typeof(double);
-					case OCType.@float: return typeof(float);
-					case OCType.id: return typeof(IntPtr);
-					case OCType.@int: return typeof(int);
-					case OCType.@long: return typeof(int);
-					case OCType.long_long: return typeof(long);
-					case OCType.pointer: return typeof(IntPtr);
-					case OCType.SEL: return typeof(IntPtr);
-					case OCType.@short: return typeof(short);
-					case OCType.structure: return typeof(ValueType);
-					case OCType.undefined_type: return typeof(IntPtr);
-					case OCType.union: return typeof(IntPtr);
-					case OCType.unsigned_char: return typeof(byte);
-					case OCType.unsigned_int: return typeof(uint);
-					case OCType.unsigned_long: return typeof(uint);
-					case OCType.unsigned_long_long: return typeof(ulong);
-					case OCType.unsigned_short: return typeof(ushort);
-					case OCType.@void: return typeof(void);
-					default: return null;
-				}
+				return Type.OCTypeToGlueType(this.kind);
 			}
 		}
+
 		internal string ApiType {
 			get {
-				switch (this.kind) {
-					case OCType.array: return this.reference.ApiType + "[]";
-					case OCType.bit_field: return "int /*ERROR: bitfield*/";
-					case OCType.@bool: return "bool";
-					case OCType.@char: return "char";
-					case OCType.char_ptr: return "string";
-					case OCType.Class: return "Class";
-					case OCType.@double: return "double";
-					case OCType.@float: return "float";
-					case OCType.id: return "object";
-					case OCType.@int: return "int";
-					case OCType.@long: return "int";
-					case OCType.long_long: return "long";
-					case OCType.pointer: return "IntPtr /*FIXME:)*/";
-					case OCType.SEL: return "string";
-					case OCType.@short: return "short";
-					case OCType.structure: return "/*FIXME full name needed*/ object";
-					case OCType.undefined_type: return "IntPtr";
-					case OCType.union: return "IntPtr/*ERROR: Union not handled*/";
-					case OCType.unsigned_char: return "byte";
-					case OCType.unsigned_int: return "uint";
-					case OCType.unsigned_long: return "uint";
-					case OCType.unsigned_long_long: return "ulong";
-					case OCType.unsigned_short: return "ushort";
-					case OCType.@void: return "void";
-					default: return null;
-				}
+				if (this.kind == OCType.array)
+					return this.reference.ApiType + "[]";
+				return Type.OCTypeToApiType(this.kind);
 			}
 		}
 
@@ -179,7 +130,7 @@ namespace CocoaSharp {
 #endif
 				ret.Add(t);
 			} while (read < tmp.Length);
-#if DEBUG
+#if DEBUG_OUT
 			if (hasNonPrimitive) {
 				MachOFile.DebugOut(0,"Parsing '{0}'",types);
 				MachOFile.DebugOut(0,"   ret={0}",ret[0]);

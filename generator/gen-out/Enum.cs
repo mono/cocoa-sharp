@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Enum.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -16,7 +16,7 @@ using System.IO;
 namespace CocoaSharp {
 	public class Enum : Type {
 		public Enum(string name, string nameSpace, ICollection items) 
-			: base(name, nameSpace,nameSpace + "." + name,typeof(Enum),OCType.@int) {
+			: base(name, nameSpace,nameSpace + "." + name,typeof(System.Enum),OCType.@int) {
 			this.items = items;
 		}
 

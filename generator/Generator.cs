@@ -51,16 +51,29 @@ namespace CocoaSharp {
 		/// <param name="f"></param>
 		/// <returns></returns>
 		public bool Run(Framework f) {
-			WriteCS csWriter = new WriteCS(mConfig);
-			string fileName = GetFileName(f.Name);
-			if (fileName == null)
+			MachOFile mfile = ProcessFramework(f);
+			if (mfile == null)
 				return false;
-			MachOFile mfile = new MachOFile(fileName);
-			// ToClass needs namespace we set that property in MachOFile
-			mfile.Namespace = f.NameSpace;
+
+			WriteCS csWriter = new WriteCS(mConfig);
 			csWriter.AddRange(mfile.Classes);
 			csWriter.OutputNamespace(f.NameSpace);
 			return true;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="f"></param>
+		/// <returns></returns>
+		public MachOFile ProcessFramework(Framework f) {
+			string fileName = GetFileName(f.Name);
+			if (fileName == null)
+				return null;
+			MachOFile mfile = new MachOFile(fileName);
+			// ToClass needs namespace we set that property in MachOFile
+			mfile.Namespace = f.NameSpace;
+			return mfile;
 		}
 
 		/// <summary>
@@ -81,11 +94,30 @@ namespace CocoaSharp {
 
 #if !MACH_O
 			ObjCManagedExporter exporter = new ObjCManagedExporter(mConfig);
-			foreach (Framework f in mConfig.Frameworks)
+			Generator g = new Generator();
+			WriteCS csWriter = new WriteCS(mConfig);
+			ArrayList mFiles = new ArrayList();
+
+			foreach (Framework f in mConfig.Frameworks) {
 				exporter.ProcessFramework(f);
+				mFiles.Add(g.ProcessFramework(f));
+			}
+
+			exporter.BuildInterfaces();
+
+			csWriter.AddRange(HeaderEnum.ToOutput(exporter.Enums.Values));
+			csWriter.AddRange(HeaderStruct.ToOutput(exporter.Structs.Values));
+			csWriter.AddRange(HeaderProtocol.ToOutput(exporter.Protocols.Values));
+			csWriter.AddRange(HeaderInterface.ToOutput(exporter.Interfaces.Values));
+
+			foreach (MachOFile mfile in mFiles)
+				csWriter.AddRange(mfile.Classes);
+
+			foreach (Framework f in mConfig.Frameworks)
+				csWriter.OutputNamespace(f.NameSpace);
+
 			int retval = 0;
 #else
-            Generator g = new Generator();
             int retval = g.Run();
 #endif
 			Console.WriteLine("Updating mapping.");

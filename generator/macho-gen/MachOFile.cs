@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOFile.cs,v 1.5 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -104,10 +104,10 @@ namespace CocoaSharp {
 		private ArrayList modules;
 
 		static public IDictionary Types = new Hashtable();
-		static private int DEBUG_LEVEL = 0;
+		static private int DEBUG_LEVEL = 1;
 		static MachOFile () {
 			try {
-				DEBUG_LEVEL = Int32.Parse (System.Environment.GetEnvironmentVariable ("COCOASHARP_GENERATOR_DEBUG_LEVEL"));
+				DEBUG_LEVEL = Int32.Parse(System.Environment.GetEnvironmentVariable("COCOASHARP_GENERATOR_DEBUG_LEVEL"));
 			} catch (Exception) {
 				DEBUG_LEVEL = 0;
 			}

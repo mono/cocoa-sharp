@@ -178,19 +178,25 @@ namespace CocoaSharp {
 				ObjCClassInspector.AddBundle(_toprocess.Name);
 			} catch {}
 			Console.Write("Processing framework ({0}): ", _toprocess.Name);
-			DirectoryInfo _frameworkDirectory = new DirectoryInfo(LocateFramework(_toprocess));
-			FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
-			Console.Write("00%");
-			for(int i = 0; i < _infos.Length; i++) {
-				float length = _infos.Length;
-				float complete = (i/length)*100;
-				ParseFile(_infos[i], _toprocess);
-				Console.Write("\b\b\b{0:00}%", complete);
+			try {
+				DirectoryInfo _frameworkDirectory = new DirectoryInfo(LocateFramework(_toprocess));
+				FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
+				Console.Write("00%");
+				for(int i = 0; i < _infos.Length; i++) {
+					float length = _infos.Length;
+					float complete = (i/length)*100;
+					ParseFile(_infos[i], _toprocess);
+					Console.Write("\b\b\b{0:00}%", complete);
+				}
+				Console.WriteLine("\b\b\b100%");
 			}
-			Console.WriteLine("\b\b\b100%");
+			catch (Exception e) {
+				Console.WriteLine("\b\b\bfailed!");
+				Console.WriteLine("Exception: " + e.Message);
+			}
 		}
 
-		private void BuildInterfaces() {
+		public void BuildInterfaces() {
 			IDictionary extras = new Hashtable();
 			foreach (HeaderInterface i in Interfaces.Values) {
 				Framework frmwrk = mConfig.GetFramework(i.Framework);
