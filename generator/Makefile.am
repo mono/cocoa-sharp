@@ -33,3 +33,6 @@ generator-run.stamp: $(ASSEMBLY)
 
 $(ASSEMBLY): $(build_sources) 
 	$(CSC) /out:$(ASSEMBLY) $(build_sources)
+
+macho-reader.exe: Ivar.cs Category.cs LoadCommand.cs Class.cs MachOFile.cs Section.cs DylibCommand.cs SegmentCommand.cs ICommand.cs Module.cs Stub.cs SymbolTable.cs
+	$(CSC) /unsafe /out:macho-reader.exe Ivar.cs Category.cs LoadCommand.cs Class.cs MachOFile.cs Section.cs DylibCommand.cs SegmentCommand.cs ICommand.cs Module.cs Stub.cs SymbolTable.cs
