@@ -18,4 +18,5 @@
 	<searchpath>/Library/Frameworks/%NAME%.framework/Headers</searchpath>
 	<addinpath>generator/custom</addinpath>
 	<overridepath>generator/custom</overridepath>
+	<corepath>generator/custom</corepath>
 </generator>

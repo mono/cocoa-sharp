@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.26 2004/06/23 22:10:19 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.27 2004/06/24 01:08:43 gnorton Exp $
 //
 
 using System;
@@ -143,6 +143,7 @@ namespace ObjCManagedExporter
 		{
 			if (OutputCS)
 			{
+
 				foreach(CEnum e in Enums.Values)
 					if(e.Framework == _toprocess.Name)
 						e.WriteFile(mConfig);
@@ -183,6 +184,15 @@ namespace ObjCManagedExporter
 						i.WriteFile(mConfig);
 				}
 			}
+			if (OutputCS)
+				if(Directory.Exists(Path.Combine(mConfig.CorePath, _toprocess.Name))) {
+					DirectoryInfo _frameworkDirectory = new DirectoryInfo(Path.Combine(mConfig.CorePath, _toprocess.Name));
+					FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
+					foreach(FileSystemInfo _file in _infos) {
+						if(_file.Name.EndsWith(".cs") && !File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
+							File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, _toprocess.Name), _file.Name), Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
+					}
+				}
 		}
 
 		private void ProcessFramework(Framework _toprocess) 
@@ -324,6 +334,8 @@ namespace ObjCManagedExporter
 		public string AddinPath;
 		[XmlElement("overridepath")]
 		public string OverridePath;
+		[XmlElement("corepath")]
+		public string CorePath;
 		
 		public Framework GetFramework(string which)
 		{
@@ -371,9 +383,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.27  2004/06/24 01:08:43  gnorton
+//	Core file support so we can add files ot the build that aren't generated
+//
 //	Revision 1.26  2004/06/23 22:10:19  urs
 //	Adding support for out of dependecy categories, generating a new class named $(class)$(categoryFramework)Extras with a the methods of all categories in same framework
-//
+//	
 //	Revision 1.25  2004/06/23 20:45:18  urs
 //	Only add category of dependent frameworks, this might be changed in the future, but would require a new class
 //	
