@@ -42,4 +42,8 @@
 2004-06-15	C.J. Collier	<cjcollier@colliertech.org>
 	* genstubs.pl (parseFile)
 	- commented empty .cs file generator
+
+2004-06-15	C.J. Collier	<cjcollier@colliertech.org>
+	* genstubs.pl (parseMethod)
+	- moved $methodName = split ... to the right location
 	
