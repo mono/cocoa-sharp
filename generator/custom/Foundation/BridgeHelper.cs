@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.1 2004/06/24 03:47:30 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.2 2004/06/25 18:43:27 gnorton Exp $
 //
 
 using System;
@@ -32,8 +32,14 @@ namespace Apple.Tools
 			return m.GetParameters();
 		}
 
-		public static string SelectorToMethodName(string selector)
+		public static string SelectorToMethodName(Type t, string selector)
 		{
+			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+                        foreach(MethodInfo m in ms) 
+                                foreach (Attribute attr in Attribute.GetCustomAttributes(m))
+                                        if (attr.GetType() == typeof(ObjCExportAttribute)) 
+						if ( ((ObjCExportAttribute)attr).Selector == selector )
+							return m.Name;
 			string methodName = selector;
 
 			if(methodName.IndexOf(":") > 0)
@@ -43,7 +49,7 @@ namespace Apple.Tools
 
 		public static object[] ProcessInvocation(Type type, NSInvocation invocation) 
 		{
-			string method = SelectorToMethodName(invocation.Selector);
+			string method = SelectorToMethodName(type, invocation.Selector);
 
 			int numArgs = GetParameterInfosByMethod(
 				GetMethodByTypeAndName(type, method)).Length;
@@ -56,7 +62,7 @@ namespace Apple.Tools
 
 		public static object InvokeMethodByObject(Object self, String sel, Object[] args) 
 		{
-			string method = SelectorToMethodName(sel);
+			string method = SelectorToMethodName(self.GetType(), sel);
 
 			return self.GetType().InvokeMember(method, 
 				BindingFlags.Default | BindingFlags.InvokeMethod, null, 
@@ -65,7 +71,7 @@ namespace Apple.Tools
 
 		public static string GenerateMethodSignature(Type t, String sel) 
 		{
-			string method = SelectorToMethodName(sel);
+			string method = SelectorToMethodName(t, sel);
 			int totalSize = 8;
 			int curSize = 8;
 			string types = "";
@@ -104,14 +110,23 @@ namespace Apple.Tools
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) 
 			{
-				string name = m.Name;
-				ParameterInfo[] parms = GetParameterInfosByMethod(m);
-				if(parms.Length >= 1)
-					name += ":";
-				for(int i = 1; i < parms.Length; i++)
-					name += parms[i].Name + ":";
+				bool addedByAttribute = false;
+				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) 
+					if (attr.GetType() == typeof(ObjCExportAttribute)) {
+						a.Add( ((ObjCExportAttribute)attr).Selector );
+						addedByAttribute = true;
+					}
 
-				a.Add(name);
+				if(!addedByAttribute) { 
+					string name = m.Name;
+					ParameterInfo[] parms = GetParameterInfosByMethod(m);
+					if(parms.Length >= 1)
+						name += ":";
+					for(int i = 1; i < parms.Length; i++)
+						name += parms[i].Name + ":";
+	
+					a.Add(name);
+				}
 			}
 			r.Methods = (String[])a.ToArray(typeof(String));
 		}
@@ -120,8 +135,16 @@ namespace Apple.Tools
 		{
 			ArrayList a = new ArrayList();
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-			foreach(MethodInfo m in ms)
-				a.Add(GenerateMethodSignature(t, m.Name));
+			foreach(MethodInfo m in ms) {
+				bool addedByAttribute = false;
+				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) 
+					if (attr.GetType() == typeof(ObjCExportAttribute) && ((ObjCExportAttribute)attr).Signature != null) {
+						a.Add( ((ObjCExportAttribute)attr).Signature );
+						addedByAttribute = true;
+					}
+				if(!addedByAttribute)
+					a.Add(GenerateMethodSignature(t, m.Name));
+			}
 			r.Signatures = (String[])a.ToArray(typeof(String));
 		}
 	}
@@ -130,6 +153,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.2  2004/06/25 18:43:27  gnorton
+// Added ObjCExport attribute for subclassing registering selectors
+//
 // Revision 1.1  2004/06/24 03:47:30  urs
 // initial custom stuff
 //
