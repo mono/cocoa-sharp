@@ -62,6 +62,7 @@ NSObject* awakeAfterUsingCoder(NSCoder *aNSCoder)
 	NSLog(@"NSObject_awakeAfterUsingCoder\n");
 	NSObject *object = [[NSObject alloc]init];
 	return [object awakeAfterUsingCoder: aNSCoder];
+}
 
 void NSObject_release(NSObject* this)
 {

@@ -31,7 +31,7 @@ class Test
 		monoButton.initWithFrame(new NSRect(20, 20, 74, 17));
 		monoButton.setTitle(new NSString("Dismiss"));
 		monoButton.setTarget(NSApplication.sharedApplication());
-		//monoButton.setAction(@selector(stopModalWithCode:));
+		monoButton.setAction(NSString.NSSelector("stopModalWithCode:"));
 
 		NSTextField text = new NSTextField();
 		text.initWithFrame(new NSRect(100, 200, 78, 20));
@@ -44,12 +44,7 @@ class Test
 		window.center();
 		window.makeKeyAndOrderFront(null);
 
-		Console.WriteLine("runModalForWindow");
-
 		NSApplication.sharedApplication().runModalForWindow(window);
-
-		Console.WriteLine("Hit enter to stop");
-		Console.ReadLine();
 
 		monoButton.release();
 		pool.release();

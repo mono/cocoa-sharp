@@ -9,11 +9,19 @@ namespace Apple.Cocoa.Foundation
 		[DllImport("CoreFoundationGlue")]
 		static extern IntPtr NSString_initWithCString(string str);
 
+		[DllImport("CoreFoundationGlue")]
+		static extern IntPtr SEL_fromString(IntPtr str);
+
 		public NSString(string str) : this(NSString_initWithCString(str)) {}
 		protected internal NSString(IntPtr raw) : base(raw) {}
 
 		public static NSString initWithCString(string val) {
 			return new NSString(val);
+		}
+
+		public static IntPtr NSSelector(string val)
+		{
+			return SEL_fromString(new NSString(val).Raw);
 		}
 	}
 }

@@ -14,3 +14,8 @@ void NSControl_setStringValue(NSControl *THIS, NSString *aString)
 {
 	[THIS setStringValue: aString];
 }
+
+void NSControl_setAction(NSControl *THIS, SEL sel)
+{
+	[THIS setAction: sel];
+}
