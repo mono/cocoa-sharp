@@ -553,6 +553,10 @@ namespace CocoaSharp {
 					name = name.Substring(0,pos-1) + name.Substring(pos-1,1).ToUpper() + name.Substring(pos);
 			}
 
+			return TranslateKeywords (name);
+		}
+
+		public static string TranslateKeywords (string name) {
 			switch (name) {
 				case "new": case "override": case "virtual": case "typeof":
 				case "is": case "as": case "delegate": case "this":
@@ -649,7 +653,7 @@ namespace CocoaSharp {
 
 		// -- Public Properties --
 		public TypeUsage Type { get { return type; } }
-		public string Name { get { return name; } }
+		public string Name { get { return Method.TranslateKeywords (name); } }
 
 		// -- Members --
 		private string name;

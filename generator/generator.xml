@@ -3,7 +3,6 @@
         <name>Foundation</name>
         <namespace>Apple.Foundation</namespace>
         <output>true</output>
-        <dependency>Apple.Tools</dependency>
     </framework>
     <framework>
         <name>AppKit</name>

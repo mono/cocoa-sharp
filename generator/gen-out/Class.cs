@@ -143,7 +143,7 @@ namespace CocoaSharp {
 			if(Parent != null)
 				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, ", " + protocols);
 			if(Parent == null && Protocols.Count > 0)
-				_cs.Write(" : {1}{0}", (Name != "NSObject" ? ", " : "") + protocols, (Name != "NSObject" ? "NSObject," : string.Empty));
+				_cs.Write(" : {1}{0}", (Name != "NSObject" ? ", " : "") + protocols, (Name != "NSObject" ? "NSObject" : string.Empty));
             if(Parent == null && Protocols.Count == 0 && Name != "NSObject")
                 _cs.Write(" : NSObject");
 			_cs.WriteLine(" {");
