@@ -11,13 +11,7 @@
 #include <crt_externs.h>
 #define environ (* _NSGetEnviron())
 
-#define JIT 1
-
-#if JIT
 #include <mono/jit/jit.h>
-#else
-#include <mono/interpreter/embed.h>
-#endif
 #include <mono/metadata/environment.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tabledefs.h>
@@ -37,7 +31,6 @@ main(int argc, const char* argv[]) {
 	MonoAssembly *assembly;
 	int retval;
 
-	void *pool = BeginApp();	
 	char *cwd = getBundleDir();
 	chdir(cwd);
 	char *realFile = (char*)malloc(strlen(sFile)+strlen(cwd)+2);
@@ -48,28 +41,15 @@ main(int argc, const char* argv[]) {
 	} else {
 		realFile = strcat(realFile, sFile);
 	}	
+	printf("DEBUG:\n\tAssembly: %s\n", realFile);
 	
-	printf("file: %s cwd:%s\n",realFile, cwd);
-	
-	/*
-	 * mono_jit_init() creates a domain: each assembly is
-	 * loaded and run in a MonoDomain.
-	 */
-#if JIT
 	domain = mono_jit_init (realFile);
-#else
-	domain = mono_interp_init (realFile);
-#endif
 
 	if(domain == NULL) {
 	    printf("ERROR: No domain for assembly: %s\n",realFile);
 		exit(1);
 	}
 
-	/*
-	 * We add our special internal call, so that C# code
-	 * can call us back.
-	 */
 	assembly = mono_domain_assembly_open (domain,
 					      realFile);
 
@@ -87,15 +67,16 @@ main(int argc, const char* argv[]) {
 		exit(1);
 	}
 
+	// Start a pool before the assembly
+	void *pool = BeginApp();	
 	mono_jit_exec (domain, assembly, argc, (char**)argv);
 
 	retval = mono_environment_exitcode_get ();
-	
-#if JIT
-	mono_jit_cleanup (domain);
-#else
-	mono_interp_cleanup (domain);
-#endif
+	// Clean up the pool before the jit
 	EndApp(pool);
+	
+	// Clean up the JIT environment
+	mono_jit_cleanup (domain);
+
 	return retval;
 }

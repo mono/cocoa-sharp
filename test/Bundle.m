@@ -24,5 +24,9 @@ void EndApp(void * pool) {
 }
 
 char *getBundleDir() {
-	return [[[NSBundle mainBundle] resourcePath] cString];
+	// Create a pool to clean up after us
+	void * pool = [[NSAutoreleasePool alloc] init];
+	char * dir = [[[NSBundle mainBundle] resourcePath] cString];
+	// Release the pool so it doesn't fight with mono / loader stuff
+	return dir;
 }
