@@ -4,7 +4,7 @@ CLEANFILES=$(ASSEMBLY)
 DISTCLEANFILES=
 noinst_DATA=generator-run.stamp
 EXTRA_DIST= \
-	Category.cs \
+	OldCategory.cs \
 	CEnum.cs \
 	Element.cs \
 	Interface.cs \
@@ -16,7 +16,7 @@ EXTRA_DIST= \
 	generator-run.stamp
 
 sources = \
-	Category.cs \
+	OldCategory.cs \
 	CEnum.cs \
 	Element.cs \
 	Interface.cs \
