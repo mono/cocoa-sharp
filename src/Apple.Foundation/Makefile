@@ -1,7 +1,7 @@
 all: ../../build/Apple.Foundation.dll
 
 ../../build/Apple.Foundation.dll: *.cs
-	mcs -g *.cs -target:library -out:../../build/Apple.Foundation.dll
+	mcs --unsafe -g *.cs -target:library -out:../../build/Apple.Foundation.dll -r:../../build/Apple.Tools.dll
 
 maintainer-clean: clean
 

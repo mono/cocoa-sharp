@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.9 2004/06/16 12:20:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.10 2004/06/17 05:48:00 gnorton Exp $
 //
 
 using System;
@@ -17,9 +17,11 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using Apple.Tools;
+
 namespace Apple.Foundation
 {
-	public class NSObject {
+	public class NSObject : BridgeHelper {
 		static IntPtr _NSObject_class;
 		public static IntPtr NSObject_class { get { if (_NSObject_class == IntPtr.Zero) _NSObject_class = NSString.NSClass("NSObject"); return _NSObject_class; } }
 
@@ -28,7 +30,7 @@ namespace Apple.Foundation
 
 		#region -- Glue --
 		[DllImport("Glue")]
-		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName);
+		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName, int nummethods, IntPtr[] methods, IntPtr[] signatures);
 		
 		[DllImport("Glue")]
 		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
@@ -54,43 +56,36 @@ namespace Apple.Foundation
 		}
 		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
-			return CreateClassDefinition(type.Name,"NSObject");
+			ObjCClassRepresentation r = GenerateObjCRepresentation(type);
+			for(int i = 0; i < r.Methods.Length; i++)
+				Console.WriteLine("{0} {1}", r.Methods[i], r.Signatures[i]);
+			IntPtr retval = IntPtr.Zero;
+			unsafe {
+				IntPtr[] methods = new IntPtr[r.NumMethods];
+				IntPtr[] signatures = new IntPtr[r.NumMethods];
+
+				for(int i = 0; i < r.NumMethods; i++) {
+					methods[i] = Marshal.StringToCoTaskMemAnsi(r.Methods[i]);
+					signatures[i] = Marshal.StringToCoTaskMemAnsi(r.Signatures[i]);
+				}
+				retval = CreateClassDefinition(type.Name, "NSObject", r.NumMethods, methods, signatures); 
+				for(int i = 0; i < r.NumMethods; i++) {
+					Marshal.FreeCoTaskMem(methods[i]);
+					Marshal.FreeCoTaskMem(signatures[i]);
+				}
+			}
+			return retval;
 		}
-		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation) {
+		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr arg) {
 			switch (what) {
 				case GlueDelegateWhat.methodSignatureForSelector:
 				{
-					string types = "";
-					
-					// Get the method info for this method.
-					MethodInfo method = this.GetType().GetMethod(NSString.FromSEL(invocation).ToString());
-
-					// Determine the return type and push it onto the types
-					if (method.ReturnType == typeof(void))
-						types = "v";
-					else
-						types = "@";
-
-					// Add the id and the selector to the types
-					types += "@:";
-
-					// Get the parameters for this method
-					ParameterInfo[] parms = method.GetParameters();
-					// Add each parm to the types
-					foreach (ParameterInfo p in parms) {
-						Console.WriteLine("MethodParam: {0}", p.ParameterType.ToString());
-						types += "@";
-					}
-					
-					// Make the info
-					return MakeMethodSignature(types);
+					return MakeMethodSignature(GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
 				}
 				case GlueDelegateWhat.forwardInvocation:
 				{
-					string method = new NSInvocation(invocation).selector();
-					
-					this.GetType().InvokeMember(method, 
-												BindingFlags.Default | BindingFlags.InvokeMethod, null, this, null);
+					NSInvocation invocation = new NSInvocation(arg);
+					InvokeMethodByObject(this, invocation.selector(), null);
 					break;
 				}
 			}
@@ -138,6 +133,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.10  2004/06/17 05:48:00  gnorton
+// Modified to move non apple stuff out of NSObject
+//
 // Revision 1.9  2004/06/16 12:20:27  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //
