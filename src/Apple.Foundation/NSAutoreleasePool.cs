@@ -9,8 +9,5 @@ namespace Apple.Foundation
 		public NSAutoreleasePool() : this(NSObject__alloc(NSAutoreleasePool_class)) {}
 		protected internal NSAutoreleasePool(IntPtr raw) : base(raw) {}
 
-		public static NSAutoreleasePool alloc() {
-			return new NSAutoreleasePool();
-		}
 	}
 }

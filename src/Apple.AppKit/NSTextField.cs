@@ -16,10 +16,6 @@ namespace Apple.AppKit
 		public NSTextField() : this(NSObject__alloc(NSTextField_class)) {}
 		protected NSTextField(IntPtr raw) : base(raw) {}
 
-		public static NSTextField alloc() {
-			return new NSTextField();
-		}
-		
 		public void setEditable(bool flag) {
 			NSTextField_setEditable(Raw, flag);
 		}

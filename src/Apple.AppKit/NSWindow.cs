@@ -25,11 +25,6 @@ namespace Apple.AppKit
 		public NSWindow() : this(NSObject__alloc(NSWindow_class)) {}
 		protected internal NSWindow(IntPtr raw) : base (raw) {}
 
-		public static NSWindow alloc()
-		{
-			return new NSWindow();
-		}
-
 		public IntPtr initWithContentRect_styleMask_backing_defer(NSRect contentRect, uint aStyle, int bufferingType, bool flag)
 		{
 			return NSWindow_initWithContentRect_styleMask_backing_defer(Raw, contentRect, aStyle, bufferingType, flag);

@@ -1,6 +1,6 @@
 SUBDIRS=..
 
-all: Test.exe Loader
+all: Test.exe 2ndTest.exe Loader
 
 CoreFoundation: /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation
 	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation CoreFoundation
@@ -14,8 +14,12 @@ libFoundationGlue.dylib: ../src/foundation/*.o
 libAppKitGlue.dylib: ../src/appkit/*.o
 	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libAppKitGlue.dylib ../src/appkit/*.o
 
-Test.exe: Test.cs ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
+Test.exe: test.cs ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
 	mcs -g Test.cs -out:Test.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
+	cp ../build/*.dll .
+
+2ndTest.exe: test-2.cs CSControl.cs ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
+	mcs -g test-2.cs CSControl.cs -out:2ndTest.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
 	cp ../build/*.dll .
 
 Loader: Loader.c

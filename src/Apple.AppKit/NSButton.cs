@@ -14,10 +14,6 @@ namespace Apple.AppKit
 		public NSButton() : this(NSObject__alloc(NSButton_class)) {}
 		protected internal NSButton(IntPtr raw) : base(raw) {}
 
-		public static NSButton alloc() {
-			return new NSButton();
-		}
-		
 		public void setTitle(NSString aString) {
 			NSButton_setTitle(Raw, aString.Raw);
 		}

@@ -6,20 +6,14 @@ using Apple.AppKit;
 
 class CSControl : NSObject {
 	
-	static IntPtr CSControl_class;
+	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl));
 
 	NSButton swap1;
-	public CSControl() {
-		NSRegisterClass(this);
-		CSControl_class = Apple.Foundation.NSString.NSClass("CSControl");
-		Raw = NSObject__alloc(CSControl_class);
-	}
+	public CSControl() : base(NSObject__alloc(CSControl_class)) {}
 
 	protected internal CSControl(IntPtr raw) : base(raw) {}
 
-/*	public void NSRegisterClass(Object toRegister) {
-		Type objIndType = toRegister.GetType();
-
+	public static IntPtr NSRegisterClass(Type objIndType) {
 		Console.WriteLine("NAME: {0}", objIndType.Name);
 		MethodInfo[] objAllMethods = objIndType.GetMethods();
 		foreach(MethodInfo objIndMethodInfo in objAllMethods)
@@ -40,7 +34,8 @@ class CSControl : NSObject {
 		{
 			Console.WriteLine("CON: {0}", objIndCons.Name);
 		}
-	} */
+		return NSString.NSClass("NSControl");
+	}
 
 	public void displayWindow() {
 		const int NSBorderlessWindowMask	= 0;
@@ -66,13 +61,13 @@ class CSControl : NSObject {
 		NSButton monoButton = new NSButton();
 		monoButton.initWithFrame(new NSRect(20, 20, 74, 17));
 		monoButton.setTitle(new NSString("Dismiss"));
-		monoButton.setTarget(CSControl_class);
+		monoButton.setTarget(this);
 		monoButton.setAction(NSString.NSSelector("_stop"));
 		
 		swap1 = new NSButton();
 		swap1.initWithFrame(new NSRect(40, 40, 104, 17));
 		swap1.setTitle(new NSString("Tickle me"));
-		swap1.setTarget(CSControl_class);
+		swap1.setTarget(this);
 		swap1.setAction(NSString.NSSelector("_swap"));
 
 		NSTextField text = new NSTextField();
