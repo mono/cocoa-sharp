@@ -16,6 +16,6 @@
 	</framework>
 	<searchpath>/System/Library/Frameworks/%NAME%.framework/Headers</searchpath>
 	<searchpath>/Library/Frameworks/%NAME%.framework/Headers</searchpath>
-	<addinpath>generator/addin</addinpath>
-	<overridepath>generator/override</overridepath>
+	<addinpath>generator/custom</addinpath>
+	<overridepath>generator/custom</overridepath>
 </generator>

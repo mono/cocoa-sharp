@@ -1,0 +1,5 @@
+<overrides>
+	<method instance="true" sel="method:Selector:">
+		/* This method will be replaced with whatever the generator default is for method:Selector: */
+	</method>
+</overrides>
