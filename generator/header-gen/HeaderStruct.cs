@@ -20,10 +20,34 @@ using System.Text.RegularExpressions;
 namespace CocoaSharp {
 
 	public class HeaderStruct : Element {
-		public HeaderStruct(string _name, string _struct, string _framework) : base(_struct,_name,_framework) {}
+		StructItem[] mItems;
+		public HeaderStruct(string _name, string _struct, string _framework) : base(_struct,_name,_framework)
+		{
+			foreach (Match m in new Regex(
+				@"(#if .*$)|(#ifdef .*$)|(#elif .*$)|(#else .*$)|(#end.*$)", RegexOptions.Multiline
+				).Matches(_struct)) {
+				_struct = _struct.Replace(m.Value, "");
+			}
+			ArrayList items = new ArrayList();
+			foreach (string line in _struct.Split(';')) {
+				string l = line.Trim();
+				if (l == "")
+					continue;
+				string[] lineSplit = l.Split(' ','\t');
+				string type = lineSplit[0];
+				for (int i = 1; i < lineSplit.Length-1; ++i)
+					type += " " + lineSplit[i];
+				string name = lineSplit[lineSplit.Length-1];
+				int bitField = name.IndexOf(":");
+				int array = name.IndexOf("[");
+				bool isPointer = name.StartsWith("*");
+				items.Add(new StructItem(null,name));
+			}
+			mItems = (StructItem[])items.ToArray(typeof(StructItem));
+		}
 
 		public override OutputElement ToOutput() {
-			return new Struct(this.Name,this.Framework,new StructItem[0]);
+			return new Struct(this.Name,this.Framework,mItems);
 		}
 	}
 }

@@ -17,10 +17,23 @@ namespace CocoaSharp {
 	using System.Collections;
 
 	public class HeaderEnum : Element {
-		public HeaderEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework) {}
+		EnumItem[] mItems;
+		public HeaderEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework)
+		{
+			ArrayList items = new ArrayList();
+			foreach (string line in _enum.Split(',')) {
+				string [] valueSep = line.Split('=');
+				string name = valueSep[0].Trim();
+				if (valueSep.Length > 1)
+					items.Add(new EnumItem(name, valueSep[1].Trim()));
+				else
+					items.Add(new EnumItem(name, string.Empty));
+			}
+			mItems = (EnumItem[])items.ToArray(typeof(EnumItem));
+		}
 
 		public override OutputElement ToOutput() {
-			return new Enum(this.Name,this.Framework,new EnumItem[0]);
+			return new Enum(this.Name,this.Framework,mItems);
 		}
 	}
 }

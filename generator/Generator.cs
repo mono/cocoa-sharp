@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Generator.cs,v 1.2 2004/09/21 04:28:53 urs Exp $
+// $Id$
 //
 
 using System;
@@ -16,13 +16,20 @@ using System.Xml.Serialization;
 
 namespace CocoaSharp {
 
-    public class Generator {
+	/// <summary>
+	/// 
+	/// </summary>
+	public class Generator {
 		private static string mXmlFile = "generator.xml";
 		private static Configuration mConfig;
 
-        public Generator() {
-        }
+		public Generator() {}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="framework"></param>
+		/// <returns></returns>
 		string GetFileName(string framework) {
 			foreach (string format in new string[] {
 				"/System/Library/Frameworks/{0}.framework/{0}",
@@ -38,54 +45,73 @@ namespace CocoaSharp {
 			return null;
 		}
 
-        public int Run() {
-            foreach (Framework f in mConfig.Frameworks) {
-                WriteCS csWriter = new WriteCS(mConfig);
-                string fileName = GetFileName(f.Name);
-				if (fileName == null)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="f"></param>
+		/// <returns></returns>
+		public bool Run(Framework f) {
+			WriteCS csWriter = new WriteCS(mConfig);
+			string fileName = GetFileName(f.Name);
+			if (fileName == null)
+				return false;
+			MachOFile mfile = new MachOFile(fileName);
+			// ToClass needs namespace we set that property in MachOFile
+			mfile.Namespace = f.NameSpace;
+			csWriter.AddRange(mfile.Classes);
+			csWriter.OutputNamespace(f.NameSpace);
+			return true;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public int Run() {
+			foreach (Framework f in mConfig.Frameworks)
+				if (!Run(f))
 					continue;
-                MachOFile mfile = new MachOFile (fileName);
-                // ToClass needs namespace we set that property in MachOFile
-                mfile.Namespace = f.NameSpace;
-                csWriter.AddRange(mfile.Classes);
-                csWriter.OutputNamespace(f.NameSpace);
-            }
 
-            return 1;
-        }
+			return 1;
+		}
 
-        static int Main (string[] args) {
-            if(!LoadConfiguration(args))
-                return -1;
+		static int Main (string[] args) {
+			if(!LoadConfiguration(args))
+				return -1;
 
+#if !MACH_O
+			ObjCManagedExporter exporter = new ObjCManagedExporter(mConfig);
+			foreach (Framework f in mConfig.Frameworks)
+				exporter.ProcessFramework(f);
+			int retval = 0;
+#else
             Generator g = new Generator();
             int retval = g.Run();
+#endif
+			Console.WriteLine("Updating mapping.");
+			Method.SaveMapping();
+			return retval;
+		}
 
-            Console.WriteLine("Updating mapping.");
-            Method.SaveMapping();
-            return retval;
-        }
-
-        private static bool LoadConfiguration(string[] args) {
-            // Ensure the file exists
-             foreach (string a in args)
-                if(a.IndexOf("-xml:") == 0)
-                    mXmlFile = a.Substring(5);
-            if(!File.Exists(mXmlFile)) {
-                Console.WriteLine("ERROR: Generator cannot run; XML File ({0}) does not exist", mXmlFile);
-                return false;
-            }
+		private static bool LoadConfiguration(string[] args) {
+			// Ensure the file exists
+			foreach (string a in args)
+				if(a.IndexOf("-xml:") == 0)
+					mXmlFile = a.Substring(5);
+			if(!File.Exists(mXmlFile)) {
+				Console.WriteLine("ERROR: Generator cannot run; XML File ({0}) does not exist", mXmlFile);
+				return false;
+			}
 
 			Configuration.XmlPath = new FileInfo(mXmlFile).DirectoryName;
 
-            // Deserialize our frameworks file
-            XmlTextReader _xmlreader = new XmlTextReader(mXmlFile);
-            XmlSerializer _serializer = new XmlSerializer(typeof(Configuration));
-            mConfig = (Configuration)_serializer.Deserialize(_xmlreader);
-            return true;
-        }
-    }
-
+			// Deserialize our frameworks file
+			XmlTextReader _xmlreader = new XmlTextReader(mXmlFile);
+			XmlSerializer _serializer = new XmlSerializer(typeof(Configuration));
+			mConfig = (Configuration)_serializer.Deserialize(_xmlreader);
+			return true;
+		}
+	}
 }
 
 //	$Log: Generator.cs,v $

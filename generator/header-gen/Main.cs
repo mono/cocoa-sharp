@@ -22,9 +22,8 @@ using System.Text.RegularExpressions;
 namespace CocoaSharp {
 
 	public class ObjCManagedExporter {
-		private string mXmlFile = "generator.xml";
-		private Configuration mConfig;
 		private string mOutputFlag = string.Empty;
+		private Configuration mConfig;
 
 		public IDictionary Interfaces;
 		public IDictionary Protocols;
@@ -39,16 +38,26 @@ namespace CocoaSharp {
 			Enums = new Hashtable();
 			Structs = new Hashtable();
 
-			ObjCClassInspector.IsObjCClass("NSString");
+			try {
+				ObjCClassInspector.IsObjCClass("NSString");
+			}
+			catch {}
 
 			foreach (string arg in args) 
+#if XML_FILE
 				if(arg.IndexOf("-xml:") >= 0)
 					mXmlFile = arg.Substring("-xml:".Length);
-				else if(arg.IndexOf("-out:") >= 0)
+				else
+#endif
+				if(arg.IndexOf("-out:") >= 0)
 					mOutputFlag = arg.Substring("-out:".Length);
 		}
 
 		public ObjCManagedExporter() : this(new string[] {string.Empty}) {}
+		public ObjCManagedExporter(Configuration config) : this(new string[] {string.Empty})
+		{
+			this.mConfig = config;
+		}
 
 		private void ParseFile(FileSystemInfo _toParse, Framework f) {
 			IDictionary _imports = new Hashtable();
@@ -62,8 +71,8 @@ namespace CocoaSharp {
 			Regex _interfaceRegex = new Regex(@"@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _protocolRegex = new Regex(@"@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(\w+?\s+)?{(\w+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _structRegex = new Regex(@"typedef\s+struct\s+(\w+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _classForwardDeclRegex = new Regex(@"@class\s+\w+;");
 			Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+\w+;");
 
@@ -164,9 +173,10 @@ namespace CocoaSharp {
 			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
 		}
 
-
-		private void ProcessFramework(Framework _toprocess) {
-			ObjCClassInspector.AddBundle(_toprocess.Name);
+		public void ProcessFramework(Framework _toprocess) {
+			try {
+				ObjCClassInspector.AddBundle(_toprocess.Name);
+			} catch {}
 			Console.Write("Processing framework ({0}): ", _toprocess.Name);
 			DirectoryInfo _frameworkDirectory = new DirectoryInfo(LocateFramework(_toprocess));
 			FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
@@ -250,6 +260,7 @@ namespace CocoaSharp {
 			return ret;
 		}
 
+#if XML_FILE
 		private bool LoadConfiguration() {
 			// Ensure the file exists
 			if(!File.Exists(mXmlFile)) {
@@ -263,10 +274,13 @@ namespace CocoaSharp {
 			mConfig = (Configuration)_serializer.Deserialize(_xmlreader);
 			return true;
 		}
+#endif
 
 		public void Run() {
+#if XML_FILE
 			if(!LoadConfiguration())
 				return;
+#endif
 
 			foreach(Framework f in mConfig.Frameworks)
 				ProcessFramework(f);
