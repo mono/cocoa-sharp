@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Method.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
+// $Id: Method.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -117,21 +117,19 @@ namespace CocoaSharp {
 		// -- Public Properties --
 		public string Name { get { return name; } }
 		public string Selector { get { return selector; } }
+		public string FullSelector(bool isClassMethod) { return isClassMethod ? "+" : "-" + Selector; } 
 		public string Types { get { return types; } }
 		public TypeUsage ReturnType { get { return returnType; } }
 		public ParameterInfo[] Parameters { get { return parameters; } }
-		public bool IsUnsupported { get { return false; } }
-		public MappingInfo Mapping { get { return (MappingInfo)NameMappings[Selector]; } }
-		public bool IsVerbose {
-			get {
-				MappingInfo info = Mapping;
-				return info == null ? true : !info.NoVerbose;
-			}
+		public MappingInfo GetMapping(bool isClassMethod) { return (MappingInfo)NameMappings[FullSelector(isClassMethod)]; }
+		public bool IsVerbose(bool isClassMethod) {
+            MappingInfo info = GetMapping(isClassMethod);
+            return info == null ? true : !info.NoVerbose;
 		}
 		public bool IsConstructor {
 			get {
-				return !IsUnsupported
-					&& Name.StartsWith("init") 
+				return
+					Name.StartsWith("init") 
 					&& ReturnType.Type.OCType == OCType.id && Parameters.Length > 0;
 			}
 		}
@@ -214,19 +212,16 @@ namespace CocoaSharp {
 		public Method GetGetMethod(bool isClassMethod,IDictionary methods, out string propName) {
 			propName = Name.Substring(3);
 			string sel = Selector;
-			string prefix = sel.Substring(0,1);
-			sel = sel.Substring(4,sel.Length-5);
+    		sel = sel.Substring(3,sel.Length-4);
 
-            if (methods == null)
-                return null;
-			Method get = (Method)methods[prefix + sel.Substring(0,1).ToLower() + sel.Substring(1)];
+			Method get = (Method)methods[sel.Substring(0,1).ToLower() + sel.Substring(1)];
 			
 			if (get == null)
-				get = (Method)methods[prefix + "is" + propName];
+				get = (Method)methods["is" + propName];
 			if (get == null)
-				get = (Method)methods[prefix + "get" + propName];
+				get = (Method)methods["get" + propName];
 			if (get == null)
-				get = (Method)methods[prefix + propName];
+				get = (Method)methods[propName];
 			
 			propName = MakeCSMethodName(isClassMethod,propName);
 			return get;
@@ -235,10 +230,9 @@ namespace CocoaSharp {
 		public Method GetSetMethod(bool isClassMethod, IDictionary methods, out string propName) {
 			propName = MakeCSMethodName(isClassMethod, Name);
 			string sel = Selector;
-			string prefix = sel.Substring(0,1);
-			sel = sel.Substring(1,1).ToUpper() + sel.Substring(2,sel.Length-2);
+			sel = sel.Substring(0,1).ToUpper() + sel.Substring(1,sel.Length-1);
 
-			Method set = (Method)methods[prefix + "set" + sel + ":"];
+			Method set = (Method)methods["set" + sel + ":"];
 			
 			return set;
 		}
@@ -248,24 +242,28 @@ namespace CocoaSharp {
 			bool hasSet = set != null;
 			string t = hasGet ? get.ReturnType.ApiType : set.Parameters[0].Type.ApiType;
 
-			if(hasSet)
+            if(hasSet)
 				w.WriteLine("        // setSelector: {0}", set.Selector);
 			if (hasGet)
 				w.WriteLine("        // getSelector: {0}", get.Selector);
 
-			w.Write("        {0}{1}{2} {3} {{",
+            w.Write("        {0}{1}{2} {3} {{",
 				isProtocol ? "" : "public ",
 				isClassMethod ? "static " : "", t, propName);
+			
 			if (!isProtocol)
 				w.WriteLine();
-
-			if (hasGet) {
+            
+            if (hasGet) {
 				if (isProtocol)
 					w.Write(" get;");
 				else {
 					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
 						get.ReturnType, 
-						string.Format("{0}_{1}({2})",className, "objc_sendMsg", isClassMethod ? "_classPtr" : "Raw")));
+						string.Format("({1})ObjCMessaging.objc_msgSend({0},{2},typeof({1}))", 
+				            isClassMethod ? "_classPtr" : "Raw",
+				            get.ReturnType.ApiType, 
+				            "\"" + get.Selector + "\"")));
 				}
 				get.SetCSAPIDone();
 			}
@@ -274,8 +272,10 @@ namespace CocoaSharp {
 				if (isProtocol)
 					w.Write(" set;");
 				else {
-					w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", 
-						className, "objc_sendMsg", isClassMethod ? "_classPtr" : "Raw",
+					w.WriteLine("            set {{ ObjCMessaging.objc_msgSend({0},{1},typeof(void),typeof({2}),{3}); }}", 
+						isClassMethod ? "_classPtr" : "Raw",
+						"\"" + set.Selector + "\"",
+						set.Parameters[0].Type.GlueType,
 						ArgumentExpression(set.Parameters[0].Type,"value"));
 				}
 				set.SetCSAPIDone();
@@ -285,15 +285,15 @@ namespace CocoaSharp {
 			else
 				w.WriteLine("        }");
 			// Check to see if this selector is in our map
-			if (hasGet && !NameMappings.Contains(get.Selector))
-				NameMappings[get.Selector] = GeneratePropertyMapping(className, propName, get, set);
-			if (hasSet && !NameMappings.Contains(set.Selector))
-				NameMappings[set.Selector] = GeneratePropertyMapping(className, propName, get, set);
+			if (hasGet && !NameMappings.Contains(get.FullSelector(isClassMethod)))
+				NameMappings[get.FullSelector(isClassMethod)] = GeneratePropertyMapping(isClassMethod, className, propName, get, set);
+			if (hasSet && !NameMappings.Contains(isClassMethod ? "+" : "-" + set.Selector))
+				NameMappings[set.FullSelector(isClassMethod)] = GeneratePropertyMapping(isClassMethod, className, propName, get, set);
 		}
 
 		private void GenerateProperty(bool isClassMethod,string className,System.IO.TextWriter w, PropertyMapping propMap,IDictionary methods, bool isProtocol) {
-			Method getMethod = propMap.GetSelector != null ? (Method)methods[propMap.GetSelector] : null;
-			Method setMethod = propMap.SetSelector != null ? (Method)methods[propMap.SetSelector] : null;
+			Method getMethod = propMap.GetSelector != null ? (Method)methods[propMap.GetSelector.Substring(1)] : null;
+			Method setMethod = propMap.SetSelector != null ? (Method)methods[propMap.SetSelector.Substring(1)] : null;
 
 			GenerateProperty(isClassMethod, className, w, getMethod, setMethod, propMap.Name, isProtocol);
 		}
@@ -310,9 +310,13 @@ namespace CocoaSharp {
 
 		private string GlueArgumentsString(bool isClassMethod) {
 			string glueArgsStr = isClassMethod ? "_classPtr" : "Raw";
+			glueArgsStr += ",\"" + Selector + "\"";
+			glueArgsStr += ",typeof(" + ReturnType.GlueType + ")";
 			foreach (ParameterInfo p in Parameters) {
 				glueArgsStr += ",";
-				glueArgsStr += p.Name;
+				glueArgsStr += "typeof(" + p.Type.GlueType + ")";
+				glueArgsStr += ",";
+				glueArgsStr += ArgumentExpression(p.Type,p.Name);
 			}
 			return glueArgsStr;
 		}
@@ -322,59 +326,57 @@ namespace CocoaSharp {
 			w.WriteLine("        {0}{1}{2} {3} ({4}) {5}", 
 				isProtocol ? "" : "public ",
 				isClassMethod ? "static " : "", 
-				ReturnType.ApiType, methodName, ParametersString(),
+				ReturnType.ApiType, MakeCSMethodName(isClassMethod,methodName), ParametersString(),
 				isProtocol ? ";" : "{");
 			if (!isProtocol) {
 				w.WriteLine("            {0};",ReturnExpression(ReturnType,
-					string.Format("{0}_{1}({2})", className, "objc_sendMsg", GlueArgumentsString(isClassMethod))));
+					string.Format("{3}{0}.{1}({2})", "ObjCMessaging", "objc_msgSend", GlueArgumentsString(isClassMethod), (ReturnType.ApiType != "void" ? "(" + ReturnType.ApiType + ")" : ""))));
 				w.WriteLine("        }");
 			}
 			
 			// Check to see if this selector is in our map
-			if(!NameMappings.Contains(Selector))
-				NameMappings[Selector] = GenerateMethodMapping(className);
+			if(!NameMappings.Contains(FullSelector(isClassMethod)))
+				NameMappings[FullSelector(isClassMethod)] = GenerateMethodMapping(isClassMethod,className);
 		}
 
 		public void CSAPIMethod(bool isClassMethod,string className,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o) {
-			if (IsUnsupported)
-				return;
 			if (mCSAPIDone)
 				return;
 
 			// Check to see if we're overridden
 			if(_o != null && _o.Methods != null)
 				foreach(MethodOverride _mo in _o.Methods) 
-					if(_mo.Selector == Selector) {
+					if(_mo.Selector == FullSelector(isClassMethod)) {
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						mCSAPIDone = true;
 						// Check to see if this selector is in our map
-						if(!NameMappings.Contains(Selector))
-							NameMappings[Selector] = GenerateMethodMapping(className);
+						if(!NameMappings.Contains(FullSelector(isClassMethod)))
+							NameMappings[FullSelector(isClassMethod)] = GenerateMethodMapping(isClassMethod,className);
 						return;
 					}
 
 			GenerateCSMethod(isClassMethod,className,methods,propOnly,w,false);
 		}
 		
-		private PropertyMapping GeneratePropertyMapping(string name,string propName, Method get, Method set) {
+		private PropertyMapping GeneratePropertyMapping(bool isClassMethod,string name,string propName, Method get, Method set) {
 			PropertyMapping pm = new PropertyMapping();
 			pm.Name = propName;
 			if(get != null) {
-				pm.GetSelector = get.Selector;
+				pm.GetSelector = get.FullSelector(isClassMethod);
 				pm.GetSignature = ObjCClassInspector.GetSignature(name,pm.GetSelector);
 			}
 			if(set != null) {
-				pm.SetSelector = set.Selector;
+				pm.SetSelector = set.FullSelector(isClassMethod);
 				pm.SetSignature = ObjCClassInspector.GetSignature(name,pm.SetSelector);
 			}
 			return pm;
 		}
 
-		private MethodMapping GenerateMethodMapping(string name) {
+		private MethodMapping GenerateMethodMapping(bool isClassMethod,string name) {
 			MethodMapping mm = new MethodMapping();
 			mm.Name = Name;
-			mm.Selector = Selector;
+			mm.Selector = FullSelector(isClassMethod);
 			mm.Signature = ObjCClassInspector.GetSignature(name,mm.Selector);
 			return mm;
 		}
@@ -419,9 +421,9 @@ namespace CocoaSharp {
 		private static string ReturnExpression(TypeUsage type,string expression) {
 			if(type.Type.OCType == OCType.SEL)
 				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
-			if(type.Type.SystemType == typeof(string) && type.Type.OCType == OCType.char_ptr)
+			if(type.Type.GlueType == "System.String" && type.Type.OCType == OCType.char_ptr)
 				return string.Format("return Marshal.PtrToStringAnsi({0})", expression);
-			if(type.GlueType != type.ApiType)
+			if(type.Type.NeedConversion)
 				return string.Format("return ({0})NSObject.NS2Net({1})", type.ApiType, expression);
 			if (type.Type.OCType == OCType.@void)
 				return expression;
@@ -431,7 +433,7 @@ namespace CocoaSharp {
 		private static string ArgumentExpression(TypeUsage type,string expression) {
 			if(type.Type.OCType == OCType.SEL)
 				return string.Format("NSString.NSSelector({0})", expression);
-			if(type.GlueType != type.ApiType)
+			if(type.Type.NeedConversion)
 				return string.Format("NSObject.Net2NS({0})", expression);
 			return expression;
 		}
@@ -455,11 +457,11 @@ namespace CocoaSharp {
 			//BuildArgs(className);
 			bool isVoid = ReturnType.Type.OCType == OCType.@void;
 			
-			if(NameMappings.Contains(Selector)) {
-				object _mapping = NameMappings[Selector];
+			if(NameMappings.Contains(FullSelector(isClassMethod))) {
+				object _mapping = NameMappings[FullSelector(isClassMethod)];
 				if (_mapping is PropertyMapping) {
 					PropertyMapping _p = (PropertyMapping)_mapping;
-					if (isVoid && _p.GetSelector == Selector) {
+					if (isVoid && _p.GetSelector == FullSelector(isClassMethod)) {
 						if (!propOnly)
 							GenerateMethod(isClassMethod, className,w,_p.Name + "_",isProtocol);
 						return;
@@ -499,7 +501,7 @@ namespace CocoaSharp {
 
 		#region -- C# Interface --
 		public void CSInterfaceMethod(bool isClassMethod,string className,IDictionary methods,bool propOnly,System.IO.TextWriter w) {
-			if (IsUnsupported || isClassMethod || mCSAPIDone)
+			if (isClassMethod || mCSAPIDone)
 				return;
 
 			GenerateCSMethod(isClassMethod,className,methods,propOnly,w,true);
@@ -623,6 +625,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Method.cs,v $
+// Revision 1.5  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.4  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

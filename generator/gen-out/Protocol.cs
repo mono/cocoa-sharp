@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Protocol.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Protocol.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -25,7 +25,7 @@ namespace CocoaSharp {
 		}
 
 		public Protocol(string name, string nameSpace, ICollection instanceMethods, ICollection classMethods)
-			: base(name, nameSpace,null,OCType.id) {
+			: base(name, nameSpace, nameSpace + "." + name,null,OCType.id) {
 			Protocols[nameSpace + "." + name] = this;
 			this.instanceMethods = instanceMethods;
 			this.classMethods = classMethods;
@@ -49,9 +49,7 @@ namespace CocoaSharp {
 		public override void WriteCS(TextWriter _cs, Configuration config) {
 			IDictionary allMethods = new Hashtable();
 			foreach (Method method in instanceMethods) {
-				if (method.IsUnsupported)
-					continue;
-
+				
 				string _methodSig = method.Selector;
 				if(!allMethods.Contains(_methodSig)) 
 					allMethods[_methodSig] = method;
@@ -92,6 +90,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Protocol.cs,v $
+// Revision 1.4  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

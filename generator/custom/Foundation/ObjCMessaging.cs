@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;   
 using System.Runtime.InteropServices;
 
-namespace Apple.Foundation {
+namespace Apple.Tools {
 	public class ObjCMessaging {
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr sel_registerName(string selectorName);
@@ -58,15 +58,15 @@ namespace Apple.Foundation {
 		public static object objc_msgSend (IntPtr receiver, string selector, Type rettype, params object[] args) {
 			StringBuilder type = new StringBuilder();
 			type.AppendFormat("{0}_System.IntPtr_System.IntPtr", rettype);
-			for (int i = 0; i < args.Length; ++i) {
-				type.AppendFormat("_{0}", args[i].GetType());
+			for (int i = 0; i < args.Length; i+=2) {
+				type.AppendFormat("_{0}", args[i]);
 			}
-			Console.WriteLine ("Looking for {0}", type.ToString());
 			Type t = TypeResolve(type.ToString()).GetType(type.ToString());
-			object[] realArgs = new object[args.Length+2];
+			object[] realArgs = new object[(args.Length/2)+2];
 			realArgs[0] = receiver;
 			realArgs[1] = sel_registerName(selector);
-			Array.Copy(args, 0, realArgs, 2, args.Length);
+			for (int i = 1; i < args.Length; i+=2) 
+		                realArgs[i+2] = args[i];
 			object o = Activator.CreateInstance(t);
 			return t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
 

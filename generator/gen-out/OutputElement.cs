@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: OutputElement.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
+// $Id: OutputElement.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -57,9 +57,9 @@ namespace CocoaSharp {
 			ProcessAddin(Name,_cs,config);
 		}
 		protected void ProcessAddin(string name, TextWriter _cs, Configuration config) {
-			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Namespace, name))) {
+			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, name))) {
 				_cs.WriteLine("\t\t#region -- Generator Addins --");
-				StreamReader _addinReader = new StreamReader(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Namespace, name));
+				StreamReader _addinReader = new StreamReader(String.Format("{0}{1}{2}{1}{3}.addin", config.AddinPath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, name));
 				String _addinLine;
 				while((_addinLine = _addinReader.ReadLine()) != null)
 					_cs.WriteLine(_addinLine);
@@ -73,6 +73,9 @@ namespace CocoaSharp {
 
 //
 // $Log: OutputElement.cs,v $
+// Revision 1.5  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.4  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

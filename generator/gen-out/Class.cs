@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Class.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
+// $Id: Class.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -29,7 +29,7 @@ namespace CocoaSharp {
 		}
 
 		public Class(string name, string nameSpace, Class parent, ICollection protocols, ICollection variables, ICollection instanceMethods, ICollection classMethod)
-			: base(name, nameSpace,null,OCType.id) {
+			: base(name, nameSpace, nameSpace + "." + name, null, OCType.id) {
 			Classes[nameSpace + "." + name] = this;
 			this.parent = parent;
 			this.protocols = protocols != null ? protocols : new ArrayList();
@@ -59,6 +59,12 @@ namespace CocoaSharp {
 				return (string[])ret.ToArray(typeof(string));
 			}
 		}
+		internal static IDictionary MethodsToDictionary(ICollection methods) {
+            IDictionary ret = new Hashtable();
+            foreach (Method m in methods)
+                ret[m.Selector] = m;
+            return ret;
+		}
 
 		// -- Members --
 		private Class parent;
@@ -85,6 +91,7 @@ namespace CocoaSharp {
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Collections;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
+			_cs.WriteLine("using Apple.Tools;");
 
 			Framework frmwrk = config != null ? config.GetFramework(Namespace) : null;
 			if (frmwrk != null && frmwrk.Dependencies != null)
@@ -97,29 +104,26 @@ namespace CocoaSharp {
 			_cs.Write("    public class {0}", Name);
 
 			if(Parent != null)
-				_cs.Write(" : {0}{1}", Parent, string.Join(", I", ProtocolNames).Trim());
+				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, string.Join(", I", ProtocolNames).Trim());
 			if(Parent == null && Protocols.Count > 0)
-				_cs.Write(" : I{0}", string.Join(", I", ProtocolNames));
+				_cs.Write(" : {1}I{0}", string.Join(", I", ProtocolNames), (Name != "NSObject" ? "NSObject," : ""));
 			_cs.WriteLine(" {");
 
 #if !CAT
 			_cs.WriteLine("        #region -- Internal Members --");
 			_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",Name);
 			_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Apple.Foundation.Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
-			_cs.WriteLine("        [DllImport(\"{0}\")]",Namespace + "Glue");
-			_cs.WriteLine("        protected extern static bool Is{0}Verbose();",Name);
-			_cs.WriteLine("        [DllImport(\"{0}\")]",Namespace + "Glue");
-			_cs.WriteLine("        protected extern static void Set{0}Verbose(bool verbose);",Name);
-			_cs.WriteLine("        public static bool _Verbose {{ get {{ return Is{0}Verbose(); }} set {{ Set{0}Verbose(value); }} }}",Name);
 			_cs.WriteLine("        #endregion");
 			_cs.WriteLine();
 #endif
 
 			_cs.WriteLine("        #region -- Properties --");
+			IDictionary instMethods = MethodsToDictionary(InstanceMethods);
+			IDictionary clsMethods = MethodsToDictionary(ClassMethods);
 			foreach (Method _toOutput in InstanceMethods)
-				_toOutput.CSAPIMethod(false, Name, null/*InstanceMethods*/, true, _cs, _overrides);
+				_toOutput.CSAPIMethod(false, Name, instMethods, true, _cs, _overrides);
 			foreach (Method _toOutput in ClassMethods)
-				_toOutput.CSAPIMethod(true, Name, null/*ClassMethods*/, true, _cs, _overrides);
+				_toOutput.CSAPIMethod(true, Name, clsMethods, true, _cs, _overrides);
 			_cs.WriteLine("        #endregion");
 			_cs.WriteLine();
 
@@ -157,9 +161,9 @@ namespace CocoaSharp {
 
 			_cs.WriteLine("        #region -- Public API --");
 			foreach (Method _toOutput in InstanceMethods)
-				_toOutput.CSAPIMethod(false, Name, null/*InstanceMethods*/, false, _cs, _overrides);
+				_toOutput.CSAPIMethod(false, Name, instMethods, false, _cs, _overrides);
 			foreach (Method _toOutput in ClassMethods)
-				_toOutput.CSAPIMethod(true, Name, null/*ClassMethods*/, false, _cs, _overrides);
+				_toOutput.CSAPIMethod(true, Name, clsMethods, false, _cs, _overrides);
 			_cs.WriteLine("        #endregion");
 			_cs.WriteLine();
 
@@ -169,29 +173,14 @@ namespace CocoaSharp {
 			_cs.WriteLine("}");
 			_cs.Close();
 		}
-
-		public void WriteOCFile(Configuration config) {
-#if false
-			TextWriter _gs = OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", Namespace, Name);
-
-			foreach(string import in Imports)
-				_gs.WriteLine("#import <{0}>", import);
-
-			_gs.WriteLine("BOOL sIs{0}Verbose = NO; BOOL sIs{0}VerboseInit = NO; void Init{0}Verbose() {{ if (sIs{0}VerboseInit) return; sIs{0}VerboseInit = YES; sIs{0}Verbose = getenv(\"COCOASHARP_DEBUG_LEVEL\") != 0 && atoi(getenv(\"COCOASHARP_DEBUG_LEVEL\")) >= 1; }}",Name);
-			_gs.WriteLine("BOOL Is{0}Verbose() {{ Init{0}Verbose(); return sIs{0}Verbose; }}",Name);
-			_gs.WriteLine("void Set{0}Verbose(BOOL verbose) {{ sIs{0}Verbose = verbose; }}",Name);
-			_gs.WriteLine();
-
-			foreach (Method _toOutput in AllMethods)
-				_toOutput.ObjCMethod(ExtrasName, _gs);
-			_gs.Close();
-#endif
-		}
 	}
 }
 
 //
 // $Log: Class.cs,v $
+// Revision 1.5  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.4  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

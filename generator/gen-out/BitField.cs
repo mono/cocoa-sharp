@@ -5,14 +5,14 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: BitField.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: BitField.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
 
 namespace CocoaSharp {
 	public class BitField : Type {
-		public BitField(int bits) : base(null,null,typeof(int),OCType.bit_field) {
+		public BitField(int bits) : base(null,null,"int",typeof(int),OCType.bit_field) {
 			this.bits = bits;
 		}
 
@@ -26,6 +26,9 @@ namespace CocoaSharp {
 
 //
 // $Log: BitField.cs,v $
+// Revision 1.3  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

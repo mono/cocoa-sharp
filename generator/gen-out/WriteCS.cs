@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: WriteCS.cs,v 1.2 2004/09/20 16:42:52 gnorton Exp $
+// $Id: WriteCS.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -31,7 +31,6 @@ namespace CocoaSharp {
 
 			int count = 0, total = outList.Count;
 			foreach(OutputElement e in outList) {
-				Console.WriteLine ("WRITING FILE!" + e.Name);
 				e.WriteFile(mConfig);
 				WriteProgress(ref count,total);
 			}
@@ -73,6 +72,9 @@ namespace CocoaSharp {
 
 //
 // $Log: WriteCS.cs,v $
+// Revision 1.3  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.2  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

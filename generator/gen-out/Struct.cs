@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Struct.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Struct.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -15,7 +15,7 @@ using System.IO;
 namespace CocoaSharp {
 	public class Struct : Type {
 		public Struct(string name,string nameSpace,ICollection items)
-			: base(name,nameSpace,typeof(System.ValueType),OCType.structure) {
+			: base(name,nameSpace,nameSpace + "." + name,typeof(System.ValueType),OCType.structure) {
 			this.items = items;
 		}
 
@@ -52,6 +52,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Struct.cs,v $
+// Revision 1.4  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

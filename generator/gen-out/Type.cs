@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Type.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Type.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -13,20 +13,54 @@ using System.Collections;
 
 namespace CocoaSharp {
 	public class Type : OutputElement {
-		public Type(string name, string nameSpace, System.Type type, OCType ocType) 
+		public Type(string name, string nameSpace, string apiType, System.Type glueType, OCType ocType) 
 			: base(name, nameSpace) {
-			this.type = type;
+			this.apiType = apiType;
+			this.glueType = glueType;
 			this.ocType = ocType;
 		}
 
+        public bool NeedConversion {
+            get {
+				switch (this.ocType) {
+					case OCType.bit_field:
+					case OCType.@bool: 
+					case OCType.@double:
+					case OCType.@float: 
+					case OCType.@int:
+					case OCType.@long:
+					case OCType.long_long:
+					case OCType.@short:
+					case OCType.unsigned_int:
+					case OCType.unsigned_long:
+					case OCType.unsigned_long_long:
+					case OCType.unsigned_short:
+					case OCType.@void:
+					case OCType.@char:
+					case OCType.unsigned_char:
+					case OCType.pointer: // FIXME
+					   return false;
+					case OCType.array:
+					case OCType.char_ptr:
+					case OCType.Class:
+					case OCType.id:
+					case OCType.SEL:
+					case OCType.structure:
+					case OCType.undefined_type:
+					case OCType.union:
+					default: 
+					   return true;
+				}
+            }
+        }
 		// -- Public Properties --
-		public string GlueType { get { return type.FullName; } }
-		public string ApiType { get { return ocType.ToString(); } }
-		public System.Type SystemType { get { return type; } }
+        public string GlueType { get { return glueType.FullName; } }
+		public string ApiType { get { return apiType; } }
 		public OCType OCType { get { return ocType; } }
 
 		// -- Members --
-		private System.Type type;
+		private string apiType;
+		private System.Type glueType;
 		private OCType ocType;
 	}
 
@@ -60,6 +94,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Type.cs,v $
+// Revision 1.4  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

@@ -5,14 +5,15 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Array.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: Array.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
 
 namespace CocoaSharp {
 	public class Array : Type {
-		public Array(Type elementType,int dim) : base(null,null,typeof(IntPtr),OCType.array) {
+		public Array(Type elementType,int dim) 
+		      : base(null,null,elementType.ApiType + "[]",typeof(IntPtr),OCType.array) {
 			this.elementType = elementType;
 			this.dim = dim;
 		}
@@ -29,6 +30,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Array.cs,v $
+// Revision 1.3  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

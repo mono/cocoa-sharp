@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOType.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
+// $Id: MachOType.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -93,7 +93,7 @@ namespace CocoaSharp {
 			return ret;
 		}
 
-		internal System.Type SystemType {
+		internal System.Type GlueType {
 			get {
 				switch (this.kind) {
 					case OCType.array: return typeof(Array);
@@ -124,11 +124,43 @@ namespace CocoaSharp {
 				}
 			}
 		}
+		internal string ApiType {
+			get {
+				switch (this.kind) {
+					case OCType.array: return this.reference.ApiType + "[]";
+					case OCType.bit_field: return "int /*ERROR: bitfield*/";
+					case OCType.@bool: return "bool";
+					case OCType.@char: return "char";
+					case OCType.char_ptr: return "string";
+					case OCType.Class: return "Class";
+					case OCType.@double: return "double";
+					case OCType.@float: return "float";
+					case OCType.id: return "object";
+					case OCType.@int: return "int";
+					case OCType.@long: return "int";
+					case OCType.long_long: return "long";
+					case OCType.pointer: return "IntPtr /*FIXME:)*/";
+					case OCType.SEL: return "string";
+					case OCType.@short: return "short";
+					case OCType.structure: return "/*FIXME full name needed*/ object";
+					case OCType.undefined_type: return "IntPtr";
+					case OCType.union: return "IntPtr/*ERROR: Union not handled*/";
+					case OCType.unsigned_char: return "byte";
+					case OCType.unsigned_int: return "uint";
+					case OCType.unsigned_long: return "uint";
+					case OCType.unsigned_long_long: return "ulong";
+					case OCType.unsigned_short: return "ushort";
+					case OCType.@void: return "void";
+					default: return null;
+				}
+			}
+		}
+
 		internal TypeUsage ToTypeUsage(string nameSpace) {
 			return new TypeUsage(ToType(nameSpace),modifiers);
 		}
 		internal Type ToType(string nameSpace) {
-			return new Type(name,nameSpace,SystemType,kind);
+			return new Type(name,nameSpace,ApiType,GlueType,kind);
 		}
 
 		static public MachOType[] ParseTypes(string types) {
@@ -375,6 +407,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOType.cs,v $
+// Revision 1.5  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.4  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

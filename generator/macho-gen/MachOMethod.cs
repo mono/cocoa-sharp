@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOMethod.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
+// $Id: MachOMethod.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
 //
 
 using System;
@@ -36,13 +36,13 @@ namespace CocoaSharp {
 
 		internal ParameterInfo[] ToParameters(string nameSpace) {
 			ArrayList ret = new ArrayList();
-			for (int i = 2; i < types.Length; ++i)
-				ret.Add(new ParameterInfo("p" + (i-2),types[i].ToTypeUsage(nameSpace)));
+			for (int i = 3; i < types.Length; ++i)
+				ret.Add(new ParameterInfo("p" + (i-3),types[i].ToTypeUsage(nameSpace)));
 			return (ParameterInfo[])ret.ToArray(typeof(ParameterInfo));
 		}
 
 		internal Method ToMethod(string nameSpace) {
-			return new Method(name.Replace(":","_"),name,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
+			return new Method(name.Trim(':').Replace(":","_"),name,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
 		}
 
 		static internal ICollection ToMethods(string nameSpace,ICollection methods) {
@@ -73,6 +73,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOMethod.cs,v $
+// Revision 1.5  2004/09/20 20:18:23  gnorton
+// More refactoring; Foundation almost gens properly now.
+//
 // Revision 1.4  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //
