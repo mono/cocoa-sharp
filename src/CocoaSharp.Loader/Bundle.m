@@ -14,16 +14,20 @@
 #import <Foundation/NSAutoreleasePool.h>
 #import <AppKit/NSApplication.h>
 
-void * BeginApp(char *bundleDir) {
+void * BeginApp() {
 	// Create a pool to clean up after us
 	void * pool = [[NSAutoreleasePool alloc] init];
 
-	// Start up NSApplication
-	[NSApplication sharedApplication];
-
-	strcpy(bundleDir,[[[NSBundle mainBundle] resourcePath] cString]);
-	
 	return pool;
+}
+
+void ChangeToResourceDir() {
+	chdir([[[NSBundle mainBundle] resourcePath] cString]);
+}
+
+char *GetAssembly() {
+	NSLog(@"%s\n", [[[[NSBundle mainBundle] pathsForResourcesOfType:@"exe" inDirectory:nil] objectAtIndex:0] cString]);
+	return [[[[NSBundle mainBundle] pathsForResourcesOfType:@"exe" inDirectory:nil] objectAtIndex:0] cString];
 }
 
 void EndApp(void * pool) {

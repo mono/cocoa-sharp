@@ -21,43 +21,32 @@
 
 #include <string.h>
 
-const char * sFile = "Test.exe";
-
 int main(int argc, const char* argv[]) {
-	char *realFile = (char*)malloc(1024);
-	char *cwd = (char*)malloc(1024);
-	void *pool = BeginApp(cwd);
+	void *pool = BeginApp();
+	char *assemblyName = GetAssembly();
+	ChangeToResourceDir();
 
-	chdir(cwd);
-	strcpy(realFile,cwd);
-	strcat(realFile, "/");
-	if (argc > 1 && strncmp(argv[argc-1], "-psn", 4) != 0)
-		strcat(realFile, argv[argc-1]);
-	else
-		// TODO: search in resource folder to a .exe rather then assuming 'Test.exe'
-		strcat(realFile, sFile);
-
-	printf("DEBUG:\n\tAssembly: %s\n", realFile);
+	printf("DEBUG:\n\tAssembly: %s\n", assemblyName);
 	
-	MonoDomain *domain = mono_jit_init (realFile);
+	MonoDomain *domain = mono_jit_init (assemblyName);
 
 	if(domain == NULL) {
-	    printf("ERROR: No domain for assembly: %s\n",realFile);
+	    printf("ERROR: No domain for assembly: %s\n",assemblyName);
 		exit(1);
 	}
 
 	MonoAssembly *assembly = mono_domain_assembly_open (domain,
-		realFile);
+		assemblyName);
 
 	if(assembly == NULL) {
-	    printf("ERROR: Assembly load failed: %s\n",realFile);
+	    printf("ERROR: Assembly load failed: %s\n",assemblyName);
 		exit(1);
 	}
 
 	MonoImage *image = mono_assembly_get_image(assembly);
 
 	if(image == NULL) {
-	    printf("ERROR: No assembly image: %s\n",realFile);
+	    printf("ERROR: No assembly image: %s\n",assemblyName);
 		exit(1);
 	}
 
