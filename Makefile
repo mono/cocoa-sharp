@@ -7,10 +7,14 @@ build/CoreFoundationGlue: src/*.m
 	gcc -g -x objective-c src/*.m -o build/CoreFoundationGlue -dynamiclib -framework Cocoa
 
 build/Test.exe: src/test/*.cs build/Apple.Cocoa.Foundation.dll
+	gcc src/test/Loader.c -o build/Loader `pkg-config --cflags mono` `pkg-config --libs mono`
 	mcs -g src/test/*.cs -out:build/Test.exe /r:build/Apple.Cocoa.Foundation.dll
 
 debug: build/Test.exe build/CoreFoundationGlue
-	cd build; gdb --args mono Test.exe
+	cd build; gdb --args ./Loader
 
 run: build/Test.exe build/CoreFoundationGlue
-	cd build; mono Test.exe
+	cd build; ./Loader Test.exe
+
+clean:
+	rm -f build/*
