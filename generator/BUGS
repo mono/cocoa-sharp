@@ -1,0 +1,7 @@
+AppKit:
+	NSDrawer_stub.m: Doesn't handle the conflicting open/close calls.
+	NSFormCell_stub.m: Doesn't handle the conflicting titleWidth calls.
+	NSPageLayout_stub.m: Many duplicated methods.
+	NSSliderCell_stub.m: Duplicated drawKnow method.
+	NSTypesetter_stub.m: Duplicated layoutTab & layoutControlGlyphForLineFragment methods.
+	NSWorkspace_stub.m: Duplicated noteFileSystemChanged method.
