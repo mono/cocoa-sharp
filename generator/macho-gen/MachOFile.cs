@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOFile.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: MachOFile.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -95,11 +95,13 @@ namespace CocoaSharp {
 		private const uint LC_LOAD_WEAK_DYLIB = (0x18 | LC_REQ_DYLD);
 
 		private string filename;
+		private string nameSpace;
 		private byte[] filedata;
 		private unsafe byte* ptr;
 		private unsafe byte* headptr;
 		private mach_header header;
 		private ArrayList commands;
+		private ArrayList modules;
 
 		static public IDictionary Types = new Hashtable();
 		static private int DEBUG_LEVEL = 0;
@@ -299,10 +301,30 @@ namespace CocoaSharp {
 			if (moduleSection == null)
 				throw new Exception ("ERROR: __module_info not found in __OBJC segment");
 
-			ArrayList modules = Module.ParseModules (moduleSection, this);
+			modules = Module.ParseModules (moduleSection, this);
 			
 			GetFunctionNames();
 		}
+
+        public string Namespace {
+            set {
+                this.nameSpace = value;
+            }
+            get {
+                return this.nameSpace;
+            }
+        }
+//sec
+// ok compile test?
+		public IList Classes {
+            get {
+                IList ret = new ArrayList();
+                foreach (Module m in modules)
+                    foreach (MachOClass moc in m.SymTab.Classes)
+                        ret.Add(moc.ToClass(nameSpace));
+                return ret;
+            }
+        }
 
 		bool SelectSymbol(nlist sym) {
 			if ((sym.n_type & nlist.N_STAB) != 0)
@@ -546,6 +568,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOFile.cs,v $
+// Revision 1.4  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

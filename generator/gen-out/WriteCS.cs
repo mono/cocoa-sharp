@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: WriteCS.cs,v 1.1 2004/09/18 17:30:17 urs Exp $
+// $Id: WriteCS.cs,v 1.2 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -31,6 +31,7 @@ namespace CocoaSharp {
 
 			int count = 0, total = outList.Count;
 			foreach(OutputElement e in outList) {
+				Console.WriteLine ("WRITING FILE!" + e.Name);
 				e.WriteFile(mConfig);
 				WriteProgress(ref count,total);
 			}
@@ -72,6 +73,9 @@ namespace CocoaSharp {
 
 //
 // $Log: WriteCS.cs,v $
+// Revision 1.2  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.1  2004/09/18 17:30:17  urs
 // Move CS output gen into gen-out
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
+// $Id: MachOClass.cs,v 1.5 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -64,7 +64,8 @@ namespace CocoaSharp {
 			AddProtocolsFromArray(ProcessProtocolList(occlass.protocols,file));
 		}
 
-		internal Class ToClass(string nameSpace) {
+		public Class ToClass(string nameSpace) {
+		  Console.WriteLine ("{0} - {1}", name, superClass);
 			return new Class(name, nameSpace, Class.GetClass(superClass), 
 				MachOProtocol.ToProtocols(protocols.Values),
 				MachOIvar.ToVariables(nameSpace, ivars),
@@ -178,6 +179,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOClass.cs,v $
+// Revision 1.5  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.4  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

@@ -23,7 +23,6 @@ sources = \
 	header-gen/HeaderMethod.cs \
 	header-gen/HeaderProtocol.cs \
 	header-gen/HeaderStruct.cs \
-	header-gen/Main.cs \
 	macho-gen/DylibCommand.cs \
 	macho-gen/ICommand.cs \
 	macho-gen/LoadCommand.cs \
@@ -55,7 +54,9 @@ sources = \
 	gen-out/Protocol.cs \
 	gen-out/Struct.cs \
 	gen-out/Type.cs \
-	gen-out/TypeUsage.cs 
+	gen-out/TypeUsage.cs \
+	gen-out/WriteCS.cs \
+	Generator.cs 
 
 build_sources = $(addprefix $(srcdir)/, $(sources)) 
 

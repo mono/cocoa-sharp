@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Method.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Method.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -217,6 +217,8 @@ namespace CocoaSharp {
 			string prefix = sel.Substring(0,1);
 			sel = sel.Substring(4,sel.Length-5);
 
+            if (methods == null)
+                return null;
 			Method get = (Method)methods[prefix + sel.Substring(0,1).ToLower() + sel.Substring(1)];
 			
 			if (get == null)
@@ -621,6 +623,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Method.cs,v $
+// Revision 1.4  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

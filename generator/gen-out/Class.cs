@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Class.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Class.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -17,6 +17,8 @@ using System.Xml.Serialization;
 namespace CocoaSharp {
 	public class Class : Type {
 		static public Class GetClass(string name) {
+		    if (name == null)
+		        return null;
 			Class ret = (Class)Classes[name];
 			if (ret != null)
 				return ret;
@@ -30,10 +32,10 @@ namespace CocoaSharp {
 			: base(name, nameSpace,null,OCType.id) {
 			Classes[nameSpace + "." + name] = this;
 			this.parent = parent;
-			this.protocols = protocols;
-			this.variables = variables;
-			this.instanceMethods = instanceMethods;
-			this.classMethods = classMethods;
+			this.protocols = protocols != null ? protocols : new ArrayList();
+			this.variables = variables != null ? variables : new ArrayList();
+			this.instanceMethods = instanceMethods != null ? instanceMethods : new ArrayList();
+			this.classMethods = classMethods != null ? classMethods : new ArrayList();
 		}
 
 		// -- Public Properties --
@@ -44,8 +46,8 @@ namespace CocoaSharp {
 		public ICollection ClassMethods { get { return classMethods; } }
 		public ICollection AllMethods {
 			get {
-				ArrayList ret = new ArrayList(InstanceMethods);
-				ret.AddRange(ClassMethods);
+			  	ArrayList ret = new ArrayList(InstanceMethods);
+                ret.AddRange(ClassMethods);
 				return ret;
 			}
 		}
@@ -87,6 +89,7 @@ namespace CocoaSharp {
 			Framework frmwrk = config != null ? config.GetFramework(Namespace) : null;
 			if (frmwrk != null && frmwrk.Dependencies != null)
 				foreach (string dependency in frmwrk.Dependencies)
+				    // TODO: remove hard coding of Apple.
 					_cs.WriteLine("using Apple.{0};",dependency);
 			_cs.WriteLine();
 			_cs.WriteLine("namespace {0} {{", Namespace);
@@ -189,6 +192,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Class.cs,v $
+// Revision 1.4  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

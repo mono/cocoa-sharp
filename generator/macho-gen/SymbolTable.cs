@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: SymbolTable.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: SymbolTable.cs,v 1.3 2004/09/20 16:42:52 gnorton Exp $
 //
 
 using System;
@@ -44,6 +44,12 @@ namespace CocoaSharp {
 				}
 			}
 		}
+
+		public ICollection Classes {
+		      get {
+		          return classes;
+		      }
+        }
 	}
 
 	internal struct objc_symtab {
@@ -56,6 +62,9 @@ namespace CocoaSharp {
 
 //
 // $Log: SymbolTable.cs,v $
+// Revision 1.3  2004/09/20 16:42:52  gnorton
+// More generator refactoring.  Start using the MachOGen for our classes.
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //
