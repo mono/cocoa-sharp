@@ -1,9 +1,9 @@
 
 #Simple test for OS X
-if [ -d /Library/Frameworks/Mono.framework/Versions/0.95/share/aclocal ]; then
-    aclocal -I /Library/Frameworks/Mono.framework/Versions/0.95/share/aclocal
+if [ -d /Library/Frameworks/Mono.framework/Versions/Current/share/aclocal ]; then
+    aclocal -I /Library/Frameworks/Mono.framework/Versions/Current/share/aclocal
 else
-    echo "Not OS X"
+    echo "WARNING: Please use the official Mono OS X Packages"
     aclocal
 fi
 
