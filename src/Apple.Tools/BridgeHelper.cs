@@ -25,9 +25,16 @@ namespace Apple.Tools {
 		}
 
 		public static string GenerateMethodSignature(Type t, String m) {
+			
 			// We need to chop back to the real .Net Method Name
 			if(m.IndexOf(":") >= 0)
 				m = m.Substring(0, m.IndexOf(":"));
+
+			int totalSize = 8;
+			int curSize = 8;
+			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, m)))
+				totalSize += 4;
+
 			string types = "";
 
 			if(GetMethodByTypeAndName(t, m).ReturnType == typeof(void))
@@ -35,10 +42,14 @@ namespace Apple.Tools {
 			else
 				types = "@";
 			
-			types += "@:";
+			types += totalSize;
+			types += "@0:4";
 
 			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, m)))
-				types += "@";
+			{
+				types += "@" + curSize;
+				curSize += 4;
+			}
 				
 			return types;
 		}
