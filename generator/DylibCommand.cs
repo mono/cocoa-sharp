@@ -1,3 +1,7 @@
+//
+// $Id: DylibCommand.cs,v 1.2 2004/09/03 17:30:24 urs Exp $
+//
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
