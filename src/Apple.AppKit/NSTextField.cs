@@ -7,13 +7,13 @@ namespace Apple.AppKit
 {
 	public class NSTextField : NSControl {
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSTextField_alloc();
+		static extern IntPtr NSTextField__alloc();
 		[DllImport("AppKitGlue")]
 		static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
 		static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
 
-		public NSTextField() : this(NSTextField_alloc()) {}
+		public NSTextField() : this(NSTextField__alloc()) {}
 		protected NSTextField(IntPtr raw) : base(raw) {}
 
 		public static NSTextField alloc() {

@@ -7,7 +7,7 @@ namespace Apple.AppKit
 	public class NSWindow : NSResponder {
 
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSWindow_alloc();
+		static extern IntPtr NSWindow__alloc();
 
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSWindow_initWithContentRect_styleMask_backing_defer(IntPtr THIS, NSRect contentRec, uint aStyle, int bufferingType, bool flag);
@@ -24,7 +24,7 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSWindow_contentView(IntPtr THIS);
 
-		public NSWindow() : this(NSWindow_alloc()) {}
+		public NSWindow() : this(NSWindow__alloc()) {}
 		protected internal NSWindow(IntPtr raw) : base (raw) {}
 
 		public static NSWindow alloc()

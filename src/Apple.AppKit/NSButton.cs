@@ -7,11 +7,11 @@ namespace Apple.AppKit
 {
 	public class NSButton : NSControl {
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSButton_alloc();
+		static extern IntPtr NSButton__alloc();
 		[DllImport("AppKitGlue")]
 		static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
 		
-		public NSButton() : this(NSButton_alloc()) {}
+		public NSButton() : this(NSButton__alloc()) {}
 		protected internal NSButton(IntPtr raw) : base(raw) {}
 
 		public static NSButton alloc() {

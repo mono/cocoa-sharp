@@ -7,14 +7,16 @@ namespace Apple.Foundation
 	public class NSString : NSObject, NSCopying, NSMutableCopying, NSCoding {
 
 		[DllImport("FoundationGlue")]
-		static extern IntPtr NSString_alloc();
+		static extern IntPtr NSString__alloc();
 		[DllImport("FoundationGlue")]
-		static extern IntPtr NSString_initWithCString(IntPtr THIS, string str);
-
+		static extern IntPtr NSString__stringWithCString(string str);
 		[DllImport("FoundationGlue")]
-		static extern IntPtr SEL_fromString(IntPtr str);
+		static extern IntPtr NSString_initWithUTF8String(IntPtr THIS, string str);
 
-		public NSString(string str) : this(NSString_initWithCString(NSString_alloc(), str)) {}
+		[DllImport("Foundation")]
+		static extern IntPtr NSSelectorFromString(IntPtr str);
+
+		public NSString(string str) : this(NSString__stringWithCString(str)) {}
 		protected internal NSString(IntPtr raw) : base(raw) {}
 
 		public static NSString initWithCString(string val) {
@@ -23,7 +25,7 @@ namespace Apple.Foundation
 
 		public static IntPtr NSSelector(string val)
 		{
-			return SEL_fromString(new NSString(val).Raw);
+			return NSSelectorFromString(new NSString(val).Raw);
 		}
 	}
 }
