@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.31 2004/06/25 02:49:14 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.32 2004/06/25 17:39:10 urs Exp $
 //
 
 using System;
@@ -141,6 +141,9 @@ namespace ObjCManagedExporter
 
 		private void OutputFramework(Framework _toprocess) 
 		{
+			Console.Write("Output framework ({0}): ", _toprocess.Name);
+			Console.Write("00%");
+
 			if (OutputCS)
 			{
 
@@ -157,6 +160,7 @@ namespace ObjCManagedExporter
 						p.WriteFile(mConfig);
 			}
 
+			int count = 0;
 			foreach (Interface i in Interfaces.Values) 
 			{
 				if(i.Framework != _toprocess.Name)
@@ -183,6 +187,8 @@ namespace ObjCManagedExporter
 					if (OutputCS)
 						i.WriteFile(mConfig);
 				}
+
+				Console.Write("\b\b\b{0:00}%", count++/(float)Interfaces.Count*100);
 			}
 			if (OutputCS)
 				if(Directory.Exists(Path.Combine(mConfig.CorePath, _toprocess.Name))) {
@@ -196,6 +202,7 @@ namespace ObjCManagedExporter
 						}
 					}
 				}
+			Console.WriteLine("\b\b\b100%");
 		}
 
 		private void ProcessFramework(Framework _toprocess) 
@@ -317,6 +324,8 @@ namespace ObjCManagedExporter
 
 			foreach(Framework f in mConfig.Frameworks)
 				OutputFramework(f);
+
+			Console.WriteLine("Code generation successful");
 		}   
             
 		static void Main(string[] args) 
@@ -387,9 +396,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.32  2004/06/25 17:39:10  urs
+//	Handle char* as argument and return value
+//
 //	Revision 1.31  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
-//
+//	
 //	Revision 1.30  2004/06/24 14:15:42  gnorton
 //	Some appkit fixes
 //	

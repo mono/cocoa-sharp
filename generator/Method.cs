@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.34 2004/06/25 02:49:14 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.35 2004/06/25 17:39:10 urs Exp $
 //
 
 using System;
@@ -35,6 +35,7 @@ namespace ObjCManagedExporter
 		[XmlAttribute("native")] public string Native;
 		[XmlAttribute("api")] public string Api;
 		[XmlAttribute("glue")] public string Glue;
+		[XmlAttribute("gluearg")] public string GlueArg;
 	}
 
 	public class ReplaceData
@@ -54,11 +55,16 @@ namespace ObjCManagedExporter
 		private string[] mMessageParts;
 		private string[] mArgumentNames;
 		private string[] mArgumentDeclarationTypes;
+		private string[] mArgumentGlueTypes;
+		private string[] mArgumentAPITypes;
 		private string[] mCSAPIParameters;
 		private string[] mCSGlueArguments;
 		private bool mIsClassMethod, mIsUnsupported, mCSAPIDone;
 		private string mReturnDeclarationType;
-		private static TypeConversions mConversions;
+		private string mReturnGlueType;
+		private string mReturnAPIType;
+
+		private static TypeConversions sConversions;
 		private static IDictionary Conversions;
 
 		private static Regex[] sUnsupported = new Regex[] 
@@ -70,16 +76,18 @@ namespace ObjCManagedExporter
 		#endregion
 
 		#region -- Constructor --
-		public Method(string methodDeclaration) 
-		{
+		static Method() {
 			XmlSerializer _ser = new XmlSerializer(typeof(TypeConversions));
 			XmlTextReader _xtr = new XmlTextReader("generator/typeconversion.xml");
-			mConversions = (TypeConversions)_ser.Deserialize(_xtr);
+			sConversions = (TypeConversions)_ser.Deserialize(_xtr);
 			_xtr.Close();
 			Conversions = new Hashtable();
-			foreach (NativeData nd in mConversions.Conversions)
+			foreach (NativeData nd in sConversions.Conversions)
 				Conversions.Add(nd.Native, nd);
+		} 
 
+		public Method(string methodDeclaration) 
+		{
 			mMethodDeclaration = methodDeclaration.Trim();
 
 			// Check for unsupported methods and return commented function
@@ -108,9 +116,11 @@ namespace ObjCManagedExporter
 			Match match = sMatch1.Match(methodDecl);
 
 			string methodType = match.Groups[1].Value;
-			mReturnDeclarationType = match.Groups[2].Value.Trim();
+			mReturnDeclarationType = StripComments(match.Groups[2].Value.Trim());
 			if (mReturnDeclarationType.Length == 0)
 				mReturnDeclarationType = "id";
+			mReturnGlueType = ConvertTypeGlue(mReturnDeclarationType,false);
+			mReturnAPIType = ConvertType(mReturnDeclarationType,false);
 			string remainder = match.Groups[3].Value;
 
 			mIsClassMethod = methodType == "+";
@@ -133,6 +143,8 @@ namespace ObjCManagedExporter
 				messageParts.Add(match.Groups[1].Value);
 				mArgumentNames = new string[0];
 				mArgumentDeclarationTypes = new string[0];
+				mArgumentGlueTypes = new string[0];
+				mArgumentAPITypes = new string[0];
 			} 
 			else if(arg_rx.IsMatch(remainder)) 
 			{
@@ -154,6 +166,8 @@ namespace ObjCManagedExporter
 							argName = argType;
 							argType = "id";
 						}
+						else
+							argType = StripComments(argType);
 
 						argTypes.Add(argType);
 						argNames.Add(argName);
@@ -161,6 +175,13 @@ namespace ObjCManagedExporter
 				}
 				mArgumentNames = (string[])argNames.ToArray(typeof(string));
 				mArgumentDeclarationTypes = (string[])argTypes.ToArray(typeof(string));
+				mArgumentGlueTypes = new string[mArgumentDeclarationTypes.Length];
+				mArgumentAPITypes = new string[mArgumentDeclarationTypes.Length];
+				for (int i = 0; i < mArgumentDeclarationTypes.Length; ++i)
+				{
+					mArgumentGlueTypes[i] = ConvertTypeGlue(mArgumentDeclarationTypes[i],true);
+					mArgumentAPITypes[i] = ConvertType(mArgumentDeclarationTypes[i],true);
+				}
 			} 
 			else 
 			{
@@ -209,7 +230,7 @@ namespace ObjCManagedExporter
 	
 				ArrayList argTypes = new ArrayList();
 				for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-					argTypes.Add(StripComments(ConvertType(mArgumentDeclarationTypes[i])));
+					argTypes.Add(mArgumentAPITypes[i]);
 	
 				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
 			}
@@ -246,9 +267,11 @@ namespace ObjCManagedExporter
 			
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = ConvertType(mArgumentDeclarationTypes[i]);
+				string t = mArgumentAPITypes[i];
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
-				_glueArgs.Add(ArgumentExpression(mArgumentDeclarationTypes[i],"p" + i + "/*" + mArgumentNames[i] + "*/"));
+				_glueArgs.Add(ArgumentExpression(mArgumentDeclarationTypes[i],
+					mArgumentGlueTypes[i],mArgumentAPITypes[i],
+					"p" + i + "/*" + mArgumentNames[i] + "*/"));
 			}
 
 			mCSAPIParameters = (string[])_params.ToArray(typeof(string));
@@ -332,7 +355,7 @@ namespace ObjCManagedExporter
 					}
 
 
-			string _type = ConvertTypeGlue(mReturnDeclarationType);
+			string _type = mReturnGlueType;
 			ArrayList _params = new ArrayList();
 
 			if (mIsClassMethod)
@@ -342,7 +365,7 @@ namespace ObjCManagedExporter
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = ConvertTypeGlue(mArgumentDeclarationTypes[i]);
+				string t = mArgumentGlueTypes[i];
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
 			}
 
@@ -359,7 +382,7 @@ namespace ObjCManagedExporter
 		#region -- C# Public API --
 		public bool IsGetMethod(string type)
 		{
-			if (type != ConvertType(mReturnDeclarationType))
+			if (type != mReturnAPIType)
 				return false;
 			if (mArgumentDeclarationTypes.Length > 0)
 				return false;
@@ -372,7 +395,7 @@ namespace ObjCManagedExporter
 			if (mIsUnsupported)
 				return;
 
-			string _type = ConvertType(mReturnDeclarationType);
+			string _type = mReturnAPIType;
 			BuildArgs(name);
 			string paramsStr = string.Join(", ", mCSAPIParameters);
 			string glueArgsStr = string.Join(", ", mCSGlueArguments);
@@ -380,7 +403,7 @@ namespace ObjCManagedExporter
 			
 			if (!mCSAPIDone && isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
 			{
-				string t = ConvertType(mArgumentDeclarationTypes[0]);
+				string t = mArgumentAPITypes[0];
 				string propName = mCSMethodName.Substring(3);
 
 				Method get = (Method)methods[propName.Substring(0,1).ToLower() + propName.Substring(1) + "0"];
@@ -392,9 +415,13 @@ namespace ObjCManagedExporter
 				
 				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
 				if (get != null && get.IsGetMethod(t))
-					w.WriteLine("            get {{ {0}; }}", ReturnExpression(mArgumentDeclarationTypes[0],string.Format("{0}_{1}({2})",name, get.GlueMethodName, mCSGlueArguments[0])));
+					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
+						mArgumentDeclarationTypes[0],mArgumentGlueTypes[0],mArgumentAPITypes[0],
+						string.Format("{0}_{1}({2})",name, get.GlueMethodName, mCSGlueArguments[0])));
 
-				w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", name, mGlueMethodName, mCSGlueArguments[0],ArgumentExpression(mArgumentDeclarationTypes[0],"value"));
+				w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", name, mGlueMethodName, mCSGlueArguments[0],
+					ArgumentExpression(mArgumentDeclarationTypes[0],mArgumentGlueTypes[0],mArgumentAPITypes[0],
+						"value"));
 				w.WriteLine("        }");
 				mCSAPIDone = true;
 				
@@ -414,32 +441,31 @@ namespace ObjCManagedExporter
 					}
 
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
-			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
+			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,mReturnGlueType,mReturnAPIType,
+				string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
 			w.WriteLine("        }");
 		}
 		
-		private static string ReturnExpression(string declType, string expression)
+		private static string ReturnExpression(string declType,string glueType,string apiType,string expression)
 		{
-			string t = ConvertType(declType);
-			if(StripComments(declType) == "SEL")
+			if(declType == "SEL")
 				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
-			else if(t != ConvertTypeGlue(declType))
-				return string.Format("return ({0})NSObject.NS2Net({1})", t, expression);
-			else if (t == "void")
+			if (apiType == "string" && declType.Replace("const ",string.Empty).Replace(" ",string.Empty) == "char*")
+				return string.Format("return Marshal.PtrToStringAnsi({0})", expression);
+			if(glueType != apiType)
+				return string.Format("return ({0})NSObject.NS2Net({1})", apiType, expression);
+			if (apiType == "void")
 				return expression;
-			else
-				return "return " + expression;
+			return "return " + expression;
 		}
 
-		private static string ArgumentExpression(string declType, string expression)
+		private static string ArgumentExpression(string declType,string glueType,string apiType,string expression)
 		{
-			string t = ConvertType(declType);
-			if(StripComments(declType) == "SEL")
+			if(declType == "SEL")
 				return string.Format("NSString.NSSelector({0})", expression);
-			else if(t != ConvertTypeGlue(declType))
+			if(glueType != apiType)
 				return string.Format("NSObject.Net2NS({0})", expression);
-			else
-				return expression;
+			return expression;
 		}
 
 		public void CSConstructor(string name,TextWriter w)
@@ -466,12 +492,12 @@ namespace ObjCManagedExporter
 			if (mIsClassMethod)
 				return;
 
-			string _type = ConvertType(mReturnDeclarationType);
+			string _type = mReturnAPIType;
 			ArrayList _params = new ArrayList();
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = ConvertType(mArgumentDeclarationTypes[i]);
+				string t = mArgumentAPITypes[i];
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
 			}
 
@@ -518,38 +544,41 @@ namespace ObjCManagedExporter
 			return str.Trim();
 		}
 
-		private static string ConvertTypeGlue(string type) 
+		private static string ConvertTypeGlue(string type,bool arg) 
 		{
-			type = StripComments(type.Replace("const ",string.Empty));
-			if(Conversions[type] != null && ((NativeData)Conversions[type]).Glue != null)
-				return ((NativeData)Conversions[type]).Glue;
+			type = type.Replace("const ",string.Empty);
+			{
+				NativeData nd = (NativeData)Conversions[type];
+				if(nd != null && nd.Glue != null)
+					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
+			}
 
-			foreach (NativeData nd in mConversions.Regexs)
+			foreach (NativeData nd in sConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
-					return nd.Glue;
+					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
 
-			foreach (ReplaceData rd in mConversions.Replaces)
+			foreach (ReplaceData rd in sConversions.Replaces)
 				if(rd.Type == "glue")
 					if(new Regex(rd.Regex).IsMatch(type))
-						return type.Replace(rd.ToReplace, rd.ReplaceWith);
+						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
 			
 			return type;
 		}
 
-		private static string ConvertType(string type) 
+		private static string ConvertType(string type,bool arg) 
 		{
-			type = StripComments(type.Replace("const ",string.Empty));
+			type = type.Replace("const ",string.Empty);
 			if(Conversions[type] != null && ((NativeData)Conversions[type]).Api != null)
 				return ((NativeData)Conversions[type]).Api;
 
-			foreach (NativeData nd in mConversions.Regexs)
+			foreach (NativeData nd in sConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null)
 					return nd.Api;
 
-			foreach (ReplaceData rd in mConversions.Replaces)
+			foreach (ReplaceData rd in sConversions.Replaces)
 				if(rd.Type == "api")
 					if(new Regex(rd.Regex).IsMatch(type))
-						return type.Replace(rd.ToReplace, rd.ReplaceWith);
+						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
 			
 			return type;
 		}
@@ -558,9 +587,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.35  2004/06/25 17:39:10  urs
+//	Handle char* as argument and return value
+//
 //	Revision 1.34  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
-//
+//	
 //	Revision 1.33  2004/06/24 20:09:24  urs
 //	fix constructor gen
 //	

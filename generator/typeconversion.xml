@@ -56,7 +56,7 @@
 	<type native="CFRunLoopRef" api="IntPtr" glue="IntPtr" />
 	<type native="id*" glue="IntPtr" api="IntPtr" />
 	<type native="SEL*" glue="IntPtr" api="IntPtr" />
-	<regex native="char\s*\*" glue="string" api="string" />
+	<regex native="char\s*\*" glue="IntPtr" gluearg="string" api="string" />
 	<regex native="NSString\s*\*" glue="IntPtr" api="string" />
 	<regex native="^[^NS]{2}.+\s*\*" glue="IntPtr" api="IntPtr" />
 	<regex native="NS.+\s*\*" glue="IntPtr"/>
