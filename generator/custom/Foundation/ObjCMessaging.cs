@@ -61,8 +61,8 @@ namespace Apple.Tools {
 			object[] realArgs = new object[(args.Length/2)+2];
 			realArgs[0] = receiver;
 			realArgs[1] = sel_registerName(selector);
-			for (int i = 0; i < args.Length; i+=2) 
-		                realArgs[i+2] = args[i+1];
+			for (int i = 0, j = 2; i < args.Length; i+=2, j++) 
+		                realArgs[j] = args[i+1];
 			object o = Activator.CreateInstance(t);
 			return t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
 
