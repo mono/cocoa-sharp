@@ -378,7 +378,13 @@ monodoc:
 	cp /usr/local/mono/lib/monodoc/monodoc.xml monodoc.app/Contents/Resources
 
 run:
+	GC_DONT_GC=1 ./monodoc.app/Contents/MacOS/monodoc
+
+run-gc:
 	./monodoc.app/Contents/MacOS/monodoc
+
+debug:
+	gdb --args ./monodoc.app/Contents/MacOS/monodoc
 
 clean:
 	rm -rf monodoc.app
