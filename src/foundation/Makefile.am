@@ -112,3 +112,4 @@ libFoundationGlue_la_SOURCES =				\
 
 libFoundationGlue_la_LDFLAGS = -x objective-c -framework Cocoa 
 libFoundationGlue_la_LIBADD = 
+libFoundationGlue_ls_LIBS = -framework Cocoa

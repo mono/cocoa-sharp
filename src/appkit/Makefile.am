@@ -39,6 +39,7 @@ libAppKitGlue_la_SOURCES =				\
 	NSDocumentScripting_stub.m 		\
 	NSDocument_stub.m 			\
 	NSDragging_stub.m 			\
+	NSDrawer_stub.m 			\
 	NSEPSImageRep_stub.m 		\
 	NSErrors_stub.m 			\
 	NSEvent_stub.m 			\
@@ -48,6 +49,7 @@ libAppKitGlue_la_SOURCES =				\
 	NSFontPanel_stub.m 			\
 	NSFont_stub.m 			\
 	NSForm_stub.m 			\
+	NSFormCell_stub.m 			\
 	NSGlyphGenerator_stub.m 		\
 	NSGlyphInfo_stub.m 			\
 	NSGraphicsContext_stub.m 		\
@@ -82,6 +84,7 @@ libAppKitGlue_la_SOURCES =				\
 	NSOutlineView_stub.m 		\
 	NSPDFImageRep_stub.m 		\
 	NSPICTImageRep_stub.m 		\
+	NSPageLayout_stub.m 			\
 	NSPanel_stub.m 			\
 	NSParagraphStyle_stub.m 		\
 	NSPasteboard_stub.m 			\
@@ -107,6 +110,7 @@ libAppKitGlue_la_SOURCES =				\
 	NSSegmentedControl_stub.m 		\
 	NSShadow_stub.m 			\
 	NSSlider_stub.m 			\
+	NSSliderCell_stub.m 			\
 	NSSound_stub.m 			\
 	NSSpeechRecognizer_stub.m 		\
 	NSSpeechSynthesizer_stub.m 		\
@@ -135,12 +139,14 @@ libAppKitGlue_la_SOURCES =				\
 	NSText_stub.m 			\
 	NSToolbarItem_stub.m 		\
 	NSToolbar_stub.m 			\
+	NSTypesetter_stub.m 			\
 	NSUserDefaultsController_stub.m 	\
 	NSUserInterfaceValidation_stub.m 	\
 	NSView_stub.m 			\
 	NSWindowController_stub.m 		\
 	NSWindowScripting_stub.m 		\
-	NSWindow_stub.m 			
+	NSWindow_stub.m 			\	
+	NSWorkspace_stub.m 			
 
-libAppKitGlue_la_LDFLAGS = -x objective-c -framework Cocoa 
+libAppKitGlue_la_LDFLAGS = -module -x objective-c -framework Cocoa 
 libAppKitGlue_la_LIBADD = 
