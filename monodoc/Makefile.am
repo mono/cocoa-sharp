@@ -5,17 +5,8 @@ all: monodoc
 
 monodoc:
 	rm -Rf monodoc.app
-	mkdir -p monodoc.app/Contents/Resources
-	mcs -debug -out:monodoc.app/Contents/Resources/Monodoc.exe browser.cs Contributions.cs XmlNodeWriter.cs catalog.cs -resource:./monodoc.png,monodoc.png -r:System.Web.Services.dll -pkg:cocoa-sharp -r:tmp/monodoc.dll
-	mkdir -p monodoc.app/Contents/MacOS
-	cp ../sample/SimpleWindow/*.icns monodoc.app/Contents/Resources
-	cp monodoc.plist monodoc.app/Contents/Info.plist
-	cp -R monodoc.nib monodoc.app/Contents/Resources
-	cp $(prefix)/lib/lib*Glue*.dylib monodoc.app/Contents/Resources
-	cp $(prefix)/bin/CocoaSharpLoader monodoc.app/Contents/MacOS/monodoc
-	cp tmp/monodoc.dll monodoc.app/Contents/Resources
-	cp -r tmp/sources monodoc.app/Contents/Resources/sources
-	cp tmp/monodoc.xml monodoc.app/Contents/Resources
+	mcs -debug -out:browser.exe browser.cs Contributions.cs XmlNodeWriter.cs catalog.cs -resource:./monodoc.png,monodoc.png -r:System.Web.Services.dll -pkg:cocoa-sharp -r:tmp/monodoc.dll
+	macpack -n:monodoc -a:./browser.exe -m:2 -o:. -r:monodoc.nib -r:/Library/Frameworks/Mono.framework/Versions/Current/lib/libCocoaSharpGlue.dylib -r:tmp/monodoc.dll -r:tmp/sources -r:tmp/monodoc.xml
 
 run:
 	./monodoc.app/Contents/MacOS/monodoc
