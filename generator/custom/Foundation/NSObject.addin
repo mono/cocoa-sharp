@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.19 2004/07/01 22:01:50 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.20 2004/07/02 12:45:10 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -52,10 +52,14 @@
 		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
+Console.WriteLine("DEBUG: NSRegisterClass {0}", type.Name);
 			if (sConstructorDelegate == null) {
+Console.WriteLine("DEBUG: Making delegates");
 				sConstructorDelegate = new ConstructorDelegate(ConstructObject);
 				sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
+Console.WriteLine("DEBUG: Setting delegates");
 				SetConstructorDelegate(sConstructorDelegate,sGetManagedDelegate);
+Console.WriteLine("DEBUG: Done, Setting delegates");
 			}
 
 			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
@@ -160,7 +164,13 @@ Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, 
 
 		#region -- Constructor Delegate --
 		delegate void ConstructorDelegate (IntPtr /*(id)*/ raw, string aClass);
+#if JIT_HACK_FIXED
 		delegate BridgeDelegate GetManagedDelegate (IntPtr /*(id)*/ raw);
+#else
+		delegate void GetManagedDelegate (IntPtr /*(id)*/ raw);
+		[DllImport("Glue")]
+		protected static extern void SetJIT_HACK_Delegate(BridgeDelegate managedDelegate);
+#endif
 		static ConstructorDelegate sConstructorDelegate;
 		static GetManagedDelegate sGetManagedDelegate;
 		static IDictionary NativeObjects = new Hashtable();
@@ -185,15 +195,27 @@ Console.WriteLine("DEBUG: ObjC asked us to make {0} for 0x{1,8:x}", className, (
 			NativeObjects[raw] = managedObject;
 		}
 
-		static BridgeDelegate GetDelegateForObject(IntPtr /*(id)*/ raw) {
-Console.WriteLine("DEBUG: ObjC us for the delegate 0x{1,8:x}", (int)raw);
-            NSObject managedObject = (NSObject)NativeObjects[raw];
-            if (managedObject == null)
-            {
-Console.WriteLine("ERROR: native object was not registered 0x{1,8:x}", (int)raw);
-                return null;
-            }
-            return managedObject._delegate;
+		static
+#if JIT_HACK_FIXED
+		BridgeDelegate
+#else
+		void
+#endif
+		GetDelegateForObject(IntPtr /*(id)*/ raw) {
+Console.WriteLine("DEBUG: ObjC us for the delegate 0x{0,8:x}", (int)raw);
+			NSObject managedObject = (NSObject)NativeObjects[raw];
+			if (managedObject != null)
+#if JIT_HACK_FIXED
+ 				return managedObject._delegate;
+#else
+				SetJIT_HACK_Delegate(managedObject._delegate);
+#endif
+Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw);
+#if JIT_HACK_FIXED
+			return null;
+#else
+			SetJIT_HACK_Delegate(null);
+#endif
 		}
 
 		#endregion
@@ -201,6 +223,9 @@ Console.WriteLine("ERROR: native object was not registered 0x{1,8:x}", (int)raw)
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.20  2004/07/02 12:45:10  urs
+// cleanup
+//
 // Revision 1.19  2004/07/01 22:01:50  urs
 // Remove static ctor, since it produces a JIT error
 //

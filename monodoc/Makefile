@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/cocoa-sharp
 pkgincludedir = $(includedir)/cocoa-sharp
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run autoconf
-AUTOMAKE = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run autoheader
+ACLOCAL = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run autoconf
+AUTOMAKE = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -69,7 +69,7 @@ target_triplet = powerpc-apple-darwin7.4.0
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run tar
+AMTAR = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run tar
 AR = ar
 AS = @AS@
 AWK = awk
@@ -109,7 +109,7 @@ STRIP = strip
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /Users/plasma/Documents/Development/mono/cocoa-sharp/install-sh
+install_sh = /Users/umuff/mono-cvs/cocoa-sharp/install-sh
 SUBDIRS = 
 subdir = monodoc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -363,15 +363,14 @@ uninstall-info: uninstall-info-recursive
 all: monodoc
 
 monodoc:
-	mcs -debug -out:browser.exe browser.cs Contributions.cs XmlNodeWriter.cs catalog.cs -resource:./monodoc.png,monodoc.png -r:System.Web.Services.dll -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:./monodoc.dll
 	rm -Rf monodoc.app
-	mkdir -p monodoc.app/Contents/MacOS
 	mkdir -p monodoc.app/Contents/Resources
+	mcs -debug -out:monodoc.app/Contents/Resources/Test.exe browser.cs Contributions.cs XmlNodeWriter.cs catalog.cs -resource:./monodoc.png,monodoc.png -r:System.Web.Services.dll -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:./monodoc.dll
+	mkdir -p monodoc.app/Contents/MacOS
 	cp ../sample/SimpleWindow/*.icns monodoc.app/Contents/Resources
 	cp monodoc.plist monodoc.app/Contents/Info.plist
-	cp browser.exe monodoc.app/Contents/Resources/Test.exe
-	cp ../test/*.dll* monodoc.app/Contents/Resources
-	cp ../test/*Glue* monodoc.app/Contents/Resources
+	cp ../build/*.dll* monodoc.app/Contents/Resources
+	cp ../build/*Glue* monodoc.app/Contents/Resources
 	cp ../test/Loader monodoc.app/Contents/MacOS/monodoc
 	cp monodoc.dll monodoc.app/Contents/Resources
 	cp -r /usr/local/mono/lib/monodoc/sources monodoc.app/Contents/Resources/sources
