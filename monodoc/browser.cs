@@ -143,20 +143,21 @@ class Browser : NSObject {
 		NSTabViewItem tabViewItem = new NSTabViewItem("Contents");
 		tabViewItem.label = "Contents";
 		tabView.addTabViewItem(tabViewItem);
-		NSScrollView sv = new NSScrollView(tabView.contentRect);
-		sv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-		tabViewItem.view = sv;
+//		NSScrollView sv = new NSScrollView(tabView.contentRect);
+//		sv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+//		tabViewItem.view = sv;
 
-		NSOutlineView ov = new NSOutlineView(new NSRect(new NSPoint(0,0),sv.contentSize));
+		NSOutlineView ov = new NSOutlineView(tabView.contentRect);
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-		sv.documentView = ov;
-		NSTableColumn c = new NSTableColumn("0");
+//		sv.documentView = ov;
+		NSTableColumn c = new NSTableColumn("Caption");
 		c.width = 100;
 		c.editable = false;
 		c.resizable = true;
-		((NSCell)c.headerCell).stringValue = "Header";
-
+		((NSCell)c.headerCell).stringValue = "Caption";
 		ov.addTableColumn(c);
+
+		tabViewItem.view = ov;		
 		ov.dataSource = browserController;
  		
 		tabViewItem = new NSTabViewItem("Index");
@@ -246,53 +247,56 @@ class Browser : NSObject {
 }
 
 class BrowserItem : NSObject {
-	internal RootTree help_tree;
 	internal Node node;
-	internal int level;
+	internal IList items = null;
 
-	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release)
-	{
-		Console.WriteLine("BrowserItem.ctor(IntPtr,bool) is called: bad");
+	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release) {
+		Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw=" + _ptr);
 	}
-	public BrowserItem(RootTree _tree) {
-		help_tree = _tree;
-		level = 0;
-	}
-	public BrowserItem(Node _node,int _level) {
+	public BrowserItem(Node _node) {
 		node = _node;
-		level = _level;
+		Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw=" + Raw);
+	}
+	~ BrowserItem() {
+		Console.WriteLine("DEBUG: ~" + this + " Raw=" + Raw);
+		SetRaw(IntPtr.Zero,false);
 	}
 	
-	public int Count { get { return level >= 2 ? 0 : help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
-	public object ItemAt(int ndx)
+	public int Count { get { return node != null ? node.Nodes.Count : 0; } }
+	public BrowserItem ItemAt(int ndx)
 	{
-		if (help_tree != null)
-			return new BrowserItem((Node)help_tree.Nodes[ndx],level+1);
-		return node != null ? new BrowserItem((Node)node.Nodes[ndx],level+1) : null;
+		if (items == null && !node.IsLeaf)
+			foreach (Node n in node.Nodes)
+				if (n != null)
+					items.Add(new BrowserItem(n));
+		return (BrowserItem)items[ndx];
 	}
 	public object ValueAt(object identifier)
 	{
 Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
-		return "Value";
+		return node != null ? node.Caption : "null";
 	}
 	public override string ToString()
 	{
-		return "BrowserItem: " + level;
+		return "BrowserItem: " + (node != null ? node.Caption : "null");
 	}
 }
 
 class BrowserController : NSObject {
 	internal RootTree help_tree;
+	internal IList items = new ArrayList();
 
 	public BrowserController(RootTree _tree) {
 		help_tree = _tree;
+		foreach (Node node in help_tree.Nodes)
+			items.Add(new BrowserItem(node));
 	}
 	
 	[ObjCExport("outlineView:numberOfChildrenOfItem:")]
 	public int OutlineViewNumberOfChildrenOfItem(NSOutlineView outlineView, object item)
 	{
 		BrowserItem bi = item as BrowserItem;
-		int count = bi != null ? bi.Count : 1;//help_tree.Nodes.Count;
+		int count = bi != null ? bi.Count : help_tree.Nodes.Count;
 Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
 		return count;
 	}
@@ -309,21 +313,19 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item);
 		BrowserItem bi = item as BrowserItem;
 		if (bi != null)
-			return bi.ItemAt(index);
+			bi = bi.ItemAt(index);
 		else
-			return new BrowserItem(help_tree);
+			bi = (BrowserItem)items[index];
+		return bi;
 	}
 
 	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
 	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
 	{
 Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item + ", for column: " + tableColumn.identifier);
-		object identifier = tableColumn.identifier;
-		if (int.Parse(identifier.ToString()) > 0)
-			return null;
 		BrowserItem bi = item as BrowserItem;
 		
-		return bi == null ? null : bi.ValueAt(identifier);
+		return bi == null ? null : bi.ValueAt(tableColumn.identifier);
 	}
 	
 	[ObjCExport(Selector="browser:numberOfRowsInColumn:",Signature="i16@0:4@8i12")]

@@ -4,15 +4,44 @@
 			object retVal = null;
 			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
 			NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
-			if(t.IsPrimitive) {
-
-				retVal = Marshal.PtrToStructure(argPtr, t);
-			} else {
-				IntPtr ret = Marshal.ReadIntPtr(argPtr);
-				retVal = (object)NS2Net(ret);
-			}
+			retVal = t.IsPrimitive ? Marshal.PtrToStructure(argPtr, t) : NS2Net(Marshal.ReadIntPtr(argPtr));
 			Marshal.FreeHGlobal(argPtr);
 			return retVal;
 		}
+        </method>
+
+        <method sel="-setReturnValue:">
+        public object /*(void *)*/ returnValue {
+            set
+            {
+            	if (methodSignature.methodReturnLength == 0)
+            		return;
+				bool isNull = value == null;
+				Type valueType = isNull ? null : value.GetType();
+				bool isValueType = !isNull && valueType.IsPrimitive;
+				IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
+//Console.WriteLine("DEBUG: NSInvocation: (-setReturnValue:) [value=" + value + "] isValueType=" + isValueType + ", ptr=" + retVal);
+				if(isNull)
+					Marshal.WriteIntPtr(retVal,IntPtr.Zero);
+				else if (isValueType) {
+					Marshal.WriteIntPtr(retVal,IntPtr.Zero);
+					if (valueType == typeof(bool)) Marshal.WriteByte(retVal, (byte)((bool)value ? 1 : 0));
+					else if (valueType == typeof(byte)) Marshal.WriteByte(retVal, (byte)value);
+					else if (valueType == typeof(sbyte)) Marshal.WriteByte(retVal, (byte)(sbyte)value);
+					else if (valueType == typeof(char)) Marshal.WriteInt16(retVal, (Int16)(char)value);
+					else if (valueType == typeof(Int16)) Marshal.WriteInt16(retVal, (Int16)value);
+					else if (valueType == typeof(UInt16)) Marshal.WriteInt16(retVal, (Int16)(UInt16)value);
+					else if (valueType == typeof(Int32)) Marshal.WriteInt32(retVal, (Int32)value);
+					else if (valueType == typeof(UInt32)) Marshal.WriteInt32(retVal, (Int32)(UInt32)value);
+					else if (valueType == typeof(Int64)) Marshal.WriteInt64(retVal, (Int64)value);
+					else if (valueType == typeof(UInt64)) Marshal.WriteInt64(retVal, (Int64)(UInt64)value);
+					else
+						Console.WriteLine("ERROR: NSInvocation: (-setReturnValue:): did not handle valuetype with size: " + Marshal.SizeOf(value));
+				} else
+					Marshal.WriteIntPtr(retVal,Net2NS(value));
+            	NSInvocation_setReturnValue1(Raw,retVal);
+				Marshal.FreeHGlobal(retVal);
+            }
+        }
         </method>
 </overrides>

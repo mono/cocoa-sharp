@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.12 2004/06/29 20:32:05 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.13 2004/06/30 16:51:00 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -73,21 +73,10 @@
 					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
 				case GlueDelegateWhat.forwardInvocation:
 				{
-					IntPtr retVal = IntPtr.Zero;
-
 					NSInvocation invocation = new NSInvocation(arg,false);
 					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
 					
-					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
-					if(ret != null)
-						if(ret.GetType().IsPrimitive) {
-							retVal = Marshal.AllocHGlobal(Marshal.SizeOf(ret));
-							Marshal.StructureToPtr(ret, retVal, true);
-						} else {
-							retVal = Net2NS(ret);
-						}
-					if(retVal != IntPtr.Zero)
-						invocation.returnValue = retVal;
+					invocation.returnValue = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
 					break;
 				}
 			}
@@ -145,6 +134,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.13  2004/06/30 16:51:00  urs
+// Making monodoc happy
+//
 // Revision 1.12  2004/06/29 20:32:05  urs
 // More cleanup
 //

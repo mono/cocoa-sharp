@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.43 2004/06/29 13:35:51 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.44 2004/06/30 16:51:00 urs Exp $
 //
 
 using System;
@@ -508,6 +508,8 @@ namespace ObjCManagedExporter
 			if (get == null)
 				get = (Method)methods[prefix + "is" + propName];
 			if (get == null)
+				get = (Method)methods[prefix + "get" + propName];
+			if (get == null)
 				get = (Method)methods[prefix + propName];
 			
 			propName = MakeCSMethodName(propName);
@@ -914,9 +916,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.44  2004/06/30 16:51:00  urs
+//	Making monodoc happy
+//
 //	Revision 1.43  2004/06/29 13:35:51  urs
 //	make tree green again, I like green :)
-//
+//	
 //	Revision 1.42  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
 //	
