@@ -31,8 +31,8 @@ namespace CocoaSharp {
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct section {
-		[FieldOffset(0)] public char[] sectname;
-		[FieldOffset(16)] public char[] segname;
+		[FieldOffset(0)] public IntPtr sectname;
+		[FieldOffset(16)] public IntPtr segname;
 		[FieldOffset(32)] public uint addr;
 		[FieldOffset(36)] public uint size;
 		[FieldOffset(40)] public uint offset;

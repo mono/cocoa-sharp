@@ -41,7 +41,7 @@ namespace CocoaSharp {
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct segment_command {
-		[FieldOffset(0)] public char[] segname;
+		[FieldOffset(0)] public IntPtr segname;
 		[FieldOffset(16)] public uint vmaddr;
 		[FieldOffset(20)] public uint vmsize;
 		[FieldOffset(24)] public uint fileoff;

@@ -69,6 +69,17 @@ namespace CocoaSharp {
 			}
 		}
 
+		public static void DebugOut(int level, string format, params object[] args) 
+		{
+			if (DEBUG_LEVEL >= level) 
+				Console.WriteLine(format,args);
+		}
+
+		public static void DebugOut(string format, params object[] args) 
+		{
+			DebugOut(1,format,args);
+		}
+
 		private void ParseHeader () {
 			unsafe {
 				this.header = *((mach_header *)Pointer);
@@ -78,16 +89,14 @@ namespace CocoaSharp {
 			if (this.header.magic != MH_MAGIC && this.header.magic != MH_CIGAM)
 				throw new Exception ("ERROR: " + filename + " is not a MachO file (" + String.Format ("{0:X}", this.header.magic) + ").");
 
-			if (DEBUG_LEVEL > 0) {
-				Console.WriteLine ("MachOFile.cs-> header dump:");
-				Console.WriteLine ("magic: {0:X}", header.magic);
-				Console.WriteLine ("cputype: {0:X} {1}", header.cputype, (header.cputype == 0x12 ? "PowerPC" : "Unknown"));
-				Console.WriteLine ("cpusubtype: {0:X}", header.cpusubtype);
-				Console.WriteLine ("filetype: {0:X}", header.filetype);
-				Console.WriteLine ("ncmds: {0}", header.ncmds);
-				Console.WriteLine ("sizeofcmds: {0}", header.sizeofcmds);
-				Console.WriteLine ("flags: {0}", header.flags);
-			}
+			DebugOut("MachOFile.cs-> header dump:");
+			DebugOut("magic: {0:X}", header.magic);
+			DebugOut("cputype: {0:X} {1}", header.cputype, (header.cputype == 0x12 ? "PowerPC" : "Unknown"));
+			DebugOut("cpusubtype: {0:X}", header.cpusubtype);
+			DebugOut("filetype: {0:X}", header.filetype);
+			DebugOut("ncmds: {0}", header.ncmds);
+			DebugOut("sizeofcmds: {0}", header.sizeofcmds);
+			DebugOut("flags: {0}", header.flags);
 		}
 
 		private void LoadCommands () {
@@ -100,19 +109,18 @@ namespace CocoaSharp {
 
 				ICommand cmd;
 
-				if (DEBUG_LEVEL > 0) {
-					Console.WriteLine ("MachOFile.cs:LoadCommands(): load_command dump:");
-					Console.WriteLine ("cmd: {0:X}", lcmd.cmd);
-					Console.WriteLine ("cmdsize: {0}", lcmd.cmdsize);
-				}
+				DebugOut("MachOFile.cs:LoadCommands(): load_command dump:");
+				DebugOut("cmd: {0:X}", lcmd.cmd);
+				DebugOut("cmdsize: {0}", lcmd.cmdsize);
+
 				if (lcmd.cmd == LC_SEGMENT) {
-					Console.WriteLine ("DEBUG: SegmentCommand()");
+					DebugOut(0,"DEBUG: SegmentCommand()");
 					cmd = new SegmentCommand (this, lcmd);
 				} else if (lcmd.cmd == LC_ID_DYLIB || lcmd.cmd == LC_LOAD_DYLIB || lcmd.cmd == LC_LOAD_WEAK_DYLIB) {
-					Console.WriteLine ("DEBUG: DylibCommand()");
+					DebugOut(0,"DEBUG: DylibCommand()");
 					cmd = new DylibCommand (this, lcmd);
 				} else { 
-					Console.WriteLine ("DEBUG: LoadCommand()");
+					DebugOut(0,"DEBUG: LoadCommand()");
 					cmd = new LoadCommand (this, lcmd);
 				}
 
@@ -122,7 +130,6 @@ namespace CocoaSharp {
 		}
 
 		public void Parse () {
-
 		}
 	}
 
