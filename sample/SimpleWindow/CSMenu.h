@@ -14,6 +14,8 @@
 
 }
 
-- (void)createFlashyMenu;
++ (NSMenu *) createAppleMenu;
+- (void)stop;
++ (NSMenu *) createWindowMenu; 
 
 @end

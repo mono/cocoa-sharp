@@ -25,4 +25,9 @@
 	[NSApp terminate:nil];
 }
 
+- (void)closeWindow
+{
+	[self orderFront:nil];
+}
+
 @end

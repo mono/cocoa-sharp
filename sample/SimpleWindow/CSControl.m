@@ -16,11 +16,9 @@
 
 //  old method that was called in CSApplication, but this resulted in the window
 //  not drawing properly when launched from terminal.
-- (void)displayWindow
+- (void)displayMainWindow
 {
-	///
 	CSWindow *window = [NSApp mainWindow];
-
 	
 	//create our button 
 	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(100,20,100,30)] autorelease];
@@ -62,31 +60,98 @@
 
 	
 	// Create a menu
-	CSMenu *menu = [[CSMenu alloc] init];
-	[menu createFlashyMenu];
+	//CSMenu *menu = [[CSMenu alloc] init];
+	//[menu createApplicationMenu];
 	
 	//make sure the window is centered on the screen.
 	[window center];
 	//no matter what, bring window to the front.
 	[window makeKeyAndOrderFront: window];
 	//[window makeKeyWindow];
-	[menu release];
+	//[menu release];
 }
 
-+ (void)stop
++ (void)quit: (id) sender
 {
 	//makeMainWindow above set the application's main window.  now we can orderFront: nill
 	//which makes it disappear.
-	[[NSApp mainWindow] orderFront:nil];
-	
+	[[NSApp mainWindow] orderOut:nil];	
 	//this quits the application.
 	[NSApp terminate: NSApp];
 }
 
-- (NSButton *)displayButton
+- (void) displayFileBrowser
+{
+	//create an NSRect and use it to create an CSWindow
+	NSRect contentRect = NSMakeRect(300, 180, 400, 400);
+	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
+	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask | NSResizableWindowMask backing:NSBackingStoreBuffered defer:NO];
+	[window setTitle: @"File Window"];
+	//make window the main window for the application
+	AppController *browserControl = [[AppController alloc] init];
+	CSBrowser *browser = [browserControl setupBrowser];
+	//[browser createWindowMenu];
+	//[browserControl setupBrowser: browser];
+	[browser setDelegate: browserControl];
+	[[window contentView] addSubview: browser];
+	//[browserControl runUntilStop];
+	//[window release];
+	[[NSApp mainWindow] orderOut:[NSApp mainWindow]];
+	[window center];
+	[window makeKeyAndOrderFront: window];
+	[window makeMainWindow];
+}
+
+- (NSButton *) displayBrowserButton
 {
 	//create our button 
-	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(100,20,100,30)] autorelease];
+	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(30,20,100,30)] autorelease];
+	[monoButton setButtonType: NSToggleButton];
+	[monoButton setBezelStyle: NSRoundedBezelStyle];
+	[monoButton setEnabled: YES ];
+	[monoButton setState: NSOnState];
+	[monoButton setFont: [NSFont fontWithName: @"Geneva" size: 10]];
+	
+	[monoButton setKeyEquivalentModifierMask: NSCommandKeyMask];
+	[monoButton setKeyEquivalent: @"b"];
+	
+	//set the text of the button and its target, in this case self
+	[monoButton setTitle: @"Open Broswer"];
+	[monoButton setTarget: self];
+	//this will call the stop method in self when the button is pressed.
+	[monoButton setAction: @selector(displayFileBrowser)];
+	return monoButton;
+	
+}
+
+- (NSButton *) displayStopButton
+{
+	//create our button 
+	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(180,20,100,30)] autorelease];
+	[monoButton setButtonType: NSToggleButton];
+	[monoButton setBezelStyle: NSRoundedBezelStyle];
+	[monoButton setEnabled: YES ];
+	[monoButton setState: NSOnState];
+	[monoButton setFont: [NSFont fontWithName: @"Geneva" size: 10]];
+	
+	//make the button throb
+	[monoButton setKeyEquivalent: @"\r"];
+	AppController *browserControl = [[AppController alloc] init];
+	
+	//set the text of the button and its target, in this case self
+	[monoButton setTitle: @"Dismiss"];
+	[monoButton setTarget: browserControl];
+	//this will call the stop method in self when the button is pressed.
+	[monoButton setAction: @selector(stopLoop)];
+	return monoButton;
+	
+}
+
+
+- (NSButton *) displayQuitButton
+{
+	//create our button 
+	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(180,20,100,30)] autorelease];
 	[monoButton setButtonType: NSToggleButton];
 	[monoButton setBezelStyle: NSRoundedBezelStyle];
 	[monoButton setEnabled: YES ];
@@ -97,10 +162,10 @@
 	[monoButton setKeyEquivalent: @"\r"];
 	
 	//set the text of the button and its target, in this case self
-	[monoButton setTitle: @"Dismiss"];
+	[monoButton setTitle: @"Quit"];
 	[monoButton setTarget: [CSControl class]];
 	//this will call the stop method in self when the button is pressed.
-	[monoButton setAction: @selector(stop)];
+	[monoButton setAction: @selector(quit:)];
 	return monoButton;
 	
 }
@@ -117,12 +182,12 @@
 	
 }	
 
-- (void) displayMenu
+/*- (void) displayApplicationMenu
 {	
 	// Create a menu
 	CSMenu *menu = [[CSMenu alloc] init];
-	[menu createFlashyMenu];
+	[menu createApplicationMenu];
 	[menu release];
-}	
+}*/	
 
 @end

@@ -9,14 +9,19 @@
 #import <Cocoa/Cocoa.h>
 #import "CSWindow.h"
 #import "CSMenu.h"
+#import "CSBrowser.h"
+#import "CSBrowserControl.h"
+#import "AppController.h"
 
 @interface CSControl : NSObject {
 
 }
-- (void)displayWindow;
-+ (void)stop;
+- (void)displayMainWindow;
++ (void)quit: (id) sender;
 - (NSTextField *)displayTextField;
-- (NSButton *)displayButton;
-- (void) displayMenu;
+- (NSButton *)displayQuitButton;
+//- (void) displayApplicationMenu;
+- (NSButton *) displayBrowserButton;
+- (void) displayFileBrowser;
 
 @end

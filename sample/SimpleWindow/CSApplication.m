@@ -20,8 +20,13 @@
 	[NSApplication sharedApplication];
 	[NSApp setApplicationIconImage: [NSImage imageNamed: @"mono.icns"]];
 
+	//setup our menus.
 	[NSApp setMainMenu: [[NSMenu alloc] initWithTitle:@"MainMenu"]];
-
+	//setAppleMenu is a bad title as it sets the menu to the right of the apple menu..
+	[NSApp setAppleMenu: [CSMenu createAppleMenu]];	
+	//set some of the buildin behavior this way.
+	[NSApp setWindowsMenu: [CSMenu createWindowMenu]];
+	
 	//create an NSRect and use it to create an CSWindow
 	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
 	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
@@ -34,14 +39,15 @@
 	
 	
 	//subviews were added in [control displayWindow], but this resulted
-	//in the window now drawing properly when launched from terminal
+	//in the window not drawing properly when launched from terminal
 	//moving the calls here fixed that issue.  not understood why.
 	CSControl *control = [[CSControl alloc]init];
-	[[window contentView] addSubview: [control displayButton]];
+	[[window contentView] addSubview: [control displayQuitButton]];
 	[[window contentView] addSubview: [control displayTextField]];
-	[control displayMenu];
+	[[window contentView] addSubview: [control displayBrowserButton]];
+	//[control displayApplicationMenu];
 
-	//run the application
+	//run the application 
 	[NSApp run];
 	[pool release];	
 }
