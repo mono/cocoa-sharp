@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.25 2004/07/03 03:48:44 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.26 2004/07/03 20:02:41 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -53,12 +53,11 @@
 
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
 			string name = type.Name;
-			foreach (Attribute attr in Attribute.GetCustomAttributes(type)) {
-				ObjCRegisterAttribute regAttr = attr as ObjCRegisterAttribute;
-				if(regAttr != null && regAttr.Name != null) {
+			foreach (ObjCRegisterAttribute regAttr in Attribute.GetCustomAttributes(type,typeof(ObjCRegisterAttribute))) {
+				if(regAttr.Name != null)
 					name = regAttr.Name;
-					break;
-				}
+
+				break;
 			}
 Console.WriteLine("DEBUG: NSRegisterClass {0} as {1}", type.Name, name);
 			if (sConstructorDelegate == null) {
@@ -161,9 +160,9 @@ Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			BridgeHelper.SetInstanceVar(Raw,name,value);
 		}
 		
-		public void _UpdateMembers()
+		public void _UpdateMembers(bool import)
 		{
-			BridgeHelper.UpdateMembers(this);
+			BridgeHelper.UpdateMembers(this,import);
 		}
 
 		public IntPtr Raw {
@@ -280,6 +279,9 @@ Console.WriteLine("DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.26  2004/07/03 20:02:41  urs
+// Some attribute love
+//
 // Revision 1.25  2004/07/03 03:48:44  gnorton
 // ObjCRegisterAttribute support; we can now overload any ObjCClassname -> .NET Classname mapping
 //

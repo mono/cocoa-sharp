@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.13 2004/07/03 03:36:11 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.14 2004/07/03 20:02:41 urs Exp $
 //
 
 using System;
@@ -38,13 +38,12 @@ namespace Apple.Foundation
 						foreach (Type t in asm.GetTypes())
 							if (t.IsClass && t.IsSubclassOf(typeof(NSObject))) {
 								bool attrAdded = false;
-								foreach (Attribute attr in Attribute.GetCustomAttributes(t)) {
-									ObjCRegisterAttribute regAttr = attr as ObjCRegisterAttribute;
-									if(regAttr != null && regAttr.Name != null) {
+								foreach (ObjCRegisterAttribute regAttr in Attribute.GetCustomAttributes(t,typeof(ObjCRegisterAttribute))) {
+									if(regAttr.Name != null) {
 										Name2Type[regAttr.Name] = t;
 										attrAdded = true;
-										break;
 									}
+									break;
 								}
 								if(!attrAdded)
 									Name2Type[t.Name] = t;
@@ -111,6 +110,9 @@ Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C cla
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.14  2004/07/03 20:02:41  urs
+// Some attribute love
+//
 // Revision 1.13  2004/07/03 03:36:11  gnorton
 // ObjCRegisterAttribute support
 //

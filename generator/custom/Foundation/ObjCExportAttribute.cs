@@ -2,21 +2,23 @@ using System;
 
 namespace Apple.Foundation {
 
+    [AttributeUsage(AttributeTargets.Method)]
 	public class ObjCExportAttribute : Attribute {
 		protected string aSelector;
 		protected string aSignature;
-		protected bool aAutoSync=true;
+		protected bool aAutoSync = true;
+
 		public ObjCExportAttribute() {}
-		public ObjCExportAttribute(String selector) {
+		public ObjCExportAttribute(string selector) {
 			this.aSelector = selector;
 		}
 
-		public String Selector {
+		public string Selector {
 			get { return this.aSelector; }
 			set { this.aSelector = value; }
 		}
 
-		public String Signature {
+		public string Signature {
 			get { return this.aSignature; }
 			set { this.aSignature = value; }
 		}

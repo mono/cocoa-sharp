@@ -2,21 +2,23 @@ using System;
 
 namespace Apple.Foundation {
 
+    [AttributeUsage(AttributeTargets.Field)]
 	public class ObjCConnectAttribute : Attribute {
 		protected string aName;
 		protected string aType;
 		protected int aSize = -1;
+
 		public ObjCConnectAttribute() {}
-		public ObjCConnectAttribute(String name) {
+		public ObjCConnectAttribute(string name) {
 			this.aName = name;
 		}
 
-		public String Name {
+		public string Name {
 			get { return this.aName; }
 			set { this.aName = value; }
 		}
 
-		public String Type {
+		public string Type {
 			get { return this.aType; }
 			set { this.aType = value; }
 		}

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.12 2004/07/03 18:40:24 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.13 2004/07/03 20:02:41 urs Exp $
 //
 
 using System;
@@ -54,14 +54,10 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		public static string SelectorToMethodName(Type t, string selector)
 		{
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-                        foreach(MethodInfo m in ms) 
-                                foreach (Attribute attr in Attribute.GetCustomAttributes(m))
-				{
-					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-                                        if (exprtAttr != null) 
-						if (exprtAttr.Selector != null && exprtAttr.Selector == selector)
-							return m.Name;
-				}
+			foreach(MethodInfo m in ms) 
+				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute)))
+					if (exprtAttr.Selector != null && exprtAttr.Selector == selector)
+						return m.Name;
 
 			string methodName = selector;
 
@@ -84,119 +80,124 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			return (object[])retArgs.ToArray(typeof(object));
 		}
 
-		public static object InvokeMethodByObject(Object self, String sel, Object[] args) 
+		public static object InvokeMethodByObject(object self, string sel, object[] args) 
 		{
 			string method = SelectorToMethodName(self.GetType(), sel);
+	        bool autoSync = false;
+	        
 			// Check to see if we should UpdateMembers()
-			foreach (Attribute attr in Attribute.GetCustomAttributes(GetMethodByTypeAndName(self.GetType(), method)))
-			{
-				ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-				if (exprtAttr != null && exprtAttr.AutoSync == true) {
+			foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(
+			    GetMethodByTypeAndName(self.GetType(), method), typeof(ObjCExportAttribute)
+			)) {
+				if (exprtAttr.AutoSync == true) {
 					// Check to make sure that we have members to update
 					if(GetMembers(self.GetType()).Length <= 0) {
 						exprtAttr.AutoSync = false;
 						break;
 					}
-					Console.WriteLine("DEBUG: Auto-updating members on {0}", self.GetType().Name);
-					UpdateMembers((NSObject)self);
-					break;
+					autoSync = true;
 				}
+				break;
 			}
 
-			return self.GetType().InvokeMember(method, 
+			if (autoSync) {
+				Console.WriteLine("DEBUG: Auto-import members on {0}", self.GetType().Name);
+				UpdateMembers((NSObject)self,true);
+			}
+
+			object ret = self.GetType().InvokeMember(method, 
 				BindingFlags.Default | BindingFlags.InvokeMethod, null, 
 				self, args);
+
+			if (autoSync) {
+				Console.WriteLine("DEBUG: Auto-export members on {0}", self.GetType().Name);
+				UpdateMembers((NSObject)self,false);
+			}
+
+			return ret;
+		}
+
+		public static string Type2TypeEncoding(Type type, out int size)
+		{
+			//TODO: unsigned char, class object, selector, array, structure, union, bnum, ^type, ?
+			if(type == typeof(Char)) {
+				size = Marshal.SizeOf(typeof(Char));
+				return "c";
+			}
+			if(type == typeof(Int32)) {
+				size = Marshal.SizeOf(typeof(Int32));
+				return "i";
+			}
+			if(type == typeof(short)) {
+				size = Marshal.SizeOf(typeof(Int16));
+				return "s";
+			}
+			if(type == typeof(long)) {
+				size = Marshal.SizeOf(typeof(Int32));
+				return "l";
+			}
+			if(type == typeof(Int64)) {
+				size = Marshal.SizeOf(typeof(Int64));
+				return "q";
+			}
+			if(type == typeof(UInt32)) {
+				size = Marshal.SizeOf(typeof(UInt32));
+				return "I";
+			}
+			if(type == typeof(ushort)) {
+				size = Marshal.SizeOf(typeof(UInt16));
+				return "S";
+			}
+			if(type == typeof(ulong)) {
+				size = Marshal.SizeOf(typeof(UInt32));
+				return "L";
+			}
+			if(type == typeof(UInt64)) {
+				size = Marshal.SizeOf(typeof(UInt64));
+				return "Q";
+			}
+			if(type == typeof(float)) {
+				size = Marshal.SizeOf(typeof(Single));
+				return "f";
+			}
+			if(type == typeof(double)) {
+				size = Marshal.SizeOf(typeof(Double));
+				return "d";
+			}
+			if(type == typeof(bool)) {
+				size = Marshal.SizeOf(typeof(Boolean));
+				return "B";
+			}
+			if(type == typeof(void)) {
+				size = 0;
+				return "v";
+			}
+			if(type == typeof(string)) {
+				size = 4;
+				return "@"; // Use NSString*, we could also marshal as const char *, which would be *
+			}
+			// This always seems to be 4 regardless of 64/32bitness
+			size = 4;
+			return "@";
 		}
 
 		public static void GetSignatureCode(ref string signatureString, ref int size, Type type)
 		{
-			//TODO: unsigned char, class object, selector, array, structure, union, bnum, ^type, ?
-			if(type == typeof(Char)) {
-				signatureString += "c";
-				size += Marshal.SizeOf(typeof(Char));
-				return;
-			}
-			if(type == typeof(Int32)) {
-				signatureString += "i";
-				size += Marshal.SizeOf(typeof(Int32));
-				return;
-			}
-			if(type == typeof(short)) {
-				signatureString += "s";
-				size += Marshal.SizeOf(typeof(Int16));
-				return;
-			}
-			if(type == typeof(long)) {
-				signatureString += "l";
-				size += Marshal.SizeOf(typeof(Int32));
-				return;
-			}
-			if(type == typeof(Int64)) {
-				signatureString += "q";
-				size += Marshal.SizeOf(typeof(Int64));
-				return;
-			}
-			if(type == typeof(UInt32)) {
-				signatureString += "I";
-				size += Marshal.SizeOf(typeof(UInt32));
-				return;
-			}
-			if(type == typeof(ushort)) {
-				signatureString += "S";
-				size += Marshal.SizeOf(typeof(UInt16));
-				return;
-			}
-			if(type == typeof(ulong)) {
-				signatureString += "L";
-				size += Marshal.SizeOf(typeof(UInt32));
-				return;
-			}
-			if(type == typeof(UInt64)) {
-				signatureString += "Q";
-				size += Marshal.SizeOf(typeof(UInt64));
-				return;
-			}
-			if(type == typeof(float)) {
-				signatureString += "f";
-				size += Marshal.SizeOf(typeof(Single));
-				return;
-			}
-			if(type == typeof(double)) {
-				signatureString += "d";
-				size += Marshal.SizeOf(typeof(Double));
-				return;
-			}
-			if(type == typeof(bool)) {
-				signatureString += "B";
-				size += Marshal.SizeOf(typeof(Boolean));
-				return;
-			}
-			if(type == typeof(void)) {
-				signatureString += "v";
-				return;
-			}
-			if(type == typeof(String)) {
-				signatureString += "*";
-				size += 4; // Marshal.SizeOf(typeof(String));
-				return;
-			}
-			signatureString += "@";
-			// This always seems to be 4 regardless of 64/32bitness
-			size += 4;
-			return;
+		    int typeSize;
+		    signatureString += Type2TypeEncoding(type,out typeSize);
+		    size += typeSize;
 		}
 		
 		public static string GenerateMethodSignature(Type t, String sel) 
 		{
 			string method = SelectorToMethodName(t, sel);
-			foreach (Attribute attr in Attribute.GetCustomAttributes(GetMethodByTypeAndName(t, method)))
-			{
-				ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-				if (exprtAttr != null) {
-					if (exprtAttr.Signature != null)
-						return exprtAttr.Signature;
-					break;
-				}
+
+			foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(
+				GetMethodByTypeAndName(t, method), typeof(ObjCExportAttribute)
+			)) {
+				if (exprtAttr.Signature != null)
+					return exprtAttr.Signature;
+				break;
 			}
 
 			// We need to detect and generate the method signature according to:
@@ -237,31 +238,14 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			ArrayList Names = new ArrayList();
 			ArrayList Types = new ArrayList();
 			ArrayList Sizes = new ArrayList();
-			MemberInfo[] ms = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-			foreach(MemberInfo mi in ms) 
-			{
-				foreach (Attribute attr in Attribute.GetCustomAttributes(mi)) {
-					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
-					if (connectAttr != null) {
-						if(connectAttr.Name != null)
-							Names.Add(connectAttr.Name);
-						else
-							Names.Add(mi.Name);
-						if(connectAttr.Type != null)
-							Types.Add(connectAttr.Type);
-						else {
-							//TODO: Full type map - fu here
-							Types.Add("@");
-						}
-						if(connectAttr.Size != -1)
-							Sizes.Add(connectAttr.Size);
-						else {
-							//TODO: Full size map - fu here
-							Sizes.Add(4);
-						}
-						break;
-					}
-				}
+			foreach(FieldInfo fi in GetMembers(t)) {
+				ObjCConnectAttribute connectAttr = (ObjCConnectAttribute)Attribute.GetCustomAttributes(fi,typeof(ObjCConnectAttribute))[0];
+				int size;
+				string type = Type2TypeEncoding(fi.FieldType,out size);
+
+				Names.Add(connectAttr.Name != null ? connectAttr.Name : fi.Name);
+				Types.Add(connectAttr.Type != null ? connectAttr.Type : type);
+				Sizes.Add(connectAttr.Size != -1 ? connectAttr.Size : size);
 			}
 			m.Names = (String[])Names.ToArray(typeof(String));
 			m.Types = (String[])Types.ToArray(typeof(String));
@@ -295,13 +279,10 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			foreach(MethodInfo m in ms) 
 			{
 				bool addedByAttribute = false;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) {
-					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-					if (exprtAttr != null) {
-						a.Add(exprtAttr.Selector != null ? exprtAttr.Selector : SelectorFromMethod(m));
-						addedByAttribute = true;
-						break;
-					}
+				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute))) {
+					a.Add(exprtAttr.Selector != null ? exprtAttr.Selector : SelectorFromMethod(m));
+					addedByAttribute = true;
+					break;
 				}
 
 #if REGISTER_ALL_METHODS
@@ -318,13 +299,10 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) {
 				bool addedByAttribute = false;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) {
-					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-					if (exprtAttr != null) {
-						a.Add(exprtAttr.Signature != null ? exprtAttr.Signature : GenerateMethodSignature(t, m.Name));
-						addedByAttribute = true;
-						break;
-					}
+				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute))) {
+					a.Add(exprtAttr.Signature != null ? exprtAttr.Signature : GenerateMethodSignature(t, m.Name));
+					addedByAttribute = true;
+					break;
 				}
 #if REGISTER_ALL_METHODS
 				if(!addedByAttribute)
@@ -362,32 +340,27 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		{
 			ArrayList ret = new ArrayList();
 			foreach(FieldInfo f in t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
-				foreach (Attribute attr in Attribute.GetCustomAttributes(f)) {
-					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
-					if (connectAttr != null) {
-						ret.Add(f);
-						break;
-					}
+				foreach (ObjCConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ObjCConnectAttribute))) {
+					ret.Add(f);
+					break;
 				}
 			}
 			return (FieldInfo[])ret.ToArray(typeof(FieldInfo));
 		}
 
-		public static void UpdateMembers(NSObject obj)
+		public static void UpdateMembers(NSObject obj,bool import)
 		{
 			foreach (FieldInfo f in GetMembers(obj.GetType())) {
 				Type type = f.FieldType;
-				String name = f.Name;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(f)) {
-					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
-					if (connectAttr != null) {
-						if(connectAttr.Name != null)
-							name = connectAttr.Name;
-					}
-				}
-				f.SetValue(obj,
-                    obj._GetInstanceVar(name,type)
-				);
+				string name = f.Name;
+				foreach (ObjCConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ObjCConnectAttribute)))
+					if(connectAttr.Name != null)
+						name = connectAttr.Name;
+
+				if (import)
+					f.SetValue(obj,GetInstanceVar(obj.Raw,name,type));
+				else
+					SetInstanceVar(obj.Raw,name,f.GetValue(obj));
 			}
 		}
 	}
@@ -396,6 +369,9 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.13  2004/07/03 20:02:41  urs
+// Some attribute love
+//
 // Revision 1.12  2004/07/03 18:40:24  gnorton
 // - Fixed ObjCExport to autosync members into ObjC land rather than having to call _UpdateMember();
 // - Fixed ObjCConnect attribute to have initial detected value support
