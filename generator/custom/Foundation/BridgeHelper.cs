@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.13 2004/07/03 20:02:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.14 2004/07/03 21:50:31 urs Exp $
 //
 
 using System;
@@ -359,7 +359,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 
 				if (import)
 					f.SetValue(obj,GetInstanceVar(obj.Raw,name,type));
-				else
+				else if (f.FieldType.IsPrimitive)
 					SetInstanceVar(obj.Raw,name,f.GetValue(obj));
 			}
 		}
@@ -369,6 +369,9 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.14  2004/07/03 21:50:31  urs
+// Only auto-export primitives for now
+//
 // Revision 1.13  2004/07/03 20:02:41  urs
 // Some attribute love
 //
