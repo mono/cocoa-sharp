@@ -57,7 +57,7 @@ namespace CocoaSharp {
 
 			WriteCS csWriter = new WriteCS(mConfig);
 			csWriter.AddRange(mfile.Classes);
-			csWriter.OutputNamespace(f.NameSpace);
+			csWriter.OutputNamespace(f.NameSpace, f.Name);
 			return true;
 		}
 
@@ -115,7 +115,7 @@ namespace CocoaSharp {
 
 			Console.WriteLine("Output per namespace");
 			foreach (Framework f in mConfig.Frameworks)
-				csWriter.OutputNamespace(f.NameSpace);
+				csWriter.OutputNamespace(f.NameSpace, f.Name);
 
 			int retval = 0;
 #else

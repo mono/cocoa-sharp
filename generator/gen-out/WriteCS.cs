@@ -22,7 +22,7 @@ namespace CocoaSharp {
 			mOutputElements.AddRange(outputElements);
 		}
 
-		public void OutputNamespace(string nameSpace) {
+		public void OutputNamespace(string nameSpace, string framework) {
 			Console.Write("Output Namespace ({0}): ", nameSpace);
 			Console.Write("00%");
 
@@ -36,15 +36,15 @@ namespace CocoaSharp {
 				mOutputElements.Remove(e);
 			}
 
-			if(Directory.Exists(Path.Combine(mConfig.CorePath, nameSpace))) {
-				DirectoryInfo _frameworkDirectory = new DirectoryInfo(Path.Combine(mConfig.CorePath, nameSpace));
+			if(Directory.Exists(Path.Combine(mConfig.CorePath, framework))) {
+				DirectoryInfo _frameworkDirectory = new DirectoryInfo(Path.Combine(mConfig.CorePath, framework));
 				FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
 				foreach(FileSystemInfo _file in _infos) {
 					if(_file.Name.EndsWith(".cs")) {
 						string fileName = Path.Combine(Path.Combine("src", nameSpace), _file.Name);
 						if(File.Exists(fileName))
 							File.Delete(fileName);
-						File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, nameSpace), _file.Name), fileName);
+						File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, framework), _file.Name), fileName);
 					}
 				}
 			}

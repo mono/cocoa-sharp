@@ -31,8 +31,12 @@ namespace Apple.Foundation
 
 			if (type == null && Name2Type_init)
 			{
+				ArrayList assemblies = new ArrayList ();
+				assemblies.Add (System.Reflection.Assembly.GetEntryAssembly ());
+				foreach (AssemblyName asmName in System.Reflection.Assembly.GetEntryAssembly ().GetReferencedAssemblies ())
+					assemblies.Add (System.Reflection.Assembly.Load (asmName));
 				Name2Type_init = false;
-				foreach (Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
+				foreach (Assembly asm in assemblies)
 					try
 					{
 						foreach (Type t in asm.GetTypes())
@@ -71,6 +75,7 @@ namespace Apple.Foundation
 				
 			NSObject ret = null;
 			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
+			className = className.Replace ("NSConcrete", "NS");
 			Type type = NS2Type(className);
 
 			if (type != null) {
@@ -84,9 +89,6 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 			}
 			else
 				NSObject.DebugLog(1, "ERROR: No class found that derives from NSObject with the name: " + className);
-
-			if(ret != null && ret is Apple.Foundation.NSString)
-				return ret.ToString();
 
 			return ret != null ? ret : new NSObject(raw,false);
 		}

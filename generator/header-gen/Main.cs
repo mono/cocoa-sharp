@@ -452,7 +452,7 @@ namespace CocoaSharp {
 			csWriter.AddRange(HeaderInterface.ToOutput(this.Interfaces));
 
 			foreach(Framework f in mConfig.Frameworks)
-				csWriter.OutputNamespace(f.Name);
+				csWriter.OutputNamespace(f.NameSpace, f.Name);
 
 			Console.WriteLine("Code generation successful");
 #if false
