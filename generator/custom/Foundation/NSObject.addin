@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.18 2004/07/01 21:26:03 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.19 2004/07/01 22:01:50 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -52,6 +52,12 @@
 		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
+			if (sConstructorDelegate == null) {
+				sConstructorDelegate = new ConstructorDelegate(ConstructObject);
+				sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
+				SetConstructorDelegate(sConstructorDelegate,sGetManagedDelegate);
+			}
+
 			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
 			IntPtr retval = IntPtr.Zero;
 
@@ -190,17 +196,14 @@ Console.WriteLine("ERROR: native object was not registered 0x{1,8:x}", (int)raw)
             return managedObject._delegate;
 		}
 
-		static NSObject() {
-			sConstructorDelegate = new ConstructorDelegate(ConstructObject);
-			sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
-			SetConstructorDelegate(sConstructorDelegate,sGetManagedDelegate);
-		}
-
 		#endregion
 
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.19  2004/07/01 22:01:50  urs
+// Remove static ctor, since it produces a JIT error
+//
 // Revision 1.18  2004/07/01 21:26:03  urs
 // Support for NIB files: objects that are not constructed by us
 //
