@@ -18,7 +18,7 @@ void AddMethod(Class cls,const char *name, const char *types, IMP imp) {
 }
 
 id testImp(id base, SEL sel, ...) {
-    NSLog(@"tempImp %@ %@", base, sel);
+    NSLog(@"tempImp %@ %s", base, sel_getName(sel));
     return base;
 }
 
