@@ -2,7 +2,7 @@ SUBDIRS=..
 
 all: Test.exe Loader
 
-Test.exe: Test.cs ../build/Apple.Foundation.dll ../build/Apple.AppKit.dll
+Test.exe: Test.cs ../build/Apple.Foundation.dll ../build/Apple.AppKit.dll ../src/appkit/.libs/libAppKitGlue.dylib ../src/foundation/.libs/libFoundationGlue.dylib
 	mcs -g Test.cs -out:Test.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
 	cp ../build/*.dll .
 	cp ../src/appkit/.libs/libAppKitGlue.dylib .
