@@ -233,8 +233,16 @@ namespace CocoaSharp {
 
 				Match m = _typedefRegex.Match(typedef);
 				System.Diagnostics.Debug.Assert(m.Success);
-				string name = m.Groups["name"].Value.Trim();
-				string type = m.Groups["type"].Value.Trim();
+				string name = "";
+				string type = "";
+				// Mono throws an exception going into the group collection when it shouldn't
+				// Lets catch it here as a work around for now
+				try {
+					name = m.Groups["name"].Value.Trim();
+				} catch {}
+				try {
+					type = m.Groups["type"].Value.Trim();
+				} catch {}
 				if (type.Length > 0) {
 					Match subMatch = _enumRegex.Match(type);
 					if (subMatch.Success) {
