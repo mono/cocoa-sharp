@@ -1,12 +1,15 @@
 SUBDIRS=..
 
-all: Test.exe 2ndTest.exe Loader test-4 test-4.exe
+all: Test.exe 2ndTest.exe Loader test-4 test-4.exe libWebKitGlue.dylib
 
 CoreFoundation: /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation
 	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation CoreFoundation
 
 Foundation: /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation
 	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation Foundation
+
+libWebKitGlue.dylib: ../src/WebKitGlue.Glue/*.o
+	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libWebKitGlue.dylib ../src/WebKitGlue.Glue/*.o
 
 libFoundationGlue.dylib: ../src/Foundation.Glue/*.o
 	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libFoundationGlue.dylib ../src/Foundation.Glue/*.o
