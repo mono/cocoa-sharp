@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.9 2004/09/04 04:18:32 urs Exp $
+// $Id: Class.cs,v 1.10 2004/09/04 04:49:30 gnorton Exp $
 //
 
 using System;
@@ -45,21 +45,33 @@ namespace CocoaSharp {
 				}
 			}
 
-			methods = ProcessMethods(occlass.methodLists,file);
+			methods = Method.ProcessMethods(occlass.methodLists,file);
 
 			if (isClass) {
 				// Process meta class
 				objc_class metaClass = *(objc_class *)file.GetPtr(occlass.isa);
 				Utils.MakeBigEndian(ref metaClass.methodLists);
-				classMethods = ProcessMethods(metaClass.methodLists,file);
+				classMethods = Method.ProcessMethods(metaClass.methodLists,file);
 			}
 #if false
 			// Process protocols
 			[aClass addProtocolsFromArray:[self processProtocolList:classPtr->protocols]];
 #endif
 		}
+	}
 
-		static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
+	public class Method {
+		private string name, types;
+
+		public Method(objc_method method, MachOFile file) {
+			Utils.MakeBigEndian(ref method.name);
+			Utils.MakeBigEndian(ref method.types);
+			name = file.GetString(method.name);
+			types = file.GetString(method.types);
+			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
+		}
+
+		unsafe public static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
 			ArrayList ret = new ArrayList();
 			if (methodLists != 0) {
 				byte* methodsPtr = file.GetPtr(methodLists);
@@ -75,33 +87,6 @@ namespace CocoaSharp {
 		}
 	}
 
-	public class Method {
-		private string name, types;
-
-		public Method(objc_method method, MachOFile file) {
-			Utils.MakeBigEndian(ref method.name);
-			Utils.MakeBigEndian(ref method.types);
-			name = file.GetString(method.name);
-			types = file.GetString(method.types);
-			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
-		}
-	}
-
-	public class Ivar {
-		private string name, type;
-		private int offset;
-
-		public Ivar(objc_ivar ivar, MachOFile file) {
-			Utils.MakeBigEndian(ref ivar.name);
-			Utils.MakeBigEndian(ref ivar.type);
-			Utils.MakeBigEndian(ref ivar.offset);
-			name = file.GetString(ivar.name);
-			type = file.GetString(ivar.type);
-			offset = ivar.offset;
-			MachOFile.DebugOut(1,"\tvar: {0} type={1} offset={2}", name, type, offset);
-		}
-	}
-
 	public struct objc_class {
 		public uint isa;
 		public uint super_class;
@@ -114,19 +99,6 @@ namespace CocoaSharp {
 		public uint cache;
 		public uint protocols;
 	}
-
-	// Section: __instance_vars
-	public struct objc_ivar_list {
-		public int ivar_count;
-		// Followed by ivars
-	};
-
-	// Section: __instance_vars
-	public struct objc_ivar {
-		public uint name;
-		public uint type;
-		public int offset;
-	};
 
 	public struct objc_method_list {
 		public uint obsolete;

@@ -1,5 +1,5 @@
 //
-// $Id: SymbolTable.cs,v 1.6 2004/09/04 04:18:32 urs Exp $
+// $Id: SymbolTable.cs,v 1.7 2004/09/04 04:49:30 gnorton Exp $
 //
 
 using System;
@@ -11,6 +11,7 @@ namespace CocoaSharp {
 	unsafe public class SymbolTable {
 		private objc_symtab ocsymtab;
 		private ArrayList classes = new ArrayList();
+		private ArrayList categories = new ArrayList();
 
 		public SymbolTable (byte *ptr, MachOFile file) {
 			ocsymtab = *((objc_symtab *)ptr);
@@ -24,6 +25,11 @@ namespace CocoaSharp {
 				Utils.MakeBigEndian(ref *defptr);
 				Class cls = new Class(*defptr, file);
 				classes.Add(cls);
+			}
+			for (int i = 0; i < ocsymtab.cat_def_cnt; ++i, ++defptr) {
+				Utils.MakeBigEndian(ref *defptr);
+				Category cat = new Category(*defptr, file);
+				categories.Add(cat);
 			}
 		}
 	}
