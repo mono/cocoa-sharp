@@ -18,10 +18,10 @@
 	<type native="unsigned int" api="uint" glue="uint" />
 	<type native="UInt32" api="uint" glue="uint" />
 	<type native="UTF32Char" api="uint" glue="uint" />
-	<type native="long" api="long" glue="long" />
-	<type native="long int" api="long" glue="long" />
-	<type native="unsigned long" api="ulong" glue="ulong" />
-	<type native="unsigned long int" api="ulong" glue="ulong" />
+	<type native="long" api="int" glue="int" />
+	<type native="long int" api="int" glue="int" />
+	<type native="unsigned long" api="uint" glue="uint" />
+	<type native="unsigned long int" api="uint" glue="uint" />
 	<type native="long long" api="Int64" glue="Int64" />
 	<type native="int64_t" api="Int64" glue="Int64" />
 	<type native="SInt64" api="Int64" glue="Int64" />

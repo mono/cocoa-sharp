@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.28 2004/06/24 03:37:07 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.29 2004/06/24 05:00:38 urs Exp $
 //
 
 using System;
@@ -172,9 +172,12 @@ namespace ObjCManagedExporter
 			mMessageParts = (string[])messageParts.ToArray(typeof(string));
 			
 			mGlueMethodName = string.Empty;
-			mCSMethodName = MakeCSMethodName(mMessageParts[0] /*string.Join("_", mMessageParts)*/);
+			mCSMethodName = MakeCSMethodName(/*mMessageParts[0]*/ string.Join("_", mMessageParts));
 			if (mIsClassMethod)
+			{
+				mCSMethodName = mCSMethodName.Substring(0,1).ToUpper() + mCSMethodName.Substring(1);
 				mGlueMethodName += "_";
+			}
 			mGlueMethodName += string.Join("_",mMessageParts) + mArgumentNames.Length;
 		}
 		#endregion
@@ -206,7 +209,7 @@ namespace ObjCManagedExporter
 	
 				ArrayList argTypes = new ArrayList();
 				for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-					argTypes.Add(ConvertType(mArgumentDeclarationTypes[i]));
+					argTypes.Add(StripComments(ConvertType(mArgumentDeclarationTypes[i])));
 	
 				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
 			}
@@ -544,9 +547,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.29  2004/06/24 05:00:38  urs
+//	Unflattern C# API methods to reduce conflicts
+//	Rename static methods to start with a capital letter (to reduce conflict with instance methods)
+//
 //	Revision 1.28  2004/06/24 03:37:07  gnorton
 //	Some performance increates on the dynamic type converter (convert the <type /> entries to a IDictionary to access an indexer; rather than foreaching)
-//
+//	
 //	Revision 1.27  2004/06/24 02:16:05  gnorton
 //	Updated out typeconversions to be loaded from an XML file; instead of being hard coded.  In the future we wont need to update the app to update the types.
 //	

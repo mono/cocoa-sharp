@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.14 2004/06/24 04:14:35 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.15 2004/06/24 05:00:38 urs Exp $
 //
 
 using System;
@@ -141,6 +141,7 @@ namespace ObjCManagedExporter
 			_cs.WriteLine("        public {0}() : this(NSObject__alloc0({1}_classPtr),true) {{}}",Name,ExtrasName);
 			Interface cur = this;
 			IDictionary constructors = new Hashtable();
+			constructors["IntPtr,bool"] = true;
 			while (cur != null)
 			{
 				foreach (Method _toOutput in cur.AllMethods.Values)
@@ -179,9 +180,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.15  2004/06/24 05:00:38  urs
+//	Unflattern C# API methods to reduce conflicts
+//	Rename static methods to start with a capital letter (to reduce conflict with instance methods)
+//
 //	Revision 1.14  2004/06/24 04:14:35  urs
 //	Fix typo
-//
+//	
 //	Revision 1.13  2004/06/24 04:09:59  urs
 //	Add System.Collection to generated C# files
 //	
