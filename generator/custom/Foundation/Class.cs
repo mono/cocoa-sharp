@@ -18,7 +18,7 @@ namespace Apple.Foundation {
                 */
 
                 #region -- Foundation --
-                [DllImport("Foundation")]
+                [DllImport("/System/Library/Frameworks/Foundation.framework/Foundation")]
                 protected static extern IntPtr /*(Class)*/ NSClassFromString(IntPtr /*(NSString*)*/ str);
                 #endregion
 

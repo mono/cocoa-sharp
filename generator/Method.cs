@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.42 2004/06/29 03:32:58 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.43 2004/06/29 13:35:51 urs Exp $
 //
 
 using System;
@@ -34,6 +34,8 @@ namespace ObjCManagedExporter
 		[XmlAttribute("get")] public string GetSelector;
 		[XmlAttribute("set")] public string SetSelector;
 		[XmlAttribute("name")] public string Name;
+		[XmlAttribute("getsignature")] public string GetSignature;
+		[XmlAttribute("setsignature")] public string SetSignature;
 		[XmlAttribute("returntype")] public string ReturnType;
 
 		public int CompareTo(object obj) 
@@ -54,6 +56,7 @@ namespace ObjCManagedExporter
 	{
 		[XmlAttribute("selector")] public string Selector;
 		[XmlAttribute("name")] public string Name;
+		[XmlAttribute("signature")] public string Signature;
 		[XmlAttribute("returntype")] public string ReturnType;
 
 		public int CompareTo(object obj) 
@@ -427,7 +430,7 @@ namespace ObjCManagedExporter
 				format += nd.Format;
 				arg += a;
 			}
-			else if (type == "id")
+			else if (type == "id" || (type.EndsWith("*") && ObjCClassInspector.IsObjCClass(type.Substring(0,type.Length-2).Trim())))
 			{
 				format += "<%@: %p>";
 				arg += "[" + a + " class]," + a;
@@ -574,9 +577,9 @@ namespace ObjCManagedExporter
 				w.WriteLine("        }");
 			// Check to see if this selector is in our map
 			if (hasGet && !NameMappings.Contains(get.Selector))
-				NameMappings[get.Selector] = GeneratePropertyMapping(propName, get, set);
+				NameMappings[get.Selector] = GeneratePropertyMapping(name, propName, get, set);
 			if (hasSet && !NameMappings.Contains(set.Selector))
-				NameMappings[set.Selector] = GeneratePropertyMapping(propName, get, set);
+				NameMappings[set.Selector] = GeneratePropertyMapping(name, propName, get, set);
 		}
 
 		private void GenerateProperty(string name,System.IO.TextWriter w, PropertyMapping propMap,IDictionary methods, bool isProtocol) 
@@ -606,7 +609,7 @@ namespace ObjCManagedExporter
 			
 			// Check to see if this selector is in our map
 			if(!NameMappings.Contains(Selector))
-				NameMappings[Selector] = GenerateMethodMapping();
+				NameMappings[Selector] = GenerateMethodMapping(name);
 		}
 
 		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o)
@@ -630,22 +633,29 @@ namespace ObjCManagedExporter
 			GenerateCSMethod(name,methods,propOnly,w,false);
 		}
 		
-		private PropertyMapping GeneratePropertyMapping(String propName, Method get, Method set) 
+		private PropertyMapping GeneratePropertyMapping(string name,string propName, Method get, Method set) 
 		{
 			PropertyMapping pm = new PropertyMapping();
 			pm.Name = propName;
 			if(get != null)
+			{
 				pm.GetSelector = get.Selector;
+				pm.GetSignature = ObjCClassInspector.GetSignature(name,pm.GetSelector);
+			}
 			if(set != null)
+			{
 				pm.SetSelector = set.Selector;
+				pm.SetSignature = ObjCClassInspector.GetSignature(name,pm.SetSelector);
+			}
 			return pm;
 		}
         
-		private MethodMapping GenerateMethodMapping() 
+		private MethodMapping GenerateMethodMapping(string name) 
 		{
 			MethodMapping mm = new MethodMapping();
 			mm.Name = mCSMethodName;
 			mm.Selector = Selector;
+			mm.Signature = ObjCClassInspector.GetSignature(name,mm.Selector);
 			return mm;
 		}
         
@@ -736,9 +746,16 @@ namespace ObjCManagedExporter
 			if(NameMappings.Contains(Selector)) 
 			{
 				object _mapping = NameMappings[Selector];
-				if (propOnly && _mapping is PropertyMapping)
+				if (_mapping is PropertyMapping)
 				{
-					GenerateProperty(name, w, (PropertyMapping)_mapping, methods, isProtocol);
+					PropertyMapping _p = (PropertyMapping)_mapping;
+					if (isVoid && _p.GetSelector == Selector)
+					{
+						if (!propOnly)
+							GenerateMethod(name,w,_p.Name + "_",isProtocol);
+						return;
+					}
+					GenerateProperty(name, w, _p, methods, isProtocol);
 					return;
 				}
 
@@ -897,9 +914,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.43  2004/06/29 13:35:51  urs
+//	make tree green again, I like green :)
+//
 //	Revision 1.42  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
-//
+//	
 //	Revision 1.41  2004/06/28 22:59:43  gnorton
 //	Bugfixes
 //	

@@ -21,30 +21,30 @@ namespace Finder {
 		private NSButton GoButton;
 
 		public Finder() {
-			Application = NSApplication.SharedApplication();
+			Application = NSApplication.SharedApplication;
 		}
 
 		public void Run() {
-			Application.ApplicationIconImage = (NSImage)NSImage.ImageNamed("mono.icns");
+			Application.applicationIconImage = (NSImage)NSImage.ImageNamed("mono.icns");
 
 			Window = new NSWindow(new NSRect(200, 180, 800, 600),
 					      (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
 					      NSBackingStoreType.NSBackingStoreBuffered,
 					      false);
-			Window.Title = "Cocoa# WebBrowser";
+			Window.title = "Cocoa# WebBrowser";
 			NSWindowController wc = new NSWindowController(Window);
-			
+
 			Browser = new NSBrowser(new NSRect(0, 0, 800, 575));
-			Browser.Delegate = this;
+			Browser.delegate_ = this;
 
 			URLBar = new NSTextField(new NSRect(0, 575, 700, 25));
-	                URLBar.Editable = true;
-	                URLBar.Bezeled = true;
-	                URLBar.StringValue = "http://www.slashdot.org/";
-			URLBar.Delegate = this;
+	        URLBar.editable = true;
+	        URLBar.bezeled = true;
+	        URLBar.stringValue = "http://www.slashdot.org/";
+			URLBar.delegate_ = this;
 
-			((NSView)Window.contentView()).addSubview(Browser);
-			((NSView)Window.contentView()).addSubview(URLBar);
+			((NSView)Window.contentView).addSubview(Browser);
+			((NSView)Window.contentView).addSubview(URLBar);
 			Window.center();
 			//Window.makeKeyAndOrderFront(null);
 			wc.showWindow(Application);
@@ -59,11 +59,11 @@ namespace Finder {
 		[ObjCExport(Selector="browser:willDisplayCell:atRow:column:", Signature="v24@0:4@8@12i16i20")]
 		public void WillDisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
 			Console.WriteLine("DEBUG: Displaying Row={0} Column={1}", rowNumber, columnNumber); 
-			cell.StringValue = "Row=" + rowNumber + " Col=" + columnNumber;
+			cell.stringValue = "Row=" + rowNumber + " Col=" + columnNumber;
 		}
+
 		[ObjCExport("controlTextDidEndEditing:")]
 		public void TextFinishedEditing(NSConcreteNotification aNotification) {
 		}
-		
 	}
 }

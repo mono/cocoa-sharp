@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.6 2004/06/28 19:18:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.7 2004/06/29 13:35:52 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -28,7 +28,7 @@
 		static IDictionary NSClasses = new Hashtable();
 
 		#region -- Glue --
-		[DllImport("Foundation")]
+		[DllImport("/System/Library/Frameworks/Foundation.framework/Foundation")]
         protected internal static extern IntPtr /*Method*/ class_getInstanceMethod(IntPtr /*Class*/ aClass, IntPtr /*SEL*/ aSelector);
 
 		[DllImport("Glue")]
@@ -143,6 +143,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.7  2004/06/29 13:35:52  urs
+// make tree green again, I like green :)
+//
 // Revision 1.6  2004/06/28 19:18:31  urs
 // Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
 //
