@@ -8,7 +8,6 @@
 
 #import "CSWindow.h"
 
-
 @implementation CSWindow
 - (BOOL)canBecomeKeyWindow
 {
@@ -25,4 +24,5 @@
 	[self orderFront:nil];
 	[NSApp terminate:nil];
 }
+
 @end

@@ -10,6 +10,8 @@
 
 @implementation CSMenu
 
+//probably should refactor this to take titles, and equivalents as args.
+
 - (void)createFlashyMenu {
     // Since IB is slightly behind the current state of the art of menu capabilities, we need to create some of the fancier examples by hand.
     NSMenu *newMenu;
@@ -18,10 +20,12 @@
     // Add the submenu
     newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Mono Menu Item" action:NULL keyEquivalent:@""];
     newMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"Mono Menu"];
+
+	//have to do this to get the menu to appear.
+	[[NSApp mainMenu] addItem:newItem];
 	[newMenu setAutoenablesItems: YES];
     [newItem setSubmenu:newMenu];
     [newMenu release];
-    [[NSApp mainMenu] addItem:newItem];
     [newItem release];
 	
     // Add some cool items

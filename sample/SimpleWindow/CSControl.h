@@ -15,5 +15,8 @@
 }
 - (void)displayWindow;
 + (void)stop;
+- (NSTextField *)displayTextField;
+- (NSButton *)displayButton;
+- (void) displayMenu;
 
 @end

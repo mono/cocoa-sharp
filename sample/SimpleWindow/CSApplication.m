@@ -20,22 +20,28 @@
 	[NSApplication sharedApplication];
 	[NSApp setApplicationIconImage: [NSImage imageNamed: @"mono.icns"]];
 
-	[NSMenu setMenuBarVisible:YES];
 	[NSApp setMainMenu: [[NSMenu alloc] initWithTitle:@"MainMenu"]];
 
 	//create an NSRect and use it to create an CSWindow
 	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
 	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
 	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
+	[window setTitle: @"Mono Window"];
 	//make window the main window for the application
+	[window center];
 	[window makeMainWindow];
+	[window makeKeyAndOrderFront: window];
 	
-
 	
-	//Here is where custom code is implemented to draw the first window, or whatever
+	//subviews were added in [control displayWindow], but this resulted
+	//in the window now drawing properly when launched from terminal
+	//moving the calls here fixed that issue.  not understood why.
 	CSControl *control = [[CSControl alloc]init];
-	[control displayWindow];
+	[[window contentView] addSubview: [control displayButton]];
+	[[window contentView] addSubview: [control displayTextField]];
+	[control displayMenu];
 
+	//run the application
 	[NSApp run];
 	[pool release];	
 }
