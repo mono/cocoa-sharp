@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.7 2004/06/29 18:52:40 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.8 2004/06/29 20:32:05 urs Exp $
 //
 
 using System;
@@ -28,8 +28,12 @@ namespace Apple.Foundation
 			if(raw == IntPtr.Zero)
 				return null;
 
+Console.Write("NS2Net: " + raw);
 			if(NSObject.Objects.Contains(raw))
+			{
+Console.WriteLine(" --> found: " + ((WeakReference)NSObject.Objects[raw]).Target);
 				return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
+			}
 				
 			NSObject ret = new NSObject(raw,false);
 			string className = ret.ClassName;
@@ -65,19 +69,23 @@ namespace Apple.Foundation
 			else
 				Console.WriteLine(className + " not in Foundation or AppKit");
 
-			if((ret as Apple.Foundation.NSString) != null)
+			if(ret is Apple.Foundation.NSString)
 				return ret.ToString();
 
 			return ret;
 		}
 		
 		public static IntPtr Net2NS(object obj) {
-			if (obj == null) return IntPtr.Zero;
-			if (obj is IntPtr) return (IntPtr)obj;
+			if (obj == null)
+				return IntPtr.Zero;
+			if (obj is IntPtr)
+				return (IntPtr)obj;
 			NSObject nsObj = obj as NSObject;
-			if (nsObj != null) return nsObj.Raw;
+			if (nsObj != null)
+				return nsObj.Raw;
 			string str = obj as string;
-			if (str != null) return new NSString(str).Raw;
+			if (str != null)
+				return new NSString(str).Raw;
 			throw new Exception("Net2NS: not handled type of object: " + obj.GetType());
 		}
 	}
@@ -86,6 +94,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.8  2004/06/29 20:32:05  urs
+// More cleanup
+//
 // Revision 1.7  2004/06/29 18:52:40  gnorton
 // Handle potential nullptrs
 //

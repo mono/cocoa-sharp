@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.11 2004/06/29 18:28:46 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.12 2004/06/29 20:32:05 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -84,7 +84,7 @@
 							retVal = Marshal.AllocHGlobal(Marshal.SizeOf(ret));
 							Marshal.StructureToPtr(ret, retVal, true);
 						} else {
-							retVal = ((NSObject)ret).Raw;
+							retVal = Net2NS(ret);
 						}
 					if(retVal != IntPtr.Zero)
 						invocation.returnValue = retVal;
@@ -145,6 +145,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.12  2004/06/29 20:32:05  urs
+// More cleanup
+//
 // Revision 1.11  2004/06/29 18:28:46  gnorton
 // Remove the ptr from the hashtable when we're DToring it.
 // Remove some debugging WriteLines from NSO

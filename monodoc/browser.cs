@@ -244,6 +244,7 @@ class Browser : NSObject {
 class BrowserItem : NSObject {
 	internal RootTree help_tree;
 	internal Node node;
+	internal int level;
 
 	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release)
 	{
@@ -251,21 +252,28 @@ class BrowserItem : NSObject {
 	}
 	public BrowserItem(RootTree _tree) {
 		help_tree = _tree;
+		level = 0;
 	}
-	public BrowserItem(Node _node) {
+	public BrowserItem(Node _node,int _level) {
 		node = _node;
+		level = _level;
 	}
 	
-	public int Count { get { return help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
+	public int Count { get { return level > 2 ? 0 : help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
 	public object ItemAt(int ndx)
 	{
 		if (help_tree != null)
-			return new BrowserItem((Node)help_tree.Nodes[ndx]);
-		return node != null ? new BrowserItem((Node)node.Nodes[ndx]) : null;
+			return new BrowserItem((Node)help_tree.Nodes[ndx],level+1);
+		return node != null ? new BrowserItem((Node)node.Nodes[ndx],level+1) : null;
 	}
 	public object ValueAt(object identifier)
 	{
+Console.WriteLine("ValueAt: " + identifier + " for " + this);
 		return "Value";
+	}
+	public override string ToString()
+	{
+		return "BrowserItem: " + level;
 	}
 }
 
@@ -305,7 +313,7 @@ class BrowserController : NSObject {
 	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
 	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
 	{
-		Console.WriteLine("OutlineViewObjectValueForTableColumnByItem");
+		Console.WriteLine("OutlineViewObjectValueForTableColumnByItem: " + item);
 		object identifier = tableColumn.identifier;
 		BrowserItem bi = item as BrowserItem;
 		

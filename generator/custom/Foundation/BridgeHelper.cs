@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.7 2004/06/29 18:28:46 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.8 2004/06/29 20:32:05 urs Exp $
 //
 
 using System;
@@ -38,7 +38,7 @@ namespace Apple.Tools
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
                         foreach(MethodInfo m in ms) 
                                 foreach (Attribute attr in Attribute.GetCustomAttributes(m))
-                                        if (attr.GetType() == typeof(ObjCExportAttribute)) 
+                                        if (attr is ObjCExportAttribute) 
 						if ( ((ObjCExportAttribute)attr).Selector == selector )
 							return m.Name;
 			string methodName = selector;
@@ -140,7 +140,7 @@ namespace Apple.Tools
 			}
 			if(type == typeof(String)) {
 				signatureString += "*";
-				size += Marshal.SizeOf(typeof(String));
+				size += 4; // Marshal.SizeOf(typeof(String));
 				return;
 			}
 			signatureString += "@";
@@ -153,9 +153,14 @@ namespace Apple.Tools
 		{
 			string method = SelectorToMethodName(t, sel);
 			foreach (Attribute attr in Attribute.GetCustomAttributes(GetMethodByTypeAndName(t, method)))
-				if (attr.GetType() == typeof(ObjCExportAttribute)) 
-					if ( ((ObjCExportAttribute)attr).Signature != null )
-						return ((ObjCExportAttribute)attr).Signature;
+			{
+				ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+				if (exprtAttr != null) {
+					if (exprtAttr.Signature != null)
+						return exprtAttr.Signature;
+					break;
+				}
+			}
 
 			// We need to detect and generate the method signature according to:
 			// http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/4objc_runtime_overview/chapter_4_section_6.html
@@ -204,11 +209,13 @@ namespace Apple.Tools
 			{
 				bool addedByAttribute = false;
 				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) 
-					if (attr.GetType() == typeof(ObjCExportAttribute)) {
-						a.Add( ((ObjCExportAttribute)attr).Selector );
+					if (attr is ObjCExportAttribute) {
+						a.Add(((ObjCExportAttribute)attr).Selector);
 						addedByAttribute = true;
+						break;
 					}
 
+#if REGISTER_ALL_METHODS
 				if(!addedByAttribute) { 
 					string name = m.Name;
 					ParameterInfo[] parms = GetParameterInfosByMethod(m);
@@ -219,6 +226,7 @@ namespace Apple.Tools
 	
 					a.Add(name);
 				}
+#endif
 			}
 			r.Methods = (String[])a.ToArray(typeof(String));
 		}
@@ -229,13 +237,18 @@ namespace Apple.Tools
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) {
 				bool addedByAttribute = false;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) 
-					if (attr.GetType() == typeof(ObjCExportAttribute) && ((ObjCExportAttribute)attr).Signature != null) {
-						a.Add( ((ObjCExportAttribute)attr).Signature );
+				foreach (Attribute attr in Attribute.GetCustomAttributes(m)) {
+					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+					if (exprtAttr != null) {
+						a.Add(exprtAttr.Signature != null ? exprtAttr.Signature : GenerateMethodSignature(t, m.Name));
 						addedByAttribute = true;
+						break;
 					}
+				}
+#if REGISTER_ALL_METHODS
 				if(!addedByAttribute)
 					a.Add(GenerateMethodSignature(t, m.Name));
+#endif
 			}
 			r.Signatures = (String[])a.ToArray(typeof(String));
 		}
@@ -245,6 +258,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.8  2004/06/29 20:32:05  urs
+// More cleanup
+//
 // Revision 1.7  2004/06/29 18:28:46  gnorton
 // Remove the ptr from the hashtable when we're DToring it.
 // Remove some debugging WriteLines from NSO
