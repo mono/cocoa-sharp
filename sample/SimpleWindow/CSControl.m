@@ -71,6 +71,44 @@
 	//[menu release];
 }
 
++ (CSWindow *)createMonoWindow
+{
+	//create an NSRect and use it to create an CSWindow
+	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
+	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
+	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
+	[window setTitle: @"Mono Window"];
+	//make window the main window for the application
+	[window center];
+	[window makeMainWindow];
+	[window makeKeyAndOrderFront: window];
+	
+	//subviews were added in [control displayWindow], but this resulted
+	//in the window not drawing properly when launched from terminal
+	//moving the calls here fixed that issue.  not understood why.
+	CSControl *control = [[[CSControl alloc]init]autorelease];
+	
+	[[window contentView] addSubview: [control displayQuitButton]];
+	[[window contentView] addSubview: [control displayTextField]];
+	[[window contentView] addSubview: [control displayBrowserButton]];
+	
+
+	return window;
+}
+
+- (void)displayMonoWindow: (id) sender
+{
+	//makeMainWindow above set the application's main window.  now we can orderFront: nill
+	//which makes it disappear.
+	[[NSApp mainWindow] orderOut:nil];	
+	CSWindow *window = [CSControl createMonoWindow];
+	[window makeMainWindow];
+	[window center];
+	[window makeMainWindow];
+	[window makeKeyAndOrderFront: window];
+	
+}
+
 + (void)quit: (id) sender
 {
 	//makeMainWindow above set the application's main window.  now we can orderFront: nill
@@ -80,10 +118,32 @@
 	[NSApp terminate: NSApp];
 }
 
+- (NSButton *) displayMonoWindowButton
+{
+	//create our button 
+	NSButton *monoButton = [[[NSButton alloc] initWithFrame: NSMakeRect(0, 400,100,30)] autorelease];
+	[monoButton setButtonType: NSToggleButton];
+	[monoButton setBezelStyle: NSRoundedBezelStyle];
+	[monoButton setEnabled: YES ];
+	[monoButton setState: NSOnState];
+	[monoButton setFont: [NSFont fontWithName: @"Geneva" size: 10]];
+	
+	//make the button throb
+	[monoButton setKeyEquivalent: @"\r"];
+	
+	//set the text of the button and its target, in this case self
+	[monoButton setTitle: @"Main Window"];
+	[monoButton setTarget: self];
+	//this will call the stop method in self when the button is pressed.
+	[monoButton setAction: @selector(displayMonoWindow:)];
+	return monoButton;
+	
+}
+
 - (void) displayFileBrowser
 {
 	//create an NSRect and use it to create an CSWindow
-	NSRect contentRect = NSMakeRect(300, 180, 400, 400);
+	NSRect contentRect = NSMakeRect(300, 180, 550, 450);
 	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
 	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask | NSResizableWindowMask backing:NSBackingStoreBuffered defer:NO];
 	[window setTitle: @"File Window"];
@@ -94,6 +154,7 @@
 	//[browserControl setupBrowser: browser];
 	[browser setDelegate: browserControl];
 	[[window contentView] addSubview: browser];
+	[[window contentView] addSubview: [self displayMonoWindowButton]];
 	//[browserControl runUntilStop];
 	//[window release];
 	[[NSApp mainWindow] orderOut:[NSApp mainWindow]];

@@ -26,28 +26,9 @@
 	[NSApp setAppleMenu: [CSMenu createAppleMenu]];	
 	//set some of the buildin behavior this way.
 	[NSApp setWindowsMenu: [CSMenu createWindowMenu]];
-	
-	//create an NSRect and use it to create an CSWindow
-	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
-	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
-	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
-	[window setTitle: @"Mono Window"];
-	//make window the main window for the application
-	[window center];
-	[window makeMainWindow];
-	[window makeKeyAndOrderFront: window];
-	
-	
-	//subviews were added in [control displayWindow], but this resulted
-	//in the window not drawing properly when launched from terminal
-	//moving the calls here fixed that issue.  not understood why.
-	CSControl *control = [[CSControl alloc]init];
-	[[window contentView] addSubview: [control displayQuitButton]];
-	[[window contentView] addSubview: [control displayTextField]];
-	[[window contentView] addSubview: [control displayBrowserButton]];
-	//[control displayApplicationMenu];
 
-	//run the application 
+	//This gets the app started by creating the first window...
+	[CSControl createMonoWindow];
 	[NSApp run];
 	[pool release];	
 }

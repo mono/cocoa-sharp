@@ -18,6 +18,9 @@
 }
 - (void)displayMainWindow;
 + (void)quit: (id) sender;
++ (CSWindow *) createMonoWindow;
+- (void)displayMonoWindow: (id) sender;
+- (NSButton *) displayMonoWindowButton;
 - (NSTextField *)displayTextField;
 - (NSButton *)displayQuitButton;
 //- (void) displayApplicationMenu;
