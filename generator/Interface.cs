@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.13 2004/06/24 04:09:59 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.14 2004/06/24 04:14:35 urs Exp $
 //
 
 using System;
@@ -100,7 +100,7 @@ namespace ObjCManagedExporter
 				_xmlreader.Close();
 			}
 			_cs.WriteLine("using System;");
-			_cs.WriteLine("using System.Collection;");
+			_cs.WriteLine("using System.Collections;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
 
 			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
@@ -179,9 +179,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.14  2004/06/24 04:14:35  urs
+//	Fix typo
+//
 //	Revision 1.13  2004/06/24 04:09:59  urs
 //	Add System.Collection to generated C# files
-//
+//	
 //	Revision 1.12  2004/06/24 03:48:26  urs
 //	minor fix for NSObject
 //	
