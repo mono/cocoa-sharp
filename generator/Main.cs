@@ -128,7 +128,7 @@ namespace ObjCManagedExporter {
 						if(!_addedMethods.Contains((string)_methodEnum.Key)) { 
 							_addedMethods.Add((string)_methodEnum.Key);
 							Method _toOutput = (Method)_methodEnum.Value;
-							Console.WriteLine(_toOutput.ObjCMethod);
+							_toOutput.ObjCMethod(i.Name,Console.Out);
 						} else 
 							Console.WriteLine("DUPLICATE METHOD: {0}", (string)_methodEnum.Key);
 					}
