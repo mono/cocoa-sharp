@@ -48,11 +48,11 @@ namespace ObjCManagedExporter {
 			// \s*([+-])\s*(?:\(([^\)]+)\))?(.+)
 			Match match = sMatch1.Match(mMethodDeclaration);
 
-			string methodType = match.Groups[0].Value;
-			mReturnDeclarationType = match.Groups[1].Value;
+			string methodType = match.Groups[1].Value;
+			mReturnDeclarationType = match.Groups[2].Value;
 			if (mReturnDeclarationType == string.Empty)
 				mReturnDeclarationType = "id";
-			string remainder = match.Groups[2].Value;
+			string remainder = match.Groups[3].Value;
 
 			mIsClassMethod = methodType == "+";
 
@@ -74,12 +74,14 @@ namespace ObjCManagedExporter {
 				// If there are no arguments (only matches method name)
 				match = noarg_rx.Match(remainder);
 				messageParts.Add(match.Groups[1].Value);
+				mArgumentNames = new string[0];
+				mArgumentDeclarationTypes = new string[0];
 			} 
 			else if(arg_rx.IsMatch(remainder)) 
 			{
 				// If there are arguments, parse them
 				GroupCollection grps = arg_rx.Match(remainder).Groups;
-				for (int i = 0; i < grps.Count; )
+				for (int i = 1; i < grps.Count; )
 				{
 					messageParts.Add(grps[i++].Value);
 					string argType = grps[i++].Value;
@@ -87,8 +89,7 @@ namespace ObjCManagedExporter {
 
 					if (argType == string.Empty)
 						argType = "id";
-
-					if (argName == string.Empty)
+					else if (argName == string.Empty)
 					{
 						argName = argType;
 						argType = "id";
@@ -116,11 +117,17 @@ namespace ObjCManagedExporter {
         
 		public void ObjCMethod(string name,System.IO.TextWriter w)
 		{
+			if (mIsUnsupported)
+			{
+				w.WriteLine("// " + name + mGlueMethodName + ": not supported");
+				return;
+			}
+
 			ArrayList _message = new ArrayList();
 			ArrayList _params = new ArrayList();
 
 			if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
-				_message.Add(mMessageParts);
+				_message.Add(mMessageParts[0]);
 			else
 			{
 				for(int i = 0; i < mMessageParts.Length; ++i)
@@ -159,7 +166,7 @@ namespace ObjCManagedExporter {
 			string retter = mReturnDeclarationType == "void" ? string.Empty : "return ";
 
 			// Return the lines of the wrapper
-			w.WriteLine(mReturnDeclarationType + " " + mGlueMethodName + "(" + paramsStr + ") {");
+			w.WriteLine(mReturnDeclarationType + " " + name + "_" + mGlueMethodName + "(" + paramsStr + ") {");
 			w.WriteLine(body);
 			w.WriteLine("\t" + retter + "[" + receiver + " " + message + "];");
 			w.WriteLine("}");
