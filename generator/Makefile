@@ -5,3 +5,7 @@ generator.exe: Category.cs CEnum.cs Struct.cs Interface.cs Main.cs Method.cs Pro
 
 generator.run: generator.exe
 	(cd .. ; mono generator/generator.exe -xml:generator/generator.xml) && touch generator.run
+
+cs: generator.exe
+	(cd .. ; mono generator/generator.exe -xml:generator/generator.xml -out:CS)
+

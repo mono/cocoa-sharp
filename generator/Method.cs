@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.16 2004/06/22 13:38:59 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.17 2004/06/22 14:16:20 urs Exp $
 //
 
 using System;
@@ -264,7 +264,7 @@ namespace ObjCManagedExporter
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
 			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
 
-			w.WriteLine("        public {0} {1} {2} ({3}) {{", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr); 
+			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
 			if(_type != convertTypeGlue(mReturnDeclarationType))
 				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, csparamsStr);
 			else 
@@ -303,12 +303,36 @@ namespace ObjCManagedExporter
 			{
 				case "delegate":
 				case "this":
-				case "lock":
 				case "base":
-				case "int":
-				case "string":
-				case "class":
+				case "lock":
 				case "object":
+				case "string":
+				case "int":
+				case "short":
+				case "long":
+				case "bool":
+				case "void":
+				case "char":
+				case "static":
+				case "class":
+				case "interface":
+				case "struct":
+				case "enum":
+				case "null":
+				case "private":
+				case "public":
+				case "protected":
+				case "internal":
+				case "if":
+				case "else":
+				case "switch":
+				case "for":
+				case "foreach":
+				case "case":
+				case "return":
+				case "default":
+				case "continue":
+				case "break":
 					return "_" + name;
 			}
 			return name;
@@ -326,16 +350,25 @@ namespace ObjCManagedExporter
 				case "unichar": return "char";
 				case "char": return "sbyte";
 				case "unsigned char": return "byte";
-				case "unsigned short": return "ushort";
-				case "short": return "short";
-				case "int": case "long int": case "int32_t": case "SInt32":
+				case "short": case "short int":
+					return "short";
+				case "unsigned short": case "unsigned short int":
+					return "ushort";
+				case "int": case "int32_t": case "SInt32":
 					return "int";
-				case "unsigned": case "unsigned int": case "unsigned long int": 
+				case "unsigned": case "unsigned int": case "UInt32": 
 					return "uint";
-				case "unsigned long": return "ulong";
-				case "long long": case "int64_t": return "Int64";
-				case "unsigned long long": return "UInt64";
+				case "long": case "long int":
+					return "long";
+				case "unsigned long": case "unsigned long int":
+					return "ulong";
+				case "long long": case "int64_t": case "SInt64":
+					return "Int64";
+				case "unsigned long long": case "UInt64":
+					return "UInt64";
 
+				case "OSErr":
+					return "Int16";
 				case "OSType":
 					return "int";
 
@@ -384,10 +417,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.17  2004/06/22 14:16:20  urs
+//	Minor fix
+//
 //	Revision 1.16  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)
-//
+//	
 //	Revision 1.15  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
 //	
