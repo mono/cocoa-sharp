@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.7 2004/09/04 02:07:19 gnorton Exp $
+// $Id: Class.cs,v 1.8 2004/09/04 02:26:31 urs Exp $
 //
 
 using System;
@@ -13,17 +13,19 @@ namespace CocoaSharp {
 		private objc_class occlass;
 		private string superClass, name;
 		private ArrayList ivars = new ArrayList();
-		private ArrayList methods = new ArrayList();
+		private ArrayList methods, classMethods;
 	
 		public Class (uint offset, MachOFile file) {
 			byte *ptr = file.GetPtr(offset);
 			occlass = *(objc_class *)ptr;
+			Utils.MakeBigEndian(ref occlass.isa);
 			Utils.MakeBigEndian(ref occlass.super_class);
 			Utils.MakeBigEndian(ref occlass.name);
 			Utils.MakeBigEndian(ref occlass.version);
 			Utils.MakeBigEndian(ref occlass.info);
 			Utils.MakeBigEndian(ref occlass.instance_size);
 			Utils.MakeBigEndian(ref occlass.ivars);
+			Utils.MakeBigEndian(ref occlass.methodLists);
 			superClass = file.GetString(occlass.super_class);
 			name = file.GetString(occlass.name);
 			MachOFile.DebugOut(0,"Class: {0} : {1} iSize={2}", name, superClass,occlass.instance_size);
@@ -41,26 +43,14 @@ namespace CocoaSharp {
 				}
 			}
 
-			byte* methodsPtr = file.GetPtr(occlass.methodLists);
-			objc_method_list ocmethodlist = *(objc_method_list *)methodsPtr;
-			byte* methodPtr = methodsPtr+Marshal.SizeOf(ocmethodlist);
-			Utils.MakeBigEndian(ref ocmethodlist.method_count);
-			for (int i = 0; i < ocmethodlist.method_count; ++i, methodPtr += Marshal.SizeOf(typeof(objc_method))) {
-				objc_method method = *(objc_method*)methodPtr;
-				methods.Add(new Method(method,file));
-			}
-#if false
-			// Process methods
-			[aClass setInstanceMethods:[self processMethods:classPtr->methods]];
+			methods = ProcessMethods(occlass.methodLists,file);
 
 			// Process meta class
-
+			objc_class metaClass = *(objc_class *)file.GetPtr(occlass.isa);
+			Utils.MakeBigEndian(ref metaClass.methodLists);
+			classMethods = ProcessMethods(metaClass.methodLists,file);
+#if false
 			{
-				const struct cd_objc_class *metaClassPtr;
-
-				metaClassPtr = [machOFile pointerFromVMAddr:classPtr->isa];
-				//assert(metaClassPtr->info & CLS_CLASS);
-
 				// Process class methods
 				[aClass setClassMethods:[self processMethods:metaClassPtr->methods]];
 			}
@@ -68,6 +58,20 @@ namespace CocoaSharp {
 			// Process protocols
 			[aClass addProtocolsFromArray:[self processProtocolList:classPtr->protocols]];
 #endif
+		}
+		static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
+			ArrayList ret = new ArrayList();
+			if (methodLists != 0) {
+				byte* methodsPtr = file.GetPtr(methodLists);
+				objc_method_list ocmethodlist = *(objc_method_list *)methodsPtr;
+				byte* methodPtr = methodsPtr+Marshal.SizeOf(ocmethodlist);
+				Utils.MakeBigEndian(ref ocmethodlist.method_count);
+				for (int i = 0; i < ocmethodlist.method_count; ++i, methodPtr += Marshal.SizeOf(typeof(objc_method))) {
+					objc_method method = *(objc_method*)methodPtr;
+					ret.Add(new Method(method,file));
+				}
+			}
+			return ret;
 		}
 	}
 
