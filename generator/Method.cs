@@ -178,5 +178,70 @@ namespace ObjCManagedExporter {
 			w.WriteLine("\t" + retter + "[" + receiver + " " + message + "];");
 			w.WriteLine("}");
 		}
+
+		public void CSGlueMethod(string name,string glueLib,System.IO.TextWriter w)
+		{
+			string _type = convertTypeGlue(mReturnDeclarationType);
+			ArrayList _params = new ArrayList();
+
+			if (mIsClassMethod)
+				_params.Add("IntPtr CLASS");
+			else
+				_params.Add("IntPtr THIS");
+
+			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+			{
+				string t = convertTypeGlue(mArgumentDeclarationTypes[i]);
+				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
+			}
+
+			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
+
+			// [DllImport("AppKitGlue")]
+			// protected internal static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
+			w.WriteLine("        [DllImport(\"" + glueLib + "\")]");
+			w.WriteLine("        protected internal static extern " +
+				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
+		}
+
+		private static string convertTypeGlue(string type) 
+		{
+			switch (type) 
+			{
+				case "BOOL": return "bool";
+				case "long long": return "Int64";
+				case "unsigned long long": return "UInt64";
+				case "unsigned": return "uint";
+				case "id": return "IntPtr /*(" + type + ")*/";
+				case "Class": return "IntPtr /*(" + type + ")*/";
+				case "SEL": return "IntPtr /*(" + type + ")*/";
+				case "IMP": return "IntPtr /*(" + type + ")*/";
+				default:
+					if (type.EndsWith("*"))
+						return "IntPtr /*(" + type + ")*/";
+					break;
+			}
+			return type;
+		}
+
+		private static string convertType(string type) 
+		{
+			switch (type) 
+			{
+				case "BOOL": return "bool";
+				case "long long": return "Int64";
+				case "unsigned long long": return "UInt64";
+				case "unsigned": return "uint";
+				case "id": return "object";
+				case "Class": return "Class";
+				case "SEL": return "string";
+				case "IMP": return "IntPtr /*(" + type + ")*/";
+				default:
+					if (type.EndsWith("*"))
+						return type.StartsWith("NSString") ? "string" : "IntPtr /*(" + type + ")*/";
+					break;
+			}
+			return type;
+		}
 	}
 }

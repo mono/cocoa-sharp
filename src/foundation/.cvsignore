@@ -1,4 +1,4 @@
-*_stub.m
+*_glue.m
 *.o
 *.lo
 *.la
