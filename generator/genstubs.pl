@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.17 2004/06/18 17:52:52 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.18 2004/06/18 22:36:18 gnorton Exp $
 #
 
 use strict;
@@ -637,7 +637,11 @@ sub genCSharpStub {
     # BUG: Why are we getting empty method names in here?
     return unless defined($objC{'method name'});
 
-    my $type = convertTypeGlue($objC{'return type'});
+    if(  ( ($objC{'return type'} !~ /(\w+)\s+\*/) && (!defined($typeMap{$objC{'return type'}})))) {
+        print "WARNING: Not processing " . $objC{'method name'} . " because I dont know how to map: " . $objC{'return type'} . "\n";
+        return;
+    }
+    my $type = (($objC{'return type'} =~ /(\w+)\s*\*/) ? "IntPtr /*$1*/" : $typeMap{$objC{'return type'}});
     my @params = ();
     my @names = defined $objC{'arg names'} ? @{ $objC{'arg names'} } : ();
     my @types = defined $objC{'arg types'} ? @{ $objC{'arg types'} } : ();
@@ -649,7 +653,11 @@ sub genCSharpStub {
     }
 
     for(my $i = 0; $i < int @types; $i++){
-        my $t = convertTypeGlue($types[$i]);
+        if(  ( ($types[$i] !~ /(\w+)\s+\*/) && (!defined($typeMap{$types[$i]})))) {
+            print "WARNING: Not processing " . $objC{'method name'} . " because I dont know how to map: " . $types[$i] . "\n";
+            return;
+        }
+        my $t = (($types[$i] =~ /(\w+)\s*\*/) ? "IntPtr /*$1*/" : $typeMap{$types[$i]});
         push(@params, "$t p$i/*$names[$i]*/");
     }
 
@@ -670,14 +678,19 @@ sub genCSharpInstanceMethod {
     #BUG: Why are we getting undefined method names in here
     return unless defined($objC{'method name'});
 
-    my $type = convertType($objC{'return type'});
+    if(  ( ($objC{'return type'} !~ /(\w+)\s+\*/) && (!defined($typeMap{$objC{'return type'}})))) {
+        print "WARNING: Not processing " . $objC{'method name'} . " because I dont know how to map: " . $objC{'return type'} . "\n";
+        return;
+    }
+    my $type = (($objC{'return type'} =~ /(\w+)\s*\*/) ? "IntPtr /*$1*/" : $typeMap{$objC{'return type'}});
     my $retter = ($type =~ /void/) ? "" : "return ";
     my @args = ();
     my @params = ();
     my @names = defined $objC{'arg names'} ? @{ $objC{'arg names'} } : ();
     my @types = defined $objC{'arg types'} ? @{ $objC{'arg types'} } : ();
     my @messageParts = @{ $objC{'message parts'} };
-    my $methodName = $objC{'method name'};
+    my $methodName = substr($objC{'method name'}, index($objC{'method name'}, "_")+1);
+    $methodName = (defined($typeMap{$methodName}) ? $typeMap{$methodName} : $methodName);
 
     if ($objC{'is class method'}) {
         $type = "static $type";
@@ -687,7 +700,11 @@ sub genCSharpInstanceMethod {
     }
 
     for(my $i = 0; $i < int @types; $i++){
-        my $t = convertType($types[$i]);
+        if(  ( ($types[$i] !~ /(\w+)\s+\*/) && (!defined($typeMap{$types[$i]})))) {
+            print "WARNING: Not processing " . $objC{'method name'} . " because I dont know how to map: " . $types[$i] . "\n";
+            return;
+        }
+        my $t = (($types[$i] =~ /(\w+)\s*\*/) ? "IntPtr /*$1*/" : $typeMap{$types[$i]});
         push(@args, "$t p$i/*$names[$i]*/");
         push(@params, "p$i/*$names[$i]*/");
     }
@@ -697,53 +714,60 @@ sub genCSharpInstanceMethod {
 
     # void setTitle(string aString);
     return (
-        "        public $type $messageParts[0] ($args) {",
+        "        public $type $methodName ($args) {",
         "            $retter$methodName ($params);",
         "        }"
     );
 }
 
-sub convertTypeGlue {
-    my $type = shift();
-    
-    return "IntPtr /*(??)*/" unless defined $type;
-    
-    if ($type eq "BOOL") {
-        return "bool";
-    } elsif ($type eq "unsigned") {
-        return "uint";
-    } elsif($type eq "id" || $type eq "Class" || $type eq "SEL" || $type eq "IMP" || $type =~ /.*\*$/) {
-        return "IntPtr /*($type)*/";
-    }
-    
-    return $type;
-}
+#sub convertTypeGlue {
+#    my $type = shift();
+#    
+#    return "IntPtr /*(??)*/" unless defined $type;
+#    
+#    if ($type eq "BOOL") {
+#        return "bool";
+#    } elsif ($type eq "long long") {
+#        return "Int64";
+#    } elsif ($type eq "unsigned long long") {
+#        return "UInt64";
+#    } elsif ($type eq "unsigned") {
+#        return "uint";
+#    } elsif($type eq "id" || $type eq "Class" || $type eq "SEL" || $type eq "IMP" || $type =~ /.*\*$/) {
+#        return "IntPtr /*($type)*/";
+#    }
+#    if($type =~ /^unsigned (\w+)$/) {
+#        $type = "u" . $1;
+#    } 
+#    
+#    return $type;
+#}
 
-sub convertType {
-    my $type = shift();
-    
-    return "object /*(??)*/" unless defined $type;
-    
-    if ($type eq "BOOL") {
-        return "bool";
-    } elsif ($type eq "unsigned") {
-        return "uint";
-    } elsif($type eq "id") {
-        return "object /*($type)*/";
-    } elsif($type eq "Class") {
-        return "Class";
-    } elsif($type eq "SEL") {
-        return "string /*SEL*/";
-    } elsif($type eq "IMP") {
-        return "IntPtr /*IMP*/";
-    } elsif($type =~ /NSString.*\*$/) {
-        return "string /*($type)*/";
-    } elsif($type =~ /(\w+).*\*$/) {
-        return "$1 /*($type)*/";
-    }
-    
-    return $type;
-}
+#sub convertType {
+#    my $type = shift();
+#    
+#    return "object /*(??)*/" unless defined $type;
+#    
+#    if ($type eq "BOOL") {
+#        return "bool";
+#    } elsif ($type eq "unsigned") {
+#        return "uint";
+#    } elsif($type eq "id") {
+#        return "object /*($type)*/";
+#    } elsif($type eq "Class") {
+#        return "Class";
+#    } elsif($type eq "SEL") {
+#        return "string /*SEL*/";
+#    } elsif($type eq "IMP") {
+#        return "IntPtr /*IMP*/";
+#    } elsif($type =~ /NSString.*\*$/) {
+#        return "string /*($type)*/";
+#    } elsif($type =~ /(\w+).*\*$/) {
+#        return "$1 /*($type)*/";
+#    }
+#    
+#    return $type;
+#}
 
 sub getCSharpHash {
     my %objC = @_;
@@ -758,9 +782,12 @@ sub getCSharpHash {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.18  2004/06/18 22:36:18  gnorton
+#	Better .cs handling; still broken but closer
+#
 #	Revision 1.17  2004/06/18 17:52:52  urs
 #	Some .cs file gen improv.
-#
+#	
 #	Revision 1.16  2004/06/18 15:09:31  gnorton
 #	* Resolve some warning in the.cs generation
 #	* Temporarily make our tmp directories if needed
