@@ -39,6 +39,13 @@ void InitGlue(classHandlerDelegate classHandler) {
     objc_setClassHandler(classHandler);
 }
 
+const char * GetObjectSuperClassName(id THIS, int depth) {
+    id sclass = THIS;
+    int i = 0;
+    for (i = 0; i < depth; i++)
+        sclass = [sclass superclass];
+    return [[sclass className] cString];
+}
 const char * GetObjectClassName(id THIS) {
     return [[THIS className] cString];
 }
