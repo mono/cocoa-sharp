@@ -4,139 +4,129 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
 
-#if 0
-void AddMethod(Class cls,const char *name, const char *types, IMP imp) {
-    struct objc_method_list *methodsToAdd = (struct objc_method_list *)
-        malloc(1 * 
-        sizeof(struct objc_method) + 
-        sizeof(struct objc_method_list));
-    methodsToAdd->method_count = 1;
-
-    struct objc_method meth;
-    meth.method_name = sel_registerName(name);
-    meth.method_types = types;
-    meth.method_imp = imp;
-    methodsToAdd->method_list[0] = meth;
-
-    class_addMethods(cls, methodsToAdd);
-}
-#endif
-
-typedef BOOL (*managedDelegate)(NSInvocation * anInvocation);
-
-@interface DotNetForwarding : NSObject {
-	managedDelegate mDelegate;
-}
-- (id) initWithManagedDelegate: (managedDelegate) delegate;
-- (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector;
-- (NSMethodSignature *) methodSignature: (SEL) aSelector;
-- (void) forwardInvocation: (NSInvocation *) anInvocation;
-#if 0
-- (BOOL) isProxy;
-- (BOOL) respondsToSelector: (SEL) aSelector;
-#endif
-
-@end
-
-@protocol CSControl
+// static code: has to go
+@interface _CSControl : NSObject {}
 - (void) _stop;
 - (void) _swap;
-@end
-
-@interface _CSControl : NSObject <CSControl> {}
 @end
 
 @implementation _CSControl
 - (void) _stop {}
 - (void) _swap {}
 @end
+// end of static code
+
+
+void AddMethods(Class cls,int count,...) {
+    struct objc_method_list *methodsToAdd = (struct objc_method_list *)
+        malloc(count*sizeof(struct objc_method) + sizeof(struct objc_method_list));
+    methodsToAdd->method_count = count;
+
+	int i;
+	va_list vl;
+	va_start(vl,count);
+	for (i = 0; i < count; ++i) {
+		SEL name = va_arg(vl,SEL);
+		char *types = va_arg(vl,char *);
+		IMP imp = va_arg(vl,IMP);
+	
+		struct objc_method *meth = methodsToAdd->method_list+i;
+		meth->method_name = name;
+		meth->method_types = types;
+		meth->method_imp = imp;
+	}
+
+    class_addMethods(cls, methodsToAdd);
+}
+
+typedef BOOL (*managedDelegate)(NSInvocation * anInvocation);
+
+@interface DotNetForwarding : NSObject {
+}
++ (id) initWithManagedDelegate: (managedDelegate) delegate on: (id) base;
++ (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector on: (id) base;
++ (void) forwardInvocation: (NSInvocation *) anInvocation on: (id) base;
+
+@end
 
 @implementation DotNetForwarding
-- (id)initWithManagedDelegate:(managedDelegate)delegate
-{
-    self = [super init];
-    NSLog(@"initWithManagedDelegate: %@ %p", self, delegate);
-	mDelegate = delegate;
-	return self;
++ (id) initWithManagedDelegate: (managedDelegate) delegate on: (id) base {
+    NSLog(@"initWithManagedDelegate: %@ %p", base, delegate);
+
+	object_setInstanceVariable(base,"mDelegate",delegate);
+	
+	return base;
 }
 
-- (NSMethodSignature *)methodSignatureForSelector: (SEL) aSelector {
++ (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector on: (id) base {
     NSLog(@"methodSignatureForSelector: %s", sel_getName(aSelector));
-
-	NSMethodSignature* signature = [[self superclass] instanceMethodSignatureForSelector: aSelector];
+	
+	NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
 	
 	if (!signature)
-		signature = [self methodSignature: aSelector];
-	return signature;
-}
-
-- (NSMethodSignature *) methodSignature: (SEL) aSelector
-{
-    NSLog(@"methodSignature: %s",sel_getName(aSelector));
-	NSMethodSignature* signature = [_CSControl instanceMethodSignatureForSelector: aSelector];
-	if (signature)
-    	NSLog(@"methodSignature: %s %@",sel_getName(aSelector),signature);
-	return signature;
-}
-
-- (void) forwardInvocation: (NSInvocation *) invocation {
-    NSLog(@"forwardInvocation: %s", sel_getName([invocation selector]));
+		// static code: has to change
+		signature = [_CSControl instanceMethodSignatureForSelector: aSelector];
 	
-	if (mDelegate(invocation))
+	return signature;
+}
+
++ (void) forwardInvocation: (NSInvocation *) anInvocation on: (id) base {
+    NSLog(@"forwardInvocation: %s", sel_getName([anInvocation selector]));
+	
+	managedDelegate delegate;
+	object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+	
+	if (delegate(anInvocation))
         return;
     else
-        [self doesNotRecognizeSelector: [invocation selector]];
+        [base doesNotRecognizeSelector: [anInvocation selector]];
 }
-
-#if 0
-- (BOOL) isProxy {
-    NSLog(@"isProxy: %@", self);
-	return YES;
-}
-
-- (BOOL) respondsToSelector: (SEL) aSelector {
-	if( [[self superclass] instancesRespondToSelector: aSelector] )
-		return YES;
-	if (aSelector == @selector(_stop) || aSelector == @selector(_swap))
-		return YES;
-    NSLog(@"respondsToSelector: %s --> NO", sel_getName(aSelector));
-	return NO;
-}
-
-- (void)prototypeMethod {
-    NSLog(@"prototypeMethod: %@", self);
-}
-#endif
 
 @end
 
 id DotNetForwarding_initWithManagedDelegate(DotNetForwarding *THIS, managedDelegate delegate) {
 	NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
-	return [THIS initWithManagedDelegate: delegate];
+	return [DotNetForwarding initWithManagedDelegate: delegate on: THIS];
 }
 
-#if 0
-//- (void)forwardInvocation:(NSInvocation *)anInvocation;
-id glue_forwardInvocation(id base, SEL sel, ...) {
-    NSLog(@"glue_forwardInvocation: calling delegate %@ %s", base, sel_getName(sel));
+//- (id)initWithManagedDelegate:(managedDelegate)delegate
+id glue_initWithManagedDelegate(id base, SEL sel, ...) {
+    NSLog(@"glue_initWithManagedDelegate %@ %s", base, sel_getName(sel));
 
-	NSInvocation * anInvocation;
-	
-	return base;
+	va_list vl;
+	va_start(vl,sel);
+	managedDelegate delegate = va_arg(vl,managedDelegate);
+
+	id ret = [DotNetForwarding initWithManagedDelegate: delegate on: base];
+	NSLog(@" --> ret = %@",ret);
+	return ret;
 }
 
 //- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 id glue_methodSignatureForSelector(id base, SEL sel, ...) {
-    NSLog(@"glue_methodSignatureForSelector %@ %s", base, sel_getName(sel));
+    NSLog(@"glue_methodSignatureForSelector %p %s", base, sel_getName(sel));
+	
+	va_list vl;
+	va_start(vl,sel);
+	SEL aSelector = va_arg(vl,SEL);
+	
+	return [DotNetForwarding methodSignatureForSelector: aSelector on: base];
+}
 
-	SEL aSelector;
+//- (void)forwardInvocation:(NSInvocation *)anInvocation;
+id glue_forwardInvocation(id base, SEL sel, ...) {
+    NSLog(@"glue_forwardInvocation: calling delegate %p %s", base, sel_getName(sel));
 
+	va_list vl;
+	va_start(vl,sel);
+	NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
+	
+	[DotNetForwarding forwardInvocation: anInvocation on: base];
 	return base;
 }
-#endif
 
 Class CreateClassDefinition(const char * name, const char * superclassName) {
-	superclassName = "DotNetForwarding";
+	//superclassName = "DotNetForwarding";
     NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
     //
@@ -178,22 +168,20 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     // Allocate empty method lists.
     // We can add methods later.
     //
-    new_class->methodLists = (struct objc_method_list *)calloc( 1, sizeof(struct objc_method_list *) );
-    *new_class->methodLists = -1;
-    meta_class->methodLists = (struct objc_method_list *)calloc( 1, sizeof(struct objc_method_list *) );
-    *meta_class->methodLists = -1;
+    new_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
+    *new_class->methodLists = (struct objc_method_list*)-1;
+    meta_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
+    *meta_class->methodLists = (struct objc_method_list*)-1;
 
-#if 0
     struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 1, sizeof(struct objc_ivar_list) + (1-1)*sizeof(struct objc_ivar) );
 
     ivarList->ivar_count = 1;
-    ivarList->ivar_list[0].ivar_name = "dotNet";
-    ivarList->ivar_list[0].ivar_type = @encode(void*);
-    ivarList->ivar_list[0].ivar_offset = 0;
+    ivarList->ivar_list[0].ivar_name = "mDelegate";
+    ivarList->ivar_list[0].ivar_type = @encode(managedDelegate);
+    ivarList->ivar_list[0].ivar_offset = 4;
 
     new_class->instance_size = sizeof(void*);
     new_class->ivars = ivarList;
-#endif
 
     //
     // Connect the class definition to the class hierarchy:
@@ -207,8 +195,13 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
 
     // Finally, register the class with the runtime.
     objc_addClass( new_class );
-    
-    //AddMethod(new_class, "forwardInvocation:", "", glue_forwardInvocation);
+	
+    AddMethods(new_class, 3, 
+			  @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
+			  @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
+			  @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
     
     return new_class;
 }
+
+
