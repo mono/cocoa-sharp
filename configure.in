@@ -1,11 +1,24 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
 AC_PROG_LIBTOOL
-AM_INIT_AUTOMAKE(MonoObjc.framework, 0.1)
+AM_INIT_AUTOMAKE(cocoa-sharp, 0.1)
 AM_MAINTAINER_MODE
+dnl Make Objective-C work with automake 1.7.x
+AM_CONDITIONAL([am__fastdepOBJC], false)
 
 dnl Defines CC to avoid warnings
 AC_PROG_INSTALL
+dnl AC_PROG_OBJC doesn't seem to exist, this is the workaround
+AC_MSG_CHECKING(for an Objective-C compiler)
+OBJC="$CC"
+AC_SUBST(OBJC)
+OBJCFLAGS="$CFLAGS -x objective-c"
+AC_SUBST(OBJCFLAGS)
+dnl _AM_DEPENDENCIES(OBJC) doesn't work, so hard code OBJCDEPMODE here
+dnl _AM_DEPENDENCIES(OBJC)
+dnl Of course, hard coding doesn't work for some versions of automake
+OBJCDEPMODE="depmode=gcc"
+AC_SUBST(OBJCDEPMODE)
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then
@@ -42,6 +55,7 @@ else
     AC_MSG_ERROR([You need to install mono])
 fi
 
+OBJC="gcc"
 CS="C#"
 if test "x$CSC" = "xno" ; then
     AC_MSG_ERROR([No $CS compiler found])
@@ -59,4 +73,8 @@ AC_SUBST(GLIB2_CFLAGS)
 
 AC_OUTPUT([
 Makefile
+test/Makefile
+src/Makefile
+src/appkit/Makefile
+src/foundation/Makefile
 ])
