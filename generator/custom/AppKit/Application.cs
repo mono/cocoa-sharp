@@ -12,12 +12,20 @@ namespace Apple.AppKit
 {
 	public class Application
 	{
+		static NSAutoreleasePool pool;
+		static NSBundle mainBundle;
+
 		static Application ()
 		{
 		}
 
 		public static void Init ()
 		{
+//			pool = (NSAutoreleasePool)NSAutoreleasePool.AllocWithZone (IntPtr.Zero);
+			pool = new NSAutoreleasePool ();
+			pool.init ();
+			mainBundle = NSBundle.MainBundle;
+			Console.WriteLine (mainBundle.resourcePath.ToString ());
 			// We import Foundation and AppKit by default
 			LoadFramework ("Foundation");
 			LoadFramework ("AppKit");

@@ -78,6 +78,12 @@ namespace Apple.Foundation
 			className = className.Replace ("NSConcrete", "NS");
 			if (className.StartsWith ("NS") && className.EndsWith ("Color"))
 				className = "NSColor";
+			if (className.Equals ("NSPathStore2"))
+				className = "NSString";
+			if (className.Equals ("NSCGSFont"))
+				className = "NSFont";
+			if (className.Equals ("NSCFDictionary"))
+				className = "NSDictionary";
 			Type type = NS2Type(className);
 
 			if (type != null) {
