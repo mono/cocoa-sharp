@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.19 2004/06/18 22:41:40 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.20 2004/06/19 02:34:32 urs Exp $
 #
 
 use strict;
@@ -716,7 +716,7 @@ sub genCSharpInstanceMethod {
     # void setTitle(string aString);
     return (
         "        public $type $methodName ($args) {",
-        "            $retter$methodName ($params);",
+        "            $retter$objC{'method name'} ($params);",
         "        }"
     );
 }
@@ -783,9 +783,12 @@ sub getCSharpHash {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.20  2004/06/19 02:34:32  urs
+#	some cleanup
+#
 #	Revision 1.19  2004/06/18 22:41:40  gnorton
 #	Forgot one case for __ statics
-#
+#	
 #	Revision 1.18  2004/06/18 22:36:18  gnorton
 #	Better .cs handling; still broken but closer
 #	

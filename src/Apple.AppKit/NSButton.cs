@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.10 2004/06/18 13:54:57 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.11 2004/06/19 02:34:32 urs Exp $
 //
 
 using System;
@@ -36,24 +36,30 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSButton_class = Class.Get("NSButton");
 
 		[DllImport("AppKitGlue")]
+		protected internal static extern IntPtr NSButton_title(IntPtr THIS);
+
+		[DllImport("AppKitGlue")]
 		protected internal static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
+		
+		[DllImport("AppKitGlue")]
+		protected internal static extern NSBezelStyle NSButton_bezelStyle(IntPtr THIS);
 		
 		[DllImport("AppKitGlue")]
 		protected internal static extern void NSButton_setBezelStyle(IntPtr THIS, NSBezelStyle style);
 		
-		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
 		protected internal NSButton(IntPtr raw,bool release) : base(raw,release) {}
+
+		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
 		public NSButton(NSRect rect) {
-			SetRaw(NSObject__alloc(NSButton_class), true);
-			initWithFrame(rect);
+		    initWithFrame(rect);
 		}
 
 		public string Title {
-			set { NSButton_setTitle(Raw, Net2NS(value)); }
+			get { return NS2Net(NSButton_title(Raw)); } set { NSButton_setTitle(Raw, Net2NS(value)); }
 		}
 
 		public NSBezelStyle BezelStyle {
-			set { NSButton_setBezelStyle(Raw, value); }
+			get { return NSButton_bezelStyle(Raw); } set { NSButton_setBezelStyle(Raw, value); }
 		}
 	}
 }
@@ -61,6 +67,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.11  2004/06/19 02:34:32  urs
+// some cleanup
+//
 // Revision 1.10  2004/06/18 13:54:57  urs
 // *** empty log message ***
 //

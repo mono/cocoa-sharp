@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.6 2004/06/17 17:41:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.7 2004/06/19 02:34:32 urs Exp $
 //
 
 using System;
@@ -23,15 +23,24 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		protected internal static extern IntPtr NSControl_initWithFrame(IntPtr THIS, NSRect frameRect);
 		[DllImport("AppKitGlue")]
+		protected internal static extern IntPtr NSControl_target(IntPtr THIS);
+		[DllImport("AppKitGlue")]
 		protected internal static extern void NSControl_setTarget(IntPtr THIS, IntPtr anObject);
+		[DllImport("AppKitGlue")]
+		protected internal static extern IntPtr NSControl_action(IntPtr THIS);
 		[DllImport("AppKitGlue")]
 		protected internal static extern void NSControl_setAction(IntPtr THIS, IntPtr aSelector);
 		[DllImport("AppKitGlue")]
+		protected internal static extern IntPtr NSControl_stringValue(IntPtr THIS);
+		[DllImport("AppKitGlue")]
 		protected internal static extern void NSControl_setStringValue(IntPtr THIS, IntPtr aString);
 		
-		public NSControl() {}
-
 		protected NSControl(IntPtr raw,bool release) : base(raw,release) {}
+
+		public NSControl() : this(alloc(),true) {}
+		public NSControl(NSRect frameRect) : this(alloc(),true) {
+		    initWithFrame(frameRect);
+		}
 
 		new public NSControl initWithFrame(NSRect frameRect)
 		{
@@ -41,17 +50,17 @@ namespace Apple.AppKit
 	
 		public object Target
 		{
-			set { NSControl_setTarget(Raw, Net2NS(value)); }
+			get { return NS2Net(NSControl_target(Raw)); } set { NSControl_setTarget(Raw, Net2NS(value)); }
 		}
 
 		public string Action
 		{
-			set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
+			get { return NSString.FromSEL(NSControl_action(Raw)); } set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
 		}
 
 		public string StringValue
 		{
-			set { NSControl_setStringValue(Raw, Net2NS(value)); }
+			get { return (string)NS2Net(NSControl_stringValue(Raw)); } set { NSControl_setStringValue(Raw, Net2NS(value)); }
 		}
 	}
 }
@@ -59,6 +68,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.7  2004/06/19 02:34:32  urs
+// some cleanup
+//
 // Revision 1.6  2004/06/17 17:41:20  gnorton
 // API modification.
 //
