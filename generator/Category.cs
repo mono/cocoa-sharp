@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Category.cs,v 1.7 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Category.cs,v 1.8 2004/06/23 20:45:18 urs Exp $
 //
 
 using System;
@@ -25,7 +25,7 @@ namespace ObjCManagedExporter
 		private string mClass;
 		private string[] mImports;
         
-		public Category(string _name, string _class) : base(_name,"???")
+		public Category(string _name, string _class,string _framework) : base(_name,_framework)
 		{
 			mClass = _class;
 		}
@@ -47,9 +47,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Category.cs,v $
+//	Revision 1.8  2004/06/23 20:45:18  urs
+//	Only add category of dependent frameworks, this might be changed in the future, but would require a new class
+//
 //	Revision 1.7  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.6  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	
