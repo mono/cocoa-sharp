@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSAutoreleasePool.cs,v 1.7 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSAutoreleasePool.cs,v 1.8 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -20,7 +20,7 @@ namespace Apple.Foundation
 	public class NSAutoreleasePool : NSObject {
 		protected internal static IntPtr NSAutoreleasePool_class = Class.Get("NSAutoreleasePool");
 
-		private NSAutoreleasePool() : this(NSObject__alloc(NSAutoreleasePool_class),true) {}
+		private NSAutoreleasePool() : this(NSObject__alloc0(NSAutoreleasePool_class),true) {}
 		protected internal NSAutoreleasePool(IntPtr raw,bool release) : base(raw,release) {}
 
 	}
@@ -29,6 +29,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSAutoreleasePool.cs,v $
+// Revision 1.8  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.7  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

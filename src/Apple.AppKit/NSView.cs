@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.6 2004/06/17 17:41:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.7 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -23,25 +23,25 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSView_class = Class.Get("NSView");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSView_addSubview(IntPtr THIS, IntPtr aView);
+		protected internal static extern void NSView_addSubview1(IntPtr THIS, IntPtr aView);
 		
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSView_initWithFrame(IntPtr THIS, NSRect frame);
+		protected internal static extern IntPtr NSView_initWithFrame1(IntPtr THIS, NSRect frame);
 		
-		public NSView() : this(NSObject__alloc(NSView_class),true) {}
+		public NSView() : this(NSObject__alloc0(NSView_class),true) {}
 		protected internal NSView(IntPtr raw,bool release) : base(raw,release) {}
 		public NSView(NSRect frame) {
-			SetRaw(NSObject__alloc(NSView_class), true);
+			SetRaw(NSObject__alloc0(NSView_class), true);
 			initWithFrame(frame);
 		}
 
 		virtual public NSView initWithFrame(NSRect frame) {
-			SetRaw(NSView_initWithFrame(Raw, frame),_release);
+			SetRaw(NSView_initWithFrame1(Raw, frame),_release);
 			return this;
 		}
 
 		public void addSubview(NSView aView) {
-			NSView_addSubview(Raw, aView.Raw);
+			NSView_addSubview1(Raw, aView.Raw);
 		}
 	}
 }
@@ -49,6 +49,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSView.cs,v $
+// Revision 1.7  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.6  2004/06/17 17:41:20  gnorton
 // API modification.
 //

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.9 2004/06/19 20:42:59 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.10 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -23,49 +23,49 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSControl_class = Class.Get("NSControl");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSControl_initWithFrame(IntPtr THIS, NSRect frameRect);
+		protected internal static extern IntPtr NSControl_initWithFrame1(IntPtr THIS, NSRect frameRect);
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSControl_target(IntPtr THIS);
+		protected internal static extern IntPtr NSControl_target0(IntPtr THIS);
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSControl_setTarget(IntPtr THIS, IntPtr anObject);
+		protected internal static extern void NSControl_setTarget1(IntPtr THIS, IntPtr anObject);
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSControl_action(IntPtr THIS);
+		protected internal static extern IntPtr NSControl_action0(IntPtr THIS);
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSControl_setAction(IntPtr THIS, IntPtr aSelector);
+		protected internal static extern void NSControl_setAction1(IntPtr THIS, IntPtr aSelector);
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSControl_stringValue(IntPtr THIS);
+		protected internal static extern IntPtr NSControl_stringValue0(IntPtr THIS);
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSControl_setStringValue(IntPtr THIS, IntPtr aString);
+		protected internal static extern void NSControl_setStringValue1(IntPtr THIS, IntPtr aString);
 		
 		protected NSControl(IntPtr raw,bool release) : base(raw,release) {}
 
-		public NSControl() : this(NSObject__alloc(NSControl_class),true) {}
-		public NSControl(NSRect frameRect) : this(NSObject__alloc(NSControl_class),true) {
+		public NSControl() : this(NSObject__alloc0(NSControl_class),true) {}
+		public NSControl(NSRect frameRect) : this(NSObject__alloc0(NSControl_class),true) {
 		    initWithFrame(frameRect);
 		}
 
 		new public NSControl initWithFrame(NSRect frameRect)
 		{
-			SetRaw(NSControl_initWithFrame(Raw,frameRect),_release);
+			SetRaw(NSControl_initWithFrame1(Raw,frameRect),_release);
 			return this;
 		}
 	
 		public object Target
 		{
-			get { return NS2Net(NSControl_target(Raw)); } set { NSControl_setTarget(Raw, Net2NS(value)); }
+			get { return NS2Net(NSControl_target0(Raw)); } set { NSControl_setTarget1(Raw, Net2NS(value)); }
 		}
 
 		public string Action
 		{
-			get { return NSString.FromSEL(NSControl_action(Raw)).ToString(); } set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
+			get { return NSString.FromSEL(NSControl_action0(Raw)).ToString(); } set { NSControl_setAction1(Raw, NSString.NSSelector(value)); }
 		}
 
 		public string StringValue
 		{
 			get { 
-				return NS2Net(NSControl_stringValue(Raw)).ToString();
+				return NS2Net(NSControl_stringValue0(Raw)).ToString();
 			} set { 
-				NSControl_setStringValue(Raw, Net2NS(value)); 
+				NSControl_setStringValue1(Raw, Net2NS(value)); 
 			}
 		}
 	}
@@ -74,6 +74,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.10  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.9  2004/06/19 20:42:59  gnorton
 // Code cleanup (remove some old methods/clean some console.writelines)
 // Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.8 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.9 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -29,38 +29,38 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSApplication_class = Class.Get("NSApplication");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSApplication__sharedApplication(IntPtr CLASS);
+		protected internal static extern IntPtr NSApplication__sharedApplication0(IntPtr CLASS);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern int NSApplication_runModalForWindow(IntPtr THIS, IntPtr theWindow);
+		protected internal static extern int NSApplication_runModalForWindow1(IntPtr THIS, IntPtr theWindow);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern int NSApplication_setApplicationIconImage(IntPtr THIS, IntPtr image);
+		protected internal static extern int NSApplication_setApplicationIconImage1(IntPtr THIS, IntPtr image);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSApplication_stopModal(IntPtr THIS);
+		protected internal static extern void NSApplication_stopModal0(IntPtr THIS);
 
 		private NSApplication() : this(IntPtr.Zero,false) {}
 		protected internal NSApplication(IntPtr raw,bool release) : base(raw,release) {}
 
 		public static NSApplication sharedApplication()
 		{
-			return new NSApplication(NSApplication__sharedApplication(IntPtr.Zero),false);
+			return new NSApplication(NSApplication__sharedApplication0(IntPtr.Zero),false);
 		}
 		
 		public void setApplicationIconImage(NSImage image)
 		{
-			NSApplication_setApplicationIconImage(Raw, image.Raw);
+			NSApplication_setApplicationIconImage1(Raw, image.Raw);
 		}
 
 		public void stopModal()
 		{
-			NSApplication_stopModal(Raw);
+			NSApplication_stopModal0(Raw);
 		}
 
 		public int runModalForWindow(NSWindow theWindow)
 		{
-			return NSApplication_runModalForWindow(Raw, theWindow.Raw);
+			return NSApplication_runModalForWindow1(Raw, theWindow.Raw);
 		}
 	}
 }
@@ -68,6 +68,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSApplication.cs,v $
+// Revision 1.9  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.8  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.7 2004/06/20 02:07:25 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.8 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -27,17 +27,17 @@ namespace Apple.Foundation
 
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr/*(SEL)*/ NSInvocation_selector(IntPtr /*(NSInvocation*)*/ THIS);
+		protected internal static extern IntPtr/*(SEL)*/ NSInvocation_selector0(IntPtr /*(NSInvocation*)*/ THIS);
 		[DllImport("FoundationGlue")]
-		protected internal static extern void NSInvocation_getArgument_atIndex(IntPtr /*(NSInvocation*)*/ THIS, ref IntPtr buffer, int index);
+		protected internal static extern void NSInvocation_getArgument_atIndex2(IntPtr /*(NSInvocation*)*/ THIS, ref IntPtr buffer, int index);
 		#endregion
 
-		public NSInvocation() : this(NSObject__alloc(NSInvocation_class),true) {}
+		public NSInvocation() : this(NSObject__alloc0(NSInvocation_class),true) {}
 		protected internal NSInvocation(IntPtr raw,bool release) : base(raw,release) {}
 
 		public object getArgument(int i) {
 			IntPtr argPtr = IntPtr.Zero;
-			NSInvocation_getArgument_atIndex(Raw, ref argPtr, i+2);
+			NSInvocation_getArgument_atIndex2(Raw, ref argPtr, i+2);
 			// this can be compared to:
 			// id argPtr = nil;
 			// [invocation getArgument: &argPtr atIndex: i+2];
@@ -47,7 +47,7 @@ namespace Apple.Foundation
 		}
 
 		public string Selector {
-			get { return NSString.FromSEL(NSInvocation_selector(Raw)).ToString(); }
+			get { return NSString.FromSEL(NSInvocation_selector0(Raw)).ToString(); }
 		}
 	}
 }
@@ -55,6 +55,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSInvocation.cs,v $
+// Revision 1.8  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.7  2004/06/20 02:07:25  urs
 // Clean up, move Apple.Tools into Foundation since it will need it
 // No need to allocate memory for getArgumentAtIndex of NSInvocation

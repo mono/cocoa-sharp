@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.9 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.10 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -23,13 +23,13 @@ namespace Apple.Foundation {
 
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		protected static extern IntPtr NSString__stringWithCString(IntPtr CLASS,string str);
+		protected static extern IntPtr NSString__stringWithCString1(IntPtr CLASS,string str);
 		[DllImport("FoundationGlue")]
-		protected static extern IntPtr NSString_initWithUTF8String(IntPtr THIS, string str);
+		protected static extern IntPtr NSString_initWithUTF8String1(IntPtr THIS, string str);
 		[DllImport("FoundationGlue")]
-		static extern IntPtr NSString_cString(IntPtr THIS);
+		static extern IntPtr NSString_cString0(IntPtr THIS);
 		[DllImport("FoundationGlue")]
-		static extern int NSString_length(IntPtr THIS);
+		static extern int NSString_length0(IntPtr THIS);
 		#endregion
 
 		#region -- Foundation --
@@ -39,7 +39,7 @@ namespace Apple.Foundation {
 		static extern IntPtr /*(NSString*)*/ NSStringFromSelector(IntPtr /*SEL)*/ sel);
 		#endregion
 		
-		public NSString(string str) : this(NSString__stringWithCString(IntPtr.Zero,str),false) {}
+		public NSString(string str) : this(NSString__stringWithCString1(IntPtr.Zero,str),false) {}
 		protected internal NSString(IntPtr raw,bool release) : base(raw,release) {}
 
 		public static NSString FromString(string val) {
@@ -53,10 +53,10 @@ namespace Apple.Foundation {
 		}
 		
 		public override string ToString() {
-			return (string)Marshal.PtrToStringAuto(NSString_cString(Raw));
+			return (string)Marshal.PtrToStringAuto(NSString_cString0(Raw));
 		}
 		public int length() {
-			return NSString_length(Raw);
+			return NSString_length0(Raw);
 		}
 	}
 }
@@ -64,6 +64,9 @@ namespace Apple.Foundation {
 //***************************************************************************
 //
 // $Log: NSString.cs,v $
+// Revision 1.10  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.9  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.8 2004/06/23 17:52:41 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.9 2004/06/23 17:55:41 urs Exp $
 //
 
 using System;
@@ -117,7 +117,7 @@ namespace ObjCManagedExporter
 			_cs.WriteLine("        #region -- Constructors --");
 			_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
 			_cs.WriteLine();
-			_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_classPtr),true) {{}}",Name);
+			_cs.WriteLine("        public {0}() : this(NSObject__alloc0({0}_classPtr),true) {{}}",Name);
 			Interface cur = this;
 			IDictionary constructors = new Hashtable();
 			while (cur != null)
@@ -158,9 +158,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.9  2004/06/23 17:55:41  urs
+//	Make test compile with the lasted glue API name change
+//
 //	Revision 1.8  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
-//
+//	
 //	Revision 1.7  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
 //	

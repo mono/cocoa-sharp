@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.12 2004/06/19 17:19:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.13 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -36,30 +36,30 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSButton_class = Class.Get("NSButton");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSButton_title(IntPtr THIS);
+		protected internal static extern IntPtr NSButton_title0(IntPtr THIS);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
+		protected internal static extern void NSButton_setTitle1(IntPtr THIS, IntPtr aString);
 		
 		[DllImport("AppKitGlue")]
-		protected internal static extern NSBezelStyle NSButton_bezelStyle(IntPtr THIS);
+		protected internal static extern NSBezelStyle NSButton_bezelStyle0(IntPtr THIS);
 		
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSButton_setBezelStyle(IntPtr THIS, NSBezelStyle style);
+		protected internal static extern void NSButton_setBezelStyle1(IntPtr THIS, NSBezelStyle style);
 		
 		protected internal NSButton(IntPtr raw,bool release) : base(raw,release) {}
 
-		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
-		public NSButton(NSRect rect) : this(NSObject__alloc(NSButton_class), true) {
+		public NSButton() : this(NSObject__alloc0(NSButton_class),true) {}
+		public NSButton(NSRect rect) : this(NSObject__alloc0(NSButton_class), true) {
 		    initWithFrame(rect);
 		}
 
 		public string Title {
-			get { return (string)NS2Net(NSButton_title(Raw)); } set { NSButton_setTitle(Raw, Net2NS(value)); }
+			get { return (string)NS2Net(NSButton_title0(Raw)); } set { NSButton_setTitle1(Raw, Net2NS(value)); }
 		}
 
 		public NSBezelStyle BezelStyle {
-			get { return NSButton_bezelStyle(Raw); } set { NSButton_setBezelStyle(Raw, value); }
+			get { return NSButton_bezelStyle0(Raw); } set { NSButton_setBezelStyle1(Raw, value); }
 		}
 	}
 }
@@ -67,6 +67,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.13  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.12  2004/06/19 17:19:27  gnorton
 // Broken API fixes.
 // Delegates and methods with multi-argument support working.

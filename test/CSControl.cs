@@ -11,7 +11,7 @@ class CSControl : NSObject {
 	NSButton swap1;
 	CSTextControl textController;
 	BridgeDelegate CSControlDelegate;
-	public CSControl() : this(NSObject__alloc(CSControl_class),true) {}
+	public CSControl() : this(NSObject__alloc0(CSControl_class),true) {}
 
 	protected internal CSControl(IntPtr raw,bool release) : base(raw,release) {
 		textController = new CSTextControl();

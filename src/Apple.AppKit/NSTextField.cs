@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.9 2004/06/18 20:13:00 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.10 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -21,33 +21,34 @@ namespace Apple.AppKit
 {
 	public class NSTextField : NSControl {
 		protected internal static IntPtr NSTextField_class = Class.Get("NSTextField");
-		private NSObject mDelegate;
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
+		protected internal static extern void NSTextField_setEditable1(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
+		protected internal static extern void NSTextField_setBezeled1(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSTextField_setDelegate(IntPtr THIS, IntPtr aDelegate);
+		protected internal static extern void NSTextField_setDelegate1(IntPtr THIS, IntPtr aDelegate);
+		[DllImport("AppKitGlue")]
+		protected internal static extern IntPtr NSTextField_delegate0(IntPtr THIS);
 
-		public NSTextField() : this(NSObject__alloc(NSTextField_class),true) {}
+		public NSTextField() : this(NSObject__alloc0(NSTextField_class),true) {}
 		protected NSTextField(IntPtr raw,bool release) : base(raw,release) {}
 		public NSTextField(NSRect rect) {
-			SetRaw(NSObject__alloc(NSTextField_class), true);
+			SetRaw(NSObject__alloc0(NSTextField_class), true);
 			initWithFrame(rect);
 		}
 
 		public bool Editable {
-			set { NSTextField_setEditable(Raw, value); }
+			set { NSTextField_setEditable1(Raw, value); }
 		}
 		
 		public bool Bezeled {
-			set { NSTextField_setBezeled(Raw, value); }
+			set { NSTextField_setBezeled1(Raw, value); }
 		}
 		
 		public NSObject Delegate {
-			get { return mDelegate; }
-			set { mDelegate = value; NSTextField_setDelegate(Raw, value.Raw); }
+			get { return (NSObject)NS2Net(NSTextField_delegate0(Raw)); }
+			set { NSTextField_setDelegate1(Raw, value.Raw); }
 		}
 	}
 }
@@ -55,6 +56,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSTextField.cs,v $
+// Revision 1.10  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.9  2004/06/18 20:13:00  gnorton
 // Support for multi-argument method signatures/calling in .Net
 //

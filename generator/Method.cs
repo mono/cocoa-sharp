@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.24 2004/06/23 17:52:41 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.25 2004/06/23 17:55:41 urs Exp $
 //
 
 using System;
@@ -260,7 +260,7 @@ namespace ObjCManagedExporter
 			}
 
 			// Add the log call
-			body += string.Format("\tNSLog(@\"{0}: %@\\n\", {1});",mGlueMethodName,receiver);
+			body += string.Format("\tNSLog(@\"{0}: %@\\n\", {1});",name + "_" + mGlueMethodName,receiver);
 
 			// The parameters to the C function
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
@@ -551,9 +551,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.25  2004/06/23 17:55:41  urs
+//	Make test compile with the lasted glue API name change
+//
 //	Revision 1.24  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
-//
+//	
 //	Revision 1.23  2004/06/23 17:23:41  urs
 //	Rename glue methods to include argument count to differenciate 'init' from 'init:'.
 //	

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.8 2004/06/17 17:41:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.9 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -22,50 +22,50 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSWindow_class = Class.Get("NSWindow");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSWindow_initWithContentRect_styleMask_backing_defer(IntPtr THIS, NSRect contentRec, uint aStyle, int bufferingType, bool flag);
+		protected internal static extern IntPtr NSWindow_initWithContentRect_styleMask_backing_defer4(IntPtr THIS, NSRect contentRec, uint aStyle, int bufferingType, bool flag);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSWindow_setTitle(IntPtr THIS, IntPtr aString);
+		protected internal static extern void NSWindow_setTitle1(IntPtr THIS, IntPtr aString);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSWindow_center(IntPtr THIS);
+		protected internal static extern void NSWindow_center0(IntPtr THIS);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern void NSWindow_makeKeyAndOrderFront(IntPtr THIS, IntPtr sender);
+		protected internal static extern void NSWindow_makeKeyAndOrderFront1(IntPtr THIS, IntPtr sender);
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSWindow_contentView(IntPtr THIS);
+		protected internal static extern IntPtr NSWindow_contentView0(IntPtr THIS);
 
-		public NSWindow() : this(NSObject__alloc(NSWindow_class),true) {}
+		public NSWindow() : this(NSObject__alloc0(NSWindow_class),true) {}
 		protected internal NSWindow(IntPtr raw,bool release) : base (raw,release) {}
 		public NSWindow(NSRect contentRect, uint aStyle, int bufferingType, bool flag) {
-			SetRaw(NSObject__alloc(NSWindow_class), true);
+			SetRaw(NSObject__alloc0(NSWindow_class), true);
 			initWithContentRect_styleMask_backing_defer(contentRect, aStyle, bufferingType, flag);
 		}
 		public NSWindow initWithContentRect_styleMask_backing_defer(NSRect contentRect, uint aStyle, int bufferingType, bool flag)
 		{
-			SetRaw(NSWindow_initWithContentRect_styleMask_backing_defer(Raw, contentRect, aStyle, bufferingType, flag),_release);
+			SetRaw(NSWindow_initWithContentRect_styleMask_backing_defer4(Raw, contentRect, aStyle, bufferingType, flag),_release);
 			return this;
 		}
 
 		public string Title
 		{
-			set { NSWindow_setTitle(Raw, Net2NS(value)); }
+			set { NSWindow_setTitle1(Raw, Net2NS(value)); }
 		}
 
 		public void center()
 		{
-			NSWindow_center(Raw);
+			NSWindow_center0(Raw);
 		}
 		
 		public void makeKeyAndOrderFront(object sender)
 		{
-			NSWindow_makeKeyAndOrderFront(Raw, Net2NS(sender));
+			NSWindow_makeKeyAndOrderFront1(Raw, Net2NS(sender));
 		}
 		
 		public NSObject contentView()
 		{
-			return (NSObject)NS2Net(NSWindow_contentView(Raw));
+			return (NSObject)NS2Net(NSWindow_contentView0(Raw));
 		}
 	}
 }
@@ -73,6 +73,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSWindow.cs,v $
+// Revision 1.9  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.8  2004/06/17 17:41:20  gnorton
 // API modification.
 //

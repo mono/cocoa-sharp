@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSImage.cs,v 1.4 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSImage.cs,v 1.5 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -22,13 +22,13 @@ namespace Apple.AppKit
 		protected internal static IntPtr NSImage_class = Class.Get("NSImage");
 
 		[DllImport("AppKitGlue")]
-		protected internal static extern IntPtr NSImage__imageNamed(IntPtr CLASS, IntPtr name);
+		protected internal static extern IntPtr NSImage__imageNamed1(IntPtr CLASS, IntPtr name);
 
-		public NSImage() : this(NSObject__alloc(NSImage_class),true) {}
+		public NSImage() : this(NSObject__alloc0(NSImage_class),true) {}
 		protected internal NSImage(IntPtr raw,bool release) : base (raw,release) {}
 
 		public static NSImage imageNamed(string name) {
-			return new NSImage(NSImage__imageNamed(NSImage_class, Net2NS(name)),false);
+			return new NSImage(NSImage__imageNamed1(NSImage_class, Net2NS(name)),false);
 		}
 	}
 }
@@ -36,6 +36,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSImage.cs,v $
+// Revision 1.5  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.4  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

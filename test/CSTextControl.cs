@@ -10,7 +10,7 @@ class CSTextControl : NSControl {
 	
 	NSButton swap1;
 	BridgeDelegate CSTextControlDelegate;
-	public CSTextControl() : this(NSObject__alloc(CSTextControl_class),true) {}
+	public CSTextControl() : this(NSObject__alloc0(CSTextControl_class),true) {}
 
 	protected internal CSTextControl(IntPtr raw,bool release) : base(raw,release) {
 		CSTextControlDelegate = new BridgeDelegate(this.MethodInvoker);

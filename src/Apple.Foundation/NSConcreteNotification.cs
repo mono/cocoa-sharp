@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSConcreteNotification.cs,v 1.1 2004/06/19 17:19:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSConcreteNotification.cs,v 1.2 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -20,7 +20,7 @@ namespace Apple.Foundation
 	public class NSConcreteNotification : NSNotification {
 		protected internal static IntPtr NSConcreteNotification_class = Class.Get("NSConcreteNotification");
 		
-		public NSConcreteNotification() : this(NSObject__alloc(NSConcreteNotification_class),true) {}
+		public NSConcreteNotification() : this(NSObject__alloc0(NSConcreteNotification_class),true) {}
 		protected internal NSConcreteNotification(IntPtr raw,bool release) : base(raw,release) {}
 
 	}
@@ -29,6 +29,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSConcreteNotification.cs,v $
+// Revision 1.2  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.1  2004/06/19 17:19:27  gnorton
 // Broken API fixes.
 // Delegates and methods with multi-argument support working.

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSNotification.cs,v 1.1 2004/06/19 17:19:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSNotification.cs,v 1.2 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
@@ -22,14 +22,14 @@ namespace Apple.Foundation
 		
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr/*(SEL)*/ NSNotification_object(IntPtr /*(NSNotification*)*/ THIS);
+		protected internal static extern IntPtr/*(SEL)*/ NSNotification_object0(IntPtr /*(NSNotification*)*/ THIS);
 		#endregion
 
-		public NSNotification() : this(NSObject__alloc(NSNotification_class),true) {}
+		public NSNotification() : this(NSObject__alloc0(NSNotification_class),true) {}
 		protected internal NSNotification(IntPtr raw,bool release) : base(raw,release) {}
 
 		public Object Object {
-			get { return NS2Net(NSNotification_object(Raw)); }
+			get { return NS2Net(NSNotification_object0(Raw)); }
 		}
 	}
 }
@@ -37,6 +37,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSNotification.cs,v $
+// Revision 1.2  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.1  2004/06/19 17:19:27  gnorton
 // Broken API fixes.
 // Delegates and methods with multi-argument support working.

@@ -9,19 +9,46 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.18 2004/06/20 02:07:25 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.19 2004/06/23 17:55:46 urs Exp $
 //
 
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using Apple.Tools;
 
 namespace Apple.Foundation
 {
+#if DEBUG_GEN
+	public class NSZone {}
+	public class NSRange {}
+	public class NSArray {}
+	public class NSColor {}
+	public class NSDate {}
+	public class NSDecimal {}
+	public class NSEnumerator {}
+	public class NSFileWrapper {}
+	public class NSPasteboard {}
+	public class NSTextAttachment {}
 	
-	public class NSObject {
+	public struct NSRangePointer {}
+	public struct NSRect {}
+	public struct NSPoint {}
+	public struct NSSize {}
+	public struct NSComparisonResult {}
+	public struct NSURLHandle {}
+	public struct AEEventClass {}
+	public struct AEEventID {}
+	public struct AEKeyword {}
+	public struct AEReturnID {}
+	public struct AETransactionID {}
+	public struct DescType {}
+#endif
+	
+	public class NSObject 
+	{
 		public static object NS2Net(IntPtr raw) {
 			return TypeConverter.NS2Net(raw);
 		}
@@ -47,19 +74,19 @@ namespace Apple.Foundation
 
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr NSObject__alloc(IntPtr CLASS);
+		protected internal static extern IntPtr NSObject__alloc0(IntPtr CLASS);
 
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr NSObject_class(IntPtr THIS);
+		protected internal static extern IntPtr NSObject_class0(IntPtr THIS);
 
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr NSObject_className(IntPtr THIS);
+		protected internal static extern IntPtr NSObject_className0(IntPtr THIS);
 
 		[DllImport("FoundationGlue")]
-		protected internal static extern IntPtr NSObject_init(IntPtr THIS);
+		protected internal static extern IntPtr NSObject_init0(IntPtr THIS);
 
 		[DllImport("FoundationGlue")]
-		protected internal static extern void NSObject_release(IntPtr THIS);
+		protected internal static extern void NSObject_release0(IntPtr THIS);
 
 		[DllImport("Glue")]
 		protected internal static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
@@ -104,7 +131,7 @@ namespace Apple.Foundation
 			return IntPtr.Zero;
 		}
 
-		public NSObject() : this(NSObject__alloc(IntPtr.Zero),true) {}
+		public NSObject() : this(NSObject__alloc0(IntPtr.Zero),true) {}
 
 		~NSObject() {
 			if (Raw != IntPtr.Zero && _release)
@@ -132,20 +159,20 @@ namespace Apple.Foundation
 		}
 
 		public NSObject init() {
-			SetRaw(NSObject_init(Raw),_release);
+			SetRaw(NSObject_init0(Raw),_release);
 			return this;
 		}
 
 		public Class Class {
-			get { return new Class(NSObject_class(Raw),false); }
+			get { return new Class(NSObject_class0(Raw),false); }
 		}
 
 		public string ClassName {
-			get { return new NSString(NSObject_className(Raw),false).ToString(); }
+			get { return new NSString(NSObject_className0(Raw),false).ToString(); }
 		}
 
 		public void release() {
-			NSObject_release(Raw);
+			NSObject_release0(Raw);
 			SetRaw(IntPtr.Zero,false);
 		}
 	}
@@ -187,6 +214,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.19  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
 // Revision 1.18  2004/06/20 02:07:25  urs
 // Clean up, move Apple.Tools into Foundation since it will need it
 // No need to allocate memory for getArgumentAtIndex of NSInvocation
