@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.5 2004/09/03 19:10:05 urs Exp $
+// $Id: MachOFile.cs,v 1.6 2004/09/03 20:05:30 gnorton Exp $
 //
 
 using System;
@@ -207,10 +207,9 @@ namespace CocoaSharp {
 				throw new Exception ("ERROR: __module_info not found in __OBJC segment");
 
 			unsafe {
-				ptr = headptr+moduleSection.Offset;
 				objc_module ocmodule = new objc_module ();
 				int count = moduleSection.Size / 16;
-				modules = Module.ParseModules (headptr, ptr, objcSegment.VMAddr, objcSegment.FileOffset, count);
+				modules = Module.ParseModules (headptr, moduleSection, objcSegment, count);
 			}
 		}
 

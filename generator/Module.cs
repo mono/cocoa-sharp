@@ -9,9 +9,9 @@ namespace CocoaSharp {
 		private objc_module ocmodule;
 		private SymbolTable symtab;
 
-		unsafe public Module (objc_module ocmodule, byte *ptr) {
+		unsafe public Module (objc_module ocmodule, byte *headptr, SegmentCommand objcSegment) {
 			this.ocmodule = ocmodule;
-			this.symtab = new SymbolTable (ptr);
+			this.symtab = new SymbolTable (headptr, ocmodule.symtab, objcSegment);
 		}
 
 		public int Version {
@@ -26,24 +26,25 @@ namespace CocoaSharp {
 			get { return symtab; }
 		}
 
-		unsafe public static ArrayList ParseModules (byte *headptr, byte *ptr, int segvmaddr, int segfileoff, int count) {
+		unsafe public static ArrayList ParseModules (byte *headptr, Section moduleSection, SegmentCommand objcSegment, int count) {
 			ArrayList modules = new ArrayList ();
 			objc_module ocmodule;
 			Console.WriteLine ("Count: {0}", count);
+			byte *ptr = headptr + (int)moduleSection.Offset;
 			for (int i = 0; i < count; i++, ptr+=Marshal.SizeOf (ocmodule)) {
 				ocmodule = *((objc_module *)ptr);
 				Utils.MakeBigEndian(ref ocmodule.version);
 				Utils.MakeBigEndian(ref ocmodule.size);
-				modules.Add (new Module (ocmodule, headptr + (ocmodule.symtab.ToInt32 () - segvmaddr + segfileoff)));
+				modules.Add (new Module (ocmodule, headptr, objcSegment));
 			}
 			return modules;
 		}
 	}
 
-	public struct objc_module {
+	unsafe public struct objc_module {
 		public uint version;
 		public uint size;
 		public IntPtr name;
-		public IntPtr symtab;
+		public uint symtab;
 	}
 }

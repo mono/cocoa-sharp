@@ -1,5 +1,5 @@
 //
-// $Id: SymbolTable.cs,v 1.2 2004/09/03 19:10:05 urs Exp $
+// $Id: SymbolTable.cs,v 1.3 2004/09/03 20:05:30 gnorton Exp $
 //
 
 using System;
@@ -13,24 +13,25 @@ namespace CocoaSharp {
 		/// <summary>
 		/// Creates a new <see cref="SymbolTable"/> instance.
 		/// </summary>
-		/// <param name="ptr">Ptr.</param>
-		public SymbolTable (byte *ptr) {
-			ocsymtab = *((objc_symtab *)ptr);
+		/// <param name="offset">Offset.</param>
+		public SymbolTable (byte *headptr, uint offset, SegmentCommand objcSegment) {
+			ocsymtab = *((objc_symtab *)(headptr+(int)(offset - objcSegment.VMAddr + objcSegment.FileOffset)));
 			Utils.MakeBigEndian(ref ocsymtab.sel_ref_cnt);
 			Utils.MakeBigEndian(ref ocsymtab.cls_def_cnt);
 			Utils.MakeBigEndian(ref ocsymtab.cat_def_cnt);
 
-//			for (int i = 0; i < ocsymtab.cls_def_cnt; i++, ptr += (int)Marshal.SizeOf (ocsymtab)) { 
-				Class cls = new Class ((byte *)ocsymtab.defs.ToInt32 ());
-//			}
+			uint *defptr = ocsymtab.defs;
+			//for (int i = 0; i < ocsymtab.cls_def_cnt; i++, defptr++) {
+				Class cls = new Class (headptr, *defptr, objcSegment);
+			//}
 		}
 	}
 
-	public struct objc_symtab {
+	unsafe public struct objc_symtab {
 		public uint sel_ref_cnt;
-		public IntPtr refs;
+		public void *refs;
 		public ushort cls_def_cnt;
 		public ushort cat_def_cnt;
-		public IntPtr defs;
+		public uint *defs;
 	}
 }

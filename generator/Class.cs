@@ -7,8 +7,8 @@ namespace CocoaSharp {
 		
 		private objc_class occlass;
 	
-		public Class (byte *ptr) {
-			occlass = *((objc_class *)ptr);
+		public Class (byte *headptr, uint offset, SegmentCommand objcSegment) {
+			occlass = *((objc_class *)(headptr+(int)(offset - objcSegment.VMAddr + objcSegment.FileOffset)));
 			Utils.MakeBigEndian(ref occlass.version);
 			Utils.MakeBigEndian(ref occlass.info);
 			Utils.MakeBigEndian(ref occlass.instance_size);
