@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: SegmentCommand.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: SegmentCommand.cs,v 1.4 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -96,7 +96,7 @@ namespace CocoaSharp {
 				name = Utils.GetString(mfile.Pointer, 16);
 				mfile.Pointer += (int)Marshal.SizeOf(scmd);
 			}
-			MachOFile.DebugOut(0,"\tSegment Name: {0} addr={1,8:x} size={2}", name, scmd.vmaddr, scmd.vmsize);
+			MachOFile.DebugOut("\tSegment Name: {0} addr={1,8:x} size={2}", name, scmd.vmaddr, scmd.vmsize);
 
 			ProcessSections ();
 		}
@@ -151,6 +151,13 @@ namespace CocoaSharp {
 
 //
 // $Log: SegmentCommand.cs,v $
+// Revision 1.4  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

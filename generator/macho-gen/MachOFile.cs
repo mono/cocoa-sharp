@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOFile.cs,v 1.4 2004/09/20 16:42:52 gnorton Exp $
+// $Id: MachOFile.cs,v 1.5 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -275,16 +275,16 @@ namespace CocoaSharp {
 				DebugOut("cmdsize: {0}", lcmd.cmdsize);
 
 				if (lcmd.cmd == LC_SEGMENT) {
-					DebugOut(0,"DEBUG: SegmentCommand()");
+					DebugOut("DEBUG: SegmentCommand()");
 					cmd = new SegmentCommand (this, lcmd);
 				} else if (lcmd.cmd == LC_ID_DYLIB || lcmd.cmd == LC_LOAD_DYLIB || lcmd.cmd == LC_LOAD_WEAK_DYLIB) {
-					DebugOut(0,"DEBUG: DylibCommand({0,8:x})",lcmd.cmd);
+					DebugOut("DEBUG: DylibCommand({0,8:x})",lcmd.cmd);
 					cmd = new DylibCommand (this, lcmd);
 				} else if (lcmd.cmd == LC_SYMTAB) {
-					DebugOut(0,"DEBUG: SymTabCommand()");
+					DebugOut("DEBUG: SymTabCommand()");
 					cmd = new SymTabCommand (this, lcmd);
 				} else {
-					DebugOut(0,"DEBUG: LoadCommand({0,8:x})",lcmd.cmd);
+					DebugOut("DEBUG: LoadCommand({0,8:x})",lcmd.cmd);
 					cmd = new LoadCommand (this, lcmd);
 				}
 
@@ -355,7 +355,7 @@ namespace CocoaSharp {
 				byte *namePtr = sym.n_strx != 0 ? strings + sym.n_strx : null;
 				if (sym.n_strx != 0) {
 					string n = Utils.GetString(namePtr);
-					MachOFile.DebugOut(0,"Func Name={0} type={1,2:x} sect={2} desc={3,4:x} value={4,8:x}",
+					MachOFile.DebugOut("Func Name={0} type={1,2:x} sect={2} desc={3,4:x} value={4,8:x}",
 						n,sym.n_type,sym.n_sect,sym.n_desc,sym.n_value);
 				}
 			}
@@ -388,7 +388,7 @@ namespace CocoaSharp {
 				Utils.MakeBigEndian(ref scmd.strsize);
 				mfile.Pointer += (int)Marshal.SizeOf(scmd);
 			}
-			MachOFile.DebugOut(0,"\tSymTab Command: symoff={0,8:x} nsyms={1} stroff={2,8:x} strsize={3}", scmd.symoff, scmd.nsyms, scmd.stroff, scmd.strsize);
+			MachOFile.DebugOut("\tSymTab Command: symoff={0,8:x} nsyms={1} stroff={2,8:x} strsize={3}", scmd.symoff, scmd.nsyms, scmd.stroff, scmd.strsize);
 		}
 	}
 
@@ -568,6 +568,13 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOFile.cs,v $
+// Revision 1.5  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.4  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Section.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Section.cs,v 1.4 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -69,7 +69,7 @@ namespace CocoaSharp {
 				mfile.Pointer += (int)Marshal.SizeOf (sec);
 			}
 
-			MachOFile.DebugOut(0,"\t\tSectName: {0}", sectname);
+			MachOFile.DebugOut("\t\tSectName: {0}", sectname);
 		}
 	}
 
@@ -145,6 +145,13 @@ namespace CocoaSharp {
 
 //
 // $Log: Section.cs,v $
+// Revision 1.4  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.3  2004/09/11 00:41:22  urs
 // Move Output to gen-out
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Module.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
+// $Id: Module.cs,v 1.4 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -52,7 +52,7 @@ namespace CocoaSharp {
 		unsafe public static ArrayList ParseModules (Section moduleSection, MachOFile file) {
 			ArrayList modules = new ArrayList ();
 			uint count = moduleSection.Size / (uint)Marshal.SizeOf(typeof(objc_module));
-			MachOFile.DebugOut(0,"Module {0}, Count: {1}, Addr={2,8:x}, Offset={3,8:x}", 
+			MachOFile.DebugOut("Module {0}, Count: {1}, Addr={2,8:x}, Offset={3,8:x}", 
 				moduleSection.Name, count, moduleSection.Addr, moduleSection.Offset);
 			byte *ptr = file.HeadPointer + (int)moduleSection.Offset;
 			for (int i = 0; i < count; ++i, ptr += Marshal.SizeOf (typeof(objc_module))) {

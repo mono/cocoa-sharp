@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.5 2004/09/20 16:42:52 gnorton Exp $
+// $Id: MachOClass.cs,v 1.6 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -65,7 +65,6 @@ namespace CocoaSharp {
 		}
 
 		public Class ToClass(string nameSpace) {
-		  Console.WriteLine ("{0} - {1}", name, superClass);
 			return new Class(name, nameSpace, Class.GetClass(superClass), 
 				MachOProtocol.ToProtocols(protocols.Values),
 				MachOIvar.ToVariables(nameSpace, ivars),
@@ -179,6 +178,13 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOClass.cs,v $
+// Revision 1.6  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.5  2004/09/20 16:42:52  gnorton
 // More generator refactoring.  Start using the MachOGen for our classes.
 //

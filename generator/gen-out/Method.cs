@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Method.cs,v 1.6 2004/09/20 22:31:18 gnorton Exp $
+// $Id: Method.cs,v 1.7 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -73,11 +73,11 @@ namespace CocoaSharp {
 		
 	[XmlRoot("conversions")]
 	public class TypeConversions {
-		[XmlElement("type")]
+		[XmlArray("type")]
 		public NativeData[] Conversions;
-		[XmlElement("regex")]
+		[XmlArray("regex")]
 		public NativeData[] Regexs;
-		[XmlElement("replace")]
+		[XmlArray("replace")]
 		public ReplaceData[] Replaces;
 	}
 
@@ -109,6 +109,7 @@ namespace CocoaSharp {
 		public Method(string name,string selector, string types,TypeUsage returnType, ParameterInfo[] parameters) {
 			this.name = name;
 			this.selector = selector;
+			System.Diagnostics.Debug.Assert(this.Selector.Length > 0);
 			this.types = types != null ? types : ObjCClassInspector.GetSignature(name,selector);
 			this.returnType = returnType;
 			this.parameters = parameters;
@@ -117,7 +118,7 @@ namespace CocoaSharp {
 		// -- Public Properties --
 		public string Name { get { return name; } }
 		public string Selector { get { return selector; } }
-		public string FullSelector(bool isClassMethod) { return isClassMethod ? "+" : "-" + Selector; } 
+		public string FullSelector(bool isClassMethod) { return (isClassMethod ? "+" : "-") + Selector; } 
 		public string Types { get { return types; } }
 		public TypeUsage ReturnType { get { return returnType; } }
 		public ParameterInfo[] Parameters { get { return parameters; } }
@@ -146,7 +147,6 @@ namespace CocoaSharp {
 			}
 		}
 
-
 		// -- Members --
 		private string name, selector, types;
 		private TypeUsage returnType;
@@ -161,16 +161,16 @@ namespace CocoaSharp {
 		#region -- Static Constructor --
 		static Method() {
 			XmlSerializer _ser = new XmlSerializer(typeof(TypeConversions));
-			XmlTextReader _xtr = new XmlTextReader("generator/typeconversion.xml");
+			XmlTextReader _xtr = new XmlTextReader(Path.Combine(Configuration.XmlPath,"typeconversion.xml"));
 			sConversions = (TypeConversions)_ser.Deserialize(_xtr);
 			_xtr.Close();
 			Conversions = new Hashtable();
 			foreach (NativeData nd in sConversions.Conversions)
 				Conversions[nd.Native] = nd;
 
-			if (File.Exists("generator/mapping.xml")) {
+			if (File.Exists(Path.Combine(Configuration.XmlPath,"mapping.xml"))) {
 				_ser = new XmlSerializer(typeof(Mappings));
-				_xtr = new XmlTextReader("generator/mapping.xml");
+				_xtr = new XmlTextReader(Path.Combine(Configuration.XmlPath,"mapping.xml"));
 				sNameMappings = (Mappings)_ser.Deserialize(_xtr);
 				_xtr.Close();
 			}
@@ -186,8 +186,10 @@ namespace CocoaSharp {
 						NameMappings[map.SetSelector] = map;
 				}
 			if(sNameMappings.Methods != null)
-				foreach (MethodMapping map in sNameMappings.Methods)
+				foreach (MethodMapping map in sNameMappings.Methods) {
+					System.Diagnostics.Debug.Assert(map.Selector.Length > 1);
 					NameMappings[map.Selector] = map;
+				}
 		} 
 		#endregion
 
@@ -287,7 +289,7 @@ namespace CocoaSharp {
 			// Check to see if this selector is in our map
 			if (hasGet && !NameMappings.Contains(get.FullSelector(isClassMethod)))
 				NameMappings[get.FullSelector(isClassMethod)] = GeneratePropertyMapping(isClassMethod, className, propName, get, set);
-			if (hasSet && !NameMappings.Contains(isClassMethod ? "+" : "-" + set.Selector))
+			if (hasSet && !NameMappings.Contains(set.FullSelector(isClassMethod)))
 				NameMappings[set.FullSelector(isClassMethod)] = GeneratePropertyMapping(isClassMethod, className, propName, get, set);
 		}
 
@@ -358,7 +360,7 @@ namespace CocoaSharp {
 			GenerateCSMethod(isClassMethod,className,methods,propOnly,w,false);
 		}
 		
-		private PropertyMapping GeneratePropertyMapping(bool isClassMethod,string name,string propName, Method get, Method set) {
+		private static PropertyMapping GeneratePropertyMapping(bool isClassMethod,string name,string propName, Method get, Method set) {
 			PropertyMapping pm = new PropertyMapping();
 			pm.Name = propName;
 			if(get != null) {
@@ -372,7 +374,7 @@ namespace CocoaSharp {
 			return pm;
 		}
 
-		private MethodMapping GenerateMethodMapping(bool isClassMethod,string name) {
+		private MethodMapping GenerateMethodMapping(bool isClassMethod,string className) {
 			MethodMapping mm = new MethodMapping();
 			mm.Name = Name;
 			mm.Selector = FullSelector(isClassMethod);
@@ -412,7 +414,7 @@ namespace CocoaSharp {
 			toOutput.Properties = (PropertyMapping[])mMaps.ToArray(typeof(PropertyMapping));
 
 			XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
-			StreamWriter _sw = new StreamWriter("generator/mapping.xml");
+			StreamWriter _sw = new StreamWriter(Path.Combine(Configuration.XmlPath,"mapping.xml"));
 			_ser.Serialize(_sw, toOutput);
 			_sw.Close();
 		}
@@ -477,8 +479,8 @@ namespace CocoaSharp {
 				return;
 			}
 
-			Console.WriteLine("INFO: New name mapping for selector: " + Selector);
 			if (isVoid && Parameters.Length == 1 && Name.StartsWith("set")) {
+				Console.WriteLine("INFO: New name mapping for selector: " + Selector);
 				string propName;
 				Method get = GetGetMethod(isClassMethod, methods, out propName);
 				GenerateProperty(isClassMethod, className, w, get, this, propName, isProtocol);
@@ -488,6 +490,7 @@ namespace CocoaSharp {
 			if (propOnly)
 				return;
 
+			Console.WriteLine("INFO: New name mapping for selector: " + Selector);
 			if (!isVoid && Parameters.Length == 0) {
 				string _propName;
 				Method set = GetSetMethod(isClassMethod, methods, out _propName);
@@ -624,6 +627,13 @@ namespace CocoaSharp {
 
 //
 // $Log: Method.cs,v $
+// Revision 1.7  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.6  2004/09/20 22:31:18  gnorton
 // Generator v3 now generators Foundation in a compilable glueless state.
 //

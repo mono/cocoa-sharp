@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Class.cs,v 1.6 2004/09/20 22:31:18 gnorton Exp $
+// $Id: Class.cs,v 1.7 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -28,8 +28,10 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		public Class(string name, string nameSpace, Class parent, ICollection protocols, ICollection variables, ICollection instanceMethods, ICollection classMethod)
-			: base(name, nameSpace, nameSpace + "." + name, null, OCType.id) {
+		public Class(string name, string nameSpace, Class parent, 
+			ICollection protocols, ICollection variables, 
+			ICollection instanceMethods, ICollection classMethods
+		) : base(name, nameSpace, nameSpace + "." + name, null, OCType.id) {
 			Classes[nameSpace + "." + name] = this;
 			this.parent = parent;
 			this.protocols = protocols != null ? protocols : new ArrayList();
@@ -96,8 +98,7 @@ namespace CocoaSharp {
 			Framework frmwrk = config != null ? config.GetFramework(Namespace) : null;
 			if (frmwrk != null && frmwrk.Dependencies != null)
 				foreach (string dependency in frmwrk.Dependencies)
-				    // TODO: remove hard coding of Apple.
-					_cs.WriteLine("using Apple.{0};",dependency);
+					_cs.WriteLine("using {0};",dependency);
 			_cs.WriteLine();
 			_cs.WriteLine("namespace {0} {{", Namespace);
 
@@ -180,6 +181,13 @@ namespace CocoaSharp {
 
 //
 // $Log: Class.cs,v $
+// Revision 1.7  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.6  2004/09/20 22:31:18  gnorton
 // Generator v3 now generators Foundation in a compilable glueless state.
 //

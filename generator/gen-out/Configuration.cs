@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Configuration.cs,v 1.1 2004/09/18 14:58:31 urs Exp $
+// $Id: Configuration.cs,v 1.2 2004/09/21 04:28:54 urs Exp $
 //
 
 using System;
@@ -31,12 +31,16 @@ namespace CocoaSharp {
 					return frmwrk;
 			return null;
 		}
+
+		public static string XmlPath = "generator";
 	}
 
 	[Serializable]
 	public class Framework {
 		[XmlElement("name")]
 		public string Name;
+		[XmlElement("namespace")]
+		public string NameSpace;
 		[XmlElement("output")]
 		public bool Output;
 		[XmlElement("dependency")]
@@ -74,6 +78,13 @@ namespace CocoaSharp {
 
 //
 // $Log: Configuration.cs,v $
+// Revision 1.2  2004/09/21 04:28:54  urs
+// Shut up generator
+// Add namespace to generator.xml
+// Search for framework
+// Fix path issues
+// Fix static methods
+//
 // Revision 1.1  2004/09/18 14:58:31  urs
 // Add missing
 //
