@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.11 2004/06/28 22:07:43 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.12 2004/06/29 03:32:58 urs Exp $
 //
 
 using System;
@@ -41,6 +41,21 @@ namespace ObjCManagedExporter
 
 		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
+			IDictionary allMethods = new Hashtable();
+			foreach (Method method in Methods.Values) 
+			{
+				if (method.IsUnsupported)
+					continue;
+
+				string _methodSig = method.Selector;
+				if(!allMethods.Contains(_methodSig)) 
+					allMethods[_methodSig] = method;
+				else 
+					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
+			}
+			foreach (Method _toOutput in allMethods.Values)
+				_toOutput.ClearCSAPIDone();
+
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
 			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
@@ -51,18 +66,6 @@ namespace ObjCManagedExporter
 
 			_cs.WriteLine("namespace Apple.{0} {{", Framework);
 			_cs.WriteLine("    public interface I{0} {{", Name);
-
-			IDictionary allMethods = new Hashtable();
-			foreach (Method method in Methods.Values) {
-				if (method.IsUnsupported)
-					continue;
-
-				string _methodSig = method.Selector;
-				if(!allMethods.Contains(_methodSig)) 
-					allMethods[_methodSig] = method;
-				else 
-					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
-			}
 
 			_cs.WriteLine("        #region -- Properties --");
 			foreach (Method _toOutput in allMethods.Values)
@@ -86,9 +89,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.12  2004/06/29 03:32:58  urs
+//	Cleanup mapping usage: only one bug left
+//
 //	Revision 1.11  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
-//
+//	
 //	Revision 1.10  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
 //	

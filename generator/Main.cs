@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.36 2004/06/28 22:07:43 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.37 2004/06/29 03:32:58 urs Exp $
 //
 
 using System;
@@ -249,7 +249,7 @@ namespace ObjCManagedExporter
 				//Console.WriteLine("Interface: {0}({1}):{2}", i.Name, i.Framework, i.Methods.Keys.Count);
 				if (i.Parent.Length > 0)
 					i.ParentInterface = (Interface)Interfaces[i.Parent];
-				i.AddAllMethods(i.Methods.Values);
+				i.AddAllMethods(i.Methods.Values,false);
 
 				// Process this interface and check to see if it implements any protocols
 				foreach(string proto in i.Protocols) 
@@ -260,7 +260,7 @@ namespace ObjCManagedExporter
 						if(p != null) 
 						{
 						//	Console.Write(":{0}", p.Methods.Keys.Count); 
-							i.AddAllMethods(p.Methods.Values);
+							i.AddAllMethods(p.Methods.Values,true);
 						}
 						//else
 						//	Console.Write(":missing"); 
@@ -280,12 +280,12 @@ namespace ObjCManagedExporter
 							
 							//Console.WriteLine("\t\tCategory: ({0}) added to {1} (no dependency to {2})", 
 							//	_key.Substring(0, _key.IndexOf("_")), catInter.Name, _cat.Framework);
-							catInter.AddAllMethods(_cat.Methods.Values);
+							catInter.AddAllMethods(_cat.Methods.Values,false);
 							continue;
 						}
 						//Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
 						//Console.Write(":{0}", _cat.Methods.Keys.Count);
-						i.AddAllMethods(_cat.Methods.Values);
+						i.AddAllMethods(_cat.Methods.Values,false);
 						_categoryImports.AddRange(_cat.Imports);
 						//Console.WriteLine();
 					}
@@ -416,9 +416,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.37  2004/06/29 03:32:58  urs
+//	Cleanup mapping usage: only one bug left
+//
 //	Revision 1.36  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
-//
+//	
 //	Revision 1.35  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
 //	

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.41 2004/06/28 22:59:43 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.42 2004/06/29 03:32:58 urs Exp $
 //
 
 using System;
@@ -29,17 +29,43 @@ namespace ObjCManagedExporter
 		[XmlElement("method")] public MethodMapping[] Methods;
 	}
 
-	public class PropertyMapping {
+	public class PropertyMapping : IComparable
+	{
 		[XmlAttribute("get")] public string GetSelector;
 		[XmlAttribute("set")] public string SetSelector;
 		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("returntype")] public string ReturnType;
+
+		public int CompareTo(object obj) 
+		{
+			if(obj is PropertyMapping) 
+			{
+				PropertyMapping p = (PropertyMapping)obj;
+				if (GetSelector != null && p.GetSelector != null) return GetSelector.CompareTo(p.GetSelector);
+				if (SetSelector != null && p.SetSelector != null) return SetSelector.CompareTo(p.SetSelector);
+				return GetSelector != null ? 1 : -1;
+			}
+        
+			throw new ArgumentException("object is not a PropertyMapping");    
+		}
 	}
 
-	public class MethodMapping {
+	public class MethodMapping : IComparable
+	{
 		[XmlAttribute("selector")] public string Selector;
 		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("returntype")] public string ReturnType;
+
+		public int CompareTo(object obj) 
+		{
+			if(obj is MethodMapping) 
+			{
+				MethodMapping m = (MethodMapping)obj;
+				return Selector.CompareTo(m.Selector);
+			}
+        
+			throw new ArgumentException("object is not a MethodMapping");    
+		}
 	}
 		
 
@@ -100,7 +126,8 @@ namespace ObjCManagedExporter
 		#endregion
 
 		#region -- Constructor --
-		static Method() {
+		static Method() 
+		{
 			XmlSerializer _ser = new XmlSerializer(typeof(TypeConversions));
 			XmlTextReader _xtr = new XmlTextReader("generator/typeconversion.xml");
 			sConversions = (TypeConversions)_ser.Deserialize(_xtr);
@@ -109,22 +136,28 @@ namespace ObjCManagedExporter
 			foreach (NativeData nd in sConversions.Conversions)
 				Conversions[nd.Native] = nd;
 
-			_ser = new XmlSerializer(typeof(Mappings));
-			_xtr = new XmlTextReader("generator/mapping.xml");
-			sNameMappings = (Mappings)_ser.Deserialize(_xtr);
-			_xtr.Close();
+			if (File.Exists("generator/mapping.xml"))
+			{
+				_ser = new XmlSerializer(typeof(Mappings));
+				_xtr = new XmlTextReader("generator/mapping.xml");
+				sNameMappings = (Mappings)_ser.Deserialize(_xtr);
+				_xtr.Close();
+			}
+			else
+				sNameMappings = new Mappings();
 			
 			NameMappings = new Hashtable();
 			if(sNameMappings.Properties != null)
-                foreach (PropertyMapping map in sNameMappings.Properties) {
-                    if(map.GetSelector != null)
-                        NameMappings[map.GetSelector] = map;
-                    if(map.SetSelector != null)
-                        NameMappings[map.SetSelector] = map;
-                }
+				foreach (PropertyMapping map in sNameMappings.Properties) 
+				{
+					if(map.GetSelector != null)
+						NameMappings[map.GetSelector] = map;
+					if(map.SetSelector != null)
+						NameMappings[map.SetSelector] = map;
+				}
 			if(sNameMappings.Methods != null)
-                foreach (MethodMapping map in sNameMappings.Methods)
-                    NameMappings[map.Selector] = map;
+				foreach (MethodMapping map in sNameMappings.Methods)
+					NameMappings[map.Selector] = map;
 		} 
 
 		public Method(string methodDeclaration) 
@@ -250,12 +283,16 @@ namespace ObjCManagedExporter
 		
 		public void SetCSAPIDone()
 		{
-            mCSAPIDone = true;
+			mCSAPIDone = true;
+		}
+		public void ClearCSAPIDone()
+		{
+			mCSAPIDone = false;
 		}
 
-        public string ReturnDeclarationType { get { return mReturnDeclarationType; } }
-        public string ReturnGlueType { get { return mReturnGlueType; } }
-        public string ReturnAPIType { get { return mReturnAPIType; } }
+		public string ReturnDeclarationType { get { return mReturnDeclarationType; } }
+		public string ReturnGlueType { get { return mReturnGlueType; } }
+		public string ReturnAPIType { get { return mReturnAPIType; } }
 		public string FirstCSGlueArgument { get { return mCSGlueArguments[0]; } }
 		public string FirstArgumentDeclarationType { get { return mArgumentDeclarationTypes[0]; } }
 		public string FirstArgumentGlueType { get { return mArgumentGlueTypes[0]; } }
@@ -263,9 +300,11 @@ namespace ObjCManagedExporter
 
 		public bool IsConstructor
 		{
-			get { return !mIsUnsupported
-				&& !mIsClassMethod && mCSMethodName.StartsWith("init") 
-				&& mReturnDeclarationType == "id" && mArgumentDeclarationTypes.Length > 0; }
+			get 
+			{
+				return !mIsUnsupported
+					  && !mIsClassMethod && mCSMethodName.StartsWith("init") 
+					  && mReturnDeclarationType == "id" && mArgumentDeclarationTypes.Length > 0; }
 		}
 
 		public string CSConstructorSignature
@@ -409,17 +448,17 @@ namespace ObjCManagedExporter
 				w.WriteLine("        // " + mMethodDeclaration + ": not supported");
 				return;
 			}
-			
+
 			if(_o != null && _o.GlueMethods != null)
 				foreach(MethodOverride _mo in _o.GlueMethods) 
-					if(_mo.Selector == Selector) {
+					if(_mo.Selector == Selector) 
+					{
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						return;
 					}
 
 
-			string _type = mReturnGlueType;
 			ArrayList _params = new ArrayList();
 
 			if (mIsClassMethod)
@@ -439,7 +478,7 @@ namespace ObjCManagedExporter
 			// protected internal static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
 			w.WriteLine("        [DllImport(\"" + glueLib + "\")]");
 			w.WriteLine("        protected internal static extern " +
-				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
+				mReturnGlueType + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
 		}
 		#endregion
 
@@ -479,46 +518,97 @@ namespace ObjCManagedExporter
 			string prefix = sel.Substring(0,1);
 			sel = sel.Substring(1,1).ToUpper() + sel.Substring(2,sel.Length-2);
 
-            Method set = (Method)methods[prefix + "set" + sel + ":"];
+			Method set = (Method)methods[prefix + "set" + sel + ":"];
 			
 			return set;
 		}
 
-        private void GenerateProperty(string name,System.IO.TextWriter w, Method get, Method set, string propName) {
-            bool hasGet = get != null;
-            bool hasSet = set != null;
-            string t = hasGet ? get.ReturnAPIType : set.FirstArgumentAPIType;
-            bool isClassMethod = hasGet ? get.IsClassMethod : set.IsClassMethod;
+		private void GenerateProperty(string name,System.IO.TextWriter w, Method get, Method set, string propName, bool isProtocol) 
+		{
+			bool hasGet = get != null;
+			bool hasSet = set != null;
+			string t = hasGet ? get.ReturnAPIType : set.FirstArgumentAPIType;
+			bool isClassMethod = hasGet ? get.IsClassMethod : set.IsClassMethod;
             
-            if(hasSet)
-                w.WriteLine("        // setSelector: {0}", set.MethodDeclaration);
-            if (hasGet)
-                w.WriteLine("        // getSelector: {0}", get.MethodDeclaration);
+			if(hasSet)
+				w.WriteLine("        // setSelector: {0}", set.MethodDeclaration);
+			if (hasGet)
+				w.WriteLine("        // getSelector: {0}", get.MethodDeclaration);
             
-            w.WriteLine("        public {0}{1} {2} {{", (isClassMethod ? "static " : ""), t, propName);
-            
-            if (hasGet) {
-                get.BuildArgs(name);
-                w.WriteLine("            get {{ {0}; }}", ReturnExpression(
-                    get.ReturnDeclarationType,get.ReturnGlueType,get.ReturnAPIType, 
-                        string.Format("{0}_{1}({2})",name, get.GlueMethodName, get.FirstCSGlueArgument)));
-                get.SetCSAPIDone();
-            }
+			w.Write("        {0}{1}{2} {3} {{",
+				isProtocol ? "" : "public ",
+				isClassMethod ? "static " : "", t, propName);
+			if (!isProtocol)
+				w.WriteLine();
 
-            if (hasSet) {
-                set.BuildArgs(name);
-                w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", name, set.GlueMethodName, set.FirstCSGlueArgument,
-                ArgumentExpression(set.FirstArgumentDeclarationType,set.FirstArgumentGlueType,set.FirstArgumentAPIType,
-                    "value"));
-                set.SetCSAPIDone();
-            }
-            w.WriteLine("        }");
-            // Check to see if this selector is in our map
-            if (hasGet && !NameMappings.Contains(get.Selector))
-                NameMappings[get.Selector] = GeneratePropertyMapping(propName, get, set);
-            if (hasSet && !NameMappings.Contains(set.Selector))
-                NameMappings[set.Selector] = GeneratePropertyMapping(propName, get, set);
-        }	
+			if (hasGet) 
+			{
+				if (isProtocol)
+					w.Write(" get;");
+				else
+				{
+					get.BuildArgs(name);
+					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
+						get.ReturnDeclarationType,get.ReturnGlueType,get.ReturnAPIType, 
+						string.Format("{0}_{1}({2})",name, get.GlueMethodName, get.FirstCSGlueArgument)));
+				}
+				get.SetCSAPIDone();
+			}
+
+			if (hasSet) 
+			{
+				if (isProtocol)
+					w.Write(" set;");
+				else
+				{
+					set.BuildArgs(name);
+					w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", name, set.GlueMethodName, set.FirstCSGlueArgument,
+						ArgumentExpression(set.FirstArgumentDeclarationType,set.FirstArgumentGlueType,set.FirstArgumentAPIType,
+						"value"));
+				}
+				set.SetCSAPIDone();
+			}
+			if (isProtocol)
+				w.WriteLine(" }");
+			else
+				w.WriteLine("        }");
+			// Check to see if this selector is in our map
+			if (hasGet && !NameMappings.Contains(get.Selector))
+				NameMappings[get.Selector] = GeneratePropertyMapping(propName, get, set);
+			if (hasSet && !NameMappings.Contains(set.Selector))
+				NameMappings[set.Selector] = GeneratePropertyMapping(propName, get, set);
+		}
+
+		private void GenerateProperty(string name,System.IO.TextWriter w, PropertyMapping propMap,IDictionary methods, bool isProtocol) 
+		{
+			Method getMethod = propMap.GetSelector != null ? (Method)methods[propMap.GetSelector] : null;
+			Method setMethod = propMap.SetSelector != null ? (Method)methods[propMap.SetSelector] : null;
+
+			GenerateProperty(name, w, getMethod, setMethod, propMap.Name, isProtocol);
+		}
+
+		public void GenerateMethod(string name,System.IO.TextWriter w,string methodName, bool isProtocol)
+		{
+			string paramsStr = string.Join(", ", mCSAPIParameters);
+			string glueArgsStr = string.Join(", ", mCSGlueArguments);
+			w.WriteLine("        // {0}", mMethodDeclaration);
+			w.WriteLine("        {0}{1}{2} {3} ({4}) {5}", 
+				isProtocol ? "" : "public ",
+				mIsClassMethod ? "static " : "", 
+				mReturnAPIType, methodName, paramsStr,
+				isProtocol ? ";" : "{");
+			if (!isProtocol)
+			{
+				w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,mReturnGlueType,mReturnAPIType,
+					string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
+				w.WriteLine("        }");
+			}
+			
+			// Check to see if this selector is in our map
+			if(!NameMappings.Contains(Selector))
+				NameMappings[Selector] = GenerateMethodMapping();
+		}
+
 		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o)
 		{
 			if (mIsUnsupported)
@@ -529,112 +619,84 @@ namespace ObjCManagedExporter
 			// Check to see if we're overridden
 			if(_o != null && _o.Methods != null)
 				foreach(MethodOverride _mo in _o.Methods) 
-					if(_mo.Selector == Selector) {
+					if(_mo.Selector == Selector) 
+					{
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						mCSAPIDone = true;
 						return;
 					}
 
-			string _type = mReturnAPIType;
-			BuildArgs(name);
-			string paramsStr = string.Join(", ", mCSAPIParameters);
-			string glueArgsStr = string.Join(", ", mCSGlueArguments);
-			bool isVoid = _type == "void";
-			
-            if(NameMappings.Contains(Selector)) {
-                object Mapping = NameMappings[Selector];
-                if(Mapping is PropertyMapping) {
-                    PropertyMapping propMap = (PropertyMapping)Mapping;
-                    Method getMethod = null;
-                    Method setMethod = null;
-                    if(propMap.GetSelector != null)
-                        getMethod = (Method)methods[propMap.GetSelector];
-                    if(propMap.SetSelector != null)
-                        setMethod = (Method)methods[propMap.SetSelector];
-                    GenerateProperty(name, w, getMethod, setMethod, propMap.Name);
-                    return;
-                }
-                if(Mapping is MethodMapping) {
-                     // Output according to map
-                }
-            }
-			
-			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
-			{
-                string propName;
-                Method get = GetGetMethod(methods, out propName);
-                GenerateProperty(name, w, get, this, propName);
-                return;
-			}
-			
-			if (propOnly)
-				return;
-
-			if (!mIsClassMethod && !isVoid && mArgumentDeclarationTypes.Length == 0)
-			{
-                string _propName;
-                Method set = GetSetMethod(methods, out _propName);
-				GenerateProperty(name, w, this, set, _propName); 
-			    return;
-			}
-
-			w.WriteLine("        // {0}", mMethodDeclaration);
-			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
-			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,mReturnGlueType,mReturnAPIType,
-				string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
-			w.WriteLine("        }");
-			
-			// Check to see if this selector is in our map
-            if(!NameMappings.Contains(Selector))
-                NameMappings[Selector] = GenerateMethodMapping();
-            return;    
+			GenerateCSMethod(name,methods,propOnly,w,false);
 		}
 		
-		private PropertyMapping GeneratePropertyMapping(String propName, Method get, Method set) {
-            PropertyMapping pm = new PropertyMapping();
-            pm.Name = propName;
-            if(get != null)
-                pm.GetSelector = get.Selector;
-            if(set != null)
-                pm.SetSelector = set.Selector;
-            return pm;
-        }
+		private PropertyMapping GeneratePropertyMapping(String propName, Method get, Method set) 
+		{
+			PropertyMapping pm = new PropertyMapping();
+			pm.Name = propName;
+			if(get != null)
+				pm.GetSelector = get.Selector;
+			if(set != null)
+				pm.SetSelector = set.Selector;
+			return pm;
+		}
         
-		private MethodMapping GenerateMethodMapping() {
-            MethodMapping mm = new MethodMapping();
-            mm.Name = mCSMethodName;
-            mm.Selector = Selector;
-            return mm;
-        }
+		private MethodMapping GenerateMethodMapping() 
+		{
+			MethodMapping mm = new MethodMapping();
+			mm.Name = mCSMethodName;
+			mm.Selector = Selector;
+			return mm;
+		}
         
-        public static void SaveMapping()
-        {
-            IDictionary pMaps = new Hashtable();
-            ArrayList mMaps = new ArrayList();
-            foreach(object val in NameMappings.Values) {
-                if(val is PropertyMapping)
-                    pMaps[((PropertyMapping)val).Name] = val;
-                if(val is MethodMapping)
-                    mMaps.Add(val);
-            }
+		public static void SaveMapping()
+		{
+			IDictionary pMaps = new Hashtable();
+			ArrayList mMaps = new ArrayList();
+			foreach(object val in NameMappings.Values) 
+			{
+				if(val is PropertyMapping)
+				{
+					PropertyMapping p = (PropertyMapping)val;
+					if (pMaps.Contains(p.Name)) 
+					{
+						PropertyMapping o = (PropertyMapping)pMaps[p.Name];
+						if (o.GetSelector == null)
+							o.GetSelector = p.GetSelector;
+						else if (p.GetSelector != null && o.GetSelector != p.GetSelector)
+							Console.WriteLine("Warning: conflicting get selectors " + o.GetSelector + " != " + p.GetSelector);
+						if (o.SetSelector == null)
+							o.SetSelector = p.SetSelector;
+						else if (p.SetSelector != null && o.SetSelector != p.SetSelector)
+							Console.WriteLine("Warning: conflicting set selectors " + o.SetSelector + " != " + p.SetSelector);
+					}
+					else
+						pMaps[p.Name] = val;
+				}
+				if(val is MethodMapping)
+					mMaps.Add(val);
+			}
             
-            Mappings toOutput = new Mappings();
-            toOutput.Properties = (PropertyMapping[])new ArrayList(pMaps.Values).ToArray(typeof(PropertyMapping));
-            toOutput.Methods = (MethodMapping[])mMaps.ToArray(typeof(MethodMapping));
+			Mappings toOutput = new Mappings();
+			mMaps.Sort();
+			toOutput.Methods = (MethodMapping[])mMaps.ToArray(typeof(MethodMapping));
+			mMaps = new ArrayList(pMaps.Values);
+			mMaps.Sort();
+			toOutput.Properties = (PropertyMapping[])mMaps.ToArray(typeof(PropertyMapping));
             
-            XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
-            StreamWriter _sw = new StreamWriter("generator/mapping.xml");
-            _ser.Serialize(_sw, toOutput);
-            _sw.Close();
-        }
+			XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
+			StreamWriter _sw = new StreamWriter("generator/mapping.xml");
+			_ser.Serialize(_sw, toOutput);
+			_sw.Close();
+		}
+
 		private static string ReturnExpression(string declType,string glueType,string apiType,string expression)
 		{
 			if(declType == "SEL")
 				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
 			if (apiType == "string" && declType.Replace("const ",string.Empty).Replace(" ",string.Empty) == "char*")
 				return string.Format("return Marshal.PtrToStringAnsi({0})", expression);
-			if(glueType != apiType)
+			if(glueType != StripComments(apiType))
 				return string.Format("return ({0})NSObject.NS2Net({1})", apiType, expression);
 			if (apiType == "void")
 				return expression;
@@ -645,7 +707,7 @@ namespace ObjCManagedExporter
 		{
 			if(declType == "SEL")
 				return string.Format("NSString.NSSelector({0})", expression);
-			if(glueType != apiType)
+			if(glueType != StripComments(apiType))
 				return string.Format("NSObject.Net2NS({0})", expression);
 			return expression;
 		}
@@ -666,64 +728,58 @@ namespace ObjCManagedExporter
 		}
 		#endregion
 
-		#region -- C# Interface --
-		public void CSInterfaceMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
+		private void GenerateCSMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, bool isProtocol)
 		{
-			if (mIsUnsupported || mIsClassMethod || mCSAPIDone)
+			BuildArgs(name);
+			bool isVoid = mReturnAPIType == "void";
+			
+			if(NameMappings.Contains(Selector)) 
+			{
+				object _mapping = NameMappings[Selector];
+				if (propOnly && _mapping is PropertyMapping)
+				{
+					GenerateProperty(name, w, (PropertyMapping)_mapping, methods, isProtocol);
+					return;
+				}
+
+				if (propOnly)
+					return;
+
+				MethodMapping mm = (MethodMapping)_mapping;
+				GenerateMethod(name, w, mm.Name, isProtocol);
 				return;
+			}
 
-			string _type = mReturnAPIType;
-
-			if (_type == "void" && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set")) {
-				string t = mArgumentAPITypes[0], propName;
+			Console.WriteLine("INFO: New name mapping for selector: " + Selector);
+			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
+			{
+				string propName;
 				Method get = GetGetMethod(methods, out propName);
-				bool hasGet = get != null && get.IsGetMethod(t);
-				
-				w.Write("        {0} {1} {{", t, propName);
-				if (hasGet)
-					w.Write(" get;");
-
-				w.WriteLine(" set; }");
-				mCSAPIDone = true;
-				// Check to see if this selector is in our map
-                if (!NameMappings.Contains(Selector))
-                    NameMappings[Selector] = GeneratePropertyMapping(propName, get, this);
-                if (hasGet && !NameMappings.Contains(get.Selector))
-                    NameMappings[get.Selector] = GeneratePropertyMapping(propName, get, this);
-				
+				GenerateProperty(name, w, get, this, propName, isProtocol);
 				return;
 			}
 			
 			if (propOnly)
 				return;
 
-			if (_type != "void" && mArgumentDeclarationTypes.Length == 0) {
-				string t = _type, propName = mCSMethodName;
-				
-				propName = MakeCSMethodName(propName);
-
-				w.WriteLine("        // {0}", mMethodDeclaration);
-				w.WriteLine("        {0} {1} {{ get; }}", t, propName);
-
-                if (!NameMappings.Contains(Selector))
-                    NameMappings[Selector] = GeneratePropertyMapping(propName, this, null);
-			    return;
-			}
-
-			ArrayList _params = new ArrayList();
-
-			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+			if (!isVoid && mArgumentDeclarationTypes.Length == 0)
 			{
-				string t = mArgumentAPITypes[i];
-				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
+				string _propName;
+				Method set = GetSetMethod(methods, out _propName);
+				GenerateProperty(name, w, this, set, _propName, isProtocol); 
+				return;
 			}
 
-			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
-			w.WriteLine("        // {0}", mMethodDeclaration);
-			w.WriteLine("        {0} {1} ({2}); ", _type, mCSMethodName, paramsStr);
+			GenerateMethod(name, w, mCSMethodName, isProtocol);
+		}
 
-            if (!NameMappings.Contains(Selector))
-                NameMappings[Selector] = GenerateMethodMapping();
+		#region -- C# Interface --
+		public void CSInterfaceMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
+		{
+			if (mIsUnsupported || mIsClassMethod || mCSAPIDone)
+				return;
+
+			GenerateCSMethod(name,methods,propOnly,w,true);
 		}
 		#endregion
 
@@ -733,7 +789,17 @@ namespace ObjCManagedExporter
 			if (mIsClassMethod)
 				name = name.Substring(0,1).ToUpper() + name.Substring(1);
 			else
+			{
+				int pos = 1;
 				name = name.Substring(0,1).ToLower() + name.Substring(1);
+				while (pos < name.Length-1 && name[pos] == char.ToUpper(name[pos]))
+				{
+					name = name.Substring(0,pos+1).ToLower() + name.Substring(pos+1);
+					++pos;
+				}
+				if (pos > 1 && pos < name.Length-1)
+					name = name.Substring(0,pos-1) + name.Substring(pos-1,1).ToUpper() + name.Substring(pos);
+			}
 
 			switch (name) 
 			{
@@ -773,22 +839,22 @@ namespace ObjCManagedExporter
 		private static string ConvertTypeGlue(string type,bool arg) 
 		{
 			type = type.Replace("const ",string.Empty);
-			{
-				NativeData nd = (NativeData)Conversions[type];
-				if(nd != null && nd.Glue != null)
-					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
-			}
+		{
+			NativeData nd = (NativeData)Conversions[type];
+			if(nd != null && nd.Glue != null)
+				return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
+		}
 
 			if (sConversions.Regexs != null)
-    			foreach (NativeData nd in sConversions.Regexs)
-    				if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
-    					return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
+				foreach (NativeData nd in sConversions.Regexs)
+					if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
+						return arg ? (nd.GlueArg != null ? nd.GlueArg : nd.Glue) : nd.Glue;
 
-            if (sConversions.Replaces != null)
-    			foreach (ReplaceData rd in sConversions.Replaces)
-    				if(rd.Type == "glue")
-    					if(new Regex(rd.Regex).IsMatch(type))
-    						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
+			if (sConversions.Replaces != null)
+				foreach (ReplaceData rd in sConversions.Replaces)
+					if(rd.Type == "glue")
+						if(new Regex(rd.Regex).IsMatch(type))
+							return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
 			
 			return type;
 		}
@@ -796,31 +862,33 @@ namespace ObjCManagedExporter
 		private static string ConvertType(string type,bool arg) 
 		{
 			type = type.Replace("const ",string.Empty);
-			{
-				NativeData nd = (NativeData)Conversions[type];
-				if(nd != null && nd.Api != null)
-					return nd.Api;
-			}
+		{
+			NativeData nd = (NativeData)Conversions[type];
+			if(nd != null && nd.Api != null)
+				return nd.Api;
+		}
 
 			if (sConversions.Regexs != null)
-    			foreach (NativeData nd in sConversions.Regexs)
-    				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null) {
-    				    if (nd.Api == "{detect}") {
-    				        string cls = type.Substring(0,type.Length-1).Replace(" ",string.Empty);
-    				        if (cls.StartsWith("NS") && !cls.EndsWith("*"))
-    				            return cls;
-    				        else if (ObjCClassInspector.IsObjCClass(cls))
-    				            return cls;
-    				        return "IntPtr /*(" + type + ")*/";
-    				    }
-    					return nd.Api;
-    				}
+				foreach (NativeData nd in sConversions.Regexs)
+					if(new Regex(nd.Native).IsMatch(type) && nd.Api != null) 
+					{
+						if (nd.Api == "{detect}") 
+						{
+							string cls = type.Substring(0,type.Length-1).Replace(" ",string.Empty);
+							if (cls.StartsWith("NS") && !cls.EndsWith("*"))
+								return cls;
+							else if (ObjCClassInspector.IsObjCClass(cls))
+								return cls;
+							return "IntPtr /*(" + type + ")*/";
+						}
+						return nd.Api;
+					}
 
-            if (sConversions.Replaces != null)
-    			foreach (ReplaceData rd in sConversions.Replaces)
-    				if(rd.Type == "api")
-    					if(new Regex(rd.Regex).IsMatch(type))
-    						return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
+			if (sConversions.Replaces != null)
+				foreach (ReplaceData rd in sConversions.Replaces)
+					if(rd.Type == "api")
+						if(new Regex(rd.Regex).IsMatch(type))
+							return type.Replace(rd.ToReplace, rd.ReplaceWith).Trim();
 
 			return type;
 		}
@@ -829,9 +897,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.42  2004/06/29 03:32:58  urs
+//	Cleanup mapping usage: only one bug left
+//
 //	Revision 1.41  2004/06/28 22:59:43  gnorton
 //	Bugfixes
-//
+//	
 //	Revision 1.40  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
 //	

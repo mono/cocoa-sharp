@@ -1,12 +1,12 @@
 <overrides>
-	<method instance="true" sel="release" >
+	<method sel="-release" >
                 public void release() {
                         NSObject_release0(Raw);
                         SetRaw(IntPtr.Zero,false);
                 }
 	</method>
 
-	<method instance="true" sel="class" >
+	<method sel="-class" >
                 public Class class_ {
                         get { return new Class(NSObject_class0(Raw),false); }
                 }

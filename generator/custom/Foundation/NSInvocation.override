@@ -1,5 +1,5 @@
 <overrides>
-        <method instance="true" sel="getArgument:atIndex:">
+        <method sel="-getArgument:atIndex:">
 		public object getArgument(int i, Type t) {
 			object retVal = null;
 #if UNSAFE

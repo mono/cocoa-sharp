@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.22 2004/06/28 21:31:22 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.23 2004/06/29 03:32:58 urs Exp $
 //
 
 using System;
@@ -73,7 +73,7 @@ namespace ObjCManagedExporter
 			get { return mAllMethods; }
 		}
 
-		public void AddAllMethods(ICollection methods)
+		public void AddAllMethods(ICollection methods,bool isProtocol)
 		{
 			foreach (Method method in methods)
 			{
@@ -83,13 +83,16 @@ namespace ObjCManagedExporter
 				string _methodSig = method.Selector;
 				if(!mAllMethods.Contains(_methodSig)) 
 					mAllMethods[_methodSig] = method;
-				else 
+				else if (!isProtocol)
 					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 			}
 		}
 
 		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
+			foreach (Method _toOutput in AllMethods.Values)
+				_toOutput.ClearCSAPIDone();
+
 			// Load the overrides for this Interface
 			Overrides _overrides = null;
 			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Framework, Name)))
@@ -185,9 +188,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.23  2004/06/29 03:32:58  urs
+//	Cleanup mapping usage: only one bug left
+//
 //	Revision 1.22  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
-//
+//	
 //	Revision 1.21  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
 //	
