@@ -8,11 +8,11 @@ CoreFoundation: /System/Library/Frameworks/CoreFoundation.framework/Versions/Cur
 Foundation: /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation
 	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation Foundation
 
-libFoundationGlue.dylib: ../src/foundation/*.o
-	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libFoundationGlue.dylib ../src/foundation/*.o
+libFoundationGlue.dylib: ../src/Foundation.Glue/*.o
+	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libFoundationGlue.dylib ../src/Foundation.Glue/*.o
 
-libAppKitGlue.dylib: ../src/appkit/*.o
-	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libAppKitGlue.dylib ../src/appkit/*.o
+libAppKitGlue.dylib: ../src/AppKit.Glue/*.o
+	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libAppKitGlue.dylib ../src/AppKit.Glue/*.o
 
 libGlue.so: glue.m
 	gcc -g -bundle -flat_namespace -undefined suppress -framework Cocoa -o libGlue.so glue.m
