@@ -100,6 +100,10 @@ public class Controller : NSObject {
 	public NSSearchField searchBox;
 	[Connect]
 	public NSBrowser indexBrowser;
+	[Connect]
+	public NSMenuItem backMenuItem;
+	[Connect]
+	public NSMenuItem forwardMenuItem;
 
 	static RootTree help_tree;
 
@@ -122,11 +126,19 @@ public class Controller : NSObject {
 		indexBrowser.doubleAction = "browserdoubleAction";
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
+		// use history.
+		webView.maintainsBackForwardList = true;
+		webView.backForwardList.capacity = 100;
+		forwardMenuItem.target = this;
+		forwardMenuItem.action = "goForward:";
+		backMenuItem.target = this;
+		backMenuItem.action = "goBack:";
 		Node match;
 		string content = help_tree.RenderUrl("root:", out match);
 		content=content.Replace("a href='", "a href='http://monodoc/load?");
 		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 		((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
+		addHistoryItem("root:");
 	}
 	
 	[Export("browserdoubleAction")]
@@ -139,6 +151,7 @@ public class Controller : NSObject {
 			content=content.Replace("a href='", "a href='http://monodoc/load?");
 			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 			((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
+			addHistoryItem(t.Url);
 		}
 	}
 	[Export("doubleAction")]
@@ -157,6 +170,7 @@ public class Controller : NSObject {
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
+				addHistoryItem(bi.node.URL);
 
 				outlineView.expandItem(bi);
 
@@ -181,12 +195,61 @@ Console.WriteLine("\nDEBUG: URL=={0}\n", ((NSURL)initialRequest.urL).relativeStr
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 Console.WriteLine("DEBUG: {0}", content);
 				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
+				addHistoryItem(url);
 			}
 			return null;
 		}
 		return initialRequest;
 	}
-
+	
+	private void addHistoryItem(string url) {
+		webView.backForwardList.addItem(new WebHistoryItem(url, "", 0));
+	}
+	
+	private void loadHistoryItem(WebHistoryItem item) {
+		string url = item.urlString;
+		string content = "";
+		Node n;
+		try {
+			content = help_tree.RenderUrl(url, out n);
+		} catch (Exception e) {
+			content = "Exception Rendering the requested URL: " + e;
+		}
+		if (content != null && !content.Equals("")) {
+			content=content.Replace("a href='", "a href='http://monodoc/load?");
+			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+			webView.mainFrame.loadHTMLString_baseURL(content, null);
+		}
+	}
+	
+	[Export("validateMenuItem:")]
+	public bool validateMenuItem(object sender) {
+		NSMenuItem item = (NSMenuItem) sender;
+		if (item.action.Equals("goBack:")) return webView.canGoBack;
+		if (item.action.Equals("goForward:")) return webView.canGoForward;
+		return true;
+	}
+	
+	[Export("goBack:")]
+	public void goBack(object sender) {
+		WebBackForwardList history = webView.backForwardList;
+		Console.WriteLine("webView.canGoBack = " + webView.canGoBack);
+		Console.WriteLine("webView.backForwardList.backListCount = " + history.backListCount);
+		if (history.backListCount > 0) {
+			history.goBack();
+			loadHistoryItem(history.currentItem);
+		}
+	}
+	
+	[Export("goForward:")]
+	public void goForward(object sender) {
+		Console.WriteLine("goForward:");
+		WebBackForwardList history = webView.backForwardList;
+		if (history.forwardListCount > 0) {
+			history.goForward();
+			loadHistoryItem(history.currentItem);
+		}
+	}
 }
 
 class Browser {
