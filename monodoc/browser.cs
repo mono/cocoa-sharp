@@ -108,18 +108,60 @@ class Browser : NSObject {
 
 	public Browser ()
 	{
+	    const uint NSViewNotSizable                    =  0;
+    	const uint NSViewMinXMargin                    =  1;
+    	const uint NSViewWidthSizable                  =  2;
+    	const uint NSViewMaxXMargin                    =  4;
+    	const uint NSViewMinYMargin                    =  8;
+    	const uint NSViewHeightSizable                 = 16;
+    	const uint NSViewMaxYMargin                    = 32;
+	
 		// Do the monodoc stuff
 		help_tree = RootTree.LoadTree ();
+		BrowserController browserController = new BrowserController(help_tree);
 
 		Window = new NSWindow(new NSRect(200, 180, 800, 600),
-			(uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
+			(uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask 
+			| NSWindowMask.NSTitledWindowMask | NSWindowMask.NSResizableWindowMask),
 			NSBackingStoreType.NSBackingStoreBuffered,
 			false);
 		Window.title = "Monodoc";
 		Windowcontroller = new NSWindowController(Window);
 
+		NSView drawerView = new NSView(new NSRect(0,0,250,480));
+		drawerView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+		NSDrawer drawer = new NSDrawer(new NSSize(250,480), NSRectEdge.NSMaxXEdge);
+		drawer.parentWindow = Window;
+		drawer.contentView = drawerView;
+
+		NSTabView tabView = new NSTabView(new NSRect(new NSPoint(0,0),drawer.contentSize));
+		tabView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+	
+		drawerView.addSubview(tabView);
+		
+		NSTabViewItem tabViewItem = new NSTabViewItem("Contents");
+		tabViewItem.label = "Contents";
+		tabView.addTabViewItem(tabViewItem);
+		NSScrollView sv = new NSScrollView(tabView.contentRect);
+		sv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+		tabViewItem.view = sv;
+
+		NSOutlineView ov = new NSOutlineView(new NSRect(new NSPoint(0,0),sv.contentSize));
+		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+		sv.documentView = ov;
+		ov.dataSource = browserController;
+		ov.reloadData();
+		
+		tabViewItem = new NSTabViewItem("Index");
+		tabViewItem.label = "Index";
+		tabView.addTabViewItem(tabViewItem);
+		tabViewItem = new NSTabViewItem("Search");
+		tabViewItem.label = "Search";
+		tabView.addTabViewItem(tabViewItem);
+	
 		Treebrowser = new NSBrowser(new NSRect(0, 0, 250, 600));
-		Treebrowser.delegate_ = new BrowserController(help_tree);
+		Treebrowser.delegate_ = browserController;
 		Treebrowser.target = this;
 		Treebrowser.doubleAction = "didDoubleClick";
 		NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
@@ -128,6 +170,8 @@ class Browser : NSObject {
 
 		((NSView)Window.contentView).addSubview(Webview);
 		((NSView)Window.contentView).addSubview(Treebrowser);
+		
+		drawer.open();
 		
 		Windowcontroller.showWindow(NSApplication.SharedApplication);
 	}
@@ -195,12 +239,77 @@ class Browser : NSObject {
 */
 }
 
+class BrowserItem : NSObject {
+	internal RootTree help_tree;
+	internal Node node;
+
+	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release)
+	{
+		Console.WriteLine("BrowserItem.ctor(IntPtr,bool) is called: bad");
+	}
+	public BrowserItem(RootTree _tree) {
+		help_tree = _tree;
+	}
+	public BrowserItem(Node _node) {
+		node = _node;
+	}
+	
+	public int Count { get { return help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
+	public object ItemAt(int ndx)
+	{
+		if (help_tree != null)
+			return new BrowserItem((Node)help_tree.Nodes[ndx]);
+		return node != null ? new BrowserItem((Node)node.Nodes[ndx]) : null;
+	}
+	public object ValueAt(object identifier)
+	{
+		return "Value";
+	}
+}
+
 class BrowserController : NSObject {
 	internal RootTree help_tree;
 
 	public BrowserController(RootTree _tree) {
 		help_tree = _tree;
 	}
+	
+	[ObjCExport("outlineView:numberOfChildrenOfItem:")]
+	public int OutlineViewNumberOfChildrenOfItem(NSOutlineView outlineView, object item)
+	{
+		BrowserItem bi = item as BrowserItem;
+		int count = bi != null ? bi.Count : help_tree.Nodes.Count;
+		Console.WriteLine("OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
+		return count;
+	}
+
+	[ObjCExport("outlineView:isItemExpandable:")]
+	public bool OutlineViewIsItemExpandable(NSOutlineView outlineView, object item)
+	{
+		return OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
+	}
+
+	[ObjCExport("outlineView:child:ofItem:")]
+	public object OutlineViewChildOfItem(NSOutlineView outlineView, int index, object item)
+	{
+		Console.WriteLine("OutlineViewChildOfItem");
+		BrowserItem bi = item as BrowserItem;
+		if (bi != null)
+			return bi.ItemAt(index);
+		else
+			return new BrowserItem(help_tree);
+	}
+
+	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
+	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
+	{
+		Console.WriteLine("OutlineViewObjectValueForTableColumnByItem");
+		object identifier = tableColumn.identifier;
+		BrowserItem bi = item as BrowserItem;
+		
+		return bi == null ? null : bi.ValueAt(identifier);
+	}
+	
 	[ObjCExport(Selector="browser:numberOfRowsInColumn:",Signature="i16@0:4@8i12")]
 	public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
 		if(columnNumber > 0) {
@@ -232,9 +341,6 @@ class BrowserController : NSObject {
 			cell.stringValue = n.Caption; 
 			cell.leaf = n.IsLeaf;
 		}
-       	}
-
-	
-	
+   }
 }
 }
