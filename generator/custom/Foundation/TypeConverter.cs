@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.6 2004/06/29 18:11:07 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.7 2004/06/29 18:52:40 gnorton Exp $
 //
 
 using System;
@@ -25,6 +25,9 @@ namespace Apple.Foundation
 
 		public static object NS2Net(IntPtr raw) 
 		{
+			if(raw == IntPtr.Zero)
+				return null;
+
 			if(NSObject.Objects.Contains(raw))
 				return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
 				
@@ -83,6 +86,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.7  2004/06/29 18:52:40  gnorton
+// Handle potential nullptrs
+//
 // Revision 1.6  2004/06/29 18:11:07  gnorton
 // Support dereferencing our WeakReference to return the real object; not make a new one
 //
