@@ -9,55 +9,19 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.12 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.13 2004/06/17 16:10:45 gnorton Exp $
 //
 
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
-
-namespace Apple.Tools
-{
-	using Apple.Foundation;
-	
-	public class TypeConverter {
-		public static object NS2Net(IntPtr raw) {
-			NSObject ret = new NSObject(raw,false);
-			string className = ret.ClassName;
-			Type type = Type.GetType("Apple.Foundation." + className + ", Apple.Foundation");
-			if (type == null)
-				type = Type.GetType("Apple.AppKit." + className + ", Apple.AppKit");
-			if (type != null) {
-				Console.WriteLine("<Using type: " + type.FullName + ", for Objective-C class: " + className);
-				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
-					new Type[] {typeof(IntPtr),typeof(bool)},null);
-				if (c != null)
-					ret = (NSObject)c.Invoke(new object[]{raw,false});
-				else
-					Console.WriteLine("No constructor for " + type.FullName + " with (IntPtr,bool) found");
-			}
-			else
-				Console.WriteLine(className + " not in Foundation or AppKit");
-			return ret;
-		}
-		
-		public static IntPtr Net2NS(object obj) {
-			if (obj == null) return IntPtr.Zero;
-			NSObject nsObj = obj as NSObject;
-			if (nsObj != null) return nsObj.Raw;
-			string str = obj as string;
-			if (str != null) return new NSString(str).Raw;
-			throw new Exception("Net2NS: not handled type of object: " + obj.GetType());
-		}
-	}
-}
+using Apple.Tools;
 
 namespace Apple.Foundation
 {
-	using Apple.Tools;
 	
-	public class NSObject : BridgeHelper {
+	public class NSObject {
 		public static object NS2Net(IntPtr raw) {
 			return TypeConverter.NS2Net(raw);
 		}
@@ -107,7 +71,7 @@ namespace Apple.Foundation
 		}
 		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
-			ObjCClassRepresentation r = GenerateObjCRepresentation(type);
+			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
 			for(int i = 0; i < r.Methods.Length; i++)
 				Console.WriteLine("{0} {1}", r.Methods[i], r.Signatures[i]);
 			IntPtr retval = IntPtr.Zero;
@@ -130,11 +94,11 @@ namespace Apple.Foundation
 		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr arg) {
 			switch (what) {
 				case GlueDelegateWhat.methodSignatureForSelector:
-					return MakeMethodSignature(GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
+					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					NSInvocation invocation = new NSInvocation(arg,false);
-					InvokeMethodByObject(this, invocation.Selector, null);
+					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, null);
 					break;
 				}
 			}
@@ -222,6 +186,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.13  2004/06/17 16:10:45  gnorton
+// Cleanup
+//
 // Revision 1.12  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //
