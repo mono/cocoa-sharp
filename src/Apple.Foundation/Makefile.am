@@ -1,3 +1,4 @@
+TARGET = $(ASSEMBLY)
 ASSEMBLY_NAME=Apple.Foundation
 ASSEMBLY=$(ASSEMBLY_NAME).dll
 CLEANFILES=$(ASSEMBLY) cocoa-sharp.snk
