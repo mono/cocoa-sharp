@@ -32,7 +32,7 @@ namespace CocoaSharp {
 		public override void WriteCS(TextWriter _cs, Configuration config) {
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("namespace {0} {{",Namespace);
-			_cs.WriteLine("    public enum {0} {{",Name);
+			_cs.WriteLine("    public enum {0} {{",Name.Replace("enum ", string.Empty));
 			foreach (EnumItem item in this.items)
 				if (item.Value == null || item.Value.Length == 0)
 					_cs.WriteLine("        {0}",item.Name);

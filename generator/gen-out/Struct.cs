@@ -31,7 +31,7 @@ namespace CocoaSharp {
 		public override void WriteCS(TextWriter _cs, Configuration config) {
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("namespace {0} {{",Namespace);
-			_cs.WriteLine("    public struct {0} {{",Name);
+			_cs.WriteLine("    public struct {0} {{",Name.Replace("struct ", string.Empty));
 			//_cs.WriteLine("/*" + mOriginal + "*/");
 			ProcessAddin(_cs, config);
 			_cs.WriteLine("    }");
