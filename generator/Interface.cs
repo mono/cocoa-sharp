@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.19 2004/06/26 06:52:32 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.20 2004/06/26 06:57:20 urs Exp $
 //
 
 using System;
@@ -133,16 +133,15 @@ namespace ObjCManagedExporter
 			_cs.WriteLine();
 
 			_cs.WriteLine("        #region -- Constructors --");
-			if (Name != "NSObject" && Name != "NSProxy") {
+			if (Name != "NSObject" && Name != "NSProxy")
 				_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
+			if (Name != "NSObject")
 				_cs.WriteLine("        public {0}() : base() {{}}",Name);
-			}
 			if (Name == "NSString")
 				_cs.WriteLine("        public NSString(string str) : this(NSString__stringWithCString1(IntPtr.Zero,str),false) {}");
 			_cs.WriteLine();
 			if (mExtrasFor != null)
 				_cs.WriteLine("        public {0}({1} o) : base(o.Raw,false) {{}}",Name,mExtrasFor);
-			//_cs.WriteLine("        public {0}() : this(NSObject__alloc0({1}_classPtr),true) {{}}",Name,ExtrasName);
 			Interface cur = this;
 			IDictionary constructors = new Hashtable();
 			constructors["IntPtr,bool"] = true;
@@ -186,9 +185,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.20  2004/06/26 06:57:20  urs
+//	Fix constructors
+//
 //	Revision 1.19  2004/06/26 06:52:32  urs
 //	Remove hardcoding in TypeConvertor, and autoregister new classes
-//
+//	
 //	Revision 1.18  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
 //	
