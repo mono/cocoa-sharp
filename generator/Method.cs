@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.29 2004/06/24 05:00:38 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.30 2004/06/24 05:21:04 urs Exp $
 //
 
 using System;
@@ -529,7 +529,7 @@ namespace ObjCManagedExporter
 		{
 			type = StripComments(type.Replace("const ",string.Empty));
 			if(Conversions[type] != null)
-				return ((NativeData)Conversions[type]).Glue;
+				return ((NativeData)Conversions[type]).Api;
 
 			foreach (NativeData nd in mConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type))
@@ -547,10 +547,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.30  2004/06/24 05:21:04  urs
+//	Fix typo
+//
 //	Revision 1.29  2004/06/24 05:00:38  urs
 //	Unflattern C# API methods to reduce conflicts
 //	Rename static methods to start with a capital letter (to reduce conflict with instance methods)
-//
+//	
 //	Revision 1.28  2004/06/24 03:37:07  gnorton
 //	Some performance increates on the dynamic type converter (convert the <type /> entries to a IDictionary to access an indexer; rather than foreaching)
 //	
