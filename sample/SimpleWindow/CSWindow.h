@@ -13,5 +13,6 @@
 
 }
 - (BOOL)canBecomeKeyWindow;
+- (BOOL)canBecomeMainWindow;
 
 @end
