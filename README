@@ -1,10 +1,13 @@
 To build and install the the cocoa# bridge you need to run
-/generator/genstubs.pl
-then run autogen.sh:
 ./autogen.sh
-Note that you must have automake1.8 install for autogen.sh to work properly.
-
-To show the Cocoa# demo run:
-mkdir build
 make
+
+to see monodoc
+cd monodoc; make; make run
+
+to see tests
+cd test; make
 make run
+make run2
+./CocoaSharpBrowser
+./CocoaSharpFinder
