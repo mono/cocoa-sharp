@@ -79,7 +79,6 @@ libFoundationGlue_la_SOURCES =				\
 	 NSScriptStandardSuiteCommands_stub.m \
 	 NSScriptSuiteRegistry_stub.m \
 	 NSScriptWhoseTests_stub.m \
-	 NSSelector_stub.m \
 	 NSSerialization_stub.m \
 	 NSSet_stub.m \
 	 NSSortDescriptor_stub.m \
