@@ -1,4 +1,17 @@
 #!/usr/bin/perl -w
+#
+#  genstubs.pl
+#
+#  Authors
+#      - kangaroo, Geoff Norton
+#      - C.J.
+#      - Adhamh
+#      - Urs C. Muff
+#
+#  Copyright (c) 2004 Quark Inc.  All rights reserved.
+#
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.11 2004/06/15 19:02:09 urs Exp $
+#
 
 use strict;
 use File::Basename;
@@ -9,8 +22,8 @@ my %imported = ();
 
 makeDirs();
 
-my $appKitPath     = "/System/Library/Frameworks/AppKit.framework/Headers";
 my $foundationPath = "/System/Library/Frameworks/Foundation.framework/Headers";
+my $appKitPath     = "/System/Library/Frameworks/AppKit.framework/Headers";
 
 # output interfaces
 parseDir($foundationPath, "foundation");
@@ -316,22 +329,20 @@ sub parseFile {
 
                 # Place the protocol definitions directly into the interface
                 foreach my $p (@protocols){
-		    if(! exists $protocols{$p} ) {
-			print(" WARNING: Protocol $p is missing\n");
-			next;
-		    }		
-
+                    if(! exists $protocols{$p} ) {
+                        print(" WARNING: Protocol $p is missing\n");
+                        next;
+                    }
                     print(" lines read from protocol $p: ",
                           int @{ $protocols{$p} }, "\n");
 
                     foreach my $protoLine (@{ $protocols{$p} }){
                       # TODO: only parseMethod on /^\s*[+-]/ lines
-
                       push(@out,
                            genObjCStub( \%methods,
                                         parseMethod($protoLine,
                                                     $common{interface},
-						    \%methods)
+                                                    \%methods)
                                       )
                           );
                     }
@@ -572,3 +583,9 @@ sub genCSharpStub {
 
     );
 }
+
+#	$Log: genstubs.pl,v $
+#	Revision 1.11  2004/06/15 19:02:09  urs
+#	Add headers
+#
+#
