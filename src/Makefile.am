@@ -1,1 +1,1 @@
-SUBDIRS=appkit foundation Apple.AppKit Apple.Foundation
+SUBDIRS=appkit foundation Apple.Foundation Apple.AppKit
