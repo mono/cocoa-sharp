@@ -139,10 +139,11 @@ namespace CocoaSharp {
 
 			_cs.Write("    public class {0}", Name);
 
+			string protocols = "I" + string.Join (", I", ProtocolNames).Replace ("@", "").Trim ();
 			if(Parent != null)
-				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, string.Join(", I", ProtocolNames).Trim());
+				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, ", " + protocols);
 			if(Parent == null && Protocols.Count > 0)
-				_cs.Write(" : {1}I{0}", string.Join(", I", ProtocolNames), (Name != "NSObject" ? "NSObject," : string.Empty));
+				_cs.Write(" : {1}{0}", (Name != "NSObject" ? ", " : "") + protocols, (Name != "NSObject" ? "NSObject," : string.Empty));
             if(Parent == null && Protocols.Count == 0 && Name != "NSObject")
                 _cs.Write(" : NSObject");
 			_cs.WriteLine(" {");

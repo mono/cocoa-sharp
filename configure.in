@@ -15,7 +15,7 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
 AC_PROG_LIBTOOL
-AM_INIT_AUTOMAKE(cocoa-sharp, 0.1.1)
+AM_INIT_AUTOMAKE(cocoa-sharp, 0.2)
 AM_MAINTAINER_MODE
 dnl Make Objective-C work with automake 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)
@@ -102,9 +102,6 @@ generator/Makefile
 src/Makefile
 src/CocoaSharp.Glue/Makefile
 src/CocoaSharp.Loader/Makefile
-src/AppKit.Glue/Makefile
-src/Foundation.Glue/Makefile
-src/WebKit.Glue/Makefile
 src/Apple.Foundation/Makefile
 src/Apple.AppKit/Makefile
 src/Apple.WebKit/Makefile

@@ -71,7 +71,7 @@ namespace CocoaSharp {
 			_cs.WriteLine();
 
 			_cs.WriteLine("namespace {0} {{", Namespace);
-			_cs.WriteLine("    public interface I{0} {{", Name);
+			_cs.WriteLine("    public interface I{0} {{", Name.Replace("@", ""));
 
 			_cs.WriteLine("        #region -- Properties --");
 			foreach (Method _toOutput in allMethods.Values)

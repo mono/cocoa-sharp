@@ -42,7 +42,8 @@ namespace CocoaSharp {
 				methodPtr = class_getClassMethod(classPtr,selectorPtr);
 
 			if (methodPtr == IntPtr.Zero) {
-				Console.WriteLine("WARNING: method not found {0}({1}) @ {2}({3}) --> {4}",className,classPtr,selector,selectorPtr,methodPtr);
+				if (classPtr != IntPtr.Zero)
+					Console.WriteLine("WARNING: method not found {0}({1}) @ {2}({3}) --> {4}",className,classPtr,selector,selectorPtr,methodPtr);
 				return null;
 			}
 				

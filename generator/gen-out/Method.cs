@@ -116,11 +116,11 @@ namespace CocoaSharp {
 			this.returnType = returnType;
 			this.parameters = parameters;
 		}
-		public Method(string className, string name, string selector, TypeUsage returnType, ParameterInfo[] parameters, string declaration) 
+		public Method(string className, bool isClassMethod, string name, string selector, TypeUsage returnType, ParameterInfo[] parameters, string declaration) 
 			: this (name, selector, null, returnType, parameters) {
 			this.declaration = declaration;
 #if !WINDOWS
-			this.types = ObjCClassInspector.GetSignature(className,selector);
+			this.types = ObjCClassInspector.GetSignature(className,FullSelector (isClassMethod));
 #else
 			this.types = returnType.TypeStr + "@0:4";
 			foreach (ParameterInfo p in this.parameters)
