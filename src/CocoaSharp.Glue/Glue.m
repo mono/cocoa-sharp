@@ -111,21 +111,36 @@ void AddMethods(Class cls,int numOfMethods,const char **methods,const char **sig
     class_addMethods(cls, methodsToAdd);
 }
 
-void AddInstanceVariables(Class cls,int count,...) {
+void AddInstanceVariables(Class cls,
+    int numOfVars,const char **varNames,const char **varTypes,int *varSizes,
+    int count,...) {
+    int totalCount = numOfVars+count;
     struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 
-        count, sizeof(struct objc_ivar_list) + (count-1)*sizeof(struct objc_ivar) );
+        totalCount, sizeof(struct objc_ivar_list) + (totalCount-1)*sizeof(struct objc_ivar) );
 
     int offset = cls->super_class->instance_size;
     int size = 0;
-    ivarList->ivar_count = count;
+    ivarList->ivar_count = totalCount;
 
     int i;
     struct objc_ivar * var = ivarList->ivar_list;
 
+    for (i = 0; i < numOfVars; ++i) {
+        var->ivar_name = (char*)strdup(varNames[i]);
+        var->ivar_type = (char*)strdup(varTypes[i]);
+        int ivarSize = varSizes[i];
+        size += ivarSize;
+        var->ivar_offset = offset;
+        offset += ivarSize;
+
+        if (IsGlueVerbose())
+            NSLog(@"  registering var: %s (%s) %i",var->ivar_name,var->ivar_type,var->ivar_offset);
+        ++var;
+    }
+
     va_list vl;
     va_start(vl,count);
     for (i = 0; i < count; ++i) {
-        
         var->ivar_name = va_arg(vl,char *);
         var->ivar_type = (char*)strdup(va_arg(vl,const char *));
         int ivarSize = va_arg(vl,int);
@@ -265,7 +280,9 @@ id DotNetForwarding_initWithManagedDelegate(id THIS, managedDelegate delegate) {
     return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
 }
 
-Class CreateClassDefinition(const char * name, const char * superclassName,int numOfMethods,const char **methods,const char **signatures) {
+Class CreateClassDefinition(const char * name, const char * superclassName,
+    int numOfMethods,const char **methods,const char **signatures,
+    int numOfVars,const char **varNames,const char **varTypes,int *varSizes) {
     //
     // Ensure that the superclass exists and that someone
     // hasn't already implemented a class with the same name
@@ -323,16 +340,16 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
 
         if (strcmp(name,"ConverterController") == 0)
             AddInstanceVariables(
-                new_class, 5,
-                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate),
-                "converter", @encode(id), sizeof(id), 
-                "dollarField", @encode(NSTextField*), sizeof(NSTextField*),
-                "rateField", @encode(NSTextField*), sizeof(NSTextField*),
-                "totalField", @encode(NSTextField*), sizeof(NSTextField*)
+                new_class, 
+                numOfVars,varNames,varTypes,varSizes,
+                1,
+                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
             );
         else
             AddInstanceVariables(
-                new_class, 1,
+                new_class, 
+                0, nil, nil, nil,
+                1,
                 "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
             );
     
