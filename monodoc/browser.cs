@@ -80,7 +80,7 @@ class Driver {
 		Settings.RunningGUI = true;
 		Browser browser = new Browser ();
 
-		((NSApplication)NSApplication.SharedApplication()).run();
+		NSApplication.SharedApplication.run();
 		return 0;
 	}
 }
@@ -96,7 +96,7 @@ class Browser : NSObject {
 	WebView Webview;
 	WebFrame mainFrame;
 
-        //
+	//
 	// Left-hand side Browsers
 	//
 	string CurrentUrl;
@@ -115,27 +115,27 @@ class Browser : NSObject {
 			(uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
 			NSBackingStoreType.NSBackingStoreBuffered,
 			false);
-                Window.Title = "Monodoc";
-                Windowcontroller = new NSWindowController(Window);
+		Window.title = "Monodoc";
+		Windowcontroller = new NSWindowController(Window);
 
-                Treebrowser = new NSBrowser(new NSRect(0, 0, 250, 600));
-                Treebrowser.Delegate = new BrowserController(help_tree);
-		Treebrowser.Target = this;
-		Treebrowser.DoubleAction = "didDoubleClick";
+		Treebrowser = new NSBrowser(new NSRect(0, 0, 250, 600));
+		Treebrowser.delegate_ = new BrowserController(help_tree);
+		Treebrowser.target = this;
+		Treebrowser.doubleAction = "didDoubleClick";
 		NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
-                Webview = new WebView(new NSRect(250, 0, 550, 600));
-		mainFrame = (WebFrame)NS2Net(Webview.mainFrame());
+		Webview = new WebView(new NSRect(250, 0, 550, 600));
+		mainFrame = (WebFrame)Webview.mainFrame;
 
-		((NSView)Window.contentView()).addSubview(Webview);
-		((NSView)Window.contentView()).addSubview(Treebrowser);
+		((NSView)Window.contentView).addSubview(Webview);
+		((NSView)Window.contentView).addSubview(Treebrowser);
 		
-		Windowcontroller.showWindow(NSApplication.SharedApplication());
+		Windowcontroller.showWindow(NSApplication.SharedApplication);
 	}
 
 	[ObjCExport("didDoubleClick")]
 	public void DoubleClick() {
 		try {
-			int curCol = Treebrowser.selectedColumn();
+			int curCol = Treebrowser.selectedColumn;
 			ArrayList nodesInColumn = help_tree.Nodes;
 			if(curCol > 0) {
 				for(int i = 0; i < curCol; i++) {
@@ -225,12 +225,12 @@ class BrowserController : NSObject {
 				nodes = ((Node)nodes[rowInCol]).Nodes;
 			}
 			Node n = (Node)nodes[rowNumber];
-			cell.StringValue = n.Caption; 
-			cell.Leaf = n.IsLeaf;
+			cell.stringValue = n.Caption; 
+			cell.leaf = n.IsLeaf;
 		} else {
 			Node n = (Node)help_tree.Nodes[rowNumber];
-			cell.StringValue = n.Caption; 
-			cell.Leaf = n.IsLeaf;
+			cell.stringValue = n.Caption; 
+			cell.leaf = n.IsLeaf;
 		}
        	}
 
