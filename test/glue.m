@@ -1,8 +1,29 @@
 #import <objc/objc-class.h>
 #import <Foundation/NSString.h>
 
+void AddMethod(Class cls,const char *name, const char *types, IMP imp) {
+    struct objc_method_list *methodsToAdd = (struct objc_method_list *)
+        malloc(1 * 
+        sizeof(struct objc_method) + 
+        sizeof(struct objc_method_list));
+    methodsToAdd->method_count = 1;
+
+    struct objc_method meth;
+    meth.method_name = sel_registerName(name);
+    meth.method_types = types;
+    meth.method_imp = imp;
+    methodsToAdd->method_list[0] = meth;
+
+    class_addMethods(cls, methodsToAdd);
+}
+
+id testImp(id base, SEL sel, ...) {
+    NSLog(@"tempImp %@ %@", base, sel);
+    return base;
+}
+
 Class CreateClassDefinition(const char * name, const char * superclassName) {
-    NSLog(@"creating a subclass of %s named %s\n", superclassName, name);
+    NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
     //
     // Ensure that the superclass exists and that someone
@@ -36,7 +57,7 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     // to share this copy of the name, but this is not a requirement
     // imposed by the runtime.
     //
-    new_class->name = strdup(name);
+    new_class->name = (const char *)strdup(name);
     meta_class->name = new_class->name;
 
     //
@@ -47,6 +68,16 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     *new_class->methodLists = -1;
     meta_class->methodLists = (struct objc_method_list *)calloc( 1, sizeof(struct objc_method_list *) );
     *meta_class->methodLists = -1;
+    
+    struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 1, sizeof(struct objc_ivar_list) + (1-1)*sizeof(struct objc_ivar) );
+
+    ivarList->ivar_count = 1;
+    ivarList->ivar_list[0].ivar_name = "dotNet";
+    ivarList->ivar_list[0].ivar_type = @encode(void*);
+    ivarList->ivar_list[0].ivar_offset = 0;
+
+    new_class->instance_size = sizeof(void*);
+    new_class->ivars = ivarList;
 
     //
     // Connect the class definition to the class hierarchy:
@@ -59,31 +90,9 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     meta_class->isa         = (void *)root_class->isa;
 
     // Finally, register the class with the runtime.
-    objc_addClass( new_class ); 
+    objc_addClass( new_class );
+    
+    AddMethod(new_class, "_swap", "", testImp);
+    
     return new_class;
 }
- 
-#if 0
-struct objc_method_list *methodsToAdd = (struct objc_method_list *)
-        malloc(totalMethodsToAdd * 
-        sizeof(struct objc_method) + 
-        sizeof(struct objc_method_list));
-    methodsToAdd->method_count = totalMethodsToAdd;
-    struct objc_method meth;
-    meth = *class_getInstanceMethod(toGetMethodsFrom, @selector(before:));
-    methodsToAdd->method_list[0] = meth;
-    meth = *class_getInstanceMethod(toGetMethodsFrom, @selector(after:));
-    methodsToAdd->method_list[1] = meth;
-
-for( i = 2; i< totalMethodsToAdd; i++){
-        //add identical method from the toWrap class
-        struct objc_method *originalMeth = [mit nextMethod];        
-        methodsToAdd->method_list[i].method_name = originalMeth->method_name;
-        methodsToAdd->method_list[i].method_types = originalMeth->method_types;
-        methodsToAdd->method_list[i].method_imp = originalMeth->method_imp;
-        //replace methods in the toWrap class 
-        meth = *class_getInstanceMethod(toGetMethodsFrom, [self getReplacementSEL: originalMeth]);
-        originalMeth->method_imp = meth.method_imp;
-    }
-    class_addMethods(poser, methodsToAdd);
-#endif
