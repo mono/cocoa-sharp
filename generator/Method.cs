@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.32 2004/06/24 18:56:53 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.33 2004/06/24 20:09:24 urs Exp $
 //
 
 using System;
@@ -443,7 +443,7 @@ namespace ObjCManagedExporter
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 				args.Add("p" + i);
 
-			w.WriteLine("        public {0}({1}) {{", name, string.Join(", ", mCSAPIParameters));
+			w.WriteLine("        public {0}({1}) : this() {{", name, string.Join(", ", mCSAPIParameters));
 			w.WriteLine("            {0}({1});", mCSMethodName, string.Join(", ", (string[])args.ToArray(typeof(string))));
 			w.WriteLine("        }");
 		}
@@ -549,13 +549,16 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.33  2004/06/24 20:09:24  urs
+//	fix constructor gen
+//
 //	Revision 1.32  2004/06/24 18:56:53  gnorton
 //	AppKit compiles
 //	Foundation compiles
 //	Output setMethod() for protocols not just the property so Interfaces are met.
 //	Ignore static protocol methods (.NET doesn't support static in interfaces).
 //	Resolve compiler errors.
-//
+//	
 //	Revision 1.31  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
 //	
