@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Apple.Foundation
@@ -11,6 +12,14 @@ namespace Apple.Foundation
 		private IntPtr _obj;
 		static Hashtable Objects = new Hashtable();
 
+		#region -- Glue --
+		[DllImport("Glue")]
+		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName);
+		
+		[DllImport("Glue")]
+		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
+		#endregion
+		
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
 		protected static extern IntPtr NSObject__alloc(IntPtr CLASS);
@@ -21,7 +30,19 @@ namespace Apple.Foundation
 		[DllImport("FoundationGlue")]
 		protected static extern void NSObject_release(IntPtr THIS);
 		#endregion
-
+		
+		protected delegate bool BridgeDelegate(IntPtr /*(NSInvocation*)*/ invocation);
+		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
+			return CreateClassDefinition(type.Name,"NSObject");
+		}
+		protected bool MethodInvoker(IntPtr /*(NSInvocation*)*/ invocation) {
+			string method = new NSInvocation(invocation).selector();
+			
+			this.GetType().InvokeMember(method, 
+				BindingFlags.Default | BindingFlags.InvokeMethod, null, this, null);
+			return true;
+		}
+		
 		public NSObject() : this(NSObject__alloc(IntPtr.Zero)) {}
 		~NSObject() {
 		    if (Raw != IntPtr.Zero)

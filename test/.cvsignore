@@ -3,3 +3,4 @@ Makefile.in
 Apple.*.dll
 lib*Glue.dylib
 Loader
+test-4

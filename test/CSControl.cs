@@ -5,45 +5,16 @@ using System.Reflection;
 using Apple.Foundation;
 using Apple.AppKit;
 
-delegate void BridgeDelegate(String method);
-
 class CSControl : NSObject {
-	static IntPtr CSControl_class;
-
-	[DllImport("Glue")]
-	static extern IntPtr CreateClassDefinition(string name, string superclassName, BridgeDelegate managedDelegate);
-
+	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl));
+	
 	NSButton swap1;
-	static BridgeDelegate CSControlDelegate;
-	public CSControl() {
-		CSControlDelegate = new BridgeDelegate(this.MethodInvoker);
-		alloc();
-	}
-
-	public void alloc() {
-		CSControl_class = NSRegisterClass(typeof(CSControl));
-		Raw = NSObject__alloc(CSControl_class);
-	}
+	BridgeDelegate CSControlDelegate;
+	public CSControl() : this(NSObject__alloc(CSControl_class)) {}
 
 	protected internal CSControl(IntPtr raw) : base(raw) {
 		CSControlDelegate = new BridgeDelegate(this.MethodInvoker);
-	}
-
-	public static IntPtr NSRegisterClass(Type objIndType) {
-		Console.WriteLine("NAME: {0}", objIndType.Name);
-
-		foreach(MethodInfo objIndMethodInfo in objIndType.GetMethods())
-			Console.WriteLine("METH: {0}", objIndMethodInfo.Name);
-
-		foreach(PropertyInfo objIndPropInfo in objIndType.GetProperties())
-			Console.WriteLine("PROP: {0}", objIndPropInfo.Name);
-
-		foreach(ConstructorInfo objIndCons in objIndType.GetConstructors())
-			Console.WriteLine("CON: {0}", objIndCons.Name);
-
-		IntPtr cls = CreateClassDefinition(objIndType.Name,"NSObject", CSControlDelegate);
-		CSControlDelegate("_stop");
-		return cls;
+		Raw = DotNetForwarding_initWithManagedDelegate(Raw,CSControlDelegate);
 	}
 
 	public void displayWindow() {
@@ -105,9 +76,4 @@ class CSControl : NSObject {
 	public void _swap() {
 		swap1.setTitle(new NSString("I got tickled"));
 	}
-
-	public void MethodInvoker(String method) {
-		this.GetType().InvokeMember(method, BindingFlags.Default | BindingFlags.InvokeMethod, null, this, null);
-	}
-
 }
