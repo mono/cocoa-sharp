@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.9 2004/06/29 16:42:34 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.10 2004/06/29 18:11:07 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -24,7 +24,7 @@
 		private BridgeDelegate _delegate;
 		protected bool _release;
 		
-		static IDictionary Objects = new Hashtable();
+		public static IDictionary Objects = new Hashtable();
 		static IDictionary NSClasses = new Hashtable();
 
 		#region -- Glue --
@@ -143,6 +143,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.10  2004/06/29 18:11:07  gnorton
+// Support dereferencing our WeakReference to return the real object; not make a new one
+//
 // Revision 1.9  2004/06/29 16:42:34  gnorton
 // Much better signature generator
 //
