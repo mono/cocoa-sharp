@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.34 2004/06/28 19:18:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.35 2004/06/28 21:31:22 gnorton Exp $
 //
 
 using System;
@@ -246,7 +246,7 @@ namespace ObjCManagedExporter
 			{
 				Framework frmwrk = mConfig.GetFramework(i.Framework);
 				ArrayList interfaceMethods = new ArrayList();
-				Console.WriteLine("Interface: {0}({1}):{2}", i.Name, i.Framework, i.Methods.Keys.Count);
+				//Console.WriteLine("Interface: {0}({1}):{2}", i.Name, i.Framework, i.Methods.Keys.Count);
 				if (i.Parent.Length > 0)
 					i.ParentInterface = (Interface)Interfaces[i.Parent];
 				i.AddAllMethods(i.Methods.Values);
@@ -255,16 +255,16 @@ namespace ObjCManagedExporter
 				foreach(string proto in i.Protocols) 
 					if(proto.Length > 0) 
 					{
-						Console.Write("\t\tProtocol: <{0}>", proto);
+						//Console.Write("\t\tProtocol: <{0}>", proto);
 						Protocol p = (Protocol)Protocols[proto];
 						if(p != null) 
 						{
-							Console.Write(":{0}", p.Methods.Keys.Count); 
+						//	Console.Write(":{0}", p.Methods.Keys.Count); 
 							i.AddAllMethods(p.Methods.Values);
 						}
-						else
-							Console.Write(":missing"); 
-						Console.WriteLine();
+						//else
+						//	Console.Write(":missing"); 
+						//Console.WriteLine();
 					}
 
 				ArrayList _categoryImports = new ArrayList(i.Imports);
@@ -278,21 +278,21 @@ namespace ObjCManagedExporter
 						{
 							Interface catInter = GetCategoryInterface(extras,i,_cat);
 							
-							Console.WriteLine("\t\tCategory: ({0}) added to {1} (no dependency to {2})", 
-								_key.Substring(0, _key.IndexOf("_")), catInter.Name, _cat.Framework);
+							//Console.WriteLine("\t\tCategory: ({0}) added to {1} (no dependency to {2})", 
+							//	_key.Substring(0, _key.IndexOf("_")), catInter.Name, _cat.Framework);
 							catInter.AddAllMethods(_cat.Methods.Values);
 							continue;
 						}
-						Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
-						Console.Write(":{0}", _cat.Methods.Keys.Count);
+						//Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
+						//Console.Write(":{0}", _cat.Methods.Keys.Count);
 						i.AddAllMethods(_cat.Methods.Values);
 						_categoryImports.AddRange(_cat.Imports);
-						Console.WriteLine();
+						//Console.WriteLine();
 					}
 				}
 				i.Imports = (string[])_categoryImports.ToArray(typeof(string));
 
-				Console.WriteLine("\tTOTAL:{0}", i.AllMethods.Count);
+				//Console.WriteLine("\tTOTAL:{0}", i.AllMethods.Count);
 			}
 			foreach (DictionaryEntry e in extras)
 				Interfaces[e.Key] = e.Value;
@@ -345,6 +345,8 @@ namespace ObjCManagedExporter
 				OutputFramework(f);
 
 			Console.WriteLine("Code generation successful");
+			Console.WriteLine("Updating mapping.");
+			Method.SaveMapping();
 		}   
             
 		static void Main(string[] args) 
@@ -415,9 +417,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.35  2004/06/28 21:31:22  gnorton
+//	Initial mapping support in the gen.
+//
 //	Revision 1.34  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
-//
+//	
 //	Revision 1.33  2004/06/27 20:27:48  gnorton
 //	Turn conditional output support back on
 //	
