@@ -23,6 +23,7 @@ namespace CocoaSharp {
 
 	public class HeaderMethod {
 		#region -- Members --
+		private string mClassName;
 		private string mMethodDeclaration;
 		private string mCSMethodName;
 		private string[] mMessageParts;
@@ -39,8 +40,9 @@ namespace CocoaSharp {
 		#endregion
 
 		#region -- Constructor --
-		public HeaderMethod(string methodDeclaration) {
+		public HeaderMethod(string methodDeclaration, string className) {
 			mMethodDeclaration = methodDeclaration.Trim();
+			mClassName = className;
 
 			// Check for unsupported methods and return commented function
 			// Unsupported methods include:
@@ -180,7 +182,7 @@ namespace CocoaSharp {
 			ParameterInfo[] paramInfos = new ParameterInfo[this.mArgumentNames.Length];
 			for (int i = 0; i < paramInfos.Length; ++i)
 				paramInfos[i] = new ParameterInfo(this.mArgumentNames[i], TypeUsage.FromDecl(this.mArgumentDeclarationTypes[i]));
-			return new Method(this.mCSMethodName,this.Selector,null,
+			return new Method(this.mClassName, this.mCSMethodName,this.Selector,null,
 				TypeUsage.FromDecl(this.mReturnDeclarationType),paramInfos);
 		}
 

@@ -69,7 +69,7 @@ namespace CocoaSharp {
 			string[] splitMethods = methods.Split('\n');
 			foreach(string method in splitMethods) 
 				if(mMethodRegex.IsMatch(method) && mMethods[method] == null)
-					mMethods.Add(method, new HeaderMethod(method));
+					mMethods.Add(method, new HeaderMethod(method, this.Name));
 		}
 
 	}

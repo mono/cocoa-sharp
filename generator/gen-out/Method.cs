@@ -111,12 +111,15 @@ namespace CocoaSharp {
 			this.selector = selector;
 			System.Diagnostics.Debug.Assert(this.Selector.Length > 0);
 			this.types = types;
-#if !WINDOWS
-			if (types == null)
-				this.types = ObjCClassInspector.GetSignature(name,selector);
-#endif
+
 			this.returnType = returnType;
 			this.parameters = parameters;
+		}
+		public Method(string className, string name,string selector,string types,TypeUsage returnType, ParameterInfo[] parameters) : this (name, selector, types, returnType, parameters) {
+#if !WINDOWS
+			if (types == null)
+				this.types = ObjCClassInspector.GetSignature(className,selector);
+#endif
 		}
 
 		// -- Public Properties --
