@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.25 2004/09/08 12:04:05 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.26 2004/09/08 17:05:46 adhamh Exp $
 //
 
 using System;
@@ -95,7 +95,7 @@ namespace ObjCManagedExporter
 			foreach(string import in Imports)
 				_gs.WriteLine("#import <{0}>", import);
 
-			_gs.WriteLine("BOOL sIs{0}Verbose = NO; BOOL sIs{0}VerboseInit = NO; void Init{0}Verbose() {{ if (sIs{0}VerboseInit) return; sIs{0}VerboseInit = YES; sIs{0}Verbose = getenv(\"COCOASHARP_DEBUG_LEVEL\") != 0 && atoi(getenv(\"COCOASHARP_DEBUG_LEVEL\")) >= 1; }}",Name);
+			_gs.WriteLine("BOOL sIs{0}Verbose = NO; BOOL sIs{0}VerboseInit = NO; void Init{0}Verbose() {{ if (sIs{0}VerboseInit) return; sIs{0}VerboseInit = YES; sIs{0}Verbose = getenv(\"COCOASHARP_DEBUG_LEVEL\") != 0 && (int)strtol(getenv(\"COCOASHARP_DEBUG_LEVEL\")) >= 1; }}",Name);
 			_gs.WriteLine("BOOL Is{0}Verbose() {{ Init{0}Verbose(); return sIs{0}Verbose; }}",Name);
 			_gs.WriteLine("void Set{0}Verbose(BOOL verbose) {{ sIs{0}Verbose = verbose; }}",Name);
 			_gs.WriteLine();
@@ -210,9 +210,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.26  2004/09/08 17:05:46  adhamh
+//	using strtol instead of atoi which is deprecated.
+//
 //	Revision 1.25  2004/09/08 12:04:05  urs
 //	Shut up Glue if env var "COCOASHARP_DEBUG_LEVEL" is not set to at least 1.
-//
+//	
 //	Revision 1.24  2004/07/01 12:41:33  urs
 //	- Better verbose support, individual verbose ignore per selector and per interface
 //	- Minor improvements with monodoc
