@@ -111,7 +111,8 @@ public class Controller : NSObject {
 
 	[ObjCExport("userDidSearch:")]
 	public void UserDidSearch(object sender) {
-		Console.WriteLine("DEBUG: Search is now {0}", searchBox.stringValue);
+		int index = IndexDataSource.FindClosest(searchBox.stringValue);
+		indexBrowser.selectRow_inColumn(index, 0);
 	}
 
 	[ObjCExport("applicationWillFinishLaunching:")]
@@ -268,6 +269,103 @@ class IndexDataSource : NSObject {
 		cell.stringValue = index_reader.GetValue(rowNumber);
 		cell.leaf = true;
 	}
+
+	public static int FindClosest (string text)
+        {
+                int low = 0;
+                int top = index_reader.Rows-1;
+                int high = top;
+                bool found = false;
+                int best_rate_idx = Int32.MaxValue, best_rate = -1;
+
+                while (low <= high){
+                        int mid = (high + low) / 2;
+
+                        //Console.WriteLine ("[{0}, {1}] -> {2}", low, high, mid);
+
+                        string s;
+                        int p = mid;
+                        for (s = index_reader.GetValue (mid); s [0] == ' ';){
+                                if (p == high){
+                                        if (p == low){
+                                                if (best_rate_idx != Int32.MaxValue){
+                                                        //Console.WriteLine ("Bestrated: "+best_rate_idx);
+                                                        //Console.WriteLine ("Bestrated: "+index_reader.GetValue(best_rate_idx));
+                                                        return best_rate_idx;
+                                                } else {
+                                                        //Console.WriteLine ("Returning P="+p);
+                                                        return p;
+                                                }
+                                        }
+
+                                        high = mid;
+                                        break;
+                                }
+
+                                if (p < 0)
+                                        return 0;
+
+                                s = index_reader.GetValue (++p);
+                                //Console.WriteLine ("   Advancing to ->"+p);
+                        }
+                        if (s [0] == ' ')
+                                continue;
+                        int c, rate;
+                        c = Rate (text, s, out rate);
+                        //Console.WriteLine ("[{0}] Text: {1} at {2}", text, s, p);
+                        //Console.WriteLine ("     Rate: {0} at {1}", rate, p);
+                        //Console.WriteLine ("     Best: {0} at {1}", best_rate, best_rate_idx);
+                        //Console.WriteLine ("     {0} - {1}", best_rate, best_rate_idx);
+                        if (rate >= best_rate){
+                                best_rate = rate;
+                                best_rate_idx = p;
+                        }
+                        if (c == 0)
+                                return mid;
+
+                        if (low == high){
+                                //Console.WriteLine ("THISPATH");
+                                if (best_rate_idx != Int32.MaxValue)
+                                        return best_rate_idx;
+                                else
+                                        return low;
+                        }
+
+                        if (c < 0){
+                                high = mid;
+                        } else {
+                                if (low == mid)
+                                        low = high;
+                                else
+                                        low = mid;
+                        }
+                }
+
+                //              Console.WriteLine ("Another");
+                if (best_rate_idx != Int32.MaxValue)
+                        return best_rate_idx;
+                else
+                        return high;
+
+        }
+	public static int Rate (string user_text, string db_text, out int rate)
+        {
+                int c = String.Compare (user_text, db_text, true);
+                if (c == 0){
+                        rate = 0;
+                        return 0;
+                }
+
+                int i;
+                for (i = 0; i < user_text.Length; i++){
+                        if (db_text [i] != user_text [i]){
+                                rate = i;
+                                return c;
+                        }
+                }
+                rate = i;
+                return c;
+        }
 }
 [ObjCRegister("BrowserDataSource")]
 class BrowserDataSource : NSObject {
