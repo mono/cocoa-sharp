@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.4 2004/09/03 17:38:52 gnorton Exp $
+// $Id: MachOFile.cs,v 1.5 2004/09/03 19:10:05 urs Exp $
 //
 
 using System;
@@ -8,6 +8,47 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
+	public class Utils {
+		public static void MakeBigEndian(ref int value) 
+		{
+			uint tmp = (uint)value;
+			MakeBigEndian(ref tmp);
+			value = (int)tmp;
+		}
+
+		public static void MakeBigEndian(ref uint value) 
+		{
+			if (BitConverter.IsLittleEndian) 
+			{
+				byte[] bytes = BitConverter.GetBytes(value);
+				value = BitConverter.ToUInt32(new byte[] { bytes[3], bytes[2], bytes[1], bytes[0] },0);
+			}
+		}
+
+		public static void MakeBigEndian(ref short value) 
+		{
+			ushort tmp = (ushort)value;
+			MakeBigEndian(ref tmp);
+			value = (short)tmp;
+		}
+
+		public static void MakeBigEndian(ref ushort value) 
+		{
+			if (BitConverter.IsLittleEndian) 
+			{
+				byte[] bytes = BitConverter.GetBytes(value);
+				value = BitConverter.ToUInt16(new byte[] { bytes[1], bytes[0] },0);
+			}
+		}
+
+		public static unsafe string GetString(byte* data,int length) {
+			string ret = Marshal.PtrToStringAnsi(new IntPtr (data), length);
+			int termChar = ret.IndexOf((char)0);
+			if (termChar >= 0)
+				ret = ret.Substring(0,termChar);
+			return ret;
+		}
+	}
 
 	public class MachOFile {
 
@@ -89,6 +130,14 @@ namespace CocoaSharp {
 		private void ParseHeader () {
 			unsafe {
 				this.header = *((mach_header *)Pointer);
+
+				Utils.MakeBigEndian(ref this.header.magic);
+				Utils.MakeBigEndian(ref this.header.cputype);
+				Utils.MakeBigEndian(ref this.header.cpusubtype);
+				Utils.MakeBigEndian(ref this.header.filetype);
+				Utils.MakeBigEndian(ref this.header.ncmds);
+				Utils.MakeBigEndian(ref this.header.sizeofcmds);
+				Utils.MakeBigEndian(ref this.header.flags);
 				Pointer += Marshal.SizeOf (header);
 			}
 
@@ -110,6 +159,8 @@ namespace CocoaSharp {
 				load_command lcmd;
 				unsafe {
 					lcmd = *((load_command *)Pointer);
+					Utils.MakeBigEndian(ref lcmd.cmd);
+					Utils.MakeBigEndian(ref lcmd.cmdsize);
 					Pointer += Marshal.SizeOf (lcmd);
 				}
 
@@ -142,7 +193,7 @@ namespace CocoaSharp {
 			foreach (ICommand cmd in commands) 
 				if (cmd is SegmentCommand) {
 					SegmentCommand scmd = cmd as SegmentCommand;
-					if (scmd.Name == "__OBJC")
+					if (scmd.Name.Equals("__OBJC"))
 						objcSegment = cmd as SegmentCommand;
 				}
 

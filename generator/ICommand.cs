@@ -1,5 +1,5 @@
 //
-// $Id: ICommand.cs,v 1.3 2004/09/03 17:30:24 urs Exp $
+// $Id: ICommand.cs,v 1.4 2004/09/03 19:10:05 urs Exp $
 //
 
 using System;

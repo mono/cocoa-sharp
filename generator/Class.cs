@@ -9,9 +9,12 @@ namespace CocoaSharp {
 	
 		public Class (byte *ptr) {
 			occlass = *((objc_class *)ptr);
+			Utils.MakeBigEndian(ref occlass.version);
+			Utils.MakeBigEndian(ref occlass.info);
+			Utils.MakeBigEndian(ref occlass.instance_size);
+
 			Console.WriteLine ("Class: {0}", Marshal.PtrToStringAuto (occlass.name));
 		}
-	
 	}
 
 	public struct objc_class {

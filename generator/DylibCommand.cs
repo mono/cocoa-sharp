@@ -1,5 +1,5 @@
 //
-// $Id: DylibCommand.cs,v 1.2 2004/09/03 17:30:24 urs Exp $
+// $Id: DylibCommand.cs,v 1.3 2004/09/03 19:10:05 urs Exp $
 //
 
 using System;
@@ -23,6 +23,10 @@ namespace CocoaSharp {
 		public void ProcessCommand () {
 			unsafe {
 				dld = *((dylib *)mfile.Pointer);
+				Utils.MakeBigEndian(ref dld.offset);
+				Utils.MakeBigEndian(ref dld.timestamp);
+				Utils.MakeBigEndian(ref dld.current_version);
+				Utils.MakeBigEndian(ref dld.compatability_version);
 				name = Marshal.PtrToStringAuto (new IntPtr (mfile.Pointer + dld.offset - Marshal.SizeOf (lcmd)));
 				mfile.Pointer += (int)(lcmd.cmdsize - Marshal.SizeOf (lcmd));
 			}

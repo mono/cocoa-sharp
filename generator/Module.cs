@@ -32,6 +32,8 @@ namespace CocoaSharp {
 			Console.WriteLine ("Count: {0}", count);
 			for (int i = 0; i < count; i++, ptr+=Marshal.SizeOf (ocmodule)) {
 				ocmodule = *((objc_module *)ptr);
+				Utils.MakeBigEndian(ref ocmodule.version);
+				Utils.MakeBigEndian(ref ocmodule.size);
 				modules.Add (new Module (ocmodule, headptr + (ocmodule.symtab.ToInt32 () - segvmaddr + segfileoff)));
 			}
 			return modules;
