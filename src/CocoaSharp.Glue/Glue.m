@@ -99,47 +99,45 @@ void AddMethods(Class cls,int numOfMethods,const char **methods,const char **sig
 void AddInstanceVariables(Class cls,
     int numOfVars,const char **varNames,const char **varTypes,int *varSizes,
     int count,...) {
-    int totalCount = numOfVars+count;
-    struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 
-        totalCount, sizeof(struct objc_ivar_list) + (totalCount-1)*sizeof(struct objc_ivar) );
 
-    int offset = cls->super_class->instance_size;
-    int size = 0;
-    ivarList->ivar_count = totalCount;
+    int i = 0;
+    int ivar_size = 0;
+    int ivar_count = numOfVars + count;
+    struct objc_ivar_list *ivar_list = nil;
+    struct objc_ivar *ivar = nil;
 
-    int i;
-    struct objc_ivar * var = ivarList->ivar_list;
-
-    for (i = 0; i < numOfVars; ++i) {
-        var->ivar_name = (char*)strdup(varNames[i]);
-        var->ivar_type = (char*)strdup(varTypes[i]);
-        int ivarSize = varSizes[i];
-        size += ivarSize;
-        var->ivar_offset = offset;
-        offset += ivarSize;
-
-        if (IsGlueVerbose())
-            NSLog(@"  registering var: %s (%s) %i",var->ivar_name,var->ivar_type,var->ivar_offset);
-        ++var;
+    if(ivar_count > 0) {
+        ivar_size = cls->super_class->instance_size;
+        ivar_list = malloc(sizeof(struct objc_ivar_list) + (ivar_count)*sizeof(struct objc_ivar));
+	ivar_list->ivar_count = 0; 
+        for(i = 0; i < numOfVars ; i++) {
+            ivar = ivar_list->ivar_list + ivar_list->ivar_count;
+            ivar_list->ivar_count++;
+            ivar->ivar_name = (char*)strdup(varNames[i]);
+            ivar->ivar_type = (char*)strdup(varTypes[i]);
+            ivar->ivar_offset = ivar_size;
+            
+            ivar_size += varSizes[i];
+            if (IsGlueVerbose())
+                NSLog(@"  registering var: %s (%s) %i",ivar->ivar_name,ivar->ivar_type,ivar->ivar_offset);
+        }
+        va_list vl;
+        va_start(vl, count);
+        for(i = 0; i < count; i++) {
+            ivar = ivar_list->ivar_list + ivar_list->ivar_count;
+            ivar_list->ivar_count++;
+            ivar->ivar_name = va_arg(vl, char*);
+            ivar->ivar_type = va_arg(vl, char*);
+            ivar->ivar_offset = ivar_size;
+            
+            ivar_size += va_arg(vl, int);
+            if (IsGlueVerbose())
+                NSLog(@"  registering var: %s (%s) %i",ivar->ivar_name,ivar->ivar_type,ivar->ivar_offset);
+        }
+        NSLog(@"GLUE: ivar_size=%i ivar_list=%i", ivar_size, (sizeof(struct objc_ivar_list) + (ivar_count)*sizeof(struct objc_ivar)));
+        cls->instance_size = ivar_size;
+        cls->ivars = ivar_list;
     }
-
-    va_list vl;
-    va_start(vl,count);
-    for (i = 0; i < count; ++i) {
-        var->ivar_name = va_arg(vl,char *);
-        var->ivar_type = (char*)strdup(va_arg(vl,const char *));
-        int ivarSize = va_arg(vl,int);
-        size += ivarSize;
-        var->ivar_offset = offset;
-        offset += ivarSize;
-
-        if (IsGlueVerbose())
-            NSLog(@"  registering var: %s (%s) %i",var->ivar_name,var->ivar_type,var->ivar_offset);
-        ++var;
-    }
-
-    cls->instance_size = size;
-    cls->ivars = ivarList;
 }
 
 NSMethodSignature * MakeMethodSignature(const char *types) {

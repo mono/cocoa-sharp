@@ -143,7 +143,11 @@ public class Controller : NSObject {
 			string url = initialRequest.urL.relativeString.Replace("http://monodoc/load?", "");
 			string content = "";
 			Node n;
-			content = help_tree.RenderUrl(url, out n);
+			try {
+				content = help_tree.RenderUrl(url, out n);
+			} catch (Exception e) {
+				content = "Exception Rendering the requested URL: " + e;
+			}
 			if(content != null && !content.Equals("")) {
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
