@@ -1,5 +1,5 @@
 //
-// $Id: Stub.cs,v 1.2 2004/09/03 17:30:24 urs Exp $
+// $Id: Stub.cs,v 1.3 2004/09/03 17:38:52 gnorton Exp $
 //
 
 using System;

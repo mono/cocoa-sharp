@@ -1,5 +1,5 @@
 //
-// $Id: Section.cs,v 1.3 2004/09/03 17:30:24 urs Exp $
+// $Id: Section.cs,v 1.4 2004/09/03 17:38:52 gnorton Exp $
 //
 
 using System;
@@ -19,6 +19,18 @@ namespace CocoaSharp {
 		public Section (MachOFile mfile, segment_command scmd) {
 			this.mfile = mfile;
 			this.scmd = scmd;
+		}
+
+		public string Name {
+			get { return sectname; }
+		}
+		
+		public int Offset {
+			get { return (int)sec.offset; }
+		}
+		
+		public int Size {
+			get { return (int)sec.size; }
 		}
 
 		public void ProcessSection () {

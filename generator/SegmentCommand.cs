@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.3 2004/09/03 17:30:24 urs Exp $
+// $Id: SegmentCommand.cs,v 1.4 2004/09/03 17:38:52 gnorton Exp $
 //
 
 using System;
@@ -21,6 +21,22 @@ namespace CocoaSharp {
 			this.mfile = mfile;
 			this.lcmd = lcmd;
 			sections = new ArrayList ();
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public int VMAddr {
+			get { return (int)scmd.vmaddr; }
+		}
+
+		public int FileOffset {
+			get { return (int)scmd.fileoff; }
+		}
+
+		public ArrayList Sections {
+			get { return sections; }
 		}
 
 		public void ProcessCommand () {

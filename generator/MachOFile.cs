@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.3 2004/09/03 17:30:24 urs Exp $
+// $Id: MachOFile.cs,v 1.4 2004/09/03 17:38:52 gnorton Exp $
 //
 
 using System;
@@ -23,6 +23,7 @@ namespace CocoaSharp {
 		private string filename;
 		private byte[] filedata;
 		private unsafe byte* ptr;
+		private unsafe byte* headptr;
 		private mach_header header;
 		private static int DEBUG_LEVEL = 0;
 		private ArrayList commands;
@@ -42,8 +43,6 @@ namespace CocoaSharp {
 			commands = new ArrayList ();
 			this.filename = filename;
 			LoadFile ();
-			ParseHeader ();
-			LoadCommands ();
 		}
 
 		unsafe private void LoadFile () {
@@ -56,7 +55,11 @@ namespace CocoaSharp {
 			reader.Close ();
 			fixed (byte *pdata = filedata) {
 				ptr = pdata;
+				headptr = ptr;
 			}
+			ParseHeader ();
+			LoadCommands ();
+			ProcessModules ();
 		}
 
 		unsafe public byte* Pointer {
@@ -66,14 +69,13 @@ namespace CocoaSharp {
 
 		public string Filename {
 			get { return filename; }
-			set { this.filename = value; 
+			set { 
+				this.filename = value; 
 				LoadFile ();
-				ParseHeader ();
-				LoadCommands ();
 			}
 		}
 
-		public static void DebugOut(int level, string format, params object[] args) 
+		public static void DebugOut(int level, string format, params object[] args)
 		{
 			if (DEBUG_LEVEL >= level) 
 				Console.WriteLine(format,args);
@@ -130,6 +132,34 @@ namespace CocoaSharp {
 
 				cmd.ProcessCommand ();
 				commands.Add (cmd);
+			}
+		}
+
+		private void ProcessModules () {
+			SegmentCommand objcSegment = null;
+			Section moduleSection = null;
+			ArrayList modules;
+			foreach (ICommand cmd in commands) 
+				if (cmd is SegmentCommand) {
+					SegmentCommand scmd = cmd as SegmentCommand;
+					if (scmd.Name == "__OBJC")
+						objcSegment = cmd as SegmentCommand;
+				}
+
+			if (objcSegment == null)
+				throw new Exception ("ERROR: __OBJC segment not found in MachOFile");
+			foreach (Section sec in objcSegment.Sections)
+				if (sec.Name == "__module_info")
+					moduleSection = sec;
+			
+			if (moduleSection == null)
+				throw new Exception ("ERROR: __module_info not found in __OBJC segment");
+
+			unsafe {
+				ptr = headptr+moduleSection.Offset;
+				objc_module ocmodule = new objc_module ();
+				int count = moduleSection.Size / 16;
+				modules = Module.ParseModules (headptr, ptr, objcSegment.VMAddr, objcSegment.FileOffset, count);
 			}
 		}
 
