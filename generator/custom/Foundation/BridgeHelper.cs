@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.6 2004/06/29 16:42:34 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.7 2004/06/29 18:28:46 gnorton Exp $
 //
 
 using System;
@@ -181,9 +181,7 @@ namespace Apple.Tools
 
 			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, method)))
 			{
-				Console.WriteLine("curSize then: {0}", curSize);
 				GetSignatureCode(ref types, ref curSize, p.ParameterType);
-				Console.WriteLine("curSize now: {0}", curSize);
 				types += curSize;
 			}
 				
@@ -247,6 +245,10 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.7  2004/06/29 18:28:46  gnorton
+// Remove the ptr from the hashtable when we're DToring it.
+// Remove some debugging WriteLines from NSO
+//
 // Revision 1.6  2004/06/29 16:42:34  gnorton
 // Much better signature generator
 //

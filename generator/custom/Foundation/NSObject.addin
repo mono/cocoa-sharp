@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.10 2004/06/29 18:11:07 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.11 2004/06/29 18:28:46 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -95,6 +95,8 @@
 		}
 
 		~NSObject() {
+			if (Raw != IntPtr.Zero)
+				Objects.Remove(Raw);
 			if (Raw != IntPtr.Zero && _release)
 				release();
 		}
@@ -143,6 +145,10 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.11  2004/06/29 18:28:46  gnorton
+// Remove the ptr from the hashtable when we're DToring it.
+// Remove some debugging WriteLines from NSO
+//
 // Revision 1.10  2004/06/29 18:11:07  gnorton
 // Support dereferencing our WeakReference to return the real object; not make a new one
 //
