@@ -3,27 +3,28 @@
 use strict;
 use File::Basename;
 
-#$| = 0;
+$| = 1;
 my %protocols = ();
+my %imported = ();
 
 makeDirs();
 
-# get protocols
-print("Processing interfaces.\n");
-parseDir("/System/Library/Frameworks/AppKit.framework/Headers", "appkit", 1);
-parseDir("/System/Library/Frameworks/Foundation.framework/Headers", "foundation", 1);
-print("Finished processing interfaces.\n");
+my $appKitPath     = "/System/Library/Frameworks/AppKit.framework/Headers";
+my $foundationPath = "/System/Library/Frameworks/Foundation.framework/Headers";
 
 # output interfaces
-parseDir("/System/Library/Frameworks/AppKit.framework/Headers", "appkit", 0);
-parseDir("/System/Library/Frameworks/Foundation.framework/Headers", "foundation", 0);
+parseDir($appKitPath, "appkit");
+parseDir($foundationPath, "foundation");
 
+
+# Some ideas for ParseMethod:
+# - Only parse the method!  Store method parts in the %objC hash
 sub parseMethod {
     my $origmethod = shift();
-    my $class = shift();
+    my $class      = shift();
     my $methodHash = shift();
-    my $objCHash = shift();
-    my @return = ();
+    my $objCHash   = shift();
+    my @return     = ();
 
     chomp($origmethod);
 
@@ -42,8 +43,8 @@ sub parseMethod {
        # until then, comment such methods as UNSUPPORTED
        $origmethod =~ /\.\.\./
       ) {
-        $origmethod =~ s:/::g;
-        return "/* UNSUPPORTED: \n$origmethod\n */\n\n";
+	$origmethod =~ s:/::g;
+	return "/* UNSUPPORTED: \n$origmethod\n */\n\n";
     }
 
     # It seems that methods take one of two formats.  Zero arguments:
@@ -58,7 +59,7 @@ sub parseMethod {
     my $remainder = $3;
 
     my $isClassMethod = (defined($methodType) ? ($methodType eq "+") : 0);
-    
+
     $retType =~ s/oneway //;
 
     # get rid of comments
@@ -79,63 +80,63 @@ sub parseMethod {
 
     # If there are no arguments (only matches method name)
     if($remainder =~ /$noarg_rx/){
-        push(@methodName, $1);
+	push(@methodName, $1);
 
     # If there are arguments, parse them
     }elsif($remainder =~ /$arg_rx/){
-        (my(@remainder)) = ($remainder =~ /$arg_rx/g);
+	(my(@remainder)) = ($remainder =~ /$arg_rx/g);
 
-        # Fill our arrays from the remainder of the parsed method
-        while(@remainder){
-            push( @methodName,  shift @remainder );
+	# Fill our arrays from the remainder of the parsed method
+	while(@remainder){
+	    push( @methodName,  shift @remainder );
 
-            my $argType = shift @remainder;
-            my $argName = shift @remainder;
+	    my $argType = shift @remainder;
+	    my $argName = shift @remainder;
 
-            $argType = "id" unless $argType;
+	    $argType = "id" unless $argType;
 
-            unless ($argName){
-                $argName = $argType;
-                $argType = "id";
-            }
-            
-            push( @type,        $argType );
-            push( @name,        $argName );
-        }
+	    unless ($argName){
+		$argName = $argType;
+		$argType = "id";
+	    }
+	    
+	    push( @type,        $argType );
+	    push( @name,        $argName );
+	}
 
     # If we can't parse the method, complain
     }else{
-        print("\nCouldn't parse method: ",$origmethod,);
-        return;
+	print("Couldn't parse method: $origmethod\n");
+	return;
     }
 
     my @params;
     # Build the params and message
     if(int(@methodName) == 1 && int(@name) == 0){
-        push(@message, $methodName[0]);
+	push(@message, $methodName[0]);
 
     }else{
-        for(my $i = 0; $i < int @methodName; $i++){
-            push(@params, "$type[$i] p$i");
-            push(@message, "$methodName[$i]:p$i");
-        }
+	for(my $i = 0; $i < int @methodName; $i++){
+	    push(@params, "$type[$i] p$i");
+	    push(@message, "$methodName[$i]:p$i");
+	}
     }
 
     # What object will we be sending messages to?
-    my ($receiver,$logLine,$methodName);
+    my($receiver, $logLine, $methodName);
 
     # If the method is a class method
     if($isClassMethod){
-        unshift(@params, "Class CLASS");
-        $receiver = "CLASS";
-        $logLine = "\tif (!CLASS) CLASS = NSClassFromString(\@\"$class\");\n";
-        $class .= '_';
+	unshift(@params, "Class CLASS");
+	$receiver = "CLASS";
+	$logLine = "\tif (!CLASS) CLASS = NSClassFromString(\@\"$class\");\n";
+	$class .= '_';
 
     # If the method is an instance method
     }else{
-        unshift(@params, "$class* THIS");
-	    $receiver = "THIS";
-        $logLine = "";
+	unshift(@params, "$class* THIS");
+	$receiver = "THIS";
+	$logLine = "";
     }
 
     # The fully-qualified C function name separated by _s (:s don't work)
@@ -143,8 +144,8 @@ sub parseMethod {
     $logLine .= "\tNSLog(\@\"$methodName: \%\@\\n\", $receiver);";
     
     if(exists $methodHash->{$methodName}){
-        print("\n\t\tDuplicate method name: $methodName");
-        return ();
+	print("\t\tDuplicate method name: $methodName\n");
+	return ();
     }
     
     $methodHash->{$methodName} = "1";
@@ -163,14 +164,27 @@ sub parseMethod {
              $logLine,
              "\t${retter}[$receiver $message];",
              "}"
-            );             
+	   );
 }
 
 # Parse file
+my %parsedFiles = ();
 sub parseFile {
+    # The name of the file we will be parsing
     my $filename = shift();
 
-    my $getProtocols = shift();
+    # Classes that have been imported in this traversal
+    my $currentImports = (defined $_[0] ? shift() : {});
+
+    # Note that we have imported this file so that we don't do it again
+    $currentImports->{$filename} = 1;
+
+    if(exists $imported{$filename}){
+	return @{ $imported{$filename} };
+    }
+
+    # Set to undef when started, 1 when finished
+    $parsedFiles{$filename} = undef;
 
     my %methods = ();
     my $addAlloc = 0;
@@ -187,120 +201,205 @@ sub parseFile {
     my @protocolOut = ();
 
     (my($name, $path, $suffix)) = fileparse($filename, ".h");
-    (my (undef, undef, undef, undef, $dirpart)) = split(/\//, $filename);
-    $dirpart =~ s/\.framework//;
+
+    $filename =~ m:.*/([^\.]*)\.[^/]+/:;
+    my $dirpart = $1;
 
     my $skip = 0;
     my $isProtocol = 0;
+    my $isInterface = 0;
     my $protocol;
     my $interface = $name;
+
+    my @imported = ();
     
     push(@out, "#import <$dirpart/$name.h>");
     push(@out, "#import <Foundation/NSString.h>");
     
     open(FILE, "<$filename") or die "Couldn't open $filename: $!";
+    my($class, $super, $protocols);
 
     while(my $line = <FILE>) {
-        chomp $line;
-       
-    	commentsBeGone(\$line, \*FILE);
-    
-        # Ignore #import lines
-        next if($line =~ /#import/);
+	chomp $line;
 
-        # Determine the interface we are in
-        if($line =~ /\@interface (\w+)(.*)/){
-            $interface = $1;
-            #$addAlloc = 1 if ($interface eq $name);
+	commentsBeGone(\$line, \*FILE);
 
-            if ($2 =~ /<(\w+)>/ && $getProtocols == 0){
-                my $refProto = $1;
-                my $i;
-                    
-                print(" $interface refers to $refProto ($#{ $protocols{$refProto} })");
-                foreach $i ( 0 .. $#{ $protocols{$refProto} } ) {
-                    push(@out, "", parseMethod($protocols{$refProto}[$i], $interface, \%methods));
-                }
-            }
-        }else{
-            if($line =~ /\@protocol (\w+)/){
-                $protocol = $1;
-                $isProtocol = 1;
-            }else{
-                if($line =~ /\@end/ && $isProtocol == 1){
-                    $protocols{$protocol} = [ @protocolOut ] if ($getProtocols == 1);
-                    $isProtocol = 0;
-                }
-            }
-        }
+	my %objC =
+	    ( class                => $class,
+	      super                => $super,
+	      "method name"        => undef,
+	      "method parts"       => [],
+	      "arg names"          => [],
+	      "arg types"          => [],
+	      "is instance method" => undef,
+	      receiver             => undef,
+	    );
 
-    	my($class, $super);
-    
-    	# Capture class and superclass names
-    	if($line =~ /^\s*\@interface\s+(\w+)(?:\s*:\s*(\w+))?\s*$/) {
-    	    ($class, $super) = ($1, $2);
-    	}
-    
-    	if($line =~ /^\s*\@end/){
-    	    ($class, $super) = (undef, undef);
-    	}
-    
-    	my %objC =
-    	    ( class                => $class,
-    	      super                => $super,
-    	      "method name"        => undef,
-    	      "method parts"       => [],
-    	      "arg names"          => [],
-    	      "arg types"          => [],
-    	      "is instance method" => undef,
-    	      receiver             => undef,
-    	    );
-    
-    	my %c =
-    	    ( "function name" => undef,
-    	      "param types"   => [],
-    	      "param names"   => [],
-    	      "params"        => undef,
-    	      "return type"   => undef,
-    	    );
-    
-    	my %cSharp =
-    	    ( class         => $class,
-    	      super         => $super,
-    	      "method name" => undef,
-    	      "arg names"   => [],
-    	      "arg types"   => [],
-    	    );
+	my %c =
+	    ( "function name" => undef,
+	      "param types"   => [],
+	      "param names"   => [],
+	      "params"        => undef,
+	      "return type"   => undef,
+	    );
 
-        # If this is a class or instance method definition
-        if($line =~ /^\s*[+-]/){
-    	    # For lines that end in a definition,
-    	    # Replace { ... } with a semicolon
-    	    $line =~ s/\{[^\}]*\}\s*/;/;
-    
-    	    # If the line doesn't end with a semicolon, whitespace, end of line
-    	    # Do the following until it does
-    	    while($line !~ /;\s*$ /x){ # Stupid emacs.
-        		$line =~ s://.*::;
-        		# Append the next line
-                $line .= <FILE>;
-        		# Remove trailing newline
-        		chomp $line;
-        		# Get rid of comments
-        		commentsBeGone(\$line, \*FILE);
-        		# Replace { ... } with a semicolon
-        		$line =~ s/\{[^\}]*\}/;/;
-            }
+	my %cSharp =
+	    ( class         => $class,
+	      super         => $super,
+	      "method name" => undef,
+	      "arg names"   => [],
+	      "arg types"   => [],
+	    );
 
-            if($isProtocol == 1) {
-                push(@protocolOut, $line);
-            }else{
-		        push(@out, "", parseMethod($line, $interface, \%methods, \%objC)) unless $getProtocols;
-            }
-        }
+	# Traverse import lines
+	if($line =~ m:#import\s+[<"]([^>"]+)[>"]:){
+	    my $importString = $1;
+	    (my($importName, $importDir, $importSuffix)) =
+		fileparse($importString, ".h");
+
+	    my($fqImportDir, $fqImportFile) = ("", "");
+
+	    # Are we importing from the Appkit or the Foundation dirs?
+	    if($importDir eq "AppKit/"){
+		$fqImportDir = $appKitPath;
+	    }elsif($importDir eq "Foundation/"){
+		$fqImportDir = $foundationPath;
+	    }
+
+	    $fqImportFile = "$fqImportDir/$importName.h";
+
+	    # If the import dir is either AppKit or Foundation
+	    # And we haven't already imported this file, do so now
+	    unless($fqImportDir){
+		# Not an appkit or foundation include file.
+	    }elsif($fqImportDir && 
+		   !exists($currentImports->{$fqImportFile})){
+
+		# Verify that this file exists
+		print(" ----------------------- \n",
+		      " This SHOULD NOT HAPPEN! \n",
+		      " ----------------------- \n",
+		      " '$fqImportFile' does not exist \n",
+		      " But import string is '$importString' \n",
+		     ) unless -f "$fqImportFile";
+
+		# Cache the results of the parse
+		if(!exists $imported{$fqImportFile}){
+
+		    # This would cause an infinite loop.
+		    if(exists $parsedFiles{$fqImportFile} &&
+		       $parsedFiles{$fqImportFile} == undef){
+			die "Infinite loop detected";
+		    }
+
+		    # Note that we have already imported this file
+		    $currentImports->{$fqImportFile} = 1;
+
+		    $imported{$fqImportFile} =
+			[ parseFile($fqImportFile, { %$currentImports }) ];
+
+		}
+	    }
+	# Determine the interface we are in
+	}elsif($line =~ /^\s*\@interface\s+(\w+)(.*)/){
+	    $isInterface = 1;
+	    $interface = $1;
+	    $addAlloc = 1 if ($interface eq $name);
+	    
+	    my $remainder = $2;
+
+	    $remainder =~ /\s*:\s*(\w+)\s*(?:<([^>]+)>)?/;
+
+	    # Capture superclass and protocols
+	    ($super, $protocols) = ($1, $2);
+
+	    # If the interface has a superclass
+	    if($super){
+		# TODO: Do something in this case.
+	    }
+
+	    # If the interface follows a particular protocol
+	    if($protocols){
+		my @protocols = split(/,\s*/, $protocols);
+
+		print(" $interface implements: ",
+		      join(", ", @protocols), "\n" );
+
+		# Place the protocol definitions directly into the interface
+		foreach my $p (@protocols){
+		    next unless exists $protocols{$p};
+
+		    print(" lines read from protocol $p: ",
+			  int @{ $protocols{$p} }, "\n");
+
+		    foreach my $protoLine (@{ $protocols{$p} }){
+			push(@out,
+			     "",
+			     parseMethod($protoLine, $interface, \%methods)
+			    );
+		    }
+		}
+	    }
+
+	# Are we processing a @protocol line?
+	}elsif($line =~ /\@protocol\s+(\w+)/){
+	    my $remainder = $1;
+
+	    $remainder =~ /(\w+)\s*(?:<([^>]+)>)?/;
+	    $protocol = $1;
+
+	    # TODO: Do something with extended class information
+	    my $extendedClasses = $2;
+	    my @extendedClasses;
+
+	    if($extendedClasses){
+		@extendedClasses = split(/,\s*/, $extendedClasses);
+	    }
+
+	    $isProtocol = 1;
+
+	}elsif($line =~ /\@end/ ){
+
+	    ($class, $super) = (undef, undef);
+
+	    if($isProtocol == 1){
+		$protocols{$protocol} = [ @protocolOut ];
+		$isProtocol = 0;
+	    }elsif($isInterface == 1){
+		$isInterface = 0;
+	    }
+
+	# If this is a class or instance method definition
+	}elsif($line =~ /^\s*[+-]/){
+	    # For lines that end in a definition,
+	    # Replace { ... } with a semicolon
+	    $line =~ s/\{[^\}]*\}\s*/;/;
+
+	    # If the line doesn't end with a semicolon, whitespace, end of line
+	    # Do the following until it does
+	    while($line !~ /;\s*$ /x){ # Stupid emacs.
+		$line =~ s://.*::;
+		# Append the next line
+		$line .= <FILE>;
+		# Remove trailing newline
+		chomp $line;
+		# Get rid of comments
+		commentsBeGone(\$line, \*FILE);
+		# Replace { ... } with a semicolon
+		$line =~ s/\{[^\}]*\}/;/;
+	    }
+
+	    push(@protocolOut, $line)
+		if $isProtocol == 1;
+
+	    $addAlloc = 0 if $line =~ /[\s\)]alloc\s*;/;
+
+	    push(@out, "", parseMethod($line, $interface, \%methods, \%objC))
+		if $isInterface;
+	}
     }
 
-    if($addAlloc && !($name =~ /NSProxy/ || $name =~ /NSObject/)){
+    if($addAlloc){
         push(@out,
              "",
              "$name * ${name}__alloc(){",
@@ -310,55 +409,52 @@ sub parseFile {
             );
     }
 
-    if ($getProtocols == 0) {
-        my $numMethods = int(keys %methods);
-        print " $numMethods methods.\n" if ($numMethods > 1);
-        print " 1 method.\n" if ($numMethods == 1);
-        print " no methods.\n" if ($numMethods < 1);
-    }
-    return @out;
+    $filename =~ m:.*/([^\.]*)\.[^/]+/:;
+    my $destdir = lc $1;
+
+    my $stubfile = "src/$destdir/${name}_stub.m";
+    
+    open OUT, ">$stubfile" or die "Can't open $stubfile: $!";
+    print OUT join($/, @out);
+    close OUT;
+
+    my $numMethods = int(keys %methods);
+    print " $numMethods methods in $name.\n";
+
+    $parsedFiles{$filename} = 1;
+
+    return keys %{ $currentImports };
+
 }
 
 sub parseDir {
     my $sourcedir = shift();
-    my $destdir = shift();
-    my $getProtocols = shift();
 
     opendir(my $dh, $sourcedir);
 
     my($name, $path, $suffix);
-    print "Processing $sourcedir:\n" unless $getProtocols;
+    print "Processing $sourcedir:\n";
 
     foreach my $filename (readdir($dh)) {
-        next if $filename =~ /^\./;
-        next unless $filename =~ /\.h$/;
+	next if $filename =~ /^\./;
+	next unless $filename =~ /\.h$/;
 
-        ($name, $path, $suffix) = fileparse("$sourcedir/$filename", ".h");
+	($name, $path, $suffix) = fileparse("$sourcedir/$filename", ".h");
 
-        print "\t$filename" unless $getProtocols;
-
-        my @file = parseFile("$path/$filename",$getProtocols);
-        if ($getProtocols == 0) {
-            my $stubfile = "src/$destdir/${name}_stub.m";
-    
-            open OUT, ">$stubfile" or die "Can't open $stubfile: $!";
-            print OUT join($/, @file);
-            close OUT;
-        }
+        parseFile("$path/$filename");
     }
 
-    print "\n" if ($getProtocols == 0);
 }
 
 sub makeDirs {
     unless(-d "src"){
-        mkdir "src" or die "Couldn't make dir 'src': $!";
+	mkdir "src" or die "Couldn't make dir 'src': $!";
     }
     unless(-d "src/appkit"){
-        mkdir "src/appkit" or die "Couldn't make dir 'src/appkit': $!";
+	mkdir "src/appkit" or die "Couldn't make dir 'src/appkit': $!";
     }
     unless(-d "src/foundation"){
-        mkdir "src/foundation" or die "Couldn't make dir 'src/foundation': $!";
+	mkdir "src/foundation" or die "Couldn't make dir 'src/foundation': $!";
     }
 }
 
