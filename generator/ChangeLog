@@ -1,3 +1,11 @@
+2004-12-06	Geoff Norton	<gnorton@customerdna.com>
+	* genstubs.pl
+	- BUGFIX: Fixed generation of protocols.
+	- BUGFIX: Parse Foundation before AppKit to resolve most protocol dependancies
+	- BUGFIX: Warn if a protocol is undefined.
+	- BUGFIX: Dupe check protocol methods as well.
+	- TODO: NSObject.h must be parsed before anything else
+
 2004-12-06	C.J. Collier	<cjcollier@colliertech.org>
 
 	* genstubs.pl (global)
