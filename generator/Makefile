@@ -9,3 +9,8 @@ generator.run: generator.exe
 cs: generator.exe
 	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml -out:CS)
 
+clean:
+	rm generator.exe generator.run
+
+maintainer-clean: clean
+

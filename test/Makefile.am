@@ -17,11 +17,11 @@ libAppKitGlue.dylib: ../src/AppKit.Glue/*.o
 libGlue.so: glue.m
 	gcc -g -bundle -flat_namespace -undefined suppress -framework Cocoa -o libGlue.so glue.m
 
-Test.exe: test.cs ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
+Test.exe: test.cs ../build/Apple.Foundation.dll ../build/Apple.AppKit.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
 	mcs -g Test.cs -out:Test.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
 	cp ../build/*.dll .
 
-2ndTest.exe: test-2.cs CSTextControl.cs CSControl.cs libGlue.so ../build/*.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
+2ndTest.exe: test-2.cs CSTextControl.cs CSControl.cs libGlue.so ../build/Apple.Foundation.dll ../build/Apple.AppKit.dll libAppKitGlue.dylib libFoundationGlue.dylib Foundation CoreFoundation
 	mcs -g test-2.cs CSTextControl.cs CSControl.cs -out:2ndTest.exe -r:../build/Apple.Foundation.dll -r:../build/Apple.AppKit.dll
 	cp ../build/*.dll .
 
