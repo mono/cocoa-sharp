@@ -150,9 +150,12 @@ class Browser : NSObject {
 		NSOutlineView ov = new NSOutlineView(new NSRect(new NSPoint(0,0),sv.contentSize));
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		sv.documentView = ov;
-		ov.addTableColumn(new NSTableColumn("First"));
-		ov.addTableColumn(new NSTableColumn("Second"));
-		ov.addTableColumn(new NSTableColumn("Third"));
+		ov.addTableColumn(new NSTableColumn("0"));
+		ov.addTableColumn(new NSTableColumn("1"));
+		ov.addTableColumn(new NSTableColumn("2"));
+		ov.addTableColumn(new NSTableColumn("3"));
+		ov.addTableColumn(new NSTableColumn("4"));
+		ov.addTableColumn(new NSTableColumn("5"));
 		ov.dataSource = browserController;
  		
 		tabViewItem = new NSTabViewItem("Index");
@@ -259,7 +262,7 @@ class BrowserItem : NSObject {
 		level = _level;
 	}
 	
-	public int Count { get { return level > 2 ? 0 : help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
+	public int Count { get { return level >= 2 ? 0 : help_tree != null ? help_tree.Nodes.Count : node != null ? node.Nodes.Count : 1; } }
 	public object ItemAt(int ndx)
 	{
 		if (help_tree != null)
@@ -268,7 +271,7 @@ class BrowserItem : NSObject {
 	}
 	public object ValueAt(object identifier)
 	{
-Console.WriteLine("ValueAt: " + identifier + " for " + this);
+Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
 		return "Value";
 	}
 	public override string ToString()
@@ -288,8 +291,8 @@ class BrowserController : NSObject {
 	public int OutlineViewNumberOfChildrenOfItem(NSOutlineView outlineView, object item)
 	{
 		BrowserItem bi = item as BrowserItem;
-		int count = bi != null ? bi.Count : help_tree.Nodes.Count;
-		Console.WriteLine("OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
+		int count = bi != null ? bi.Count : 1;//help_tree.Nodes.Count;
+Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
 		return count;
 	}
 
@@ -302,7 +305,7 @@ class BrowserController : NSObject {
 	[ObjCExport("outlineView:child:ofItem:")]
 	public object OutlineViewChildOfItem(NSOutlineView outlineView, int index, object item)
 	{
-		Console.WriteLine("OutlineViewChildOfItem");
+Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item);
 		BrowserItem bi = item as BrowserItem;
 		if (bi != null)
 			return bi.ItemAt(index);
@@ -313,8 +316,10 @@ class BrowserController : NSObject {
 	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
 	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
 	{
-		Console.WriteLine("OutlineViewObjectValueForTableColumnByItem: " + item);
+Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item + ", for column: " + tableColumn.identifier);
 		object identifier = tableColumn.identifier;
+		if (int.Parse(identifier.ToString()) > 0)
+			return null;
 		BrowserItem bi = item as BrowserItem;
 		
 		return bi == null ? null : bi.ValueAt(identifier);

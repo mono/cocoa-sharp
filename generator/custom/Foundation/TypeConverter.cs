@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.8 2004/06/29 20:32:05 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.9 2004/06/29 21:16:08 urs Exp $
 //
 
 using System;
@@ -28,12 +28,8 @@ namespace Apple.Foundation
 			if(raw == IntPtr.Zero)
 				return null;
 
-Console.Write("NS2Net: " + raw);
 			if(NSObject.Objects.Contains(raw))
-			{
-Console.WriteLine(" --> found: " + ((WeakReference)NSObject.Objects[raw]).Target);
 				return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
-			}
 				
 			NSObject ret = new NSObject(raw,false);
 			string className = ret.ClassName;
@@ -94,6 +90,9 @@ Console.WriteLine(" --> found: " + ((WeakReference)NSObject.Objects[raw]).Target
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.9  2004/06/29 21:16:08  urs
+// fixes
+//
 // Revision 1.8  2004/06/29 20:32:05  urs
 // More cleanup
 //
