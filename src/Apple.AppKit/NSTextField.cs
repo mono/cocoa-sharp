@@ -6,14 +6,14 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSTextField : NSControl {
-		[DllImport("AppKitGlue")]
-		static extern IntPtr NSTextField__alloc();
+		static IntPtr NSTextField_class = Apple.Foundation.NSString.NSClass("NSTextField");
+
 		[DllImport("AppKitGlue")]
 		static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
 		static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
 
-		public NSTextField() : this(NSTextField__alloc()) {}
+		public NSTextField() : this(NSObject__alloc(NSTextField_class)) {}
 		protected NSTextField(IntPtr raw) : base(raw) {}
 
 		public static NSTextField alloc() {

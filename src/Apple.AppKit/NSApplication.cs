@@ -12,10 +12,10 @@ namespace Apple.AppKit
 	};
 
 	public class NSApplication : NSResponder {
+		static IntPtr NSApplication_class = Apple.Foundation.NSString.NSClass("NSApplication");
+
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSApplication__alloc();
-		[DllImport("AppKitGlue")]
-		static extern IntPtr NSApplication__sharedApplication();
+		static extern IntPtr NSApplication__sharedApplication(IntPtr CLASS);
 
 		[DllImport("AppKitGlue")]
 		static extern int NSApplication_runModalForWindow(IntPtr THIS, IntPtr theWindow);
@@ -25,7 +25,7 @@ namespace Apple.AppKit
 
 		public static NSApplication sharedApplication()
 		{
-			return new NSApplication(NSApplication__sharedApplication());
+			return new NSApplication(NSApplication__sharedApplication(NSApplication_class));
 		}
 
 		public int runModalForWindow(NSWindow theWindow)

@@ -4,11 +4,9 @@ using System.Runtime.InteropServices;
 namespace Apple.Foundation
 {
 	public class NSAutoreleasePool : NSObject {
+		static IntPtr NSAutoreleasePool_class = NSString.NSClass("NSAutoreleasePool");
 
-		[DllImport("FoundationGlue")]
-		static extern IntPtr NSAutoreleasePool__alloc();
-
-		public NSAutoreleasePool() : this(NSAutoreleasePool__alloc()) {}
+		public NSAutoreleasePool() : this(NSObject__alloc(NSAutoreleasePool_class)) {}
 		protected internal NSAutoreleasePool(IntPtr raw) : base(raw) {}
 
 		public static NSAutoreleasePool alloc() {

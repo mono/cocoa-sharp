@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSButton : NSControl {
-		[DllImport("AppKitGlue")]
-		static extern IntPtr NSButton__alloc();
+		static IntPtr NSButton_class = Apple.Foundation.NSString.NSClass("NSButton");
+
 		[DllImport("AppKitGlue")]
 		static extern void NSButton_setTitle(IntPtr THIS, IntPtr aString);
 		
-		public NSButton() : this(NSButton__alloc()) {}
+		public NSButton() : this(NSObject__alloc(NSButton_class)) {}
 		protected internal NSButton(IntPtr raw) : base(raw) {}
 
 		public static NSButton alloc() {

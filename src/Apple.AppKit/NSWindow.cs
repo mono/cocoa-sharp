@@ -5,9 +5,7 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSWindow : NSResponder {
-
-		[DllImport("AppKitGlue")]
-		static extern IntPtr NSWindow__alloc();
+		static IntPtr NSWindow_class = Apple.Foundation.NSString.NSClass("NSWindow");
 
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSWindow_initWithContentRect_styleMask_backing_defer(IntPtr THIS, NSRect contentRec, uint aStyle, int bufferingType, bool flag);
@@ -24,7 +22,7 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSWindow_contentView(IntPtr THIS);
 
-		public NSWindow() : this(NSWindow__alloc()) {}
+		public NSWindow() : this(NSObject__alloc(NSWindow_class)) {}
 		protected internal NSWindow(IntPtr raw) : base (raw) {}
 
 		public static NSWindow alloc()

@@ -5,19 +5,21 @@ using System.Runtime.InteropServices;
 namespace Apple.Foundation
 {
 	public class NSObject {
+		//static IntPtr NSObject_class = NSString.NSClass("NSObject");
+
 		private IntPtr _obj;
 		static Hashtable Objects = new Hashtable();
 
 		[DllImport("FoundationGlue")]
-		static extern IntPtr NSObject_alloc();
+		protected static extern IntPtr NSObject__alloc(IntPtr CLASS);
 
 		[DllImport("FoundationGlue")]
-		static extern IntPtr NSObject_init(IntPtr obj);
+		static extern IntPtr NSObject_init(IntPtr THIS);
 
 		[DllImport("FoundationGlue")]
-		static extern void NSObject_release(IntPtr obj);
+		static extern void NSObject_release(IntPtr THIS);
 
-		public NSObject() : this(NSObject_alloc()) {}
+		public NSObject() : this(NSObject__alloc(IntPtr.Zero)) {}
 
 		protected NSObject(IntPtr raw) {
 			Raw = raw; 
