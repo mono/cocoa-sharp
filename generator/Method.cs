@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.20 2004/06/23 15:29:29 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.21 2004/06/23 16:32:35 urs Exp $
 //
 
 using System;
@@ -171,7 +171,7 @@ namespace ObjCManagedExporter
 	
 				ArrayList argTypes = new ArrayList();
 				for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-					argTypes.Add(convertType(mArgumentDeclarationTypes[i]));
+					argTypes.Add(ConvertType(mArgumentDeclarationTypes[i]));
 	
 				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
 			}
@@ -193,12 +193,9 @@ namespace ObjCManagedExporter
 			
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = convertType(mArgumentDeclarationTypes[i]);
+				string t = ConvertType(mArgumentDeclarationTypes[i]);
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
-				if(t != convertTypeGlue(mArgumentDeclarationTypes[i]))
-					_glueArgs.Add("Net2NS(p" + i + ") /* " + mArgumentNames[i] + "*/");
-				else 
-					_glueArgs.Add("p" + i + "/*" + mArgumentNames[i] + "*/");
+				_glueArgs.Add(ArgumentExpression(mArgumentDeclarationTypes[i],"p" + i + "/*" + mArgumentNames[i] + "*/"));
 			}
 
 			mCSAPIParameters = (string[])_params.ToArray(typeof(string));
@@ -273,7 +270,7 @@ namespace ObjCManagedExporter
 				return;
 			}
 
-			string _type = convertTypeGlue(mReturnDeclarationType);
+			string _type = ConvertTypeGlue(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
 
 			if (mIsClassMethod)
@@ -283,7 +280,7 @@ namespace ObjCManagedExporter
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = convertTypeGlue(mArgumentDeclarationTypes[i]);
+				string t = ConvertTypeGlue(mArgumentDeclarationTypes[i]);
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
 			}
 
@@ -300,7 +297,7 @@ namespace ObjCManagedExporter
 		#region -- C# Public API --
 		public bool IsGetMethod(string type)
 		{
-			if (type != convertType(mReturnDeclarationType))
+			if (type != ConvertType(mReturnDeclarationType))
 				return false;
 			if (mArgumentDeclarationTypes.Length > 0)
 				return false;
@@ -313,7 +310,7 @@ namespace ObjCManagedExporter
 			if (mIsUnsupported || mCSAPIDone)
 				return;
 
-			string _type = convertType(mReturnDeclarationType);
+			string _type = ConvertType(mReturnDeclarationType);
 			BuildArgs(name);
 			string paramsStr = string.Join(", ", mCSAPIParameters);
 			string glueArgsStr = string.Join(", ", mCSGlueArguments);
@@ -321,7 +318,7 @@ namespace ObjCManagedExporter
 			
 			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
 			{
-				string t = convertType(mArgumentDeclarationTypes[0]);
+				string t = ConvertType(mArgumentDeclarationTypes[0]);
 				string propName = mCSMethodName.Substring(3);
 				string getPropName = propName.Substring(0,1).ToLower() + propName.Substring(1);
 
@@ -332,16 +329,9 @@ namespace ObjCManagedExporter
 				
 				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
 				if (get != null && get.IsGetMethod(t))
-				{
-					if(t != convertTypeGlue(mArgumentDeclarationTypes[0]))
-						w.WriteLine("            get {{ return ({0})NS2Net({1}_{2}({3})); }}", t, name, get.GlueMethodName, mCSGlueArguments[0]);
-					else 
-						w.WriteLine("            get {{ return {0}_{1}({2}); }}", name, get.GlueMethodName, mCSGlueArguments[0]);
-				}
-				if (t != convertTypeGlue(mArgumentDeclarationTypes[0]))
-					w.WriteLine("            set {{ {0}_{1}({2},Net2NS(value)); }}", name, mGlueMethodName, mCSGlueArguments[0]);
-				else
-					w.WriteLine("            set {{ {0}_{1}({2},value); }}", name, mGlueMethodName, mCSGlueArguments[0]);
+					w.WriteLine("            get {{ {0}; }}", ReturnExpression(mArgumentDeclarationTypes[0],string.Format("{0}_{1}({2})",name, get.GlueMethodName, mCSGlueArguments[0])));
+
+				w.WriteLine("            set {{ {0}_{1}({2},{3}); }}", name, mGlueMethodName, mCSGlueArguments[0],ArgumentExpression(mArgumentDeclarationTypes[0],"value"));
 				w.WriteLine("        }");
 				mCSAPIDone = true;
 				
@@ -352,11 +342,32 @@ namespace ObjCManagedExporter
 				return;
 
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
-			if(_type != convertTypeGlue(mReturnDeclarationType))
-				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, glueArgsStr);
-			else 
-				w.WriteLine("            {0}{1}_{2}({3});", isVoid ? "" : "return ", name, mGlueMethodName, glueArgsStr);
+			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
 			w.WriteLine("        }");
+		}
+		
+		private static string ReturnExpression(string declType, string expression)
+		{
+			string t = ConvertType(declType);
+			if(StripComments(declType) == "SEL")
+				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
+			else if(t != ConvertTypeGlue(declType))
+				return string.Format("return ({0})NS2Net({1})", t, expression);
+			else if (t == "void")
+				return expression;
+			else
+				return "return " + expression;
+		}
+
+		private static string ArgumentExpression(string declType, string expression)
+		{
+			string t = ConvertType(declType);
+			if(StripComments(declType) == "SEL")
+				return string.Format("NSString.NSSelector({0})", expression);
+			else if(t != ConvertTypeGlue(declType))
+				return string.Format("Net2NS({0})", expression);
+			else
+				return expression;
 		}
 
 		public void CSConstructor(string name,TextWriter w)
@@ -381,12 +392,12 @@ namespace ObjCManagedExporter
 			if (mIsUnsupported)
 				return;
 
-			string _type = convertType(mReturnDeclarationType);
+			string _type = ConvertType(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				string t = convertType(mArgumentDeclarationTypes[i]);
+				string t = ConvertType(mArgumentDeclarationTypes[i]);
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
 			}
 
@@ -400,39 +411,17 @@ namespace ObjCManagedExporter
 		{
 			switch (name) 
 			{
-				case "new":
-				case "delegate":
-				case "this":
-				case "base":
-				case "lock":
-				case "object":
-				case "string":
-				case "int":
-				case "short":
-				case "long":
-				case "bool":
-				case "void":
-				case "char":
-				case "static":
-				case "class":
-				case "interface":
-				case "struct":
-				case "enum":
-				case "null":
-				case "private":
-				case "public":
-				case "protected":
-				case "internal":
-				case "if":
-				case "else":
-				case "switch":
-				case "for":
-				case "foreach":
-				case "case":
-				case "return":
-				case "default":
-				case "continue":
-				case "break":
+				case "new": case "override": case "virtual": case "typeof":
+				case "is": case "as": case "delegate": case "this":
+				case "base": case "lock": case "object": case "string":
+				case "int": case "short": case "long": case "bool":
+				case "void": case "char": case "static": case "class":
+				case "interface": case "struct": case "enum": case "null":
+				case "private": case "public": case "protected":
+				case "internal": case "if": case "else": case "switch":
+				case "for": case "foreach": case "while": case "do":
+				case "case": case "return": case "default":
+				case "continue": case "break":
 					return name + "_";
 			}
 			return name;
@@ -455,7 +444,7 @@ namespace ObjCManagedExporter
 			return str.Trim();
 		}
 
-		private static string convertTypeNative(string type)
+		private static string ConvertTypeNative(string type)
 		{
 			type = StripComments(type);
 			switch (type) 
@@ -494,12 +483,15 @@ namespace ObjCManagedExporter
 					return "IntPtr /*(" + type + ")*/";
 			}
 
+			if (new Regex(@"char\s*\*").IsMatch(type))
+				return "string";
+
 			return type;
 		}
 
-		private static string convertTypeGlue(string type) 
+		private static string ConvertTypeGlue(string type) 
 		{
-			type = convertTypeNative(type.Replace("const ",string.Empty));
+			type = ConvertTypeNative(type.Replace("const ",string.Empty));
 			switch (type) 
 			{
 				case "id": case "Class": case "SEL":
@@ -512,9 +504,9 @@ namespace ObjCManagedExporter
 			return type;
 		}
 
-		private static string convertType(string type) 
+		private static string ConvertType(string type) 
 		{
-			type = convertTypeNative(type.Replace("const ",string.Empty));
+			type = ConvertTypeNative(type.Replace("const ",string.Empty));
 			switch (type) 
 			{
 				case "id": return "object";
@@ -535,9 +527,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.21  2004/06/23 16:32:35  urs
+//	Add SEL support
+//
 //	Revision 1.20  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
-//
+//	
 //	Revision 1.19  2004/06/22 19:54:21  urs
 //	Add property support
 //	
