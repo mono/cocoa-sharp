@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <property get="+cellClass" set="+setCellClass:" name="CellClass" getsignature="#8@0:4" setsignature="v12@0:4#8" />
-  <property get="+currentContext" set="+setCurrentContext:" name="CurrentContext" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+currentOperation" set="+setCurrentOperation:" name="CurrentOperation" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property set="-setActionName:" name="actionName" setsignature="v12@0:4@8" />
   <property set="-setAlternateTitleWithMnemonic:" name="alternateTitleWithMnemonic" setsignature="v12@0:4@8" />
   <property set="-setAppleMenu:" name="appleMenu" />
@@ -72,6 +69,7 @@
   <property get="+brownColor" name="BrownColor" getsignature="@8@0:4" />
   <property get="+calendarDate" name="CalendarDate" getsignature="@8@0:4" />
   <property get="+capitalizedLetterCharacterSet" name="CapitalizedLetterCharacterSet" getsignature="@8@0:4" />
+  <property get="+cellClass" set="+setCellClass:" name="CellClass" getsignature="#8@0:4" setsignature="v12@0:4#8" />
   <property get="+class" name="Class" getsignature="#8@0:4" />
   <property get="+classForKeyedUnarchiver" name="ClassForKeyedUnarchiver" getsignature="#8@0:4" />
   <property get="+clearColor" name="ClearColor" getsignature="@8@0:4" />
@@ -87,6 +85,7 @@
   <property get="+controlTextColor" name="ControlTextColor" getsignature="@8@0:4" />
   <property get="+crosshairCursor" name="CrosshairCursor" getsignature="@8@0:4" />
   <property get="+currentCommand" name="CurrentCommand" getsignature="@8@0:4" />
+  <property get="+currentContext" set="+setCurrentContext:" name="CurrentContext" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+currentContextDrawingToScreen" name="CurrentContextDrawingToScreen" getsignature="c8@0:4" />
   <property get="+currentControlTint" name="CurrentControlTint" getsignature="i8@0:4" />
   <property get="+currentConversation" name="CurrentConversation" getsignature="@8@0:4" />
@@ -94,6 +93,7 @@
   <property get="+currentHandler" name="CurrentHandler" getsignature="@8@0:4" />
   <property get="+currentHost" name="CurrentHost" getsignature="@8@0:4" />
   <property get="+currentInputManager" name="CurrentInputManager" getsignature="@8@0:4" />
+  <property get="+currentOperation" set="+setCurrentOperation:" name="CurrentOperation" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+currentRunLoop" name="CurrentRunLoop" getsignature="@8@0:4" />
   <property get="+currentThread" name="CurrentThread" getsignature="@8@0:4" />
   <property get="+cyanColor" name="CyanColor" getsignature="@8@0:4" />

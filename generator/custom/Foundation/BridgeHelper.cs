@@ -9,12 +9,13 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.5 2004/06/29 15:24:25 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.6 2004/06/29 16:42:34 gnorton Exp $
 //
 
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Apple.Tools 
 {
@@ -70,6 +71,84 @@ namespace Apple.Tools
 				self, args);
 		}
 
+		public static void GetSignatureCode(ref string signatureString, ref int size, Type type)
+		{
+			//TODO: unsigned char, class object, selector, array, structure, union, bnum, ^type, ?
+			if(type == typeof(Char)) {
+				signatureString += "c";
+				size += Marshal.SizeOf(typeof(Char));
+				return;
+			}
+			if(type == typeof(Int32)) {
+				signatureString += "i";
+				size += Marshal.SizeOf(typeof(Int32));
+				return;
+			}
+			if(type == typeof(short)) {
+				signatureString += "s";
+				size += Marshal.SizeOf(typeof(Int16));
+				return;
+			}
+			if(type == typeof(long)) {
+				signatureString += "l";
+				size += Marshal.SizeOf(typeof(Int32));
+				return;
+			}
+			if(type == typeof(Int64)) {
+				signatureString += "q";
+				size += Marshal.SizeOf(typeof(Int64));
+				return;
+			}
+			if(type == typeof(UInt32)) {
+				signatureString += "I";
+				size += Marshal.SizeOf(typeof(UInt32));
+				return;
+			}
+			if(type == typeof(ushort)) {
+				signatureString += "S";
+				size += Marshal.SizeOf(typeof(UInt16));
+				return;
+			}
+			if(type == typeof(ulong)) {
+				signatureString += "L";
+				size += Marshal.SizeOf(typeof(UInt32));
+				return;
+			}
+			if(type == typeof(UInt64)) {
+				signatureString += "Q";
+				size += Marshal.SizeOf(typeof(UInt64));
+				return;
+			}
+			if(type == typeof(float)) {
+				signatureString += "f";
+				size += Marshal.SizeOf(typeof(Single));
+				return;
+			}
+			if(type == typeof(double)) {
+				signatureString += "d";
+				size += Marshal.SizeOf(typeof(Double));
+				return;
+			}
+			if(type == typeof(bool)) {
+				signatureString += "B";
+				size += Marshal.SizeOf(typeof(Boolean));
+				return;
+			}
+			if(type == typeof(void)) {
+				signatureString += "v";
+				return;
+			}
+			if(type == typeof(String)) {
+				signatureString += "*";
+				size += Marshal.SizeOf(typeof(String));
+				return;
+			}
+			signatureString += "@";
+			// This always seems to be 4 regardless of 64/32bitness
+			size += 4;
+			return;
+		}
+		
 		public static string GenerateMethodSignature(Type t, String sel) 
 		{
 			string method = SelectorToMethodName(t, sel);
@@ -82,30 +161,30 @@ namespace Apple.Tools
 			// http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/4objc_runtime_overview/chapter_4_section_6.html
 			// We need to convert primitive types to the corresponding letter code and use Marshal.SizeOf()
 			// to get the correct size.
+			
+			// ID and SEL take the size of 8 bytes
 			int totalSize = 8;
 			int curSize = 8;
 			string types = "";
 
-			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, method)))
-				totalSize += 4;
+			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, method))) {
+				if(p.ParameterType.IsPrimitive)
+					totalSize += Marshal.SizeOf(p.ParameterType);
+				else 
+					totalSize += 4;
+			}
 
-			if(GetMethodByTypeAndName(t, method).ReturnType == typeof(void))
-				types = "v";
-			else if(GetMethodByTypeAndName(t, method).ReturnType == typeof(int))
-				types = "i";
-			else
-				types = "@";
-			
+			GetSignatureCode(ref types, ref curSize, GetMethodByTypeAndName(t, method).ReturnType);
 			types += totalSize;
 			types += "@0:4";
+			curSize = 4;
 
 			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, method)))
 			{
-				if(p.ParameterType == typeof(int)) 
-					types += "i" + curSize;
-				else
-					types += "@" + curSize;
-				curSize += 4;
+				Console.WriteLine("curSize then: {0}", curSize);
+				GetSignatureCode(ref types, ref curSize, p.ParameterType);
+				Console.WriteLine("curSize now: {0}", curSize);
+				types += curSize;
 			}
 				
 			return types;
@@ -168,6 +247,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.6  2004/06/29 16:42:34  gnorton
+// Much better signature generator
+//
 // Revision 1.5  2004/06/29 15:24:25  gnorton
 // Better support for different argument type (PtrTrStructure/StructureToPtr/SizeOf usage)
 //

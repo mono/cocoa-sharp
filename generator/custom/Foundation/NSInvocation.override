@@ -2,7 +2,7 @@
         <method sel="-getArgument:atIndex:">
 		public object getArgument(int i, Type t) {
 			object retVal = null;
-			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(IntPtr));
+			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
 			NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
 			if(t.IsPrimitive) {
 

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.8 2004/06/29 15:24:25 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.9 2004/06/29 16:42:34 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -80,7 +80,7 @@
 					
 					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
 					if(ret != null)
-						if(ret.IsPrimitive) {
+						if(ret.GetType().IsPrimitive) {
 							retVal = Marshal.AllocHGlobal(Marshal.SizeOf(ret));
 							Marshal.StructureToPtr(ret, retVal, true);
 						} else {
@@ -143,6 +143,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.9  2004/06/29 16:42:34  gnorton
+// Much better signature generator
+//
 // Revision 1.8  2004/06/29 15:24:25  gnorton
 // Better support for different argument type (PtrTrStructure/StructureToPtr/SizeOf usage)
 //
