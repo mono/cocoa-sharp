@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.14 2004/09/07 20:51:21 urs Exp $
+// $Id: Class.cs,v 1.15 2004/09/08 14:22:44 urs Exp $
 //
 
 using System;
@@ -31,7 +31,7 @@ namespace CocoaSharp {
 			superClass = file.GetString(occlass.super_class);
 			name = file.GetString(occlass.name);
 			isClass = (occlass.info & 1) != 0;
-			MachOFile.DebugOut(0,"Class: {0} : {1} iSize={2} info={3,8:x} isClass={4}",name,superClass,occlass.instance_size,occlass.info,isClass);
+			MachOFile.DebugOut(1,"Class: {0} : {1} iSize={2} info={3,8:x} isClass={4}",name,superClass,occlass.instance_size,occlass.info,isClass);
 
 			// Process ivars
 			if (isClass && occlass.ivars != 0) {

@@ -1,5 +1,5 @@
 //
-// $Id: Stub.cs,v 1.4 2004/09/07 20:07:40 urs Exp $
+// $Id: Stub.cs,v 1.5 2004/09/08 14:22:44 urs Exp $
 //
 
 using System;
@@ -14,7 +14,7 @@ namespace CocoaSharp {
 			
 			foreach (OCType t in MachOFile.Types.Values)
 				if (t.fields.Length == 0)
-					MachOFile.DebugOut(0,"undef {0}",t.ToString());
+					MachOFile.DebugOut(1,"undef {0}",t.ToString());
 		}
 	}
 }

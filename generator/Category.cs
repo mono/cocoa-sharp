@@ -1,5 +1,5 @@
 //
-// $Id: Category.cs,v 1.10 2004/09/05 03:28:25 urs Exp $
+// $Id: Category.cs,v 1.11 2004/09/08 14:22:44 urs Exp $
 //
 
 using System;
@@ -23,7 +23,7 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref occategory.protocols);
 			name = file.GetString(occategory.category_name);
 			class_name = file.GetString(occategory.class_name);
-			MachOFile.DebugOut(0,"Category: {0} class_name : {1}",name,class_name);
+			MachOFile.DebugOut(1,"Category: {0} class_name : {1}",name,class_name);
 			methods = Method.ProcessMethods(occategory.instance_methods,file);
 			classMethods = Method.ProcessMethods(occategory.class_methods,file);
 		}

@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.14 2004/09/07 21:02:43 urs Exp $
+// $Id: MachOFile.cs,v 1.15 2004/09/08 14:22:44 urs Exp $
 //
 
 using System;
@@ -42,6 +42,14 @@ namespace CocoaSharp {
 				ret = ret.Substring(0,termChar);
 			return ret;
 		}
+
+		public static unsafe string GetString(byte* data) {
+			string ret = Marshal.PtrToStringAnsi(new IntPtr (data));
+			int termChar = ret.IndexOf((char)0);
+			if (termChar >= 0)
+				ret = ret.Substring(0,termChar);
+			return ret;
+		}
 	}
 
 	public class MachOFile {
@@ -50,9 +58,34 @@ namespace CocoaSharp {
 		private const uint MH_CIGAM = 0xcefaedfe;
 
 		private const uint LC_REQ_DYLD = 0x80000000;
-		private const uint LC_SEGMENT = 0x1;
-		private const uint LC_LOAD_DYLIB = 0xc;
-		private const uint LC_ID_DYLIB = 0xd;
+		private const uint LC_SEGMENT 		= 0x1;     /* segment of this file to be mapped */
+		private const uint LC_SYMTAB  		= 0x2;     /* link-edit stab symbol table info */
+		private const uint LC_SYMSEG       	= 0x3;     /* link-edit gdb symbol table info (obsolete) */
+		private const uint LC_THREAD       	= 0x4;     /* thread */
+		private const uint LC_UNIXTHREAD   	= 0x5;     /* unix thread (includes a stack) */
+		private const uint LC_LOADFVMLIB   	= 0x6;     /* load a specified fixed VM shared library */
+		private const uint LC_IDFVMLIB     	= 0x7;     /* fixed VM shared library identification */
+		private const uint LC_IDENT        	= 0x8;     /* object identification info (obsolete) */
+		private const uint LC_FVMFILE      	= 0x9;     /* fixed VM file inclusion (internal use) */
+		private const uint LC_PREPAGE      	= 0xa;     /* prepage command (internal use) */
+		private const uint LC_DYSYMTAB     	= 0xb;     /* dynamic link-edit symbol table info */
+		private const uint LC_LOAD_DYLIB   	= 0xc;     /* load a dynamically linked shared library */
+		private const uint LC_ID_DYLIB     	= 0xd;     /* dynamically linked shared lib ident */
+		private const uint LC_LOAD_DYLINKER = 0xe;     /* load a dynamic linker */
+		private const uint LC_ID_DYLINKER  	= 0xf;     /* dynamic linker identification */
+		private const uint LC_PREBOUND_DYLIB = 0x10;   /* modules prebound for a dynamically */
+												       /*  linked shared library */
+		private const uint LC_ROUTINES     	= 0x11;    /* image routines */
+		private const uint LC_SUB_FRAMEWORK = 0x12;    /* sub framework */
+		private const uint LC_SUB_UMBRELLA 	= 0x13;    /* sub umbrella */
+		private const uint LC_SUB_CLIENT   	= 0x14;    /* sub client */
+		private const uint LC_SUB_LIBRARY  	= 0x15;    /* sub library */
+		private const uint LC_TWOLEVEL_HINTS= 0x16;    /* two-level namespace lookup hints */
+		private const uint LC_PREBIND_CKSUM = 0x17;    /* prebind checksum */
+		/*
+		 * load a dynamically linked shared library that is allowed to be missing
+		 * (all symbols are weak imported).
+		 */
 		private const uint LC_LOAD_WEAK_DYLIB = (0x18 | LC_REQ_DYLD);
 
 		private string filename;
@@ -131,6 +164,14 @@ namespace CocoaSharp {
 
 			return null;
 		}
+		
+		public ICommand SegmentWithType(Type type) {
+			foreach (ICommand cmd in this.commands)
+				if (type.IsInstanceOfType(cmd)) 
+					return cmd;
+
+			return null;
+		}
 
 		unsafe public byte * GetPtr(uint offset) {
 			return GetPtr(offset,null);
@@ -147,14 +188,14 @@ namespace CocoaSharp {
 					return null;
 				}
 				if (!segment.ContainsAddress(offset)) {
-					DebugOut(1,"ERROR: Segment {0} does not contain offset {1}",segName,offset);
+					DebugOut(1,"ERROR: Segment {0} does not contain offset {1,8:x}",segName,offset);
 					return null;
 				}
 			}
 			else {
 				segment = this.SegmentContainingAddress(offset);
 				if (segment == null) {
-					DebugOut(0,"ERROR: Segment for offset {0} not found",offset);
+					DebugOut(0,"ERROR: Segment for offset {0,8:x} not found",offset);
 					return null;
 				}
 			}
@@ -231,7 +272,10 @@ namespace CocoaSharp {
 				} else if (lcmd.cmd == LC_ID_DYLIB || lcmd.cmd == LC_LOAD_DYLIB || lcmd.cmd == LC_LOAD_WEAK_DYLIB) {
 					DebugOut(0,"DEBUG: DylibCommand({0,8:x})",lcmd.cmd);
 					cmd = new DylibCommand (this, lcmd);
-				} else { 
+				} else if (lcmd.cmd == LC_SYMTAB) {
+					DebugOut(0,"DEBUG: SymTabCommand()");
+					cmd = new SymTabCommand (this, lcmd);
+				} else {
 					DebugOut(0,"DEBUG: LoadCommand({0,8:x})",lcmd.cmd);
 					cmd = new LoadCommand (this, lcmd);
 				}
@@ -250,9 +294,166 @@ namespace CocoaSharp {
 				throw new Exception ("ERROR: __module_info not found in __OBJC segment");
 
 			ArrayList modules = Module.ParseModules (moduleSection, this);
+			
+			GetFunctionNames();
+		}
+
+		bool SelectSymbol(nlist sym) {
+			if ((sym.n_type & nlist.N_STAB) != 0)
+				return false;
+
+			if (sym.n_sect == nlist.NO_SECT)
+				return false;
+
+			return (sym.n_type & nlist.N_EXT) != 0;
+		}
+
+		unsafe private void GetFunctionNames() {
+			SymTabCommand symTabCmd = (SymTabCommand)this.SegmentWithType(typeof(SymTabCommand));
+			if (symTabCmd == null)
+				return;
+			byte *symbase = HeadPointer + symTabCmd.SymOff;
+			byte *strings = HeadPointer + symTabCmd.StrOff;
+
+			// Look for a global symbol.
+			byte *ptr = symbase;
+			for (int index = 0; index < symTabCmd.NSyms; ++index, ptr += Marshal.SizeOf(typeof(nlist))) {
+				nlist sym = *(nlist*)ptr;
+				Utils.MakeBigEndian(ref sym.n_strx);
+				Utils.MakeBigEndian(ref sym.n_desc);
+				Utils.MakeBigEndian(ref sym.n_value);
+				if (!SelectSymbol(sym))
+					continue;
+				byte *namePtr = sym.n_strx != 0 ? strings + sym.n_strx : null;
+				if (sym.n_strx != 0) {
+					string n = Utils.GetString(namePtr);
+					MachOFile.DebugOut(0,"Func Name={0} type={1,2:x} sect={2} desc={3,4:x} value={4,8:x}",
+						n,sym.n_type,sym.n_sect,sym.n_desc,sym.n_value);
+				}
+			}
 		}
 
 		public void Parse () {}
+	}
+	
+	public class SymTabCommand : ICommand {
+		private MachOFile mfile;
+		private load_command lcmd;
+		private symtab_command scmd;
+
+		public SymTabCommand(MachOFile mfile, load_command lcmd) {
+			this.mfile = mfile;
+			this.lcmd = lcmd;
+		}
+
+		public uint SymOff { get { return scmd.symoff; } }
+		public uint NSyms { get { return scmd.nsyms; } }
+		public uint StrOff { get { return scmd.stroff; } }
+		public uint StrSize { get { return scmd.strsize; } }
+
+		public void ProcessCommand () {
+			unsafe {
+				scmd = *((symtab_command *)mfile.Pointer);
+				Utils.MakeBigEndian(ref scmd.symoff);
+				Utils.MakeBigEndian(ref scmd.nsyms);
+				Utils.MakeBigEndian(ref scmd.stroff);
+				Utils.MakeBigEndian(ref scmd.strsize);
+				mfile.Pointer += (int)Marshal.SizeOf(scmd);
+			}
+			MachOFile.DebugOut(0,"\tSymTab Command: symoff={0,8:x} nsyms={1} stroff={2,8:x} strsize={3}", scmd.symoff, scmd.nsyms, scmd.stroff, scmd.strsize);
+		}
+	}
+	
+	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_23.html#//apple_ref/doc/uid/20001298/symtab_command
+	//
+	// The data structure for the LC_SYMTAB load command. Describes the size and location of the symbol table data structures.
+	public struct symtab_command {
+		// Common to all load command structures. For this structure, set to LC_SYMTAB.
+		// public uint cmd;
+		
+		// Common to all load command structures. For this structure, set to sizeof(symtab_command).
+		// public uint cmdsize;
+		
+		// An integer containing the byte offset from the start of the file to the location of the symbol table entries. The symbol table is an array 
+		// of nlist data structures.
+		public uint symoff;
+		// An integer indicating the number of entries in the symbol table.
+		public uint nsyms;
+		// An integer containing the byte offset from the start of the image to the location of the string table.
+		public uint stroff;
+		// An integer indicating the size (in bytes) of the string table.
+		public uint strsize;
+	}
+
+	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_24.html#//apple_ref/doc/uid/20001298/BAJECHFH
+	//
+	// Describes an entry in the symbol table. ItÕs declared in /usr/include/mach-o/nlist.h.	
+	public struct nlist {
+		public uint n_strx;
+		public byte n_type;
+		public byte n_sect;
+		public short n_desc;
+		public uint n_value;
+
+		/*
+		 * The n_type field really contains four fields:
+		 *      unsigned char N_STAB:3,
+		 *                    N_PEXT:1,
+		 *                    N_TYPE:3,
+		 *                    N_EXT:1;
+		 * which are used via the following masks.
+		 */
+		public const byte N_STAB  = 0xe0;  /* if any of these bits set, a symbolic debugging entry */
+		public const byte N_PEXT  = 0x10;  /* private external symbol bit */
+		public const byte N_TYPE  = 0x0e;  /* mask for the type bits */
+		public const byte N_EXT   = 0x01;  /* external symbol bit, set for external symbols */
+
+		/*
+		 * If the type is N_INDR then the symbol is defined to be the same as another
+		 * symbol.  In this case the n_value field is an index into the string table
+		 * of the other symbol's name.  When the other symbol is defined then they both
+		 * take on the defined type and value.
+		 */
+		
+		/*
+		 * If the type is N_SECT then the n_sect field contains an ordinal of the
+		 * section the symbol is defined in.  The sections are numbered from 1 and
+		 * refer to sections in order they appear in the load commands for the file
+		 * they are in.  This means the same ordinal may very well refer to different
+		 * sections in different files.
+		 *
+		 * The n_value field for all symbol table entries (including N_STAB's) gets
+		 * updated by the link editor based on the value of it's n_sect field and where
+		 * the section n_sect references gets relocated.  If the value of the n_sect
+		 * field is NO_SECT then it's n_value field is not changed by the link editor.
+		 */
+		public const byte NO_SECT         = 0;       /* symbol is not in any section */
+		public const byte MAX_SECT        = 255;     /* 1 thru 255 inclusive */
+		
+		/*
+		 * Common symbols are represented by undefined (N_UNDF) external (N_EXT) types
+		 * who's values (n_value) are non-zero.  In which case the value of the n_value
+		 * field is the size (in bytes) of the common symbol.  The n_sect field is set
+		 * to NO_SECT.
+		 */
+	}
+	
+	/*
+	 * Symbols with a index into the string table of zero (n_un.n_strx == 0) are
+	 * defined to have a null, "", name.  Therefore all string indexes to non null
+	 * names must not have a zero string index.  This is bit historical information
+	 * that has never been well documented.
+	 */
+	
+	public enum N_TYPE : byte {
+		/*
+		 * Values for N_TYPE bits of the n_type field.
+		 */
+		N_UNDF  = 0x0,             /* undefined, n_sect == NO_SECT */
+		N_ABS   = 0x2,             /* absolute, n_sect == NO_SECT */
+		N_SECT  = 0xe,             /* defined in section number n_sect */
+		N_PBUD  = 0xc,             /* prebound undefined (defined in a dylib) */
+		N_INDR  = 0xa,             /* indirect */
 	}
 
 	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_6.html#//apple_ref/doc/uid/20001298/load_command

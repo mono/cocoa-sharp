@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.10 2004/09/07 20:51:21 urs Exp $
+// $Id: SegmentCommand.cs,v 1.11 2004/09/08 14:22:44 urs Exp $
 //
 
 using System;
@@ -64,12 +64,12 @@ namespace CocoaSharp {
 			return mfile.GetString(offset);
 		}
 
-		public int VMAddr {
-			get { return (int)scmd.vmaddr; }
+		public uint VMAddr {
+			get { return scmd.vmaddr; }
 		}
 
-		public int FileOffset {
-			get { return (int)scmd.fileoff; }
+		public uint FileOffset {
+			get { return scmd.fileoff; }
 		}
 
 		public ArrayList Sections {
