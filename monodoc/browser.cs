@@ -87,18 +87,18 @@ class Driver {
 	}
 }
 
-[ObjCRegister("Controller")]
+[Register("Controller")]
 public class Controller : NSObject {
 
-	[ObjCConnect]
+	[Connect]
 	public NSDrawer drawer;
-	[ObjCConnect]
+	[Connect]
 	public NSOutlineView outlineView;
-	[ObjCConnect]
+	[Connect]
 	public WebView webView;
-	[ObjCConnect]
+	[Connect]
 	public NSSearchField searchBox;
-	[ObjCConnect]
+	[Connect]
 	public NSBrowser indexBrowser;
 
 	static RootTree help_tree;
@@ -109,13 +109,13 @@ public class Controller : NSObject {
 	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
-	[ObjCExport("userDidSearch:")]
+	[Export("userDidSearch:")]
 	public void UserDidSearch(object sender) {
 		int index = IndexDataSource.FindClosest(searchBox.stringValue);
 		indexBrowser.selectRow_inColumn(index, 0);
 	}
 
-	[ObjCExport("applicationWillFinishLaunching:")]
+	[Export("applicationWillFinishLaunching:")]
 	public void FinishLoading(NSNotification aNotification) {
 		drawer.open();
 		indexBrowser.target = this;
@@ -129,7 +129,7 @@ public class Controller : NSObject {
 		webView.mainFrame.loadHTMLString_baseURL(content, null);
 	}
 	
-	[ObjCExport("browserdoubleAction")]
+	[Export("browserdoubleAction")]
 	public void browserDoubleAction() {
 		IndexEntry entry = IndexDataSource.GetEntry(indexBrowser.selectedRowInColumn(0));
 		if(entry != null) {
@@ -141,7 +141,7 @@ public class Controller : NSObject {
 			webView.mainFrame.loadHTMLString_baseURL(content, null);
 		}
 	}
-	[ObjCExport("doubleAction")]
+	[Export("doubleAction")]
 	public void outlineViewDoubleAction() {
 		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
@@ -162,7 +162,7 @@ public class Controller : NSObject {
 		}
 	}
 
-	[ObjCExport("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
+	[Export("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
 	public NSURLRequest RequestHandler(WebView sender, object identifier, NSURLRequest initialRequest, NSURLResponse urlResponse, WebDataSource datasource) {
 		Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
 		if(initialRequest.urL.relativeString.IndexOf("http://monodoc/load?") == 0) {
@@ -247,7 +247,7 @@ Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	}
 }
 
-[ObjCRegister("IndexDataSource")]
+[Register("IndexDataSource")]
 class IndexDataSource : NSObject {
 	static IndexReader index_reader;
 	IndexEntry current_entry = null;
@@ -265,13 +265,13 @@ class IndexDataSource : NSObject {
 			return null;
 	}
 
-	[ObjCExport("browser:numberOfRowsInColumn:")]
+	[Export("browser:numberOfRowsInColumn:")]
 	public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
 		if(index_reader == null)
 			return 1;
 		return index_reader.Rows;
 	}
-	[ObjCExport("browser:willDisplayCell:atRow:column:")]
+	[Export("browser:willDisplayCell:atRow:column:")]
 	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
 		if(index_reader == null) 
 			cell.stringValue = "Index Not Created";
@@ -380,7 +380,7 @@ class IndexDataSource : NSObject {
                 return c;
         }
 }
-[ObjCRegister("BrowserDataSource")]
+[Register("BrowserDataSource")]
 class BrowserDataSource : NSObject {
 
 	internal RootTree help_tree;
@@ -415,7 +415,7 @@ Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
 Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	}
 
-	[ObjCExport("outlineView:numberOfChildrenOfItem:")]
+	[Export("outlineView:numberOfChildrenOfItem:")]
 	public int OutlineViewNumberOfChildrenOfItem(NSOutlineView outlineView, object item)
 	{
 		BrowserItem bi = item as BrowserItem;
@@ -424,13 +424,13 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 		return count;
 	}
 
-	[ObjCExport("outlineView:isItemExpandable:")]
+	[Export("outlineView:isItemExpandable:")]
 	public bool OutlineViewIsItemExpandable(NSOutlineView outlineView, object item)
 	{
 		return OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
 	}
 
-	[ObjCExport("outlineView:child:ofItem:")]
+	[Export("outlineView:child:ofItem:")]
 	public object OutlineViewChildOfItem(NSOutlineView outlineView, int index, object item)
 	{
 //Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item);
@@ -442,7 +442,7 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 		return bi;
 	}
 
-	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
+	[Export("outlineView:objectValueForTableColumn:byItem:")]
 	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
 	{
 //Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item + ", for column: " + tableColumn.identifier);

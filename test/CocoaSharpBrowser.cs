@@ -65,7 +65,7 @@ namespace Webbrowser {
 			Application.run();
 		}
 		
-		[ObjCExport("controlTextDidEndEditing:")]
+		[Export("controlTextDidEndEditing:")]
 		public void EnterHit(NSConcreteNotification aNotification) {
 			LoadURL(((NSTextField)aNotification.object_).stringValue);
 		}

@@ -3,11 +3,11 @@ using System;
 namespace Apple.Foundation {
 
     [AttributeUsage(AttributeTargets.Class)]
-	public class ObjCRegisterAttribute : Attribute {
+	public class RegisterAttribute : Attribute {
 		protected string aName;
 
-		public ObjCRegisterAttribute() {}
-		public ObjCRegisterAttribute(string name) {
+		public RegisterAttribute() {}
+		public RegisterAttribute(string name) {
 			this.aName = name;
 		}
 

@@ -3,13 +3,13 @@ using System;
 namespace Apple.Foundation {
 
     [AttributeUsage(AttributeTargets.Field)]
-	public class ObjCConnectAttribute : Attribute {
+	public class ConnectAttribute : Attribute {
 		protected string aName;
 		protected string aType;
 		protected int aSize = -1;
 
-		public ObjCConnectAttribute() {}
-		public ObjCConnectAttribute(string name) {
+		public ConnectAttribute() {}
+		public ConnectAttribute(string name) {
 			this.aName = name;
 		}
 

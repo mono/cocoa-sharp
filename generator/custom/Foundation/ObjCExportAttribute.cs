@@ -3,13 +3,13 @@ using System;
 namespace Apple.Foundation {
 
     [AttributeUsage(AttributeTargets.Method)]
-	public class ObjCExportAttribute : Attribute {
+	public class ExportAttribute : Attribute {
 		protected string aSelector;
 		protected string aSignature;
 		protected bool aAutoSync = true;
 
-		public ObjCExportAttribute() {}
-		public ObjCExportAttribute(string selector) {
+		public ExportAttribute() {}
+		public ExportAttribute(string selector) {
 			this.aSelector = selector;
 		}
 

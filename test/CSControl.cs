@@ -52,13 +52,13 @@ class CSControl : NSObject {
 		Console.WriteLine("init from .Net!");
 	}
 
-	[ObjCExport]
+	[Export]
 	public void _stop() {
 		Console.WriteLine("Cool ass SHIT!");
 		NSApplication.SharedApplication.stopModal();
 	}
 
-	[ObjCExport]
+	[Export]
 	public void _swap() {
 		swap1.title = "I got tickled @ " + DateTime.Now;
 	}

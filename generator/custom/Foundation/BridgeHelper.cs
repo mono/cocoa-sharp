@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.14 2004/07/03 21:50:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.15 2004/07/24 16:31:06 gnorton Exp $
 //
 
 using System;
@@ -55,7 +55,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		{
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) 
-				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute)))
+				foreach (ExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ExportAttribute)))
 					if (exprtAttr.Selector != null && exprtAttr.Selector == selector)
 						return m.Name;
 
@@ -86,8 +86,8 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 	        bool autoSync = false;
 	        
 			// Check to see if we should UpdateMembers()
-			foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(
-			    GetMethodByTypeAndName(self.GetType(), method), typeof(ObjCExportAttribute)
+			foreach (ExportAttribute exprtAttr in Attribute.GetCustomAttributes(
+			    GetMethodByTypeAndName(self.GetType(), method), typeof(ExportAttribute)
 			)) {
 				if (exprtAttr.AutoSync == true) {
 					// Check to make sure that we have members to update
@@ -192,8 +192,8 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		{
 			string method = SelectorToMethodName(t, sel);
 
-			foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(
-				GetMethodByTypeAndName(t, method), typeof(ObjCExportAttribute)
+			foreach (ExportAttribute exprtAttr in Attribute.GetCustomAttributes(
+				GetMethodByTypeAndName(t, method), typeof(ExportAttribute)
 			)) {
 				if (exprtAttr.Signature != null)
 					return exprtAttr.Signature;
@@ -239,7 +239,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			ArrayList Types = new ArrayList();
 			ArrayList Sizes = new ArrayList();
 			foreach(FieldInfo fi in GetMembers(t)) {
-				ObjCConnectAttribute connectAttr = (ObjCConnectAttribute)Attribute.GetCustomAttributes(fi,typeof(ObjCConnectAttribute))[0];
+				ConnectAttribute connectAttr = (ConnectAttribute)Attribute.GetCustomAttributes(fi,typeof(ConnectAttribute))[0];
 				int size;
 				string type = Type2TypeEncoding(fi.FieldType,out size);
 
@@ -279,7 +279,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			foreach(MethodInfo m in ms) 
 			{
 				bool addedByAttribute = false;
-				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute))) {
+				foreach (ExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ExportAttribute))) {
 					a.Add(exprtAttr.Selector != null ? exprtAttr.Selector : SelectorFromMethod(m));
 					addedByAttribute = true;
 					break;
@@ -299,7 +299,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) {
 				bool addedByAttribute = false;
-				foreach (ObjCExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ObjCExportAttribute))) {
+				foreach (ExportAttribute exprtAttr in Attribute.GetCustomAttributes(m,typeof(ExportAttribute))) {
 					a.Add(exprtAttr.Signature != null ? exprtAttr.Signature : GenerateMethodSignature(t, m.Name));
 					addedByAttribute = true;
 					break;
@@ -340,7 +340,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		{
 			ArrayList ret = new ArrayList();
 			foreach(FieldInfo f in t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
-				foreach (ObjCConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ObjCConnectAttribute))) {
+				foreach (ConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ConnectAttribute))) {
 					ret.Add(f);
 					break;
 				}
@@ -353,7 +353,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			foreach (FieldInfo f in GetMembers(obj.GetType())) {
 				Type type = f.FieldType;
 				string name = f.Name;
-				foreach (ObjCConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ObjCConnectAttribute)))
+				foreach (ConnectAttribute connectAttr in Attribute.GetCustomAttributes(f,typeof(ConnectAttribute)))
 					if(connectAttr.Name != null)
 						name = connectAttr.Name;
 
@@ -369,6 +369,9 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.15  2004/07/24 16:31:06  gnorton
+// Renamed Attributes from ObjC*->* (more logical/less typing)
+//
 // Revision 1.14  2004/07/03 21:50:31  urs
 // Only auto-export primitives for now
 //

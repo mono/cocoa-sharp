@@ -51,18 +51,18 @@ namespace Finder {
 			Application.run();
 		}
 		
-		[ObjCExport(Selector="browser:numberOfRowsInColumn:",Signature="i16@0:4@8i12")]
+		[Export(Selector="browser:numberOfRowsInColumn:",Signature="i16@0:4@8i12")]
 		public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
 			return 20;
 		}
 
-		[ObjCExport(Selector="browser:willDisplayCell:atRow:column:", Signature="v24@0:4@8@12i16i20")]
+		[Export(Selector="browser:willDisplayCell:atRow:column:", Signature="v24@0:4@8@12i16i20")]
 		public void WillDisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
 			Console.WriteLine("DEBUG: Displaying Row={0} Column={1}", rowNumber, columnNumber); 
 			cell.stringValue = "Row=" + rowNumber + " Col=" + columnNumber;
 		}
 
-		[ObjCExport("controlTextDidEndEditing:")]
+		[Export("controlTextDidEndEditing:")]
 		public void TextFinishedEditing(NSConcreteNotification aNotification) {
 		}
 	}
