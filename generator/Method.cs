@@ -79,6 +79,7 @@ namespace ObjCManagedExporter {
 			} 
 			else if(arg_rx.IsMatch(remainder)) 
 			{
+				while(arg_rx.IsMatch(remainder)) {
 				// If there are arguments, parse them
 				GroupCollection grps = arg_rx.Match(remainder).Groups;
 				for (int i = 1; i < grps.Count; )
@@ -86,6 +87,7 @@ namespace ObjCManagedExporter {
 					messageParts.Add(grps[i++].Value);
 					string argType = grps[i++].Value;
 					string argName = grps[i++].Value;
+					remainder = remainder.Replace(grps[0].Value, "");
 
 					if (argType == string.Empty)
 						argType = "id";
@@ -97,6 +99,7 @@ namespace ObjCManagedExporter {
             
 					argTypes.Add(argType);
 					argNames.Add(argName);
+				}
 				}
 				mArgumentNames = (string[])argNames.ToArray(typeof(string));
 				mArgumentDeclarationTypes = (string[])argTypes.ToArray(typeof(string));
@@ -115,6 +118,10 @@ namespace ObjCManagedExporter {
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
         
+		public String GlueMethodName {
+			get { return mGlueMethodName; }
+		}
+	
 		public void ObjCMethod(string name,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
@@ -132,7 +139,7 @@ namespace ObjCManagedExporter {
 			{
 				for(int i = 0; i < mMessageParts.Length; ++i)
 				{
-					_params.Add(string.Format("{0} {1}",mArgumentNames[i],"p" + i));
+					_params.Add(string.Format("{0} {1}",mArgumentDeclarationTypes[i],"p" + i));
 					_message.Add(string.Format("{0}: {1}", mMessageParts[i],"p" + i));
 				}
 			}
@@ -146,7 +153,7 @@ namespace ObjCManagedExporter {
 				// If the method is a class method
 				_params.Insert(0,"Class CLASS");
 				receiver = "CLASS";
-				body = "\tif (!CLASS) CLASS = [$class class];\n";
+				body = "\tif (!CLASS) CLASS = [" + name + " class];\n";
 			}
 			else
 			{

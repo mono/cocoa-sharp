@@ -8,6 +8,7 @@ namespace ObjCManagedExporter {
         private IDictionary mMethods;
         private String mName;
         private String mClass;
+	private String[] mImports;
 	private static Regex mMethodRegex = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
         
         public Category(String _name, String _class) {
@@ -16,6 +17,9 @@ namespace ObjCManagedExporter {
             mMethods = new Hashtable();
         }
         
+	public String[] Imports {
+            get { return mImports; } set { mImports = value; }
+        }
         public String Class {
             get { return mClass; } set { mClass = value; }
         }

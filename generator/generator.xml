@@ -3,6 +3,10 @@
 		<name>Foundation</name>
 		<output>false</output>
 	</framework>
+	<framework>
+		<name>AppKit</name>
+		<output>false</output>
+	</framework>
 	<searchpath>/System/Library/Frameworks/%NAME%.framework/Headers</searchpath>
 	<searchpath>/Library/Frameworks/%NAME%.framework/Headers</searchpath>
 </generator>
