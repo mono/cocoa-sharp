@@ -36,4 +36,10 @@ Loader: Loader.c
 	gcc -g Loader.c -o Loader `pkg-config --cflags --libs mono`
 
 run: Test.exe Loader
-	./Loader Test.exe
+	mkdir -p Loader.app/Contents/MacOS
+	mkdir -p Loader.app/Contents/Resources
+	cp ../sample/SimpleWindow/*.icns Loader.app/Contents/Resources
+	cp Info.plist Loader.app/Contents/
+	cp Test.exe Loader.app/Contents/MacOS
+	cp Loader Loader.app/Contents/MacOS
+	./Loader.app/Contents/MacOS/Loader

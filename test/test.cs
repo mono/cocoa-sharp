@@ -20,6 +20,8 @@ class Test
 		pool.init();
 
 		NSApplication.sharedApplication();
+		NSApplication.setApplicationIconImage(NSImage.imageNamed(new NSString("mono.icns")));
+
 		NSRect contentRect = new NSRect(200, 180, 300, 300);
 
 		NSWindow window = new NSWindow();
@@ -92,7 +94,7 @@ class Test
 
 		NSTextField text = new NSTextField();
 		text.initWithFrame(new NSRect(100, 200, 78, 20));
-		text.setEditable(false);
+		text.setEditable(true);
 		text.setBezeled(true);
 		text.setStringValue(new NSString("Hello, Mono"));
 
