@@ -64,7 +64,6 @@
 				08FB779DFE84155DC02AAC07,
 				B2FB249D0679FB2E00F20944,
 				1AB674ADFE9D54B511CA2CBB,
-				B2FB247D0679FAF400F20944,
 			);
 			isa = PBXGroup;
 			name = SimpleWindow;
@@ -202,13 +201,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.objc;
 			path = CSControl.m;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		B297DD6C06797181004CB4CF = {
-			explicitFileType = image;
-			isa = PBXFileReference;
-			path = chess.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -374,14 +366,6 @@
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B2FB247D0679FAF400F20944 = {
-			isa = PBXFileReference;
-			lastKnownFileType = text.plist.xml;
-			name = "CSWindow-Info.plist";
-			path = "/usr/local/mono/cocoa-sharp/SimpleWindow/CSWindow-Info.plist";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
 		B2FB24840679FB0300F20944 = {
 			children = (
 				B2F08F470676517800AC7C5A,
@@ -412,7 +396,6 @@
 		B2FB249D0679FB2E00F20944 = {
 			children = (
 				B2FB269E0679FDA700F20944,
-				B297DD6C06797181004CB4CF,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -490,16 +473,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				B2FB24D70679FBA400F20944,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B2FB24D70679FBA400F20944 = {
-			fileRef = B297DD6C06797181004CB4CF;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		B2FB26790679FBF700F20944 = {
 			fileRef = B23E7155066EE6760022D01B;
