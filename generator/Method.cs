@@ -255,7 +255,7 @@ namespace ObjCManagedExporter
 				w.WriteLine("            {0} {1}_{2}({3});", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
 			w.WriteLine("        }");
 
-			if (!mIsClassMethod && mCSMethodName.StartsWith("init"))
+			if (!mIsClassMethod && mCSMethodName.StartsWith("init") && _type != "void")
 			{
 				w.WriteLine("        public {0} ({1}) {{", name, paramsStr); 
 				w.WriteLine("            SetRaw({0}_{1}({2}),_release);", name, mGlueMethodName, csparamsStr);

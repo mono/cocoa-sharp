@@ -185,22 +185,32 @@ namespace ObjCManagedExporter
 					if (!Directory.Exists(path))
 						Directory.CreateDirectory(path);
 					TextWriter _gs = new StreamWriter(File.Create(string.Format("src{0}{1}{0}{2}_glue.m", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+
 					path = string.Format("src{0}Apple.{1}{0}", Path.DirectorySeparatorChar, _toprocess.Name);
 					if (!Directory.Exists(path))
 						Directory.CreateDirectory(path);
 					TextWriter _cs = new StreamWriter(File.Create(string.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
 					_cs.WriteLine("using System;");
 					_cs.WriteLine("using System.Runtime.InteropServices;");
-					if(!i.Name.Equals("Foundation")) 
+					if(_toprocess.Name != "Foundation") 
 						_cs.WriteLine("using Apple.Foundation;");
 					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
 					_cs.WriteLine("{");
- 					_cs.Write("    public class {0}", i.Name);
+
+					_cs.Write("    public class {0}", i.Name);
 					if(i.Child.Length > 0)
 						_cs.Write(" : {0}{1}", i.Child, (String.Join(",", i.Protocols).Trim() != "" ? "," + String.Join(",", i.Protocols) : ""));
 					if(i.Child.Length == 0 && i.Protocols.Length > 0)
 						_cs.Write(" : {0}", String.Join(",", i.Protocols));
 					_cs.WriteLine("    {");
+
+					_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
+					_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\") return _{0}_class; }} }}",i.Name);
+					_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
+					_cs.WriteLine();
+					_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
+					_cs.WriteLine();
+
 					foreach(string import in i.Imports)
 						_gs.WriteLine("#import <{0}>", import);
 					foreach(string import in _categoryImports)
@@ -234,6 +244,7 @@ namespace ObjCManagedExporter
 				}
 			}
 		}
+
 		private void ProcessFramework(Framework _toprocess) 
 		{
 			Console.Write("Processing framework ({0}): ", _toprocess.Name);
