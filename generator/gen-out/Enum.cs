@@ -34,12 +34,13 @@ namespace CocoaSharp {
 			_cs.WriteLine("namespace {0} {{",Namespace);
 			_cs.WriteLine("    public enum {0} {{",Name.Replace("enum ", string.Empty));
 			foreach (EnumItem item in this.items)
-				if (item.Value == null || item.Value.Length == 0)
+				if (item.Value == null || item.Value.Length == 0) {
 					if (item.Name != "")
 						_cs.WriteLine("        {0},",item.Name);
-				else
+				} else {
 					if (item.Name != "" && item.Value != "")
 						_cs.WriteLine("        {0} = {1},",item.Name,item.Value);
+				}
 			ProcessAddin(_cs, config);
 			_cs.WriteLine("    }");
 			_cs.WriteLine("}");
