@@ -324,7 +324,10 @@ namespace CocoaSharp {
         }
 		// -- Public Properties --
         public string GlueType { get { return ocType == OCType.@void ? "void" : glueType.FullName; } }
-		public string ApiType { get { return apiType; } }
+		public string ApiType { get { 
+				if (apiType.Substring (0, 1) == ".")
+					return "object";
+				return apiType; } }
 		public OCType OCType { get { return ocType; } }
 
 		// -- Members --
