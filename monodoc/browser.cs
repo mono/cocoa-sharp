@@ -156,6 +156,7 @@ class Browser : NSObject {
 		c.resizable = true;
 		((NSCell)c.headerCell).stringValue = "Caption";
 		ov.addTableColumn(c);
+		ov.outlineTableColumn = c;
 
 		tabViewItem.view = ov;		
 		ov.dataSource = browserController;
@@ -304,7 +305,7 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 	[ObjCExport("outlineView:isItemExpandable:")]
 	public bool OutlineViewIsItemExpandable(NSOutlineView outlineView, object item)
 	{
-		return false; //since it crashes with true: OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
+		return OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
 	}
 
 	[ObjCExport("outlineView:child:ofItem:")]
