@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.3 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.4 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -28,8 +28,8 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSView_initWithFrame(IntPtr THIS, NSRect frame);
 		
-		public NSView() : this(NSObject__alloc(NSView_class)) {}
-		protected internal NSView(IntPtr raw) : base(raw) {}
+		public NSView() : this(NSObject__alloc(NSView_class),true) {}
+		protected internal NSView(IntPtr raw,bool release) : base(raw,release) {}
 
 		virtual public IntPtr initWithFrame(NSRect frame) {
 			return NSView_initWithFrame(Raw, frame);
@@ -44,6 +44,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSView.cs,v $
+// Revision 1.4  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.3  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

@@ -44,8 +44,8 @@ public class CoolClass {
 
 	public void printWithArgs(IntPtr args) {
 		ArgStruct realArgs = (ArgStruct)Marshal.PtrToStructure(args, typeof(ArgStruct));
-		NSString string11 = new NSString(realArgs.string1);
-		NSString string22 = new NSString(realArgs.string2);
+		NSString string11 = new NSString(realArgs.string1,false);
+		NSString string22 = new NSString(realArgs.string2,false);
 		NSString string3 = new NSString("footest");
 		Console.WriteLine("i={0}", i);
 		Console.WriteLine("string3={0}", string3.ToString());

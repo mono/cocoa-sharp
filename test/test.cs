@@ -16,8 +16,7 @@ class Test
 
 	static void Main(string[] args)
 	{
-		NSApplication.sharedApplication();
-		NSApplication.setApplicationIconImage(NSImage.imageNamed(new NSString("mono.icns")));
+		NSApplication.sharedApplication().setApplicationIconImage(NSImage.imageNamed(new NSString("mono.icns")));
 
 		NSRect contentRect = new NSRect(200, 180, 300, 300);
 

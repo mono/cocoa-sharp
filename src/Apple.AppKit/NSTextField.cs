@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.5 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.6 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -27,8 +27,8 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
 
-		public NSTextField() : this(NSObject__alloc(NSTextField_class)) {}
-		protected NSTextField(IntPtr raw) : base(raw) {}
+		public NSTextField() : this(NSObject__alloc(NSTextField_class),true) {}
+		protected NSTextField(IntPtr raw,bool release) : base(raw,release) {}
 
 		public void setEditable(bool flag) {
 			NSTextField_setEditable(Raw, flag);
@@ -43,6 +43,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSTextField.cs,v $
+// Revision 1.6  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.5  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

@@ -10,11 +10,11 @@ class CSControl : NSObject {
 	
 	NSButton swap1;
 	BridgeDelegate CSControlDelegate;
-	public CSControl() : this(NSObject__alloc(CSControl_class)) {}
+	public CSControl() : this(NSObject__alloc(CSControl_class),true) {}
 
-	protected internal CSControl(IntPtr raw) : base(raw) {
+	protected internal CSControl(IntPtr raw,bool release) : base(raw,release) {
 		CSControlDelegate = new BridgeDelegate(this.MethodInvoker);
-		Raw = DotNetForwarding_initWithManagedDelegate(Raw,CSControlDelegate);
+		SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,CSControlDelegate),release);
 	}
 
 	public void displayWindow() {
@@ -26,7 +26,6 @@ class CSControl : NSObject {
 		
 		const int NSBackingStoreBuffered	= 2;
 
-		NSApplication.sharedApplication();
 		NSRect contentRect = new NSRect(200, 180, 300, 300);
 
 		NSWindow window = new NSWindow();
@@ -68,9 +67,13 @@ class CSControl : NSObject {
 		text.release();
 	}
 
+	public void init() {
+		Console.WriteLine("init from .Net!");
+	}
+
 	public void _stop() {
 		Console.WriteLine("Cool ass SHIT!");
-		NSApplication.stopModal();
+		NSApplication.sharedApplication().stopModal();
 	}
 
 	public void _swap() {

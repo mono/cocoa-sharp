@@ -24,59 +24,52 @@
 
 const char * sFile = "Test.exe";
 
-int 
-main(int argc, const char* argv[]) {
-	MonoDomain *domain;
-	MonoImage *image;
-	MonoAssembly *assembly;
-	int retval;
+int main(int argc, const char* argv[]) {
+	char *realFile = (char*)malloc(1024);
+	char *cwd = (char*)malloc(1024);
+	void *pool = BeginApp(cwd);
 
-	char *cwd = getBundleDir();
 	chdir(cwd);
-	char *realFile = (char*)malloc(strlen(sFile)+strlen(cwd)+2);
-	realFile = strcat(cwd, "/");
-	if (argc >= 2 && memcmp(argv[1], "-psn", 4) != 0)
-	{
-		realFile = strcat(realFile, argv[1]);
-	} else {
-		realFile = strcat(realFile, sFile);
-	}	
+	strcpy(realFile,cwd);
+	strcat(realFile, "/");
+	if (argc > 1 && strncmp(argv[argc-1], "-psn", 4) != 0)
+		strcat(realFile, argv[argc-1]);
+	else
+		// TODO: search in resource folder to a .exe rather then assuming 'Test.exe'
+		strcat(realFile, sFile);
+
 	printf("DEBUG:\n\tAssembly: %s\n", realFile);
 	
-	domain = mono_jit_init (realFile);
+	MonoDomain *domain = mono_jit_init (realFile);
 
 	if(domain == NULL) {
 	    printf("ERROR: No domain for assembly: %s\n",realFile);
 		exit(1);
 	}
 
-	assembly = mono_domain_assembly_open (domain,
-					      realFile);
+	MonoAssembly *assembly = mono_domain_assembly_open (domain,
+		realFile);
 
-	if(assembly == NULL)
-	{
+	if(assembly == NULL) {
 	    printf("ERROR: Assembly load failed: %s\n",realFile);
 		exit(1);
 	}
 
-	image = assembly->image;
+	MonoImage *image = assembly->image;
 
-	if(image == NULL)
-	{
+	if(image == NULL) {
 	    printf("ERROR: No assembly image: %s\n",realFile);
 		exit(1);
 	}
 
-	// Start a pool before the assembly
-	void *pool = BeginApp();	
 	mono_jit_exec (domain, assembly, argc, (char**)argv);
 
-	retval = mono_environment_exitcode_get ();
+	int retval = mono_environment_exitcode_get ();
 	// Clean up the pool before the jit
-	EndApp(pool);
 	
 	// Clean up the JIT environment
 	mono_jit_cleanup (domain);
 
+	EndApp(pool);
 	return retval;
 }

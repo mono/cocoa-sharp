@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.7 2004/06/16 12:20:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.8 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -42,9 +42,8 @@ namespace Apple.Foundation
 		static extern IntPtr /*(NSString*)*/ NSStringFromSelector(IntPtr /*SEL)*/ sel);
 		#endregion
 		
-		public NSString(string str) : this(NSString__stringWithCString(IntPtr.Zero,str)) {}
-		~NSString() { Raw = IntPtr.Zero; /* Strings are autoreleased, no release needed */ }
-		protected internal NSString(IntPtr raw) : base(raw) {}
+		public NSString(string str) : this(NSString__stringWithCString(IntPtr.Zero,str),false) {}
+		protected internal NSString(IntPtr raw,bool release) : base(raw,release) {}
 
 		public static NSString FromString(string val) {
 			return new NSString(val);
@@ -56,7 +55,7 @@ namespace Apple.Foundation
 			return NSClassFromString(new NSString(val).Raw);
 		}
 		public static NSString FromSEL(IntPtr /*(SEL)*/ sel) {
-			return new NSString(NSStringFromSelector(sel));
+			return new NSString(NSStringFromSelector(sel),false);
 		}
 		
 		public override string ToString() {
@@ -71,6 +70,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSString.cs,v $
+// Revision 1.8  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.7  2004/06/16 12:20:27  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

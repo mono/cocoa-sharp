@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.3 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.4 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -31,7 +31,7 @@ namespace Apple.AppKit
 		
 		private NSControl() {}
 
-		protected NSControl(IntPtr raw) : base(raw) {}
+		protected NSControl(IntPtr raw,bool release) : base(raw,release) {}
 
 		override public IntPtr initWithFrame(NSRect frameRect)
 		{
@@ -58,6 +58,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.4  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.3  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSDrawer.cs,v 1.2 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSDrawer.cs,v 1.3 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -33,8 +33,8 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSDrawer_setContentView(IntPtr THIS, IntPtr VIEW);
 
-		public NSDrawer() : this(NSObject__alloc(NSDrawer_class)) {}
-		protected internal NSDrawer(IntPtr raw) : base (raw) {}
+		public NSDrawer() : this(NSObject__alloc(NSDrawer_class),true) {}
+		protected internal NSDrawer(IntPtr raw,bool release) : base (raw,release) {}
 
 		public IntPtr initWithContentSize_preferredEdge(NSSize size, NSRectEdge edge) {
 			return NSDrawer_initWithContentSize_preferredEdge(Raw, size, edge);
@@ -57,6 +57,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSDrawer.cs,v $
+// Revision 1.3  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.2  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

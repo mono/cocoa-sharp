@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.6 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.7 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -40,8 +40,8 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern void NSButton_setBezelStyle(IntPtr THIS, NSBezelStyle style);
 		
-		public NSButton() : this(NSObject__alloc(NSButton_class)) {}
-		protected internal NSButton(IntPtr raw) : base(raw) {}
+		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
+		protected internal NSButton(IntPtr raw,bool release) : base(raw,release) {}
 
 		public void setTitle(NSString aString) {
 			NSButton_setTitle(Raw, aString.Raw);
@@ -56,6 +56,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.7  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.6  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

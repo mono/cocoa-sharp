@@ -8,25 +8,25 @@
  *  Copyright (c) 2004 Quark Inc. All rights reserved.
  *
  */
+
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSAutoreleasePool.h>
 #import <AppKit/NSApplication.h>
 
-void * BeginApp() {
+void * BeginApp(char *bundleDir) {
+	// Create a pool to clean up after us
 	void * pool = [[NSAutoreleasePool alloc] init];
+
+	// Start up NSApplication
 	[NSApplication sharedApplication];
+
+	strcpy(bundleDir,[[[NSBundle mainBundle] resourcePath] cString]);
+	
 	return pool;
 }
 
 void EndApp(void * pool) {
+	// Release the pool
 	[(id)pool release];
-}
-
-char *getBundleDir() {
-	// Create a pool to clean up after us
-	void * pool = [[NSAutoreleasePool alloc] init];
-	char * dir = [[[NSBundle mainBundle] resourcePath] cString];
-	// Release the pool so it doesn't fight with mono / loader stuff
-	return dir;
 }

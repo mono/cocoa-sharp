@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSAutoreleasePool.cs,v 1.5 2004/06/17 02:55:38 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSAutoreleasePool.cs,v 1.6 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -20,8 +20,8 @@ namespace Apple.Foundation
 	public class NSAutoreleasePool : NSObject {
 		static IntPtr NSAutoreleasePool_class = NSString.NSClass("NSAutoreleasePool");
 
-		private NSAutoreleasePool() : this(NSObject__alloc(NSAutoreleasePool_class)) {}
-		protected internal NSAutoreleasePool(IntPtr raw) : base(raw) {}
+		private NSAutoreleasePool() : this(NSObject__alloc(NSAutoreleasePool_class),true) {}
+		protected internal NSAutoreleasePool(IntPtr raw,bool release) : base(raw,release) {}
 
 	}
 }
@@ -29,6 +29,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSAutoreleasePool.cs,v $
+// Revision 1.6  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.5  2004/06/17 02:55:38  urs
 // Some cleanup and POC of glue change
 //

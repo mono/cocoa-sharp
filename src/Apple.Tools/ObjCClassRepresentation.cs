@@ -5,35 +5,21 @@ using System.Reflection;
 namespace Apple.Tools {
 
         public class ObjCClassRepresentation {
-                private String[] methods;
-                private String[] signatures;
-                private int nummethods;
+                private String[] mMethods;
+                private String[] mSignatures;
 
 		public String[] Methods {
-			get {
-				return methods;
-			}
-			set {
-				methods = value;
-			}
+			get { return mMethods; }
+			set { mMethods = value; }
 		}
 		
 		public String[] Signatures {
-			get {
-				return signatures;
-			}
-			set {
-				signatures = value;
-			}
+			get { return mSignatures; }
+			set { mSignatures = value; }
 		}
 
 		public int NumMethods {
-			get {
-				return nummethods;
-			}
-			set {
-				nummethods = value;
-			}
+			get { return Methods.Length; }
 		}
         }
 }

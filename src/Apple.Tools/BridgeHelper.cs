@@ -36,24 +36,23 @@ namespace Apple.Tools {
 
 		public static ObjCClassRepresentation GenerateObjCRepresentation(Type t) {
 			ObjCClassRepresentation r = new ObjCClassRepresentation();
-			PopulateObjCClassRepresentationMethods(t, ref r);
-			PopulateObjCMethodSignatures(t, ref r);
+			PopulateObjCClassRepresentationMethods(t, r);
+			PopulateObjCMethodSignatures(t, r);
 			return r;	
 		}
 		
-		private static void PopulateObjCClassRepresentationMethods(Type t, ref ObjCClassRepresentation r) {
+		private static void PopulateObjCClassRepresentationMethods(Type t, ObjCClassRepresentation r) {
 			ArrayList a = new ArrayList();
 			MethodInfo[] ms = t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 			foreach(MethodInfo m in ms) 
 				a.Add(m.Name);
 			r.Methods = (String[])a.ToArray(typeof(String));
-			r.NumMethods = r.Methods.Length;
 		}
 		
-		private static void PopulateObjCMethodSignatures(Type t, ref ObjCClassRepresentation r) {
+		private static void PopulateObjCMethodSignatures(Type t, ObjCClassRepresentation r) {
 			ArrayList a = new ArrayList();
-			for(int i = 0; i < r.Methods.Length; i++)
-				a.Add(GenerateMethodSignature(t, r.Methods[i]));
+			foreach(string method in r.Methods)
+				a.Add(GenerateMethodSignature(t, method));
 			r.Signatures = (String[])a.ToArray(typeof(String));
 		}
 	}

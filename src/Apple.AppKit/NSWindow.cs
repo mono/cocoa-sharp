@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.5 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.6 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -36,8 +36,8 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern IntPtr NSWindow_contentView(IntPtr THIS);
 
-		public NSWindow() : this(NSObject__alloc(NSWindow_class)) {}
-		protected internal NSWindow(IntPtr raw) : base (raw) {}
+		public NSWindow() : this(NSObject__alloc(NSWindow_class),true) {}
+		protected internal NSWindow(IntPtr raw,bool release) : base (raw,release) {}
 
 		public IntPtr initWithContentRect_styleMask_backing_defer(NSRect contentRect, uint aStyle, int bufferingType, bool flag)
 		{
@@ -61,7 +61,7 @@ namespace Apple.AppKit
 		
 		public NSObject contentView()
 		{
-			return new NSView(NSWindow_contentView(Raw));
+			return new NSView(NSWindow_contentView(Raw),false);
 		}
 	}
 }
@@ -69,6 +69,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSWindow.cs,v $
+// Revision 1.6  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.5  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

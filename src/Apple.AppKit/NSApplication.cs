@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.6 2004/06/16 12:20:26 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.7 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -40,22 +40,22 @@ namespace Apple.AppKit
 		[DllImport("AppKitGlue")]
 		static extern void NSApplication_stopModal(IntPtr THIS);
 
-		private NSApplication() : this(IntPtr.Zero) {}
-		protected internal NSApplication(IntPtr raw) : base(raw) {}
+		private NSApplication() : this(IntPtr.Zero,false) {}
+		protected internal NSApplication(IntPtr raw,bool release) : base(raw,release) {}
 
 		public static NSApplication sharedApplication()
 		{
-			return new NSApplication(NSApplication__sharedApplication(NSApplication_class));
+			return new NSApplication(NSApplication__sharedApplication(IntPtr.Zero),false);
 		}
 		
-		public static void setApplicationIconImage(NSImage image)
+		public void setApplicationIconImage(NSImage image)
 		{
-			NSApplication_setApplicationIconImage(NSApplication__sharedApplication(NSApplication_class), image.Raw);
+			NSApplication_setApplicationIconImage(Raw, image.Raw);
 		}
 
-		public static void stopModal()
+		public void stopModal()
 		{
-			NSApplication_stopModal(NSApplication__sharedApplication(NSApplication_class));
+			NSApplication_stopModal(Raw);
 		}
 
 		public int runModalForWindow(NSWindow theWindow)
@@ -68,6 +68,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSApplication.cs,v $
+// Revision 1.7  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.6  2004/06/16 12:20:26  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //

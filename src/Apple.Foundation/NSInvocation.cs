@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.2 2004/06/16 12:20:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.3 2004/06/17 13:06:27 urs Exp $
 //
 
 using System;
@@ -25,8 +25,8 @@ namespace Apple.Foundation
 		static extern IntPtr/*(SEL)*/ NSInvocation_selector(IntPtr /*(NSInvocation*)*/ THIS);
 		#endregion
 
-		public NSInvocation() : this(NSObject__alloc(NSInvocation_class)) {}
-		protected internal NSInvocation(IntPtr raw) : base(raw) {}
+		public NSInvocation() : this(NSObject__alloc(NSInvocation_class),true) {}
+		protected internal NSInvocation(IntPtr raw,bool release) : base(raw,release) {}
 
 		public string selector() {
 			return NSString.FromSEL(NSInvocation_selector(Raw)).ToString();
@@ -37,6 +37,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSInvocation.cs,v $
+// Revision 1.3  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
 // Revision 1.2  2004/06/16 12:20:27  urs
 // Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 //
