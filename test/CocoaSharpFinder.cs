@@ -25,7 +25,7 @@ namespace Finder {
 		}
 
 		public void Run() {
-			Application.applicationIconImage = (NSImage)NSImage.ImageNamed("mono.icns");
+			Application.applicationIconImage = (NSImage)NSImage.ImageNamed("applemono.icns");
 
 			Window = new NSWindow(new NSRect(200, 180, 800, 600),
 					      (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),

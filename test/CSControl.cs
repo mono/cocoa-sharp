@@ -13,7 +13,7 @@ class CSControl : NSObject {
 	}
 
 	public void displayWindow() {
-		NSApplication.SharedApplication.applicationIconImage = (NSImage)NSImage.ImageNamed("mono.icns");
+		NSApplication.SharedApplication.applicationIconImage = (NSImage)NSImage.ImageNamed("applemono.icns");
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 400, 300),
 					       (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),

@@ -20,7 +20,7 @@ CocoaSharpFinder: CocoaSharpFinder.cs
 	mcs -g CocoaSharpFinder.cs -pkg:cocoa-sharp -out:CocoaSharpFinder.app/Contents/Resources/Test.exe
 	mkdir -p CocoaSharpFinder.app/Contents/MacOS
 	cp $(prefix)/bin/CocoaSharpLoader CocoaSharpFinder.app/Contents/MacOS/CocoaSharpFinder
-	cp ../sample/SimpleWindow/*.icns CocoaSharpFinder.app/Contents/Resources
+	cp ./applemono.icns CocoaSharpFinder.app/Contents/Resources
 	cp CocoaSharpFinder.plist CocoaSharpFinder.app/Contents/Info.plist
 	cp $(prefix)/lib/lib*Glue*.dylib CocoaSharpFinder.app/Contents/Resources
 
@@ -30,7 +30,7 @@ CocoaSharpBrowser: CocoaSharpBrowser.cs
 	mcs -g CocoaSharpBrowser.cs -pkg:cocoa-sharp -out:CocoaSharpBrowser.app/Contents/Resources/Test.exe
 	mkdir -p CocoaSharpBrowser.app/Contents/MacOS
 	cp $(prefix)/bin/CocoaSharpLoader CocoaSharpBrowser.app/Contents/MacOS/CocoaSharpBrowser
-	cp ../sample/SimpleWindow/*.icns CocoaSharpBrowser.app/Contents/Resources
+	cp ./applemono.icns CocoaSharpBrowser.app/Contents/Resources
 	cp CocoaSharpBrowser.plist CocoaSharpBrowser.app/Contents/Info.plist
 	cp $(prefix)/lib/lib*Glue*.dylib CocoaSharpBrowser.app/Contents/Resources
 
@@ -39,8 +39,8 @@ test2: test-2.cs CSTextControl.cs CSControl.cs
 	mkdir -p test2.app/Contents/Resources
 	mcs -g test-2.cs CSTextControl.cs CSControl.cs -out:2ndTest.exe -pkg:cocoa-sharp -out:test2.app/Contents/Resources/Test.exe
 	mkdir -p test2.app/Contents/MacOS
-	cp $(prefix)/CocoaSharpLoader test2.app/Contents/MacOS/Loader
-	cp ../sample/SimpleWindow/*.icns test2.app/Contents/Resources
+	cp $(prefix)/bin/CocoaSharpLoader test2.app/Contents/MacOS/Loader
+	cp ./applemono.icns test2.app/Contents/Resources
 	cp Info.plist test2.app/Contents/
 	cp $(prefix)/lib/lib*Glue*.dylib test2.app/Contents/Resources
 
@@ -49,8 +49,8 @@ test: test.cs
 	mkdir -p test.app/Contents/Resources
 	mcs -g Test.cs -out:Test.exe -pkg:cocoa-sharp -out:test.app/Contents/Resources/Test.exe
 	mkdir -p test.app/Contents/MacOS
-	cp $(prefix)/CocoaSharpLoader test.app/Contents/MacOS/Loader
-	cp ../sample/SimpleWindow/*.icns test.app/Contents/Resources
+	cp $(prefix)/bin/CocoaSharpLoader test.app/Contents/MacOS/Loader
+	cp ./applemono.icns test.app/Contents/Resources
 	cp Info.plist test.app/Contents/
 	cp $(prefix)/lib/lib*Glue*.dylib test.app/Contents/Resources
 

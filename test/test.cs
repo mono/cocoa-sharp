@@ -7,7 +7,7 @@ class Test
 {
 	static void Main(string[] args)
 	{
-		NSApplication.SharedApplication.applicationIconImage = (NSImage)NSImage.ImageNamed("mono.icns");
+		NSApplication.SharedApplication.applicationIconImage = (NSImage)NSImage.ImageNamed("applemono.icns");
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 300, 300),
 					       (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
