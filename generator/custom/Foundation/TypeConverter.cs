@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.1 2004/06/24 03:47:30 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.2 2004/06/25 03:10:27 gnorton Exp $
 //
 
 using System;
@@ -37,6 +37,9 @@ namespace Apple.Foundation
 			}
 			else
 				Console.WriteLine(className + " not in Foundation or AppKit");
+			if(type.IsSubclassOf(typeof(Apple.Foundation.NSString)))
+				return ret.ToString();
+
 			return ret;
 		}
 		
@@ -55,6 +58,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.2  2004/06/25 03:10:27  gnorton
+// Missed one file; sorry
+//
 // Revision 1.1  2004/06/24 03:47:30  urs
 // initial custom stuff
 //
