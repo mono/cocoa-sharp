@@ -252,6 +252,20 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		B2F3D2F1067AACBE00AC2F31 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			path = "CSWindow-Info.plist";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2F3D2F2067AACBE00AC2F31 = {
+			fileRef = B2F3D2F1067AACBE00AC2F31;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		B2FB24760679FAF400F20944 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -268,6 +282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2FB269F0679FDA700F20944,
+				B2F3D2F2067AACBE00AC2F31,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -395,6 +410,7 @@
 		};
 		B2FB249D0679FB2E00F20944 = {
 			children = (
+				B2F3D2F1067AACBE00AC2F31,
 				B2FB269E0679FDA700F20944,
 			);
 			isa = PBXGroup;

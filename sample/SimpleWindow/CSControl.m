@@ -14,10 +14,8 @@
 @implementation CSControl
 - (void)displayWindow
 {
-	//create an NSRect and use it to create an CSWindow
-	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
-	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
-	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
+	//
+	CSWindow *window = [NSApp mainWindow];
 	[window setTitle: @"Hi mono"];
 	
 	//create our button 
@@ -27,6 +25,9 @@
 	[monoButton setEnabled: YES ];
 	[monoButton setState: NSOnState];
 	[monoButton setFont: [NSFont fontWithName: @"Geneva" size: 10]];
+	
+	//make the button throb
+	[monoButton setKeyEquivalent: @"\r"];
 	
 	//set the text of the button and its target, in this case self
 	[monoButton setTitle: @"Dismiss"];
@@ -40,15 +41,13 @@
 	[text setEditable: NO];
 	[text setBezeled: YES];
 	[text setStringValue: @"Hello, mono"];
-	
+		
 	//NSButton and NSTextField are subclasses of NSView, use this to add them to the window
 	[[window contentView] addSubview: monoButton];
 	[[window contentView] addSubview: text];
 	
 	//make sure the window is centered on the screen.
 	[window center];
-	//make window the main window for the application
-	[window makeMainWindow];
 	//no matter what, bring window to the front.
 	[window orderFrontRegardless];
 }

@@ -19,6 +19,18 @@
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
 	[NSApplication sharedApplication];
 	[NSApp setApplicationIconImage: [NSImage imageNamed: @"iTools.tiff"]];
+
+	[NSApp setMainMenu: [[NSMenu alloc] initWithTitle:@"MainMenu"]];
+	
+	//create an NSRect and use it to create an CSWindow
+	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
+	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
+	CSWindow *window = [[CSWindow alloc] initWithContentRect: contentRect styleMask: NSWindowDocumentIconButton | NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
+	//make window the main window for the application
+	[window makeMainWindow];
+	
+	[NSMenu setMenuBarVisible:YES];
+
 	
 	//Here is where custom code is implemented to draw the first window, or whatever
 	CSControl *control = [[CSControl alloc]init];
