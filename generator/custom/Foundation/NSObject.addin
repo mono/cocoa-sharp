@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.16 2004/07/01 20:09:57 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.17 2004/07/01 20:18:45 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -39,6 +39,8 @@
 
 		[DllImport("Glue")]
 		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
+		[DllImport("Glue")]
+		static extern void setConstructorDelegate(ConstructorDelegate aDelegate);
 		#endregion
 
 		protected enum GlueDelegateWhat {
@@ -116,6 +118,27 @@ Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			}
 		}
 
+		public NSObject(IntPtr objcraw) {
+			Type myType = this.GetType();
+			IntPtr cls = IntPtr.Zero;
+			if (!NSClasses.Contains(myType)) {
+                                cls = Apple.Foundation.Class.Get(myType.Name);
+                                if (cls == IntPtr.Zero)
+                                        cls = NSRegisterClass(myType);
+                                
+                                NSClasses[myType] = cls;
+                                
+                                TypeConverter.Name2Type[myType.Name] = myType;
+                        }
+                        else
+                                cls = (IntPtr)NSClasses[myType];
+			SetRaw(objcraw, true);
+			if (class_getInstanceMethod(cls, NSString.NSSelector("initWithManagedDelegate:")) != IntPtr.Zero) {
+                                _delegate = new BridgeDelegate(this.MethodInvoker);
+                                SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,_delegate),_release);
+                        }
+
+		}
 		protected internal NSObject(IntPtr raw,bool release) {
 			SetRaw(raw,release);
 		}
@@ -149,9 +172,29 @@ Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, 
 			get { return Marshal.PtrToStringAnsi(TypeConverter.GetObjectClassName(Raw)); }
 		}
 
+		#region -- Constructor Delegate --
+		
+		static ConstructorDelegate cDelegate;
+		delegate void ConstructorDelegate (IntPtr objcRaw, String aClass);
+
+		public static void ConstructClass(IntPtr objcRaw, String aClass) {
+			Console.WriteLine("ObjC asked us to make {0}", aClass);
+			NSObject ourManagedClass = new NSObject(objcRaw);
+			return;
+		}
+		static NSObject() {
+			cDelegate = new ConstructorDelegate(ConstructClass);
+			setConstructorDelegate(cDelegate);
+		}	
+
+		#endregion
+
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.17  2004/07/01 20:18:45  gnorton
+// Initial NIB callback loading support (incomplete)
+//
 // Revision 1.16  2004/07/01 20:09:57  urs
 // Fix GC issues
 //
