@@ -10,7 +10,6 @@ EXTRA_DIST= \
 references = /r:../Apple.Foundation/Apple.Foundation.dll
 
 sources= \
-	AssemblyInfo.cs \
 	_BCFlags.cs \
 	_BCFlags2.cs \
 	_Brflags.cs \
@@ -271,8 +270,10 @@ sources= \
 	NSWorkspace.cs \
 	NSWritingDirection.cs 
 
-$(ASSEMBLY): $(sources) cocoa-sharp.snk
-	$(CSC) /nowarn:0114,0108 /out:$(ASSEMBLY) /target:library $(references) $(sources)
+build_sources = $(addprefix $(srcdir)/, $(sources)) AssemblyInfo.cs
+
+$(ASSEMBLY): $(build_sources) cocoa-sharp.snk
+	$(CSC) /nowarn:0114,0108 /out:$(ASSEMBLY) /target:library $(references) $(build_sources)
 
 cocoa-sharp.snk: $(top_srcdir)/cocoa-sharp.snk
 	cp $(top_srcdir)/cocoa-sharp.snk .

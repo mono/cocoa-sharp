@@ -7,7 +7,6 @@ configure
 autom4te.cache
 config.guess
 config.sub
-ltmain.sh
 config.status
 config.log
 aclocal.m4

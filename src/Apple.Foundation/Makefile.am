@@ -8,7 +8,6 @@ EXTRA_DIST= \
 	AssemblyInfo.cs.in
 
 sources= \
-	AssemblyInfo.cs \
 	AEEventClass.cs \
 	AEEventID.cs \
 	AEKeyword.cs \
@@ -221,7 +220,9 @@ sources= \
 	TypeConverter.cs \
 	value.cs 
 
-$(ASSEMBLY): $(sources) cocoa-sharp.snk
+build_sources = $(addprefix $(srcdir)/, $(sources)) AssemblyInfo.cs
+
+$(ASSEMBLY): $(build_sources) cocoa-sharp.snk
 	$(CSC) /nowarn:0114,0108 /out:$(ASSEMBLY) /target:library $(sources)
 
 cocoa-sharp.snk: $(top_srcdir)/cocoa-sharp.snk
