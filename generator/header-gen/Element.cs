@@ -39,8 +39,12 @@ namespace CocoaSharp {
 			get { return mFramework; }
 		}
 
+		public string NameSpace {
+			get { return "Apple." + this.Framework; }
+		}
+
 		public string FullName {
-			get { return Type.FullName(this.Name, this.Framework); }
+			get { return Type.FullName(this.Name, this.NameSpace); }
 		}
 
 		public abstract OutputElement ToOutput();

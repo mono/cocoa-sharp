@@ -233,14 +233,12 @@ namespace CocoaSharp {
 
 				Match m = _typedefRegex.Match(typedef);
 				System.Diagnostics.Debug.Assert(m.Success);
-				string name = "";
-				string type = "";
+				string name = string.Empty;
+				string type = string.Empty;
 				// Mono throws an exception going into the group collection when it shouldn't
 				// Lets catch it here as a work around for now
 				try {
 					name = m.Groups["name"].Value.Trim();
-				} catch {}
-				try {
 					type = m.Groups["type"].Value.Trim();
 				} catch {}
 				if (type.Length > 0) {
@@ -278,6 +276,7 @@ namespace CocoaSharp {
 
 			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
 		}
+		
 		static void RemoveString(ref string baseStr, string replaceStr) {
 			int len = baseStr.Length;
 			baseStr = baseStr.Replace(replaceStr, string.Empty);
@@ -301,6 +300,7 @@ namespace CocoaSharp {
 			else
 				Enums[name] = _s;
 		}
+
 		private void AddStruct(string name, string subName, string structStr, string frameworkName, string fileName) {
 			if (name == null) {
 				System.Diagnostics.Debug.Assert(subName.Length > 0);

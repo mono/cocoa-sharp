@@ -182,7 +182,7 @@ namespace CocoaSharp {
 			ParameterInfo[] paramInfos = new ParameterInfo[this.mArgumentNames.Length];
 			for (int i = 0; i < paramInfos.Length; ++i)
 				paramInfos[i] = new ParameterInfo(this.mArgumentNames[i], TypeUsage.FromDecl(this.mArgumentDeclarationTypes[i]));
-			return new Method(this.mClassName, this.mCSMethodName,(this.IsClassMethod ? "+" : "-") + this.Selector,
+			return new Method(this.mClassName, this.mCSMethodName,this.Selector,
 				TypeUsage.FromDecl(this.mReturnDeclarationType),paramInfos, this.MethodDeclaration);
 		}
 

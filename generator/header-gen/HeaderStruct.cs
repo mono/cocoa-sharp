@@ -25,7 +25,7 @@ namespace CocoaSharp {
 
 		public HeaderStruct(string _name, string _struct, string _framework) : base(_struct,_name,_framework)
 		{
-			mStruct = (Struct)Type.RegisterType(this.Name, this.Framework, typeof(Struct));
+			mStruct = (Struct)Type.RegisterType(this.Name, this.NameSpace, typeof(Struct));
 
 			ArrayList items = new ArrayList();
 			foreach (string line in _struct.Split(';')) {

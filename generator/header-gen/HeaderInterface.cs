@@ -30,7 +30,7 @@ namespace CocoaSharp {
 		private Class mClass;
 
 		public HeaderInterface(string _name, string _parent, string _protos, string _framework) : base(_name,_framework) {
-			mClass = (Class)Type.RegisterType(this.Name, this.Framework, typeof(Class));
+			mClass = (Class)Type.RegisterType(this.Name, this.NameSpace, typeof(Class));
 
 			mParent = _parent;
 			_protos = _protos.Replace(" ", "");		

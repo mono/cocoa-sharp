@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: OutputElement.cs,v 1.6 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -45,6 +45,7 @@ namespace CocoaSharp {
 		}
 
 		public void WriteFile(Configuration config) {
+			Console.WriteLine("Output " + Type.FullName(this.Name, this.Namespace) + ", " + this.GetType().Name);
 			TextWriter _cs = OpenFile();
 			WriteCS(_cs, config);
 			_cs.Close();

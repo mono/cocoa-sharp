@@ -104,13 +104,13 @@ namespace CocoaSharp {
 		private ArrayList modules;
 
 		static public IDictionary Types = new Hashtable();
-		static private int DEBUG_LEVEL = 1;
+		static private int DEBUG_LEVEL = 0;
 		static MachOFile () {
 			try {
-				DEBUG_LEVEL = Int32.Parse(System.Environment.GetEnvironmentVariable("COCOASHARP_GENERATOR_DEBUG_LEVEL"));
-			} catch (Exception) {
-				DEBUG_LEVEL = 0;
-			}
+				string var = System.Environment.GetEnvironmentVariable("COCOASHARP_GENERATOR_DEBUG_LEVEL");
+				if (var != null)
+					DEBUG_LEVEL = Int32.Parse(var);
+			} catch {}
 		}
 
 		public static void DebugOut(int level, string format, params object[] args) {
@@ -311,7 +311,7 @@ namespace CocoaSharp {
                 this.nameSpace = value;
             }
             get {
-                return this.nameSpace;
+                return this.nameSpace == null ? "Apple." + this.Filename : this.nameSpace;
             }
         }
 //sec

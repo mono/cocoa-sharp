@@ -22,9 +22,7 @@ namespace CocoaSharp {
 
 		public HeaderEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework)
 		{
-			if (_name == "NSSliderType")
-				_name = "NSSliderType";
-			mEnum = (Enum)Type.RegisterType(this.Name, this.Framework, typeof(Enum));
+			mEnum = (Enum)Type.RegisterType(this.Name, this.NameSpace, typeof(Enum));
 
 			ArrayList items = new ArrayList();
 			foreach (string line in _enum.Split(',')) {

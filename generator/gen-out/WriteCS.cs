@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: WriteCS.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -33,6 +33,7 @@ namespace CocoaSharp {
 			foreach(OutputElement e in outList) {
 				e.WriteFile(mConfig);
 				WriteProgress(ref count,total);
+				mOutputElements.Remove(e);
 			}
 
 			if(Directory.Exists(Path.Combine(mConfig.CorePath, nameSpace))) {
@@ -48,7 +49,7 @@ namespace CocoaSharp {
 				}
 			}
 
-			Console.WriteLine("\b\b\b100%");
+			Console.WriteLine("\b\b\b\b100% (" + this.mOutputElements.Count + " left)");
 		}
 
 		#region -- Members --

@@ -439,10 +439,12 @@ namespace CocoaSharp {
 			mMaps.Sort();
 			toOutput.Properties = (PropertyMapping[])mMaps.ToArray(typeof(PropertyMapping));
 
-			XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
-			StreamWriter _sw = new StreamWriter(Path.Combine(Configuration.XmlPath,"mapping.xml"));
-			_ser.Serialize(_sw, toOutput);
-			_sw.Close();
+			if ((File.GetAttributes(Path.Combine(Configuration.XmlPath,"mapping.xml")) & FileAttributes.ReadOnly) == 0) {
+				XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
+				StreamWriter _sw = new StreamWriter(Path.Combine(Configuration.XmlPath,"mapping.xml"));
+				_ser.Serialize(_sw, toOutput);
+				_sw.Close();
+			}
 		}
 
 		private static string ReturnExpression(TypeUsage type,string expression) {
@@ -506,7 +508,7 @@ namespace CocoaSharp {
 			}
 
 			if (isVoid && Parameters.Length == 1 && Name.StartsWith("set")) {
-				Console.WriteLine("INFO: New name mapping for selector: " + Selector);
+//				Console.WriteLine("INFO: New name mapping for selector: " + Selector);
 				string propName;
 				Method get = GetGetMethod(isClassMethod, methods, out propName);
 				GenerateProperty(isClassMethod, className, w, get, this, propName, isProtocol);
@@ -516,7 +518,7 @@ namespace CocoaSharp {
 			if (propOnly)
 				return;
 
-			Console.WriteLine("INFO: New name mapping for selector: " + Selector);
+//			Console.WriteLine("INFO: New name mapping for selector: " + Selector);
 			if (!isVoid && Parameters.Length == 0) {
 				string _propName;
 				Method set = GetSetMethod(isClassMethod, methods, out _propName);

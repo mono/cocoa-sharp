@@ -31,6 +31,7 @@ namespace CocoaSharp {
 
 		public static Type RegisterType(string name, string nameSpace, System.Type newType) {
 			string fullName = FullName(name, nameSpace);
+			System.Diagnostics.Debug.Assert(fullName.StartsWith("Apple."));
 			Type ret = (Type)mTypeByName[name];
 			if (ret != null) {
 				System.Diagnostics.Debug.Assert(newType.IsInstanceOfType(ret));

@@ -33,7 +33,11 @@ namespace CocoaSharp {
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("namespace {0} {{",Namespace);
 			_cs.WriteLine("    public enum {0} {{",Name);
-			_cs.Write(IfsBeGone(""/*mOriginal*/));
+			foreach (EnumItem item in this.items)
+				if (item.Value == null || item.Value.Length == 0)
+					_cs.WriteLine("        {0}",item.Name);
+				else
+					_cs.WriteLine("        {0} = {1},",item.Name,item.Value);
 			ProcessAddin(_cs, config);
 			_cs.WriteLine("    }");
 			_cs.WriteLine("}");
