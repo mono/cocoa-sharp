@@ -1,4 +1,5 @@
 //
+// $Id: Category.cs,v 1.10 2004/09/05 03:28:25 urs Exp $
 //
 
 using System;
@@ -13,9 +14,13 @@ namespace CocoaSharp {
 		private string class_name, name;
 		private ArrayList methods, classMethods;
 	
-		public Category (uint offset, MachOFile file) {
-			byte *ptr = file.GetPtr(offset);
+		public Category (byte *ptr, MachOFile file) {
 			occategory = *(objc_category *)ptr;
+			Utils.MakeBigEndian(ref occategory.category_name);
+			Utils.MakeBigEndian(ref occategory.class_name);
+			Utils.MakeBigEndian(ref occategory.instance_methods);
+			Utils.MakeBigEndian(ref occategory.class_methods);
+			Utils.MakeBigEndian(ref occategory.protocols);
 			name = file.GetString(occategory.category_name);
 			class_name = file.GetString(occategory.class_name);
 			MachOFile.DebugOut(0,"Category: {0} class_name : {1}",name,class_name);

@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.10 2004/09/04 04:49:30 gnorton Exp $
+// $Id: Class.cs,v 1.11 2004/09/05 03:28:25 urs Exp $
 //
 
 using System;
@@ -16,8 +16,7 @@ namespace CocoaSharp {
 		private ArrayList ivars = new ArrayList();
 		private ArrayList methods, classMethods;
 	
-		public Class (uint offset, MachOFile file) {
-			byte *ptr = file.GetPtr(offset);
+		public Class (byte *ptr, MachOFile file) {
 			occlass = *(objc_class *)ptr;
 			Utils.MakeBigEndian(ref occlass.isa);
 			Utils.MakeBigEndian(ref occlass.super_class);
@@ -73,15 +72,17 @@ namespace CocoaSharp {
 
 		unsafe public static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
 			ArrayList ret = new ArrayList();
-			if (methodLists != 0) {
-				byte* methodsPtr = file.GetPtr(methodLists);
-				objc_method_list ocmethodlist = *(objc_method_list *)methodsPtr;
-				byte* methodPtr = methodsPtr+Marshal.SizeOf(ocmethodlist);
-				Utils.MakeBigEndian(ref ocmethodlist.method_count);
-				for (int i = 0; i < ocmethodlist.method_count; ++i, methodPtr += Marshal.SizeOf(typeof(objc_method))) {
-					objc_method method = *(objc_method*)methodPtr;
-					ret.Add(new Method(method,file));
-				}
+			if (methodLists == 0) 
+				return ret;
+			byte* methodsPtr = file.GetPtr(methodLists);
+			if (methodsPtr == null)
+				return ret;
+			objc_method_list ocmethodlist = *(objc_method_list *)methodsPtr;
+			byte* methodPtr = methodsPtr+Marshal.SizeOf(ocmethodlist);
+			Utils.MakeBigEndian(ref ocmethodlist.method_count);
+			for (int i = 0; i < ocmethodlist.method_count; ++i, methodPtr += Marshal.SizeOf(typeof(objc_method))) {
+				objc_method method = *(objc_method*)methodPtr;
+				ret.Add(new Method(method,file));
 			}
 			return ret;
 		}

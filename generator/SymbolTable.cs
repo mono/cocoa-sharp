@@ -1,5 +1,5 @@
 //
-// $Id: SymbolTable.cs,v 1.7 2004/09/04 04:49:30 gnorton Exp $
+// $Id: SymbolTable.cs,v 1.8 2004/09/05 03:28:25 urs Exp $
 //
 
 using System;
@@ -23,13 +23,19 @@ namespace CocoaSharp {
 			uint *defptr = (uint*)(ptr + Marshal.SizeOf(ocsymtab));
 			for (int i = 0; i < ocsymtab.cls_def_cnt; ++i, ++defptr) {
 				Utils.MakeBigEndian(ref *defptr);
-				Class cls = new Class(*defptr, file);
-				classes.Add(cls);
+				ptr = file.GetPtr(*defptr);
+				if (ptr != null) {
+					Class cls = new Class(ptr, file);
+					classes.Add(cls);
+				}
 			}
 			for (int i = 0; i < ocsymtab.cat_def_cnt; ++i, ++defptr) {
 				Utils.MakeBigEndian(ref *defptr);
-				Category cat = new Category(*defptr, file);
-				categories.Add(cat);
+				ptr = file.GetPtr(*defptr);
+				if (ptr != null) {
+					Category cat = new Category(ptr, file);
+					categories.Add(cat);
+				}
 			}
 		}
 	}

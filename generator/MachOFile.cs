@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.9 2004/09/04 04:18:32 urs Exp $
+// $Id: MachOFile.cs,v 1.10 2004/09/05 03:28:25 urs Exp $
 //
 
 using System;
@@ -137,14 +137,24 @@ namespace CocoaSharp {
 		unsafe public byte* GetPtr(uint offset,string segName) {
 			if (offset == 0)
 				return null;
-			SegmentCommand segment = this.SegmentContainingAddress(offset);
-			if (segment == null) {
-				DebugOut(0,"ERROR: Segment for offset {0} not found",offset);
-				return null;
+			SegmentCommand segment; 
+			if (segName != null) {
+				segment = this.SegmentWithName(segName);
+				if (segment == null) {
+					DebugOut(0,"ERROR: Segment with name {0} not found",segName);
+					return null;
+				}
+				if (!segment.ContainsAddress(offset)) {
+					DebugOut(1,"ERROR: Segment {0} does not contain offset {1}",segName,offset);
+					return null;
+				}
 			}
-			if (segName != null && segment.Name != segName) {
-				DebugOut(0,"ERROR: Segment has wrong name {0} != {1}",segment.Name,segName);
-				return null;
+			else {
+				segment = this.SegmentContainingAddress(offset);
+				if (segment == null) {
+					DebugOut(0,"ERROR: Segment for offset {0} not found",offset);
+					return null;
+				}
 			}
 			return HeadPointer + (int)(offset - segment.VMAddr + segment.FileOffset);
 		}
