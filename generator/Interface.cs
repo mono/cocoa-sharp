@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.16 2004/06/24 06:29:36 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.17 2004/06/24 19:44:18 urs Exp $
 //
 
 using System;
@@ -135,6 +135,8 @@ namespace ObjCManagedExporter
 			_cs.WriteLine("        #region -- Constructors --");
 			if (Name != "NSObject" && Name != "NSProxy")
 				_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
+			if (Name == "NSString")
+				_cs.WriteLine("        public NSString(string str) : this(NSString__stringWithCString1(IntPtr.Zero,str),false) {}");
 			_cs.WriteLine();
 			if (mExtrasFor != null)
 				_cs.WriteLine("        public {0}({1} o) : base(o.Raw,false) {{}}",Name,mExtrasFor);
@@ -142,6 +144,8 @@ namespace ObjCManagedExporter
 			Interface cur = this;
 			IDictionary constructors = new Hashtable();
 			constructors["IntPtr,bool"] = true;
+			if (Name == "NSString")
+				constructors["string"] = true;
 			while (cur != null)
 			{
 				foreach (Method _toOutput in cur.AllMethods.Values)
@@ -180,9 +184,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.17  2004/06/24 19:44:18  urs
+//	Cleanup
+//
 //	Revision 1.16  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
-//
+//	
 //	Revision 1.15  2004/06/24 05:00:38  urs
 //	Unflattern C# API methods to reduce conflicts
 //	Rename static methods to start with a capital letter (to reduce conflict with instance methods)
