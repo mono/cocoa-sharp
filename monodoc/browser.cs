@@ -16,12 +16,15 @@ using System.Reflection;
 using System.Collections;
 using System.Web.Services.Protocols;
 using System.Xml;
+using System.Runtime.InteropServices;
 using Apple.Foundation;
 using Apple.AppKit;
 using Apple.WebKit;
 
 namespace Monodoc {
 class Driver {
+
+	
 	static int Main (string [] args)
 	{
 		string topic = null;
@@ -92,10 +95,8 @@ class Controller : NSObject {
 	public NSOutlineView outlineView;
 	[ObjCConnect]
 	public NSTextView textView;
-
+	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
-
-	public Controller () {}
 
 	[ObjCExport("windowDidBecomeMain:")]
 	public void UpdateModal(object aNotification) {
@@ -110,9 +111,11 @@ class Controller : NSObject {
 		Console.WriteLine("Going to load {0}", bi);
 		if(bi.node.URL != null)
 		{
-//			string content = Driver.help_tree.RenderUrl(bi.node.URL, out bi.node);
-			string content = "FooBar!";
-			textView.textStorage.attributedString = new NSAttributedString(content);
+			Node n;
+			string content = RootTree.LoadTree().RenderUrl(bi.node.URL, out n);
+			NSData data = new NSData(Marshal.StringToCoTaskMemAnsi(content), (uint)content.Length);
+			NSAttributedString attrContents = new NSAttributedStringAppKitExtras(data, new NSDictionary(), IntPtr.Zero);
+			textView.textStorage.attributedString = attrContents;
 		}
 	}
 }
