@@ -218,18 +218,18 @@ sub parseFile {
                     my $refProto = $1;
                     my $i;
                     
-                    print(" $interface refers to $refProto lines read $#{ $protocols{$refProto} }\n");
+                    print(" $interface refers to $refProto ($#{ $protocols{$refProto} })");
                     foreach $i ( 0 .. $#{ $protocols{$refProto} } ) {
                         push(@out, "", parseMethod($protocols{$refProto}[$i], $interface, \%methods));
                     }
                 }
             }else{
-                if($line =~ /\@protocol (\w+)/ && $getProtocols == 1){
+                if($line =~ /\@protocol (\w+)/){
                     $protocol = $1;
                     $isProtocol = 1;
                 }else{
                     if($line =~ /\@end/ && $isProtocol == 1){
-                        $protocols{$protocol} = [ @protocolOut ];
+                        $protocols{$protocol} = [ @protocolOut ] if ($getProtocols == 1);
                         $isProtocol = 0;
                     }
                 }
@@ -255,7 +255,7 @@ sub parseFile {
         }
     }
 
-    if($addAlloc && ($class =~ /NSProxy/ || $class =~ /NSObject/)){
+    if($addAlloc && !($class =~ /NSProxy/ || $class =~ /NSObject/)){
         push(@out,
              "",
              "$class * ${class}__alloc(){",
@@ -265,9 +265,13 @@ sub parseFile {
             );
     }
 
-    my @keys;
-    @keys = keys %methods;
-    print " $#keys methods.\n" if ($getProtocols == 0);
+    if ($getProtocols == 0) {
+       my @keys = keys %methods;
+       my $keyCount = $#keys;
+       print " $keyCount methods.\n" if ($keyCount > 1);
+       print " 1 method.\n" if ($keyCount == 1);
+       print " no methods.\n" if ($keyCount < 1);
+    }
     return @out;
 }
 
