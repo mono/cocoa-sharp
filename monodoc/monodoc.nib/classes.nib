@@ -1,15 +1,10 @@
 {
     IBClasses = (
-        {
-            CLASS = BrowserDataSource; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {}; 
-            SUPERCLASS = NSObject; 
-        }, 
+        {CLASS = BrowserDataSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             CLASS = Controller; 
             LANGUAGE = ObjC; 
-            OUTLETS = {drawer = NSDrawer; outlineView = NSOutlineView; textView = NSTextView; }; 
+            OUTLETS = {drawer = NSDrawer; outlineView = NSOutlineView; webView = WebView; }; 
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 

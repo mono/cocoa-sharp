@@ -89,12 +89,15 @@ class Driver {
 
 [ObjCRegister("Controller")]
 class Controller : NSObject {
+
 	[ObjCConnect]
 	public NSDrawer drawer;
+
 	[ObjCConnect]
 	public NSOutlineView outlineView;
+
 	[ObjCConnect]
-	public NSTextView textView;
+	public WebView webView;
 	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
@@ -112,10 +115,16 @@ class Controller : NSObject {
 		if(bi.node.URL != null)
 		{
 			Node n;
-			string content = RootTree.LoadTree().RenderUrl(bi.node.URL, out n);
-			NSData data = new NSData(Marshal.StringToCoTaskMemAnsi(content), (uint)content.Length);
-			NSAttributedString attrContents = new NSAttributedStringAppKitExtras(data, new NSDictionary(), IntPtr.Zero);
-			textView.textStorage.attributedString = attrContents;
+			Console.WriteLine("DEBUG: Going to render URL: {0}", bi.node.URL);
+			string content = "";
+			if(bi.node.tree != null && bi.node.tree.HelpSource != null)
+				content = bi.node.tree.HelpSource.GetText(bi.node.URL, out n);
+			if(content.Equals("") )
+				content = RootTree.LoadTree().RenderUrl(bi.node.URL, out n);
+			webView.mainFrame.loadHTMLString_baseURL(content, null);
+
+			outlineView.expandItem(bi);
+
 		}
 	}
 }
@@ -123,6 +132,8 @@ class Controller : NSObject {
 class Browser {
 	public Browser() {}
 	public void Run() {
+                NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
+
 		if(!NSBundleAppKitExtras.LoadNibNamed_owner("monodoc.nib", NSApplication.SharedApplication)) {
 			Console.WriteLine("Cant load nib");
 			return;
