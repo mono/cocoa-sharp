@@ -17,14 +17,20 @@ void AddMethod(Class cls,const char *name, const char *types, IMP imp) {
     class_addMethods(cls, methodsToAdd);
 }
 
+typedef void (*managedDelegate)(const char *selector);
+managedDelegate gDelegate;
+
 id testImp(id base, SEL sel, ...) {
-    NSLog(@"tempImp %@ %s", base, sel_getName(sel));
+    NSLog(@"calling delegate %@ %s", base, sel_getName(sel));
+    gDelegate(sel_getName(sel));
+    NSLog(@"delegate called %@ %s", base, sel_getName(sel));
     return base;
 }
 
-Class CreateClassDefinition(const char * name, const char * superclassName) {
+Class CreateClassDefinition(const char * name, const char * superclassName,managedDelegate delegate) {
     NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
+    gDelegate = delegate;
     //
     // Ensure that the superclass exists and that someone
     // hasn't already implemented a class with the same name
