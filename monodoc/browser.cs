@@ -151,7 +151,7 @@ class Browser : NSObject {
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 //		sv.documentView = ov;
 		NSTableColumn c = new NSTableColumn("Caption");
-		c.width = 225;
+		c.width = 200;
 		c.editable = false;
 		c.resizable = true;
 		((NSCell)c.headerCell).stringValue = "Caption";
@@ -263,13 +263,21 @@ class BrowserItem : NSObject {
 		SetRaw(IntPtr.Zero,false);
 	}
 	
-	public int Count { get { return node != null ? node.Nodes.Count : 0; } }
+	public int Count { 
+		get { 
+			if(node.Nodes == null)
+				return 0;
+			return node != null ? node.Nodes.Count : 0; 
+		} 
+	}
 	public BrowserItem ItemAt(int ndx)
 	{
-		if (items == null && !node.IsLeaf)
-			foreach (Node n in node.Nodes)
-				if (n != null)
+		if (items == null && !node.IsLeaf) {
+			items = new ArrayList();
+			foreach (Node n in node.Nodes) 
+				if (n != null) 
 					items.Add(new BrowserItem(n));
+		}
 		return (BrowserItem)items[ndx];
 	}
 	public object ValueAt(object identifier)
