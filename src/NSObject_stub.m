@@ -37,11 +37,10 @@ NSObject* NSObject_copy()
 	[object copy];
 }
 
-NSObject* NSObject_mutableCopy()
+NSObject* NSObject_mutableCopy(NSObject* this)
 {
 	 NSLog(@"NSObject_mutableCopy\n");
-	 NSObject *object = [[NSObject alloc]init];
-	 [object mutableCopy];
+	 [thist mutableCopy];
 }
 
 NSString* NSObject_description()
@@ -50,19 +49,16 @@ NSString* NSObject_description()
 	return [NSObject description];
 }
 
-NSObject* NSObject_replacementObjectForCoder(NSCoder *aNSCoder)
+NSObject* NSObject_replacementObjectForCoder(NSObject* this, NSCoder *aNSCoder)
 {
 	NSLog(@"NSObject_replacementObjectForCoder\n");
-	NSObject *object = [[NSObject alloc]init];
-	return [object replacementObjectForCoder: aNSCoder];
+	return [this replacementObjectForCoder: aNSCoder];
 }
 
-NSObject* awakeAfterUsingCoder(NSCoder *aNSCoder)
+NSObject* awakeAfterUsingCoder(NSObject* this, NSCoder *aNSCoder)
 {
 	NSLog(@"NSObject_awakeAfterUsingCoder\n");
-	NSObject *object = [[NSObject alloc]init];
-	return [object awakeAfterUsingCoder: aNSCoder];
-}
+	return [this awakeAfterUsingCoder: aNSCoder];
 
 void NSObject_release(NSObject* this)
 {
