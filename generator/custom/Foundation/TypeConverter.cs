@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.15 2004/07/24 16:31:06 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.16 2004/08/11 11:46:08 urs Exp $
 //
 
 using System;
@@ -36,7 +36,7 @@ namespace Apple.Foundation
 					try
 					{
 						foreach (Type t in asm.GetTypes())
-							if (t.IsClass && t.IsSubclassOf(typeof(NSObject))) {
+							if (t.IsClass && (t == typeof(NSObject) || t.IsSubclassOf(typeof(NSObject)))) {
 								bool attrAdded = false;
 								foreach (RegisterAttribute regAttr in Attribute.GetCustomAttributes(t,typeof(RegisterAttribute))) {
 									if(regAttr.Name != null) {
@@ -110,6 +110,9 @@ Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C cla
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.16  2004/08/11 11:46:08  urs
+// Small NSObject fix
+//
 // Revision 1.15  2004/07/24 16:31:06  gnorton
 // Renamed Attributes from ObjC*->* (more logical/less typing)
 //
