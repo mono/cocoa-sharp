@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.5 2004/06/19 17:19:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.6 2004/06/19 20:42:59 gnorton Exp $
 //
 
 using System;
@@ -36,11 +36,9 @@ namespace Apple.Foundation
 		protected internal NSInvocation(IntPtr raw,bool release) : base(raw,release) {}
 
 		public object getArgument(int i) {
-			Console.WriteLine("Getting argument: {0} of size {1}", i, GetInvocationArgumentSize(Raw, i+2));
-			// This is static for now till we reflect sizes
 			IntPtr argPtr = Marshal.AllocCoTaskMem(GetInvocationArgumentSize(Raw, i+2));
 			NSInvocation_getArgument_atIndex(Raw, ref argPtr, i+2);
-			return NS2Net(argPtr);
+			return NS2Net(argPtr, true);
 		}
 
 		public string Selector {
@@ -52,6 +50,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSInvocation.cs,v $
+// Revision 1.6  2004/06/19 20:42:59  gnorton
+// Code cleanup (remove some old methods/clean some console.writelines)
+// Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.
+//
 // Revision 1.5  2004/06/19 17:19:27  gnorton
 // Broken API fixes.
 // Delegates and methods with multi-argument support working.

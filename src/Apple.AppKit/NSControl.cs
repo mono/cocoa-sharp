@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.8 2004/06/19 17:19:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.9 2004/06/19 20:42:59 gnorton Exp $
 //
 
 using System;
@@ -63,10 +63,7 @@ namespace Apple.AppKit
 		public string StringValue
 		{
 			get { 
-				Console.WriteLine("Getting string!!!");
-				NSString mystring = (NSString)NS2Net(NSControl_stringValue(Raw));
-				Console.WriteLine("Casting string!!!");
-				return mystring.ToString(); 
+				return NS2Net(NSControl_stringValue(Raw)).ToString();
 			} set { 
 				NSControl_setStringValue(Raw, Net2NS(value)); 
 			}
@@ -77,6 +74,10 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.9  2004/06/19 20:42:59  gnorton
+// Code cleanup (remove some old methods/clean some console.writelines)
+// Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.
+//
 // Revision 1.8  2004/06/19 17:19:27  gnorton
 // Broken API fixes.
 // Delegates and methods with multi-argument support working.

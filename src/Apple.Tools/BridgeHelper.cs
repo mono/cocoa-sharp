@@ -18,10 +18,6 @@ namespace Apple.Tools {
 			// We need to chop back to the real .Net Method Name
 			if(m.IndexOf(":") >= 0) 
 				m = m.Substring(0, m.IndexOf(":"));
-			// HACK: We're not passing arg info in yet
-//			if(s.GetType().GetMethod(m).GetParameters().Length > 0)
-//				a = new Object[s.GetType().GetMethod(m).GetParameters().Length];
-			Console.WriteLine("Invoking method: {0} with {1} arguments.", m, a.Length);
 			return s.GetType().InvokeMember(m, BindingFlags.Default | BindingFlags.InvokeMethod, null, s, a);
 		}
 

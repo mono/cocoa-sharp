@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/TypeConverter.cs,v 1.1 2004/06/17 16:10:45 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/TypeConverter.cs,v 1.2 2004/06/19 20:42:59 gnorton Exp $
 //
 
 using System;
@@ -21,6 +21,10 @@ namespace Apple.Foundation
 {
 	public class TypeConverter {
 		public static object NS2Net(IntPtr raw) {
+			return NS2Net(raw, false);
+		}
+
+		public static object NS2Net(IntPtr raw, bool cleanPtr) {
 			NSObject ret = new NSObject(raw,false);
 			string className = ret.ClassName;
 			Type type = Type.GetType("Apple.Foundation." + className + ", Apple.Foundation");
@@ -37,6 +41,7 @@ namespace Apple.Foundation
 			}
 			else
 				Console.WriteLine(className + " not in Foundation or AppKit");
+			ret.CleanPtr = cleanPtr;
 			return ret;
 		}
 		
@@ -54,6 +59,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.2  2004/06/19 20:42:59  gnorton
+// Code cleanup (remove some old methods/clean some console.writelines)
+// Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.
+//
 // Revision 1.1  2004/06/17 16:10:45  gnorton
 // Cleanup
 //
