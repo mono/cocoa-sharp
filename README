@@ -7,7 +7,8 @@ cd monodoc; make; make run
 
 to see tests
 cd test; make
+
+run and run2 are special targets that will build and run CocoaSharpBrowser.app 
+and CocoaSharpFinder.app
 make run
 make run2
-./CocoaSharpBrowser
-./CocoaSharpFinder

@@ -9,10 +9,14 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/autogen.sh,v 1.7 2004/06/21 04:57:30 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/autogen.sh,v 1.8 2004/08/03 21:29:01 adhamh Exp $
 #
 
 #Simple test for OS X
+echo "WARNING: if you ran autogen.sh with --prefix=/foo/bar then /foo/bar/lib must"
+echo "already exist due to a bug in our auto* files."
+sleep 5
+
 if [ -d /Library/Frameworks/Mono.framework/Versions/Current/share/aclocal ]; then
     aclocal -I /Library/Frameworks/Mono.framework/Versions/Current/share/aclocal
 else
@@ -29,6 +33,13 @@ autoconf
 #***************************************************************************
 #
 # $Log: autogen.sh,v $
+# Revision 1.8  2004/08/03 21:29:01  adhamh
+# Updated packaging script for CocoaSharp.  Along with postflight scrips so that links are created.
+#
+# Added some documenation to README and autogen.sh
+# Added the mono.icns file to our example nib so that it could be built
+#         without the rest of Cocoa-Sharp source.
+#
 # Revision 1.7  2004/06/21 04:57:30  gnorton
 # Update to use our new .Net based generator (much butter; supports protocols/categories/interfaces)
 # Outputs working glue that doesn't break the tests.
