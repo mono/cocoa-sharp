@@ -9,11 +9,12 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.5 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.6 2004/06/24 06:29:36 gnorton Exp $
 //
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter 
 {
@@ -27,18 +28,29 @@ namespace ObjCManagedExporter
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("namespace Apple.{0} {{",Framework);
 			_cs.WriteLine("    public enum {0} {{",Name);
-			_cs.Write(mOriginal);
+			_cs.Write(IfsBeGone(mOriginal));
 			ProcessAddin(_cs, config);
 			_cs.WriteLine("    }");
 			_cs.WriteLine("}");
+		}
+
+		public string IfsBeGone(string mOriginal) {
+			Regex ifRegex = new Regex(@"^#.+$");
+			if(ifRegex.IsMatch(mOriginal)) 
+				foreach(Match m in ifRegex.Matches(mOriginal))
+					mOriginal = mOriginal.Replace(m.Value, "");
+			return mOriginal;
 		}
 	}
 }
 
 //	$Log: CEnum.cs,v $
+//	Revision 1.6  2004/06/24 06:29:36  gnorton
+//	Make foundation compile.
+//
 //	Revision 1.5  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.4  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.30 2004/06/24 05:21:04 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.31 2004/06/24 06:29:36 gnorton Exp $
 //
 
 using System;
@@ -415,7 +415,7 @@ namespace ObjCManagedExporter
 			if(StripComments(declType) == "SEL")
 				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
 			else if(t != ConvertTypeGlue(declType))
-				return string.Format("return ({0})NS2Net({1})", t, expression);
+				return string.Format("return ({0})NSObject.NS2Net({1})", t, expression);
 			else if (t == "void")
 				return expression;
 			else
@@ -428,7 +428,7 @@ namespace ObjCManagedExporter
 			if(StripComments(declType) == "SEL")
 				return string.Format("NSString.NSSelector({0})", expression);
 			else if(t != ConvertTypeGlue(declType))
-				return string.Format("Net2NS({0})", expression);
+				return string.Format("NSObject.Net2NS({0})", expression);
 			else
 				return expression;
 		}
@@ -547,9 +547,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.31  2004/06/24 06:29:36  gnorton
+//	Make foundation compile.
+//
 //	Revision 1.30  2004/06/24 05:21:04  urs
 //	Fix typo
-//
+//	
 //	Revision 1.29  2004/06/24 05:00:38  urs
 //	Unflattern C# API methods to reduce conflicts
 //	Rename static methods to start with a capital letter (to reduce conflict with instance methods)

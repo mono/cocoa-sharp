@@ -2,6 +2,7 @@
 	<framework>
 		<name>Foundation</name>
 		<output>true</output>
+		<dependency>Tools</dependency>
 	</framework>
 	<framework>
 		<name>AppKit</name>

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.28 2004/06/24 04:36:17 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.29 2004/06/24 06:29:36 gnorton Exp $
 //
 
 using System;
@@ -65,7 +65,7 @@ namespace ObjCManagedExporter
 			Regex _interfaceRegex = new Regex(@"^@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"^@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(\s*\w*\s*=\s*\d+.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
             
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
@@ -189,8 +189,11 @@ namespace ObjCManagedExporter
 					DirectoryInfo _frameworkDirectory = new DirectoryInfo(Path.Combine(mConfig.CorePath, _toprocess.Name));
 					FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
 					foreach(FileSystemInfo _file in _infos) {
-						if(_file.Name.EndsWith(".cs") && !File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
+						if(_file.Name.EndsWith(".cs")) {
+							if(!File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
+								File.Delete(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
 							File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, _toprocess.Name), _file.Name), Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
+						}
 					}
 				}
 		}
@@ -383,9 +386,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.29  2004/06/24 06:29:36  gnorton
+//	Make foundation compile.
+//
 //	Revision 1.28  2004/06/24 04:36:17  gnorton
 //	Updates to fix build errors; not many left now
-//
+//	
 //	Revision 1.27  2004/06/24 01:08:43  gnorton
 //	Core file support so we can add files ot the build that aren't generated
 //	

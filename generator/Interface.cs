@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.15 2004/06/24 05:00:38 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.16 2004/06/24 06:29:36 gnorton Exp $
 //
 
 using System;
@@ -133,7 +133,7 @@ namespace ObjCManagedExporter
 			_cs.WriteLine();
 
 			_cs.WriteLine("        #region -- Constructors --");
-			if (Name != "NSObject")
+			if (Name != "NSObject" && Name != "NSProxy")
 				_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
 			_cs.WriteLine();
 			if (mExtrasFor != null)
@@ -180,10 +180,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.16  2004/06/24 06:29:36  gnorton
+//	Make foundation compile.
+//
 //	Revision 1.15  2004/06/24 05:00:38  urs
 //	Unflattern C# API methods to reduce conflicts
 //	Rename static methods to start with a capital letter (to reduce conflict with instance methods)
-//
+//	
 //	Revision 1.14  2004/06/24 04:14:35  urs
 //	Fix typo
 //	

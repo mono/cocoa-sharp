@@ -2,7 +2,7 @@
         <method instance="true" sel="getArgument:atIndex:">
 		public object getArgument(int i) {
 			IntPtr argPtr = IntPtr.Zero;
-			NSInvocation_getArgument_atIndex2(Raw, ref argPtr, i+2);
+			NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
 			return NS2Net(argPtr);
 		}
         </method>
