@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.6 2004/09/03 22:21:46 urs Exp $
+// $Id: Class.cs,v 1.7 2004/09/04 02:07:19 gnorton Exp $
 //
 
 using System;
@@ -13,6 +13,7 @@ namespace CocoaSharp {
 		private objc_class occlass;
 		private string superClass, name;
 		private ArrayList ivars = new ArrayList();
+		private ArrayList methods = new ArrayList();
 	
 		public Class (uint offset, MachOFile file) {
 			byte *ptr = file.GetPtr(offset);
@@ -40,6 +41,14 @@ namespace CocoaSharp {
 				}
 			}
 
+			byte* methodsPtr = file.GetPtr(occlass.methodLists);
+			objc_method_list ocmethodlist = *(objc_method_list *)methodsPtr;
+			byte* methodPtr = methodsPtr+Marshal.SizeOf(ocmethodlist);
+			Utils.MakeBigEndian(ref ocmethodlist.method_count);
+			for (int i = 0; i < ocmethodlist.method_count; ++i, methodPtr += Marshal.SizeOf(typeof(objc_method))) {
+				objc_method method = *(objc_method*)methodPtr;
+				methods.Add(new Method(method,file));
+			}
 #if false
 			// Process methods
 			[aClass setInstanceMethods:[self processMethods:classPtr->methods]];
@@ -59,6 +68,18 @@ namespace CocoaSharp {
 			// Process protocols
 			[aClass addProtocolsFromArray:[self processProtocolList:classPtr->protocols]];
 #endif
+		}
+	}
+
+	public class Method {
+		private string name, types;
+
+		public Method(objc_method method, MachOFile file) {
+			Utils.MakeBigEndian(ref method.name);
+			Utils.MakeBigEndian(ref method.types);
+			name = file.GetString(method.name);
+			types = file.GetString(method.types);
+			MachOFile.DebugOut(0,"\tmethod: {0} types={1}", name, types);
 		}
 	}
 
@@ -102,4 +123,15 @@ namespace CocoaSharp {
 		public uint type;
 		public int offset;
 	};
+
+	public struct objc_method_list {
+		public uint obsolete;
+		public uint method_count;
+	}
+
+	public struct objc_method {
+		public uint name;
+		public uint types;
+		public uint imp;
+	}
 }
