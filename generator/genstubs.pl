@@ -105,9 +105,6 @@ sub parseMethod {
     # What object will we be sending messages to?
     my($receiver, $logLine);
 
-    # The fully-qualified C function name separated by _s (:s don't work)
-    my $methodName = join("_",  $class, @methodName);
-
     # Build the params and message
     my(@message, @params);
 
@@ -139,6 +136,9 @@ sub parseMethod {
 	$logLine = "";
 
     }
+
+    # The fully-qualified C function name separated by _s (:s don't work)
+    my $methodName = join("_",  $class, @methodName);
 
     # Add the log call
     $logLine .= "\tNSLog(\@\"$methodName: \%\@\\n\", $receiver);";
