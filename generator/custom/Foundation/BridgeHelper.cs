@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.9 2004/06/30 13:21:19 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.10 2004/07/02 21:45:58 urs Exp $
 //
 
 using System;
@@ -23,6 +23,24 @@ namespace Apple.Tools
 
 	public abstract class BridgeHelper 
 	{
+	    public static IntPtr ObjectToVoidPtr(object value)
+	    {
+			bool isNull = value == null;
+			Type valueType = isNull ? null : value.GetType();
+			bool isValueType = !isNull && valueType.IsPrimitive;
+			IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
+try { Console.WriteLine("DEBUG: ObjectToVoidPtr: [value=" + value + "] [type=" + valueType + "] isValueType=" + isValueType + ", ptr=0x{0,8:x}", (int)retVal); } 
+catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
+			if(isNull)
+				Marshal.WriteIntPtr(retVal,IntPtr.Zero);
+			else if (isValueType) {
+				Marshal.WriteIntPtr(retVal,IntPtr.Zero);
+				Marshal.StructureToPtr(value, retVal, false);
+			} else
+				Marshal.WriteIntPtr(retVal,TypeConverter.Net2NS(value));
+			return retVal;
+	    }
+
 		public static MethodInfo GetMethodByTypeAndName(Type t, String n) 
 		{
 			return t.GetMethod(n);
@@ -261,12 +279,62 @@ namespace Apple.Tools
 			}
 			r.Signatures = (String[])a.ToArray(typeof(String));
 		}
+
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr/*Ivar*/ object_getInstanceVariable(IntPtr /*id*/ THIS, string name, IntPtr /*(void **)*/ val);
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr/*Ivar*/ object_setInstanceVariable(IntPtr /*id*/ THIS, string name, IntPtr /*(void *)*/ val);
+
+		public static object GetInstanceVar(IntPtr raw,string name,Type t)
+		{
+			IntPtr argPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+			object_getInstanceVariable(raw, name, argPtr);
+			object retVal = t.IsPrimitive 
+			    ? Marshal.PtrToStructure(argPtr, t) 
+			    : TypeConverter.NS2Net(Marshal.ReadIntPtr(argPtr));
+			Marshal.FreeHGlobal(argPtr);
+			return retVal;
+		}
+
+		public static void SetInstanceVar(IntPtr raw,string name,object value)
+		{
+			IntPtr retVal = ObjectToVoidPtr(value);
+			object_setInstanceVariable(raw,name,retVal);
+			Marshal.FreeHGlobal(retVal);
+		}
+
+
+		public static FieldInfo[] GetMembers(Type t)
+		{
+			ArrayList ret = new ArrayList();
+			foreach(FieldInfo f in t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+				foreach (Attribute attr in Attribute.GetCustomAttributes(f)) {
+					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+					if (exprtAttr != null) {
+						ret.Add(f);
+						break;
+					}
+				}
+			}
+			return (FieldInfo[])ret.ToArray(typeof(FieldInfo));
+		}
+
+		public static void UpdateMembers(NSObject obj)
+		{
+			foreach (FieldInfo f in GetMembers(obj.GetType()))
+				f.SetValue(obj,
+                    obj._GetInstanceVar(f.Name,f.FieldType)
+				);
+		}
 	}
 }
 
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.10  2004/07/02 21:45:58  urs
+// Initial POC for NIB binding, make test/nib work
+//
 // Revision 1.9  2004/06/30 13:21:19  urs
 // Make tree green again
 //

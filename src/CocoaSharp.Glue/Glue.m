@@ -3,12 +3,29 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSMethodSignature.h>
+#import <AppKit/NSTextField.h>
+
+#if false
+@interface ConverterController : NSObject {
+    id converter;
+    NSTextField* dollarField; 
+    NSTextField* rateField; 
+    NSTextField* totalField; 
+}
+
+//- (void)convert: (id) sender;
+@end
+
+@implementation ConverterController
+@end
+#endif
 
 // This is needed until bug #61033 is fixed
 #define JIT_HACK 1
 
 typedef id (*constructorDelegate)(id THIS, const char *className);
 typedef id (*managedDelegate)(int what,id anInvocation);
+typedef int (*classHandlerDelegate)(const char *className);
 #if JIT_HACK
 typedef managedDelegate (*getManagedDelegate)(id THIS);
 #else
@@ -19,7 +36,7 @@ typedef void (*getManagedDelegate)(id THIS);
 
 constructorDelegate sConstructorDelegate = nil;
 getManagedDelegate sGetManagedDelegate = nil;
-BOOL sIsGlueVerbose = NO;
+BOOL sIsGlueVerbose = YES;
 
 BOOL IsGlueVerbose() { return sIsGlueVerbose; }
 void SetGlueVerbose(BOOL verbose) { sIsGlueVerbose = verbose; }
@@ -29,6 +46,10 @@ void SetConstructorDelegate(constructorDelegate _constructorDelegate,getManagedD
         NSLog(@"GLUE: Setting delegates (%p,%p)", _constructorDelegate,_getManagedDelegate);
     sConstructorDelegate = _constructorDelegate;
     sGetManagedDelegate = _getManagedDelegate;
+}
+
+void InitGlue(classHandlerDelegate classHandler) {
+    objc_setClassHandler(classHandler);
 }
 
 const char * GetObjectClassName(id THIS) {
@@ -44,14 +65,14 @@ void SetJIT_HACK_Delegate(managedDelegate delegate) {
 #endif
 
 managedDelegate GetDelegateForBase(id base) {
-    NSLog(@"GLUE: GetDelegateForBase\n"); 
-    managedDelegate delegate;
+    NSLog(@"GLUE: GetDelegateForBase base=%@",base); 
+    managedDelegate delegate = nil;
     object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
     if (delegate == nil)
 #if JIT_HACK
-        { 
-            sConstructorDelegate(base, GetObjectClassName(base));
-            sGetManagedDelegate(base); delegate = sJIT_HACK_Delegate; 
+    {
+        NSLog(@"   inst var == nil --> fetch delegate"); 
+        sGetManagedDelegate(base); delegate = sJIT_HACK_Delegate; 
 	}
 #else
         delegate = sGetManagedDelegate(base);
@@ -90,6 +111,37 @@ void AddMethods(Class cls,int numOfMethods,const char **methods,const char **sig
     class_addMethods(cls, methodsToAdd);
 }
 
+void AddInstanceVariables(Class cls,int count,...) {
+    struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 
+        count, sizeof(struct objc_ivar_list) + (count-1)*sizeof(struct objc_ivar) );
+
+    int offset = cls->super_class->instance_size;
+    int size = 0;
+    ivarList->ivar_count = count;
+
+    int i;
+    struct objc_ivar * var = ivarList->ivar_list;
+
+    va_list vl;
+    va_start(vl,count);
+    for (i = 0; i < count; ++i) {
+        
+        var->ivar_name = va_arg(vl,char *);
+        var->ivar_type = (char*)strdup(va_arg(vl,const char *));
+        int ivarSize = va_arg(vl,int);
+        size += ivarSize;
+        var->ivar_offset = offset;
+        offset += ivarSize;
+
+        if (IsGlueVerbose())
+            NSLog(@"  registering var: %s (%s) %i",var->ivar_name,var->ivar_type,var->ivar_offset);
+        ++var;
+    }
+
+    cls->instance_size = size;
+    cls->ivars = ivarList;
+}
+
 NSMethodSignature * MakeMethodSignature(const char *types) {
     NSMethodSignature *ret = [NSMethodSignature signatureWithObjCTypes: types];
     if (IsGlueVerbose())
@@ -122,11 +174,14 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
     NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
     
     if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
-        managedDelegate delegate;
-	delegate = GetDelegateForBase(base);
+#if true
+        managedDelegate delegate = GetDelegateForBase(base);
 
         aSelector = sel_getUid([[strSel substringFromIndex: 8] cString]);
         signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
+#else
+        signature = MakeMethodSignature([[strSel substringFromIndex: 8] cString]);
+#endif
     }
     
     return signature;
@@ -135,6 +190,8 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 id glue_initToManaged(id base, SEL sel, ...) {
     //if (IsGlueVerbose())
         NSLog(@"GLUE: glue_initToManaged (base=%@)",base);
+    sConstructorDelegate(base,GetObjectClassName(base));
+    return base;
 }
     
 //- (void) forwardInvocation: (NSInvocation *) anInvocation;
@@ -143,18 +200,17 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
     va_start(vl,sel);
     NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
 
-    NSLog(@"GLUE: glue_forwardInvocation called.");
-
     SEL aSelector = sel_getUid([[[NSString stringWithCString: sel_getName([anInvocation selector])] substringFromIndex: 8] cString]);
     [anInvocation setSelector: aSelector];
 
     if (IsGlueVerbose())
-        NSLog(@"GLUE: glue_forwardInvocation: calling delegate %p %s", base, sel_getName([anInvocation selector]));
+        NSLog(@"GLUE: glue_forwardInvocation: calling delegate %@ %s", base, sel_getName([anInvocation selector]));
 
-    managedDelegate delegate;
-    delegate=GetDelegateForBase(base);
+    managedDelegate delegate = GetDelegateForBase(base);
+    if (IsGlueVerbose())
+        NSLog(@"GLUE: glue_forwardInvocation: base=%@ delegate=%p",base,delegate);
 
-    if (delegate(GLUE_forwardInvocation,anInvocation) != nil)
+    if (delegate == nil || delegate(GLUE_forwardInvocation,anInvocation) != nil)
         [base doesNotRecognizeSelector: [anInvocation selector]];
     return base;
 }
@@ -181,18 +237,18 @@ id glue_implementMethod(id base, SEL sel, ...) {
     marg_setValue(margs, offset, SEL, forwardSel);
     // Process the rest of the margs on the stack
     size = (numArgs)*4;
-    if (IsGlueVerbose() && numArgs > 2)
-        NSLog(@"GLUE: glue_implementMethod");
+    if (IsGlueVerbose())
+        NSLog(@"GLUE: glue_implementMethod base=%@",base);
     for(i = 2; i < numArgs; i++) {
         // TODO: handle structures and non-4 byte argument types
         arg = va_arg(vl, void *);
         method_getArgumentInfo(method, i, &type, &offset);
         if (IsGlueVerbose())
-            NSLog(@"    Getting arg: %i (type=%s inserting at: %i", i, type, offset);
+            NSLog(@"    Getting arg: %i (type=%s inserting at: %i = %p", i, type, offset, arg);
         marg_setValue(margs, offset, void *, arg); 
     }
     if (IsGlueVerbose())
-        NSLog(@"glue_implementMethod %p %s (%s) method=%p margs=%p size=%i", base, sel_getName(forwardSel), sel_getName(method->method_name), method,margs,size);
+        NSLog(@"glue_implementMethod %@ %s (%s) method=%p margs=%p size=%i", base, sel_getName(forwardSel), sel_getName(method->method_name), method,margs,size);
 
     id ret;
     if(numArgs == 2)
@@ -245,27 +301,8 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
         //
         new_class->name = (const char *)strdup(name);
         meta_class->name = new_class->name;
-    
-        //
-        // Allocate empty method lists.
-        // We can add methods later.
-        //
-        new_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
-        *new_class->methodLists = (struct objc_method_list*)-1;
-        meta_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
-        *meta_class->methodLists = (struct objc_method_list*)-1;
-    
-        struct objc_ivar_list *ivarList = (struct objc_ivar_list *)calloc( 1, sizeof(struct objc_ivar_list) + (1-1)*sizeof(struct objc_ivar) );
-    
-        ivarList->ivar_count = 1;
-        ivarList->ivar_list[0].ivar_name = "mDelegate";
-        ivarList->ivar_list[0].ivar_type = @encode(managedDelegate);
-        ivarList->ivar_list[0].ivar_offset = super_class->instance_size;
-    
-        new_class->instance_size = sizeof(managedDelegate);
-        new_class->ivars = ivarList;
-    
-        //
+
+            //
         // Connect the class definition to the class hierarchy:
         // Connect the class to the superclass.
         // Connect the metaclass to the metaclass of the superclass.
@@ -275,16 +312,48 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
         meta_class->super_class = super_class->isa;
         meta_class->isa         = (void *)root_class->isa;
     
+        //
+        // Allocate empty method lists.
+        // We can add methods later.
+        //
+        new_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
+        *new_class->methodLists = (struct objc_method_list*)-1;
+        meta_class->methodLists = (struct objc_method_list**)calloc( 1, sizeof(struct objc_method_list *) );
+        *meta_class->methodLists = (struct objc_method_list*)-1;
+
+        if (strcmp(name,"ConverterController") == 0)
+            AddInstanceVariables(
+                new_class, 5,
+                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate),
+                "converter", @encode(id), sizeof(id), 
+                "dollarField", @encode(NSTextField*), sizeof(NSTextField*),
+                "rateField", @encode(NSTextField*), sizeof(NSTextField*),
+                "totalField", @encode(NSTextField*), sizeof(NSTextField*)
+            );
+        else
+            AddInstanceVariables(
+                new_class, 1,
+                "mDelegate", @encode(managedDelegate), sizeof(managedDelegate)
+            );
+    
         // Finally, register the class with the runtime.
         objc_addClass( new_class );
 
         AddMethods(new_class, 
                 numOfMethods, methods, signatures, glue_implementMethod,
-                3, 
+                4, 
+                @selector(init), "@8@0:4", glue_initToManaged,
                 @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
                 @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
                 @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
     }
+    else
+        AddMethods(new_class, 
+                numOfMethods, methods, signatures, glue_implementMethod,
+                3, 
+                @selector(init), "@8@0:4", glue_initToManaged,
+                @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
+                @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
 
     return new_class;
 }

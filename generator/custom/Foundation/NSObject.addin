@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.22 2004/07/02 17:15:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.23 2004/07/02 21:45:58 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -130,6 +130,21 @@ Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			SetRaw(raw,release);
 		}
 
+		public object _GetInstanceVar(string name,Type t)
+		{
+			return BridgeHelper.GetInstanceVar(Raw,name,t);
+		}
+
+		public void _SetInstanceVar(string name,object value)
+		{
+			BridgeHelper.SetInstanceVar(Raw,name,value);
+		}
+		
+		public void _UpdateMembers()
+		{
+			BridgeHelper.UpdateMembers(this);
+		}
+
 		public IntPtr Raw {
 			get { return _obj; }
 		}
@@ -176,18 +191,22 @@ Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, 
 Console.WriteLine("DEBUG: ObjC asked us to make {0} for 0x{1,8:x}", className, (int)raw);
 
 			Type myType = TypeConverter.NS2Type(className);
+			IntPtr cls;
 			if (!NSClasses.Contains(myType)) {
-				IntPtr cls = Apple.Foundation.Class.Get(myType.Name);
+				cls = Apple.Foundation.Class.Get(myType.Name);
 				if (cls == IntPtr.Zero)
 					cls = NSRegisterClass(myType);
 
 				NSClasses[myType] = cls;
 			}
+			else cls = (IntPtr)NSClasses[myType];
 
 			NSObject managedObject = (NSObject)NS2Net(raw);
 			managedObject.SetRaw(IntPtr.Zero,false);
-            managedObject.SetRaw(raw,true);
-            managedObject._delegate = new BridgeDelegate(managedObject.MethodInvoker);
+			managedObject.SetRaw(raw,true);
+			managedObject._delegate = new BridgeDelegate(managedObject.MethodInvoker);
+			if (class_getInstanceMethod(cls, NSString.NSSelector("initWithManagedDelegate:")) != IntPtr.Zero)
+				DotNetForwarding_initWithManagedDelegate(raw,managedObject._delegate);
 
 			NativeObjects[raw] = managedObject;
 		}
@@ -215,11 +234,34 @@ Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw)
 #endif
 		}
 
+		delegate int ClassHandlerDelegate(string className);
+		[DllImport("libCocoaSharpGlue.dylib")]
+		static extern void InitGlue(ClassHandlerDelegate del);
+		static ClassHandlerDelegate sClassHandler;
+	
+		static int ClassHandler(string className) {
+Console.WriteLine("DEBUG: ClassHandler: " + className);
+			Type t = TypeConverter.NS2Type(className);
+			if (t != null) {
+				NSRegisterClass(t);
+				return 1;
+			}
+			return 0;
+		}
+
+		static NSObject() {
+			sClassHandler = new ClassHandlerDelegate(ClassHandler);
+			InitGlue(sClassHandler);
+		}
+
 		#endregion
 
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.23  2004/07/02 21:45:58  urs
+// Initial POC for NIB binding, make test/nib work
+//
 // Revision 1.22  2004/07/02 17:15:27  gnorton
 // NIB hack workaround fixed.
 //
