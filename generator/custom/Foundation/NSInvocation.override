@@ -20,17 +20,17 @@
 				Type valueType = isNull ? null : value.GetType();
 				bool isValueType = !isNull &amp;&amp; valueType.IsPrimitive;
 				IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
-//Console.WriteLine("DEBUG: NSInvocation: (-setReturnValue:) [value=" + value + "] isValueType=" + isValueType + ", ptr=" + retVal);
+try { Console.WriteLine("DEBUG: NSInvocation: (-setReturnValue:) [value=" + value + "] isValueType=" + isValueType + ", ptr=0x{0,8:x}", (int)retVal); } catch { Console.WriteLine("ERROR: NSInvocation: (-setReturnValue:)"); }
 				if(isNull)
 					Marshal.WriteIntPtr(retVal,IntPtr.Zero);
 				else if (isValueType) {
 					Marshal.WriteIntPtr(retVal,IntPtr.Zero);
-					if (valueType == typeof(bool)) Marshal.WriteByte(retVal, (byte)((bool)value ? 1 : 0));
-					else if (valueType == typeof(byte)) Marshal.WriteByte(retVal, (byte)value);
-					else if (valueType == typeof(sbyte)) Marshal.WriteByte(retVal, (byte)(sbyte)value);
-					else if (valueType == typeof(char)) Marshal.WriteInt16(retVal, (Int16)(char)value);
-					else if (valueType == typeof(Int16)) Marshal.WriteInt16(retVal, (Int16)value);
-					else if (valueType == typeof(UInt16)) Marshal.WriteInt16(retVal, (Int16)(UInt16)value);
+					if (valueType == typeof(bool)) Marshal.WriteByte(retVal, 3, (byte)((bool)value ? -1 : 0));
+					else if (valueType == typeof(byte)) Marshal.WriteByte(retVal, 3, (byte)value);
+					else if (valueType == typeof(sbyte)) Marshal.WriteByte(retVal, 3, (byte)(sbyte)value);
+					else if (valueType == typeof(char)) Marshal.WriteInt16(retVal, 2, (Int16)(char)value);
+					else if (valueType == typeof(Int16)) Marshal.WriteInt16(retVal, 2, (Int16)value);
+					else if (valueType == typeof(UInt16)) Marshal.WriteInt16(retVal, 2, (Int16)(UInt16)value);
 					else if (valueType == typeof(Int32)) Marshal.WriteInt32(retVal, (Int32)value);
 					else if (valueType == typeof(UInt32)) Marshal.WriteInt32(retVal, (Int32)(UInt32)value);
 					else if (valueType == typeof(Int64)) Marshal.WriteInt64(retVal, (Int64)value);

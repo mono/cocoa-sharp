@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.44 2004/06/30 16:51:00 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.45 2004/06/30 19:29:22 urs Exp $
 //
 
 using System;
@@ -832,7 +832,8 @@ namespace ObjCManagedExporter
 				case "internal": case "if": case "else": case "switch":
 				case "for": case "foreach": case "while": case "do":
 				case "case": case "return": case "default":
-				case "continue": case "break":
+				case "continue": case "break": case "event": case "checked":
+				case "unsafe":
 					return name + "_";
 			}
 			return name;
@@ -916,9 +917,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.45  2004/06/30 19:29:22  urs
+//	Cleanup
+//
 //	Revision 1.44  2004/06/30 16:51:00  urs
 //	Making monodoc happy
-//
+//	
 //	Revision 1.43  2004/06/29 13:35:51  urs
 //	make tree green again, I like green :)
 //	

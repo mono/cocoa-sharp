@@ -304,7 +304,7 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 	[ObjCExport("outlineView:isItemExpandable:")]
 	public bool OutlineViewIsItemExpandable(NSOutlineView outlineView, object item)
 	{
-		return OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
+		return false; //since it crashes with true: OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
 	}
 
 	[ObjCExport("outlineView:child:ofItem:")]

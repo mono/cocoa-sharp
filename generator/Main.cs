@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.37 2004/06/29 03:32:58 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.38 2004/06/30 19:29:22 urs Exp $
 //
 
 using System;
@@ -56,9 +56,9 @@ namespace ObjCManagedExporter
     
 		private void ParseFile(FileSystemInfo _toParse, Framework f) 
 		{
-			ArrayList _imports = new ArrayList();
-			_imports.Add(string.Format("{0}/{1}", f.Name, _toParse.Name));
-			_imports.Add("Foundation/NSString.h");
+			IDictionary _imports = new Hashtable();
+			_imports[string.Format("{0}/{1}", f.Name, _toParse.Name)] = true;
+			_imports["Foundation/NSString.h"] = true;
 			if(!_toParse.Name.EndsWith(".h")) 
 				return;
                 
@@ -90,7 +90,7 @@ namespace ObjCManagedExporter
 			}
             
 			foreach(Match m in _importRegex.Matches(_headerData)) {
-				_imports.Add(m.Groups[1].Value);
+				_imports[m.Groups[1].Value] = true;
 //Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": import: " + m.Groups[1].Value);
 				_headerData = _headerData.Replace(m.Value, "");
 			}
@@ -99,7 +99,10 @@ namespace ObjCManagedExporter
 				Protocol _p = new Protocol(m.Groups[1].Value, m.Groups[3].Value, f.Name);
 //Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @protocol: " + _p.Name + ", " + f.Name + ", value=" + m.Value.Replace("\n","\\n"));
 				_p.AddMethods(m.Groups[4].Value);
-				Protocols.Add(_p.Name, _p);
+				if (Protocols.Contains(_p.Name))
+					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @protocol: " + _p.Name + " is already defined.");
+				else
+					Protocols[_p.Name] = _p;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
             
@@ -107,8 +110,11 @@ namespace ObjCManagedExporter
 				Category _c = new Category(m.Groups[2].Value, m.Groups[1].Value, f.Name);
 //Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @category: " + _c.Name + ", " + f.Name);
 				_c.AddMethods(m.Groups[3].Value);
-				_c.Imports = (string[])_imports.ToArray(typeof(string));
-				Categories.Add(string.Format("{0}_{1}", _c.Name, _c.Class), _c);
+				_c.Imports = (string[])new ArrayList(_imports.Keys).ToArray(typeof(string));
+				if (Categories.Contains(string.Format("{0}_{1}", _c.Name, _c.Class)))
+					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @category: " + _c.Name + " is already defined.");
+				else
+					Categories[string.Format("{0}_{1}", _c.Name, _c.Class)] = _c;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
             
@@ -117,8 +123,11 @@ namespace ObjCManagedExporter
 				Interface _i = new Interface(m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value, f.Name);
 //Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @interface: " + _i.Name + ", " + f.Name);
 				_i.AddMethods(m.Groups[6].Value);
-				_i.Imports = (string[])_imports.ToArray(typeof(string));
-				Interfaces.Add(_i.Name, _i);
+				_i.Imports = (string[])new ArrayList(_imports.Keys).ToArray(typeof(string));
+				if (Interfaces.Contains(_i.Name))
+					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @interface: " + _i.Name + " is already defined.");
+				else
+					Interfaces[_i.Name] = _i;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
             
@@ -126,14 +135,20 @@ namespace ObjCManagedExporter
 			{
 				// We found an enum
 				CEnum _s = new CEnum(m.Groups[3].Value, m.Groups[2].Value, f.Name);
-				Enums.Add(m.Groups[3].Value, _s);
+				if (Enums.Contains(_s.Name))
+					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @enum: " + _s.Name + " is already defined.");
+				else
+					Enums[m.Groups[3].Value] = _s;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
 			foreach (Match m in _structRegex.Matches(_headerData)) 
 			{
 				// We found an struct
 				Struct _s = new Struct(m.Groups[3].Value, m.Groups[2].Value, f.Name);
-				Structs.Add(m.Groups[3].Value, _s);
+				if (Interfaces.Contains(_s.Name))
+					Console.WriteLine("ERROR: " + f.Name + "/" + _toParse.Name + ": @struct: " + _s.Name + " is already defined.");
+				else
+					Structs[m.Groups[3].Value] = _s;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
 //Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
@@ -267,7 +282,9 @@ namespace ObjCManagedExporter
 						//Console.WriteLine();
 					}
 
-				ArrayList _categoryImports = new ArrayList(i.Imports);
+				IDictionary _categoryImports = new Hashtable();
+				foreach (string import in i.Imports)
+					_categoryImports[import] = true;
 				foreach (DictionaryEntry e in Categories) 
 				{
 					string _key = (string)e.Key;
@@ -286,11 +303,12 @@ namespace ObjCManagedExporter
 						//Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
 						//Console.Write(":{0}", _cat.Methods.Keys.Count);
 						i.AddAllMethods(_cat.Methods.Values,false);
-						_categoryImports.AddRange(_cat.Imports);
+						foreach (string import in _cat.Imports)
+							_categoryImports[import] = true;
 						//Console.WriteLine();
 					}
 				}
-				i.Imports = (string[])_categoryImports.ToArray(typeof(string));
+				i.Imports = (string[])new ArrayList(_categoryImports.Keys).ToArray(typeof(string));
 
 				//Console.WriteLine("\tTOTAL:{0}", i.AllMethods.Count);
 			}
@@ -416,9 +434,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.38  2004/06/30 19:29:22  urs
+//	Cleanup
+//
 //	Revision 1.37  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
-//
+//	
 //	Revision 1.36  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
 //	

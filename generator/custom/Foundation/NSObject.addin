@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.13 2004/06/30 16:51:00 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.14 2004/06/30 19:29:23 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -86,8 +86,11 @@
 		~NSObject() {
 			if (Raw != IntPtr.Zero)
 				Objects.Remove(Raw);
+			// this will leak memory, but we have to synchronize managed and objc runtime
+#if RELEASE_MEM
 			if (Raw != IntPtr.Zero && _release)
 				release();
+#endif
 		}
 
 		public NSObject() {
@@ -134,6 +137,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.14  2004/06/30 19:29:23  urs
+// Cleanup
+//
 // Revision 1.13  2004/06/30 16:51:00  urs
 // Making monodoc happy
 //
