@@ -75,6 +75,7 @@ run: Test.exe Loader
 	mkdir -p Loader.app/Contents/Resources
 	cp ../sample/SimpleWindow/*.icns Loader.app/Contents/Resources
 	cp Info.plist Loader.app/Contents/
+	cp mono.icns Loader.app/Contents/Resources
 	cp Test.exe Loader.app/Contents/Resources
 	cp *.dll* Loader.app/Contents/Resources
 	cp *Glue* Loader.app/Contents/Resources

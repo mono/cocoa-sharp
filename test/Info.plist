@@ -4,5 +4,7 @@
 <dict>
 	<key>CFBundleExecutable</key>
 	<string>Loader</string>
+        <key>CFBundleIconFile</key>
+        <string>mono.icns</string>
 </dict>
 </plist>
