@@ -1,0 +1,240 @@
+ASSEMBLY_NAME=Apple.Foundation
+ASSEMBLY=$(ASSEMBLY_NAME).dll
+CLEANFILES=$(ASSEMBLY) cocoa-sharp.snk
+DISTCLEANFILES=AssemblyInfo.cs
+noinst_DATA=$(ASSEMBLY) $(ASSEMBLY).config
+EXTRA_DIST= \
+	$(ASSEMBLY).config \
+	AssemblyInfo.cs.in
+
+sources= \
+	AssemblyInfo.cs \
+	AEEventClass.cs \
+	AEEventID.cs \
+	AEKeyword.cs \
+	AEReturnID.cs \
+	AETransactionID.cs \
+	BridgeHelper.cs \
+	Class.cs \
+	CoreFile.cs \
+	DescType.cs \
+	INSCoding.cs \
+	INSCopying.cs \
+	INSDecimalNumberBehaviors.cs \
+	INSLocking.cs \
+	INSMutableCopying.cs \
+	INSObjCTypeSerializationCallBack.cs \
+	INSObject.cs \
+	INSURLAuthenticationChallengeSender.cs \
+	INSURLHandleClient.cs \
+	INSURLProtocolClient.cs \
+	NSAppleEventDescriptor.cs \
+	NSAppleEventManager.cs \
+	NSAppleEventManagerSuspensionID.cs \
+	NSAppleScript.cs \
+	NSArchiver.cs \
+	NSArray.cs \
+	NSAssertionHandler.cs \
+	NSAttributedString.cs \
+	NSAutoreleasePool.cs \
+	NSBundle.cs \
+	NSCachedURLResponse.cs \
+	NSCalculationError.cs \
+	NSCalendarDate.cs \
+	NSCFArray.cs \
+	NSCFString.cs \
+	NSCharacterSet.cs \
+	NSClassDescription.cs \
+	NSCloneCommand.cs \
+	NSCloseCommand.cs \
+	NSCoder.cs \
+	NSComparisonResult.cs \
+	NSConcreteData.cs \
+	NSConcreteNotification.cs \
+	NSConditionLock.cs \
+	NSConnection.cs \
+	NSConstantString.cs \
+	NSCountCommand.cs \
+	NSCountedSet.cs \
+	NSCreateCommand.cs \
+	NSData.cs \
+	NSDate.cs \
+	NSDateFormatter.cs \
+	NSDecimal.cs \
+	NSDecimalNumber.cs \
+	NSDecimalNumberHandler.cs \
+	NSDeleteCommand.cs \
+	NSDeserializer.cs \
+	NSDictionary.cs \
+	NSDirectoryEnumerator.cs \
+	NSDistantObject.cs \
+	NSDistantObjectRequest.cs \
+	NSDistributedLock.cs \
+	NSDistributedNotificationCenter.cs \
+	NSEnumerator.cs \
+	NSError.cs \
+	NSException.cs \
+	NSExistsCommand.cs \
+	NSFileHandle.cs \
+	NSFileManager.cs \
+	NSFormatter.cs \
+	NSGetCommand.cs \
+	NSHandler2.cs \
+	NSHashEnumerator.cs \
+	NSHashTableCallBacks.cs \
+	NSHost.cs \
+	NSHTTPCookie.cs \
+	NSHTTPCookieAcceptPolicy.cs \
+	NSHTTPCookieStorage.cs \
+	NSHTTPURLResponse.cs \
+	NSIndexSet.cs \
+	NSIndexSpecifier.cs \
+	NSInputStream.cs \
+	NSInsertionPosition.cs \
+	NSInvocation.cs \
+	NSKeyedArchiver.cs \
+	NSKeyedUnarchiver.cs \
+	NSKeyValueChange.cs \
+	NSLock.cs \
+	NSLogicalTest.cs \
+	NSMachBootstrapServer.cs \
+	NSMachPort.cs \
+	NSMapEnumerator.cs \
+	NSMapTableKeyCallBacks.cs \
+	NSMessagePort.cs \
+	NSMessagePortNameServer.cs \
+	NSMethodSignature.cs \
+	NSMiddleSpecifier.cs \
+	NSMoveCommand.cs \
+	NSMutableArray.cs \
+	NSMutableAttributedString.cs \
+	NSMutableCharacterSet.cs \
+	NSMutableData.cs \
+	NSMutableDictionary.cs \
+	NSMutableIndexSet.cs \
+	NSMutableSet.cs \
+	NSMutableString.cs \
+	NSMutableURLRequest.cs \
+	NSNameSpecifier.cs \
+	NSNetService.cs \
+	NSNetServiceBrowser.cs \
+	NSNotification.cs \
+	NSNotificationCenter.cs \
+	NSNotificationCoalescing.cs \
+	NSNotificationQueue.cs \
+	NSNotificationSuspensionBehavior.cs \
+	NSNull.cs \
+	NSNumber.cs \
+	NSNumberFormatter.cs \
+	NSObject.cs \
+	NSOutputStream.cs \
+	NSPipe.cs \
+	NSPoint.cs \
+	NSPort.cs \
+	NSPortCoder.cs \
+	NSPortMessage.cs \
+	NSPortNameServer.cs \
+	NSPositionalSpecifier.cs \
+	NSPostingStyle.cs \
+	NSProcessInfo.cs \
+	NSPropertyListFormat.cs \
+	NSPropertyListMutabilityOptions.cs \
+	NSPropertyListSerialization.cs \
+	NSPropertySpecifier.cs \
+	NSProtocolChecker.cs \
+	NSProxy.cs \
+	NSQuitCommand.cs \
+	NSRandomSpecifier.cs \
+	NSRange.cs \
+	NSRangeSpecifier.cs \
+	NSRect.cs \
+	NSRectEdge.cs \
+	NSRecursiveLock.cs \
+	NSRelativePosition.cs \
+	NSRelativeSpecifier.cs \
+	NSRoundingMode.cs \
+	NSRunLoop.cs \
+	NSSaveOptions.cs \
+	NSScanner.cs \
+	NSScriptClassDescription.cs \
+	NSScriptCoercionHandler.cs \
+	NSScriptCommand.cs \
+	NSScriptCommandDescription.cs \
+	NSScriptExecutionContext.cs \
+	NSScriptObjectSpecifier.cs \
+	NSScriptSuiteRegistry.cs \
+	NSScriptWhoseTest.cs \
+	NSSearchPathDomainMask.cs \
+	NSSerializer.cs \
+	NSSet.cs \
+	NSSetCommand.cs \
+	NSSimpleCString.cs \
+	NSSize.cs \
+	NSSocketPort.cs \
+	NSSocketPortNameServer.cs \
+	NSSortDescriptor.cs \
+	NSSpecifierTest.cs \
+	NSSpellServer.cs \
+	NSStream.cs \
+	NSStreamEvent.cs \
+	NSStreamStatus.cs \
+	NSString.cs \
+	NSSwappedDouble.cs \
+	NSTask.cs \
+	NSTestComparisonOperation.cs \
+	NSThread.cs \
+	NSTimer.cs \
+	NSTimeZone.cs \
+	NSUnarchiver.cs \
+	NSUndoManager.cs \
+	NSUniqueIDSpecifier.cs \
+	NSURL.cs \
+	NSURLAuthenticationChallenge.cs \
+	NSURLCache.cs \
+	NSURLCacheStoragePolicy.cs \
+	NSURLConnection.cs \
+	NSURLCredential.cs \
+	NSURLCredentialPersistence.cs \
+	NSURLCredentialStorage.cs \
+	NSURLDownload.cs \
+	NSURLHandle.cs \
+	NSURLHandleStatus.cs \
+	NSURLProtectionSpace.cs \
+	NSURLProtocol.cs \
+	NSURLRequest.cs \
+	NSURLRequestCachePolicy.cs \
+	NSURLResponse.cs \
+	NSUserDefaults.cs \
+	NSValue.cs \
+	NSValueTransformer.cs \
+	NSWhoseSpecifier.cs \
+	NSWhoseSubelementIdentifier.cs \
+	NSXMLParser.cs \
+	NSXMLParserError.cs \
+	NSZone.cs \
+	ObjCClassMemberRepresentation.cs \
+	ObjCClassRepresentation.cs \
+	ObjCConnectAttribute.cs \
+	ObjCExportAttribute.cs \
+	ObjCRegisterAttribute.cs \
+	Protocol.cs \
+	TypeConverter.cs \
+	value.cs 
+
+$(ASSEMBLY): $(sources) cocoa-sharp.snk
+	$(CSC) /nowarn:0114,0108 /out:$(ASSEMBLY) /target:library $(sources)
+
+cocoa-sharp.snk: $(top_srcdir)/cocoa-sharp.snk
+	cp $(top_srcdir)/cocoa-sharp.snk .
+
+install-data-local:
+	@if test -n '$(TARGET)'; then                                           \
+	  echo "$(GACUTIL) /i $(ASSEMBLY) /f $(GACUTIL_FLAGS)"; \
+	  $(GACUTIL) /i $(ASSEMBLY) /f $(GACUTIL_FLAGS) || exit 1;      \
+	fi
+
+uninstall-local:
+	@if test -n '$(TARGET)'; then                                           \
+	  echo "$(GACUTIL) /u $(ASSEMBLY_NAME) $(GACUTIL_FLAGS)";       \
+	  $(GACUTIL) /u $(ASSEMBLY_NAME) $(GACUTIL_FLAGS) || exit 1;    \
+	fi
