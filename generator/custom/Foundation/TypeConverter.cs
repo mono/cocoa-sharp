@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.3 2004/06/25 13:37:52 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.4 2004/06/25 20:23:30 gnorton Exp $
 //
 
 using System;
@@ -26,6 +26,8 @@ namespace Apple.Foundation
 			Type type = Type.GetType("Apple.Foundation." + className + ", Apple.Foundation");
 			if (type == null)
 				type = Type.GetType("Apple.AppKit." + className + ", Apple.AppKit");
+			if (type == null)
+				type = Type.GetType("Apple.WebKit." + className + ", Apple.WebKit");
 			if (type != null) {
 				Console.WriteLine("<Using type: " + type.FullName + ", for Objective-C class: " + className);
 				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
@@ -58,6 +60,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.4  2004/06/25 20:23:30  gnorton
+// WebKit support
+//
 // Revision 1.3  2004/06/25 13:37:52  urs
 // NS2Net string fix
 //
