@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.10 2004/06/28 19:18:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.11 2004/06/28 22:07:43 gnorton Exp $
 //
 
 using System;
@@ -57,7 +57,7 @@ namespace ObjCManagedExporter
 				if (method.IsUnsupported)
 					continue;
 
-				string _methodSig = method.GlueMethodName;
+				string _methodSig = method.Selector;
 				if(!allMethods.Contains(_methodSig)) 
 					allMethods[_methodSig] = method;
 				else 
@@ -86,9 +86,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.11  2004/06/28 22:07:43  gnorton
+//	Updates/bugfixes
+//
 //	Revision 1.10  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
-//
+//	
 //	Revision 1.9  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
 //	

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.35 2004/06/28 21:31:22 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.36 2004/06/28 22:07:43 gnorton Exp $
 //
 
 using System;
@@ -410,16 +410,18 @@ namespace ObjCManagedExporter
 	}
 
 	public class MethodOverride {
-		[XmlAttribute("instance")] public bool InstanceMethod;
 		[XmlAttribute("sel")] public String Selector;
 		[XmlText] public String Method;
 	}
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.36  2004/06/28 22:07:43  gnorton
+//	Updates/bugfixes
+//
 //	Revision 1.35  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
-//
+//	
 //	Revision 1.34  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
 //	

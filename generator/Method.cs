@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.39 2004/06/28 21:31:22 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.40 2004/06/28 22:07:43 gnorton Exp $
 //
 
 using System;
@@ -30,17 +30,15 @@ namespace ObjCManagedExporter
 	}
 
 	public class PropertyMapping {
-		[XmlAttribute("name")] public string Name;
-		[XmlAttribute("instance")] public bool Instance;
 		[XmlAttribute("get")] public string GetSelector;
 		[XmlAttribute("set")] public string SetSelector;
+		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("returntype")] public string ReturnType;
 	}
 
 	public class MethodMapping {
-		[XmlAttribute("name")] public string Name;
-		[XmlAttribute("instance")] public bool Instance;
 		[XmlAttribute("selector")] public string Selector;
+		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("returntype")] public string ReturnType;
 	}
 		
@@ -289,11 +287,11 @@ namespace ObjCManagedExporter
 		{
 			get
 			{
-				if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
-					return mMessageParts[0];
+				string ret = mIsClassMethod ? "+" : "-";
 
-				string ret = string.Empty;
-				
+				if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
+					return ret + mMessageParts[0];
+
 				for(int i = 0; i < mMessageParts.Length; ++i)
 					ret += mMessageParts[i] + ":";
 				return ret;
@@ -414,7 +412,7 @@ namespace ObjCManagedExporter
 			
 			if(_o != null && _o.GlueMethods != null)
 				foreach(MethodOverride _mo in _o.GlueMethods) 
-					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
+					if(_mo.Selector == Selector) {
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						return;
@@ -459,13 +457,16 @@ namespace ObjCManagedExporter
 		public Method GetGetMethod(IDictionary methods, out string propName)
 		{
 			propName = mCSMethodName.Substring(3);
+			string sel = Selector;
+			string prefix = sel.Substring(0,1);
+			sel = sel.Substring(4,sel.Length-5);
 
-			Method get = (Method)methods[propName.Substring(0,1).ToLower() + propName.Substring(1) + "0"];
+			Method get = (Method)methods[prefix + sel.Substring(1,1).ToLower() + sel.Substring(1)];
 			
 			if (get == null)
-				get = (Method)methods["is" + propName + "0"];
+				get = (Method)methods[prefix + "is" + propName];
 			if (get == null)
-				get = (Method)methods[propName + "0"];
+				get = (Method)methods[prefix + propName];
 			
 			propName = MakeCSMethodName(propName);
 			return get;
@@ -516,7 +517,7 @@ namespace ObjCManagedExporter
 			// Check to see if we're overridden
 			if(_o != null && _o.Methods != null)
 				foreach(MethodOverride _mo in _o.Methods) 
-					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
+					if(_mo.Selector == Selector) {
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						mCSAPIDone = true;
@@ -584,14 +585,12 @@ namespace ObjCManagedExporter
                 pm.GetSelector = get.Selector;
             if(set != null)
                 pm.SetSelector = set.Selector;
-            pm.Instance = !mIsClassMethod;
             return pm;
         }
         
 		private MethodMapping GenerateMethodMapping() {
             MethodMapping mm = new MethodMapping();
             mm.Name = mCSMethodName;
-            mm.Instance = !mIsClassMethod;
             mm.Selector = Selector;
             return mm;
         }
@@ -817,9 +816,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.40  2004/06/28 22:07:43  gnorton
+//	Updates/bugfixes
+//
 //	Revision 1.39  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
-//
+//	
 //	Revision 1.38  2004/06/28 19:20:38  gnorton
 //	Added mapping classes
 //	
