@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.38 2004/06/30 19:29:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.39 2004/07/01 12:41:33 urs Exp $
 //
 
 using System;
@@ -202,21 +202,8 @@ namespace ObjCManagedExporter
 				if(i.Framework != _toprocess.Name)
 					continue;
 
-				TextWriter _gs = null;
-
 				if (OutputOC)
-				{
-					_gs = Element.OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
-
-					foreach(string import in i.Imports)
-						_gs.WriteLine("#import <{0}>", import);
-
-					_gs.WriteLine();
-
-					foreach (Method _toOutput in i.AllMethods.Values)
-						_toOutput.ObjCMethod(i.ExtrasName, _gs);
-					_gs.Close();
-				}
+					i.WriteOCFile(mConfig);
 
 				if (OutputCS)
 					i.WriteFile(mConfig);
@@ -434,9 +421,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.39  2004/07/01 12:41:33  urs
+//	- Better verbose support, individual verbose ignore per selector and per interface
+//	- Minor improvements with monodoc
+//
 //	Revision 1.38  2004/06/30 19:29:22  urs
 //	Cleanup
-//
+//	
 //	Revision 1.37  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
 //	

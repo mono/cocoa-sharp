@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.23 2004/06/29 03:32:58 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.24 2004/07/01 12:41:33 urs Exp $
 //
 
 using System;
@@ -88,6 +88,24 @@ namespace ObjCManagedExporter
 			}
 		}
 
+		public void WriteOCFile(Configuration config)
+		{
+			TextWriter _gs = OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", Framework, Name);
+
+			foreach(string import in Imports)
+				_gs.WriteLine("#import <{0}>", import);
+
+			_gs.WriteLine();
+			_gs.WriteLine("BOOL sIs{0}Verbose = YES;",Name);
+			_gs.WriteLine("BOOL Is{0}Verbose() {{ return sIs{0}Verbose; }}",Name);
+			_gs.WriteLine("void Set{0}Verbose(BOOL verbose) {{ sIs{0}Verbose = verbose; }}",Name);
+			_gs.WriteLine();
+
+			foreach (Method _toOutput in AllMethods.Values)
+				_toOutput.ObjCMethod(ExtrasName, _gs);
+			_gs.Close();
+		}
+
 		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
 			foreach (Method _toOutput in AllMethods.Values)
@@ -125,6 +143,11 @@ namespace ObjCManagedExporter
 				_cs.WriteLine("        #region -- Internal Members --");
 				_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",Name);
 				_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Apple.Foundation.Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
+				_cs.WriteLine("        [DllImport(\"{0}\")]",Framework + "Glue");
+				_cs.WriteLine("        protected extern static bool Is{0}Verbose();",Name);
+				_cs.WriteLine("        [DllImport(\"{0}\")]",Framework + "Glue");
+				_cs.WriteLine("        protected extern static void Set{0}Verbose(bool verbose);",Name);
+				_cs.WriteLine("        public static bool _Verbose {{ get {{ return Is{0}Verbose(); }} set {{ Set{0}Verbose(value); }} }}",Name);
 				_cs.WriteLine("        #endregion");
 				_cs.WriteLine();
 			}
@@ -188,9 +211,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.24  2004/07/01 12:41:33  urs
+//	- Better verbose support, individual verbose ignore per selector and per interface
+//	- Minor improvements with monodoc
+//
 //	Revision 1.23  2004/06/29 03:32:58  urs
 //	Cleanup mapping usage: only one bug left
-//
+//	
 //	Revision 1.22  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
 //	

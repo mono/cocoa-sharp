@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.45 2004/06/30 19:29:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.46 2004/07/01 12:41:33 urs Exp $
 //
 
 using System;
@@ -29,14 +29,19 @@ namespace ObjCManagedExporter
 		[XmlElement("method")] public MethodMapping[] Methods;
 	}
 
-	public class PropertyMapping : IComparable
+	public class MappingInfo
+	{
+		[XmlAttribute("name")] public string Name;
+		[XmlAttribute("returntype")] public string ReturnType;
+		[XmlAttribute("noverbose")] public bool NoVerbose;
+	}
+
+	public class PropertyMapping : MappingInfo, IComparable
 	{
 		[XmlAttribute("get")] public string GetSelector;
 		[XmlAttribute("set")] public string SetSelector;
-		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("getsignature")] public string GetSignature;
 		[XmlAttribute("setsignature")] public string SetSignature;
-		[XmlAttribute("returntype")] public string ReturnType;
 
 		public int CompareTo(object obj) 
 		{
@@ -52,12 +57,10 @@ namespace ObjCManagedExporter
 		}
 	}
 
-	public class MethodMapping : IComparable
+	public class MethodMapping : MappingInfo, IComparable
 	{
 		[XmlAttribute("selector")] public string Selector;
-		[XmlAttribute("name")] public string Name;
 		[XmlAttribute("signature")] public string Signature;
-		[XmlAttribute("returntype")] public string ReturnType;
 
 		public int CompareTo(object obj) 
 		{
@@ -283,6 +286,15 @@ namespace ObjCManagedExporter
 		public bool IsClassMethod { get { return mIsClassMethod; } }
 		public string GlueMethodName { get { return mGlueMethodName; } }
 		public string MethodDeclaration { get { return mMethodDeclaration; } }
+		public MappingInfo Mapping { get { return (MappingInfo)NameMappings[Selector]; } }
+		public bool IsVerbose
+		{
+			get
+			{
+				MappingInfo info = Mapping;
+				return info == null ? true : !info.NoVerbose;
+			}
+		}
 		
 		public void SetCSAPIDone()
 		{
@@ -407,12 +419,16 @@ namespace ObjCManagedExporter
 			if (!isVoid)
 				LogFormatForType(mReturnDeclarationType,"_ret"," --> ",ref formatArgs,ref logArgs);
 
+			w.WriteLine("// " + mMethodDeclaration);
 			w.WriteLine("{0} {1}_{2}({3}) {{",mReturnDeclarationType,name,mGlueMethodName,paramsStr);
 			if (mIsClassMethod)
 				w.WriteLine("\tif (!CLASS) CLASS = [{0} class];",name);
 			if (!isVoid)
 				w.WriteLine("\t{0} _ret = {1};",mReturnDeclarationType,expr);
-			w.WriteLine("\tNSLog(@\"{0}: %@{2}\\n\", {1}{3});",name + "_" + mGlueMethodName, receiver, formatArgs, logArgs);
+			if (IsVerbose) {
+				w.WriteLine("\tif (Is{0}Verbose())",name);
+				w.WriteLine("\t\tNSLog(@\"{0}: %@{2}\\n\", {1}{3});",name + "_" + mGlueMethodName, receiver, formatArgs, logArgs);
+			}
 			if (isVoid)
 				w.WriteLine("\t{0};",expr);
 			else
@@ -917,9 +933,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.46  2004/07/01 12:41:33  urs
+//	- Better verbose support, individual verbose ignore per selector and per interface
+//	- Minor improvements with monodoc
+//
 //	Revision 1.45  2004/06/30 19:29:22  urs
 //	Cleanup
-//
+//	
 //	Revision 1.44  2004/06/30 16:51:00  urs
 //	Making monodoc happy
 //	

@@ -91,6 +91,7 @@
 		};
 		08FB779DFE84155DC02AAC07 = {
 			children = (
+				179BFD810693680000BC540F,
 				B23E7155066EE6760022D01B,
 				B23E7156066EE6760022D01B,
 				08FB779EFE84155DC02AAC07,
@@ -114,6 +115,30 @@
 //082
 //083
 //084
+//170
+//171
+//172
+//173
+//174
+		179BFD810693680000BC540F = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = WebKit.framework;
+			path = /System/Library/Frameworks/WebKit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		179BFD820693680000BC540F = {
+			fileRef = 179BFD810693680000BC540F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//170
+//171
+//172
+//173
+//174
 //1A0
 //1A1
 //1A2
@@ -499,6 +524,7 @@
 				B2FB26790679FBF700F20944,
 				B2FB267A0679FBF700F20944,
 				B2FB267B0679FBF700F20944,
+				179BFD820693680000BC540F,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

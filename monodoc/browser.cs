@@ -104,6 +104,7 @@ class Browser : NSObject {
 
 	// For the status bar.
 	uint context_id;
+	BrowserController browserController;
 
 	public Browser ()
 	{
@@ -117,7 +118,7 @@ class Browser : NSObject {
 	
 		// Do the monodoc stuff
 		help_tree = RootTree.LoadTree ();
-		BrowserController browserController = new BrowserController(help_tree);
+		browserController = new BrowserController(help_tree);
 
 		Window = new NSWindow(new NSRect(200, 180, 600, 480),
 			(uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask 
@@ -173,6 +174,7 @@ class Browser : NSObject {
 	
 		NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
 		Webview = new WebView(new NSRect(0, 0, 600, 480));
+		Webview.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		mainFrame = (WebFrame)Webview.mainFrame;
 
 		((NSView)Window.contentView).addSubview(Webview);
@@ -187,7 +189,11 @@ class Browser : NSObject {
 		BrowserItem bi = ov.itemAtRow(ov.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
 		if(bi.node.URL != null)
-			mainFrame.loadHTMLString_baseURL(help_tree.RenderUrl(bi.node.URL, out bi.node), null);
+		{
+			string url = help_tree.RenderUrl(bi.node.URL, out bi.node);
+			if (url != null)
+				mainFrame.loadHTMLString_baseURL(url, null);
+		}
 	}
 
 /*
@@ -237,16 +243,19 @@ class Browser : NSObject {
 class BrowserItem : NSObject {
 	internal Node node;
 	internal IList items = null;
+	internal NSString caption;
 
 	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release) {
-		Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw=" + _ptr);
+		Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8:x}", (int)_ptr);
 	}
 	public BrowserItem(Node _node) {
 		node = _node;
-		Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw=" + Raw);
+		caption = new NSString(node.Caption);
+		caption.retain();
+		Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
 	}
 	~ BrowserItem() {
-		Console.WriteLine("DEBUG: ~" + this + " Raw=" + Raw);
+		Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 		SetRaw(IntPtr.Zero,false);
 	}
 	
@@ -270,7 +279,7 @@ class BrowserItem : NSObject {
 	public object ValueAt(object identifier)
 	{
 Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
-		return node != null ? node.Caption : "";
+		return caption;
 	}
 	public override string ToString()
 	{
@@ -286,8 +295,12 @@ class BrowserController : NSObject {
 		help_tree = _tree;
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
+		Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
 	}
-	
+	~ BrowserController () {
+		Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
+	}
+
 	[ObjCExport("outlineView:numberOfChildrenOfItem:")]
 	public int OutlineViewNumberOfChildrenOfItem(NSOutlineView outlineView, object item)
 	{

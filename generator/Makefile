@@ -13,7 +13,7 @@ generator.run: generator.exe Foundation
 	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml) && touch generator.run
 
 cs: generator.exe Foundation
-	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml -out:CS)
+	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml -out:CS) && touch generator.run
 
 clean:
 	rm -f generator.exe generator.run Foundation
