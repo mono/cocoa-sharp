@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.11 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.12 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -17,13 +17,57 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-using Apple.Tools;
+namespace Apple.Tools
+{
+	using Apple.Foundation;
+	
+	public class TypeConverter {
+		public static object NS2Net(IntPtr raw) {
+			NSObject ret = new NSObject(raw,false);
+			string className = ret.ClassName;
+			Type type = Type.GetType("Apple.Foundation." + className + ", Apple.Foundation");
+			if (type == null)
+				type = Type.GetType("Apple.AppKit." + className + ", Apple.AppKit");
+			if (type != null) {
+				Console.WriteLine("<Using type: " + type.FullName + ", for Objective-C class: " + className);
+				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
+					new Type[] {typeof(IntPtr),typeof(bool)},null);
+				if (c != null)
+					ret = (NSObject)c.Invoke(new object[]{raw,false});
+				else
+					Console.WriteLine("No constructor for " + type.FullName + " with (IntPtr,bool) found");
+			}
+			else
+				Console.WriteLine(className + " not in Foundation or AppKit");
+			return ret;
+		}
+		
+		public static IntPtr Net2NS(object obj) {
+			if (obj == null) return IntPtr.Zero;
+			NSObject nsObj = obj as NSObject;
+			if (nsObj != null) return nsObj.Raw;
+			string str = obj as string;
+			if (str != null) return new NSString(str).Raw;
+			throw new Exception("Net2NS: not handled type of object: " + obj.GetType());
+		}
+	}
+}
 
 namespace Apple.Foundation
 {
+	using Apple.Tools;
+	
 	public class NSObject : BridgeHelper {
+		public static object NS2Net(IntPtr raw) {
+			return TypeConverter.NS2Net(raw);
+		}
+		
+		public static IntPtr Net2NS(object obj) {
+			return TypeConverter.Net2NS(obj);
+		}
+	
 		static IntPtr _NSObject_class;
-		public static IntPtr NSObject_class { get { if (_NSObject_class == IntPtr.Zero) _NSObject_class = NSString.NSClass("NSObject"); return _NSObject_class; } }
+		public static IntPtr NSObject__class { get { if (_NSObject_class == IntPtr.Zero) _NSObject_class = Class.Get("NSObject"); return _NSObject_class; } }
 
 		private IntPtr _obj;
 		protected bool _release;
@@ -32,23 +76,29 @@ namespace Apple.Foundation
 		#region -- Glue --
 		[DllImport("Glue")]
 		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName, int nummethods, IntPtr[] methods, IntPtr[] signatures);
-		
+
 		[DllImport("Glue")]
 		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
 		#endregion
-		
+
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		protected static extern IntPtr NSObject__alloc(IntPtr CLASS);
+		protected internal static extern IntPtr NSObject__alloc(IntPtr CLASS);
 
 		[DllImport("FoundationGlue")]
-		protected static extern IntPtr NSObject_init(IntPtr THIS);
+		protected internal static extern IntPtr NSObject_class(IntPtr THIS);
 
 		[DllImport("FoundationGlue")]
-		protected static extern void NSObject_release(IntPtr THIS);
-		
+		protected internal static extern IntPtr NSObject_className(IntPtr THIS);
+
+		[DllImport("FoundationGlue")]
+		protected internal static extern IntPtr NSObject_init(IntPtr THIS);
+
+		[DllImport("FoundationGlue")]
+		protected internal static extern void NSObject_release(IntPtr THIS);
+
 		[DllImport("Glue")]
-		protected static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
+		protected internal static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
 		#endregion
 
 		protected enum GlueDelegateWhat {
@@ -84,7 +134,7 @@ namespace Apple.Foundation
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					NSInvocation invocation = new NSInvocation(arg,false);
-					InvokeMethodByObject(this, invocation.selector(), null);
+					InvokeMethodByObject(this, invocation.Selector, null);
 					break;
 				}
 			}
@@ -93,18 +143,19 @@ namespace Apple.Foundation
 		
 		public NSObject() : this(NSObject__alloc(IntPtr.Zero),true) {}
 		~NSObject() {
-		    if (Raw != IntPtr.Zero && _release)
-		        release();
+			if (Raw != IntPtr.Zero && _release)
+				release();
 		}
 
-		protected NSObject(IntPtr raw,bool release) {
+		protected internal NSObject(IntPtr raw,bool release) {
 			SetRaw(raw,release);
 		}
 
 		public IntPtr Raw {
 			get { return _obj; }
-        }
-        public void SetRaw(IntPtr raw,bool release) {
+		}
+
+		public void SetRaw(IntPtr raw,bool release) {
 		    if (raw != IntPtr.Zero)
 			    Objects [raw] = new WeakReference (this);
 			_obj = raw;
@@ -120,9 +171,50 @@ namespace Apple.Foundation
 			return this;
 		}
 
+		public Class Class {
+			get { return new Class(NSObject_class(Raw),false); }
+		}
+
+		public string ClassName {
+			get { return new NSString(NSObject_className(Raw),false).ToString(); }
+		}
+
 		public void release() {
 			NSObject_release(Raw);
 			SetRaw(IntPtr.Zero,false);
+		}
+	}
+
+	public class Class : NSObject {
+		/*
+		void class_addMethods(Class aClass, struct objc_method_list* methodList);
+		id class_createInstance(Class theClass, unsigned additionalByteCount);
+		Method class_getClassMethod(Class aClass, SEL aSelector);
+		Method class_getInstanceMethod(Class aClass, SEL aSelector);
+		Ivar class_getInstanceVariable(Class aClass, const char* aVariableName);
+		int class_getVersion(Class theClass);
+		struct objc_method_list* class_nextMethodList(Class theClass, void** iterator);
+		Class class_poseAs(Class imposter, Class original);
+		void class_removeMethods(Class aClass, struct objc_method_list* methodList);
+		void class_setVersion(Class theClass, int version);
+		*/
+
+		#region -- Foundation --
+		[DllImport("Foundation")]
+		protected static extern IntPtr /*(Class)*/ NSClassFromString(IntPtr /*(NSString*)*/ str);
+		#endregion
+
+		public static IntPtr Get(string className) {
+			return NSClassFromString(new NSString(className).Raw);
+		}
+
+		private Class() : this(IntPtr.Zero,false) {}
+
+		protected internal Class(IntPtr raw,bool release) : base(raw,release) {}
+		public Class(string name) : this(NSClassFromString(new NSString(name).Raw),false) {}
+
+		public string Name {
+			get { return ClassName; }
 		}
 	}
 }
@@ -130,6 +222,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.12  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.11  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.3 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.4 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -18,18 +18,18 @@ using System.Runtime.InteropServices;
 namespace Apple.Foundation
 {
 	public class NSInvocation : NSObject {
-		static IntPtr NSInvocation_class = NSString.NSClass("NSInvocation");
+		protected internal static IntPtr NSInvocation_class = Class.Get("NSInvocation");
 		
 		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
-		static extern IntPtr/*(SEL)*/ NSInvocation_selector(IntPtr /*(NSInvocation*)*/ THIS);
+		protected internal static extern IntPtr/*(SEL)*/ NSInvocation_selector(IntPtr /*(NSInvocation*)*/ THIS);
 		#endregion
 
 		public NSInvocation() : this(NSObject__alloc(NSInvocation_class),true) {}
 		protected internal NSInvocation(IntPtr raw,bool release) : base(raw,release) {}
 
-		public string selector() {
-			return NSString.FromSEL(NSInvocation_selector(Raw)).ToString();
+		public string Selector {
+			get { return NSString.FromSEL(NSInvocation_selector(Raw)).ToString(); }
 		}
 	}
 }
@@ -37,6 +37,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSInvocation.cs,v $
+// Revision 1.4  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.3  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

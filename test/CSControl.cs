@@ -32,25 +32,25 @@ class CSControl : NSObject {
 		window.initWithContentRect_styleMask_backing_defer(contentRect, 
 			NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask,
 			NSBackingStoreBuffered, false);
-		window.setTitle(new NSString("Hi Mono"));
+		window.Title = "Hi Mono";
 
 		NSButton monoButton = new NSButton();
 		monoButton.initWithFrame(new NSRect(20, 20, 74, 17));
-		monoButton.setTitle(new NSString("Dismiss"));
-		monoButton.setTarget(this);
-		monoButton.setAction(NSString.NSSelector("_stop"));
+		monoButton.Title = "Dismiss";
+		monoButton.Target = this;
+		monoButton.Action = "_stop";
 		
 		swap1 = new NSButton();
 		swap1.initWithFrame(new NSRect(40, 40, 104, 17));
-		swap1.setTitle(new NSString("Tickle me"));
-		swap1.setTarget(this);
-		swap1.setAction(NSString.NSSelector("_swap"));
+		swap1.Title = "Tickle me";
+		swap1.Target = this;
+		swap1.Action = "_swap";
 
 		NSTextField text = new NSTextField();
 		text.initWithFrame(new NSRect(100, 200, 78, 20));
-		text.setEditable(false);
-		text.setBezeled(true);
-		text.setStringValue(new NSString("Hello, Mono"));
+		text.Editable = false;
+		text.Bezeled = true;
+		text.StringValue = "Hello, Mono";
 
 		((NSView)window.contentView()).addSubview(monoButton);
 		((NSView)window.contentView()).addSubview(swap1);
@@ -59,12 +59,6 @@ class CSControl : NSObject {
 		window.makeKeyAndOrderFront(null);
 
 		NSApplication.sharedApplication().runModalForWindow(window);
-
-		GC.Collect();
-		window.release();
-		monoButton.release();
-		swap1.release();
-		text.release();
 	}
 
 	public void init() {
@@ -77,6 +71,6 @@ class CSControl : NSObject {
 	}
 
 	public void _swap() {
-		swap1.setTitle(new NSString("I got tickled"));
+		swap1.Title = "I got tickled @ " + DateTime.Now;
 	}
 }

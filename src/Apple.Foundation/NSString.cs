@@ -9,20 +9,19 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.8 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSString.cs,v 1.9 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace Apple.Foundation
-{
+namespace Apple.Foundation {
 	public class NSString : NSObject, NSCopying, NSMutableCopying, NSCoding {
 		static IntPtr _NSString_class;
-		public static IntPtr NSString_class { get { if (_NSString_class == IntPtr.Zero) _NSString_class = NSString.NSClass("NSString"); return _NSString_class; } }
+		public static IntPtr NSString_class { get { if (_NSString_class == IntPtr.Zero) _NSString_class = Class.Get("NSString"); return _NSString_class; } }
 
-        #region -- FoundationGlue --
+		#region -- FoundationGlue --
 		[DllImport("FoundationGlue")]
 		protected static extern IntPtr NSString__stringWithCString(IntPtr CLASS,string str);
 		[DllImport("FoundationGlue")]
@@ -33,11 +32,9 @@ namespace Apple.Foundation
 		static extern int NSString_length(IntPtr THIS);
 		#endregion
 
-        #region -- Foundation --
+		#region -- Foundation --
 		[DllImport("Foundation")]
 		protected static extern IntPtr /*(SEL)*/ NSSelectorFromString(IntPtr /*(NSString*)*/ str);
-		[DllImport("Foundation")]
-		protected static extern IntPtr /*(Class)*/ NSClassFromString(IntPtr /*(NSString*)*/ str);
 		[DllImport("Foundation")]
 		static extern IntPtr /*(NSString*)*/ NSStringFromSelector(IntPtr /*SEL)*/ sel);
 		#endregion
@@ -50,9 +47,6 @@ namespace Apple.Foundation
 		}
 		public static IntPtr /*(SEL)*/ NSSelector(string val) {
 			return NSSelectorFromString(new NSString(val).Raw);
-		}
-		public static IntPtr /*(Class)*/ NSClass(string val) {
-			return NSClassFromString(new NSString(val).Raw);
 		}
 		public static NSString FromSEL(IntPtr /*(SEL)*/ sel) {
 			return new NSString(NSStringFromSelector(sel),false);
@@ -70,6 +64,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSString.cs,v $
+// Revision 1.9  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.8  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

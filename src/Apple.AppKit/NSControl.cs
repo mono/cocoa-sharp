@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.4 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.5 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -21,36 +21,37 @@ namespace Apple.AppKit
 {
 	public class NSControl : NSView {
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSControl_initWithFrame(IntPtr THIS, NSRect frameRect);
+		protected internal static extern IntPtr NSControl_initWithFrame(IntPtr THIS, NSRect frameRect);
 		[DllImport("AppKitGlue")]
-		static extern void NSControl_setTarget(IntPtr THIS, IntPtr anObject);
+		protected internal static extern void NSControl_setTarget(IntPtr THIS, IntPtr anObject);
 		[DllImport("AppKitGlue")]
-		static extern void NSControl_setAction(IntPtr THIS, IntPtr aSelector);
+		protected internal static extern void NSControl_setAction(IntPtr THIS, IntPtr aSelector);
 		[DllImport("AppKitGlue")]
-		static extern void NSControl_setStringValue(IntPtr THIS, IntPtr aString);
+		protected internal static extern void NSControl_setStringValue(IntPtr THIS, IntPtr aString);
 		
 		private NSControl() {}
 
 		protected NSControl(IntPtr raw,bool release) : base(raw,release) {}
 
-		override public IntPtr initWithFrame(NSRect frameRect)
+		new public NSControl initWithFrame(NSRect frameRect)
 		{
-			return NSControl_initWithFrame(Raw,frameRect);
+			SetRaw(NSControl_initWithFrame(Raw,frameRect),_release);
+			return this;
 		}
 	
-		public void setTarget(NSObject anObject)
+		public object Target
 		{
-			NSControl_setTarget(Raw, anObject.Raw);
+			set { NSControl_setTarget(Raw, Net2NS(value)); }
 		}
 
-		public void setAction(IntPtr aSelector)
+		public string Action
 		{
-			NSControl_setAction(Raw, aSelector);
+			set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
 		}
 
-		public void setStringValue(NSString aString)
+		public string StringValue
 		{
-			NSControl_setStringValue(Raw, aString.Raw);
+			set { NSControl_setStringValue(Raw, Net2NS(value)); }
 		}
 	}
 }
@@ -58,6 +59,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.5  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.4  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

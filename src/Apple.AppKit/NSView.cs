@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.4 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.5 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -20,19 +20,20 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSView : NSResponder {
-                static IntPtr NSView_class = Apple.Foundation.NSString.NSClass("NSView");
+		protected internal static IntPtr NSView_class = Class.Get("NSView");
 
 		[DllImport("AppKitGlue")]
-		static extern void NSView_addSubview(IntPtr THIS, IntPtr aView);
+		protected internal static extern void NSView_addSubview(IntPtr THIS, IntPtr aView);
 		
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSView_initWithFrame(IntPtr THIS, NSRect frame);
+		protected internal static extern IntPtr NSView_initWithFrame(IntPtr THIS, NSRect frame);
 		
 		public NSView() : this(NSObject__alloc(NSView_class),true) {}
 		protected internal NSView(IntPtr raw,bool release) : base(raw,release) {}
 
-		virtual public IntPtr initWithFrame(NSRect frame) {
-			return NSView_initWithFrame(Raw, frame);
+		virtual public NSView initWithFrame(NSRect frame) {
+			SetRaw(NSView_initWithFrame(Raw, frame),_release);
+			return this;
 		}
 
 		public void addSubview(NSView aView) {
@@ -44,6 +45,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSView.cs,v $
+// Revision 1.5  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.4  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

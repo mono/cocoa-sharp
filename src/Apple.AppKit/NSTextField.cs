@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.6 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.7 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -20,22 +20,22 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSTextField : NSControl {
-		static IntPtr NSTextField_class = Apple.Foundation.NSString.NSClass("NSTextField");
+		protected internal static IntPtr NSTextField_class = Class.Get("NSTextField");
 
 		[DllImport("AppKitGlue")]
-		static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
+		protected internal static extern void NSTextField_setEditable(IntPtr THIS, bool flag);
 		[DllImport("AppKitGlue")]
-		static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
+		protected internal static extern void NSTextField_setBezeled(IntPtr THIS, bool flag);
 
 		public NSTextField() : this(NSObject__alloc(NSTextField_class),true) {}
 		protected NSTextField(IntPtr raw,bool release) : base(raw,release) {}
 
-		public void setEditable(bool flag) {
-			NSTextField_setEditable(Raw, flag);
+		public bool Editable {
+			set { NSTextField_setEditable(Raw, value); }
 		}
 		
-		public void setBezeled(bool flag) {
-			NSTextField_setBezeled(Raw, flag);
+		public bool Bezeled {
+			set { NSTextField_setBezeled(Raw, value); }
 		}
 	}
 }
@@ -43,6 +43,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSTextField.cs,v $
+// Revision 1.7  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.6  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

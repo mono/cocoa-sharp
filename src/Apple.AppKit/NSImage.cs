@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSImage.cs,v 1.3 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSImage.cs,v 1.4 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -19,16 +19,16 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSImage : NSObject {
-		static IntPtr NSImage_class = Apple.Foundation.NSString.NSClass("NSImage");
+		protected internal static IntPtr NSImage_class = Class.Get("NSImage");
 
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSImage__imageNamed(IntPtr CLASS, IntPtr name);
+		protected internal static extern IntPtr NSImage__imageNamed(IntPtr CLASS, IntPtr name);
 
 		public NSImage() : this(NSObject__alloc(NSImage_class),true) {}
 		protected internal NSImage(IntPtr raw,bool release) : base (raw,release) {}
 
-		public static NSImage imageNamed(NSString name) {
-			return new NSImage(NSImage__imageNamed(NSImage_class, name.Raw),false);
+		public static NSImage imageNamed(string name) {
+			return new NSImage(NSImage__imageNamed(NSImage_class, Net2NS(name)),false);
 		}
 	}
 }
@@ -36,6 +36,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSImage.cs,v $
+// Revision 1.4  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.3  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.7 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSApplication.cs,v 1.8 2004/06/17 15:58:07 urs Exp $
 //
 
 using System;
@@ -26,19 +26,19 @@ namespace Apple.AppKit
 	};
 
 	public class NSApplication : NSResponder {
-		static IntPtr NSApplication_class = Apple.Foundation.NSString.NSClass("NSApplication");
+		protected internal static IntPtr NSApplication_class = Class.Get("NSApplication");
 
 		[DllImport("AppKitGlue")]
-		static extern IntPtr NSApplication__sharedApplication(IntPtr CLASS);
+		protected internal static extern IntPtr NSApplication__sharedApplication(IntPtr CLASS);
 
 		[DllImport("AppKitGlue")]
-		static extern int NSApplication_runModalForWindow(IntPtr THIS, IntPtr theWindow);
+		protected internal static extern int NSApplication_runModalForWindow(IntPtr THIS, IntPtr theWindow);
 
 		[DllImport("AppKitGlue")]
-		static extern int NSApplication_setApplicationIconImage(IntPtr THIS, IntPtr image);
+		protected internal static extern int NSApplication_setApplicationIconImage(IntPtr THIS, IntPtr image);
 
 		[DllImport("AppKitGlue")]
-		static extern void NSApplication_stopModal(IntPtr THIS);
+		protected internal static extern void NSApplication_stopModal(IntPtr THIS);
 
 		private NSApplication() : this(IntPtr.Zero,false) {}
 		protected internal NSApplication(IntPtr raw,bool release) : base(raw,release) {}
@@ -68,6 +68,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSApplication.cs,v $
+// Revision 1.8  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
 // Revision 1.7  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup
