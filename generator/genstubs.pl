@@ -10,11 +10,24 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.13 2004/06/17 02:55:38 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.14 2004/06/17 06:01:15 cjcollier Exp $
 #
 
 use strict;
 use File::Basename;
+use FindBin;
+
+# Read the type map from typeConversion.pl
+my %typeMap;
+{
+    no strict "vars";
+    my $f = "$FindBin::Bin/typeConversion.pl";
+    open TYPES, "<$f" or die "Couldn't open $f: $!";
+    (%typeMap) = (eval join("", <TYPES>));
+    close TYPES;
+    use strict "vars";
+}
+
 
 $| = 1;
 my %protocols = ();
@@ -186,6 +199,7 @@ sub parseMethod {
 }
 
 # Parse file
+# TODO: Read the entire file in and for GOD'S SAKE! Don't parse line by line!
 my %parsedFiles = ();
 sub parseFile {
     # The name of the file we will be parsing
@@ -251,6 +265,7 @@ sub parseFile {
         commentsBeGone(\$line, $fh);
 
         my %objC;
+	my %cSharp;
 
         # Traverse import lines
         if($line =~ m:#import\s+[<"]([^>"]+)[>"]:){
@@ -273,6 +288,7 @@ sub parseFile {
             # And we haven't already imported this file, do so now
             unless($fqImportDir){
                 # Not an appkit or foundation include file.
+
             }elsif($fqImportDir && 
                    !exists($currentImports->{$fqImportFile})){
 
@@ -402,25 +418,24 @@ sub parseFile {
                 push(@protocolOut, $line);
 
             }else{
-                push(@objC,
-                     { parseMethod($line, $common{interface}, \%methods),
-                       %common 
-                     });
-            }
-        }
+		push(@objC,
+		     { parseMethod($line, $common{interface}, \%methods),
+		       %common 
+		     });
+	    }
+	}
     }
 
     my @uniq;
     # Generate the objC/C wrapper
     foreach my $objC (@objC){
-        if(exists $objC->{unsupported}){
-            push(@out, "/* UNSUPPORTED: \n$objC->{unsupported}\n */\n\n");
+	if(exists $objC->{unsupported}){
+	    push(@out, "/* UNSUPPORTED: \n$objC->{unsupported}\n */\n\n");
+	    next;
+	}
 
-        }else{
-            push(@out, genObjCStub(\%methods, %$objC));
-            push(@uniq, $objC);
-
-        }
+	push(@out, genObjCStub(\%methods, %$objC));
+	push(@uniq, $objC);
     }
 
     $filename =~ m:.*/([^\.]*)\.[^/]+/:;
@@ -571,6 +586,12 @@ sub genObjCStub {
 sub getCSharpHash {
     my %objC = @_;
 
+    my %cSharp =
+	( "arg names" => $objC{"arg names"},
+	  
+	 
+	);
+
     return (
 
     );
@@ -585,9 +606,18 @@ sub genCSharpStub {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.14  2004/06/17 06:01:15  cjcollier
+#		* typeConversion.pl
+#		- Created.  Enter type mapping from ObjC to C#
+#
+#		* genstubs.pl
+#		- Reading in typeConversion.pl and building a hash from it
+#		- Cleaned up unsupported function handling slightyl
+#		- Created a %cSharp hash that will eventually be populated by %objC.  This is what inspired typeConversion.pl
+#
 #	Revision 1.13  2004/06/17 02:55:38  urs
 #	Some cleanup and POC of glue change
-#
+#	
 #	Revision 1.12  2004/06/16 12:20:26  urs
 #	Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
 #	
