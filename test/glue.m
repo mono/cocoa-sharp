@@ -101,12 +101,36 @@ id glue_implementMethod(id base, SEL sel, ...) {
     va_start(vl,sel);
 
     Method method = class_getInstanceMethod([base class], sel);
+    int numArgs = method_getNumberOfArguments(method);
+    int size = method_getSizeOfArguments(method);
     SEL forwardSel = sel_getUid([[NSString stringWithFormat: @"_dotNet_%s", sel_getName(sel)] cString]);
     marg_list margs;
     marg_malloc(margs, method);
-    NSLog(@"glue_implementMethod %p %s method=%p margs=%p size=%i", base, sel_getName(forwardSel),method,margs,method_getSizeOfArguments(method));
 
-    id ret = (id)objc_msgSend(base, forwardSel);
+    char *type;
+    void *arg;
+    int i, offset;
+    // Add the id to the margs
+    method_getArgumentInfo(method, 0, &type, &offset);
+    marg_setValue(margs, offset, id, base);
+    // Add the sel to the margs
+    method_getArgumentInfo(method, 1, &type, &offset);
+    marg_setValue(margs, offset, SEL, forwardSel);
+    // Process the rest of the margs on the stack
+    size = (numArgs)*4;
+    for(i = 2; i < numArgs; i++) {
+        arg = va_arg(vl, void *);
+        method_getArgumentInfo(method, i, &type, &offset);
+        NSLog(@"Getting arg: %i inserting at: %i", i, offset);
+        marg_setValue(margs, offset, void *, arg); 
+    }
+    NSLog(@"glue_implementMethod %p %s (%s) method=%p margs=%p size=%i", base, sel_getName(forwardSel), sel_getName(method->method_name), method,margs,size);
+
+    id ret;
+    if(numArgs == 2)
+        ret = (id)objc_msgSend(base, forwardSel);
+    else
+        ret = (id)objc_msgSendv(base, forwardSel, size, margs);
     marg_free(margs);
     return ret;
 }
