@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.27 2004/07/24 16:31:06 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.28 2004/09/07 21:08:57 adhamh Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -20,6 +20,16 @@
 			return TypeConverter.Net2NS(obj);
 		}
 	
+        public static string debugLevel = System.Environment.GetEnvironmentVariable("COCOASHARP_DEBUG_LEVEL");
+
+		public static void DebugLog(int debug_level, string message, params object[]args) {
+			//level 1 = error
+			//level 2 = debug
+			if (debugLevel != null  && Int32.Parse(debugLevel) >= debug_level) {
+				Console.WriteLine(message,args);
+				}
+		}
+
 		private IntPtr _obj;
 		private BridgeDelegate _delegate;
 		protected bool _release;
@@ -59,7 +69,7 @@
 
 				break;
 			}
-Console.WriteLine("DEBUG: NSRegisterClass {0} as {1}", type.Name, name);
+NSObject.DebugLog(1, "DEBUG: NSRegisterClass {0} as {1}", type.Name, name);
 			if (sConstructorDelegate == null) {
 				sConstructorDelegate = new ConstructorDelegate(ConstructObject);
 				sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
@@ -117,7 +127,7 @@ Console.WriteLine("DEBUG: NSRegisterClass {0} as {1}", type.Name, name);
 			// this will leak memory, but we have to synchronize managed and objc runtime
 #if RELEASE_MEM
 			if (Raw != IntPtr.Zero && _release) {
-Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
+NSObject.DebugLog(1, "DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 				release();
 			}
 #endif
@@ -173,10 +183,10 @@ Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			if (raw == _obj)
 				return;
 
-//Console.WriteLine("DEBUG: Change Raw for {0}[{1}]: 0x{2,8:x} -> 0x{3,8:x}", this.GetType().Name, release, (int) _obj, (int) raw);
+//NSObject.DebugLog(1, "DEBUG: Change Raw for {0}[{1}]: 0x{2,8:x} -> 0x{3,8:x}", this.GetType().Name, release, (int) _obj, (int) raw);
 			if (_release && _obj != IntPtr.Zero)
 				lock (Objects) {
-Console.WriteLine("DEBUG: Remove Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
+NSObject.DebugLog(1, "DEBUG: Remove Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
 					Objects.Remove(_obj);
 				}
 
@@ -185,7 +195,7 @@ Console.WriteLine("DEBUG: Remove Raw for {0}: ptr=0x{1,8:x}", this.GetType().Nam
 
 			if (_release && _obj != IntPtr.Zero)
 				lock (Objects) {
-Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
+NSObject.DebugLog(1, "DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
 					Objects.Add(_obj, new WeakReference(this));
 				}
 		}
@@ -208,7 +218,7 @@ Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, 
 		static IDictionary NativeObjects = new Hashtable();
 
 		static void ConstructObject(IntPtr /*(id)*/ raw, string className) {
-Console.WriteLine("DEBUG: ObjC asked us to make {0} for 0x{1,8:x}", className, (int)raw);
+NSObject.DebugLog(1, "DEBUG: ObjC asked us to make {0} for 0x{1,8:x}", className, (int)raw);
 
 			Type myType = TypeConverter.NS2Type(className);
 			IntPtr cls;
@@ -238,7 +248,7 @@ Console.WriteLine("DEBUG: ObjC asked us to make {0} for 0x{1,8:x}", className, (
 		void
 #endif
 		GetDelegateForObject(IntPtr /*(id)*/ raw) {
-Console.WriteLine("DEBUG: ObjC us for the delegate 0x{0,8:x}", (int)raw);
+NSObject.DebugLog(1, "DEBUG: ObjC us for the delegate 0x{0,8:x}", (int)raw);
 			NSObject managedObject = (NSObject)NativeObjects[raw];
 			if (managedObject != null)
 #if JIT_HACK_FIXED
@@ -260,7 +270,7 @@ Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw)
 		static ClassHandlerDelegate sClassHandler;
 	
 		static int ClassHandler(string className) {
-Console.WriteLine("DEBUG: ClassHandler: " + className);
+NSObject.DebugLog(1, "DEBUG: ClassHandler: " + className);
 			Type t = TypeConverter.NS2Type(className);
 			if (t != null) {
 				NSRegisterClass(t);
@@ -279,6 +289,13 @@ Console.WriteLine("DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.28  2004/09/07 21:08:57  adhamh
+// Added code for disabling debug logging.
+//
+// if the env var COCOASHARP_DEBUG_LEVEL is not set then logging is off.
+//
+// COCOASHARP_DEBUG_LEVEL can be anything greater than 1 so that later we can add debugging levels if needed.
+//
 // Revision 1.27  2004/07/24 16:31:06  gnorton
 // Renamed Attributes from ObjC*->* (more logical/less typing)
 //

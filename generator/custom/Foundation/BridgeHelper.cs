@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.15 2004/07/24 16:31:06 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.16 2004/09/07 21:08:57 adhamh Exp $
 //
 
 using System;
@@ -29,7 +29,7 @@ namespace Apple.Tools
 			Type valueType = isNull ? null : value.GetType();
 			bool isValueType = !isNull && valueType.IsPrimitive;
 			IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
-try { Console.WriteLine("DEBUG: ObjectToVoidPtr: [value=" + value + "] [type=" + valueType + "] isValueType=" + isValueType + ", ptr=0x{0,8:x}", (int)retVal); } 
+try { NSObject.DebugLog(1, "DEBUG: ObjectToVoidPtr: [value=" + value + "] [type=" + valueType + "] isValueType=" + isValueType + ", ptr=0x{0,8:x}", (int)retVal); } 
 catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			if(isNull)
 				Marshal.WriteIntPtr(retVal,IntPtr.Zero);
@@ -101,7 +101,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			}
 
 			if (autoSync) {
-				Console.WriteLine("DEBUG: Auto-import members on {0}", self.GetType().Name);
+				NSObject.DebugLog(1, "DEBUG: Auto-import members on {0}", self.GetType().Name);
 				UpdateMembers((NSObject)self,true);
 			}
 
@@ -110,7 +110,7 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 				self, args);
 
 			if (autoSync) {
-				Console.WriteLine("DEBUG: Auto-export members on {0}", self.GetType().Name);
+				NSObject.DebugLog(1, "DEBUG: Auto-export members on {0}", self.GetType().Name);
 				UpdateMembers((NSObject)self,false);
 			}
 
@@ -369,6 +369,13 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.16  2004/09/07 21:08:57  adhamh
+// Added code for disabling debug logging.
+//
+// if the env var COCOASHARP_DEBUG_LEVEL is not set then logging is off.
+//
+// COCOASHARP_DEBUG_LEVEL can be anything greater than 1 so that later we can add debugging levels if needed.
+//
 // Revision 1.15  2004/07/24 16:31:06  gnorton
 // Renamed Attributes from ObjC*->* (more logical/less typing)
 //

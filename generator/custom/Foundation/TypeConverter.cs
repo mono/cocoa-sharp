@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.18 2004/09/07 11:36:30 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.19 2004/09/07 21:08:57 adhamh Exp $
 //
 
 using System;
@@ -74,7 +74,7 @@ namespace Apple.Foundation
 			Type type = NS2Type(className);
 
 			if (type != null) {
-Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C class: " + className);
+NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C class: " + className);
 				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
 					new Type[] {typeof(IntPtr),typeof(bool)},null);
 				if (c != null)
@@ -116,6 +116,13 @@ Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C cla
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.19  2004/09/07 21:08:57  adhamh
+// Added code for disabling debug logging.
+//
+// if the env var COCOASHARP_DEBUG_LEVEL is not set then logging is off.
+//
+// COCOASHARP_DEBUG_LEVEL can be anything greater than 1 so that later we can add debugging levels if needed.
+//
 // Revision 1.18  2004/09/07 11:36:30  urs
 // Remove breaking change
 //
