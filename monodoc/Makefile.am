@@ -1,4 +1,4 @@
-prefix=/Library/Frameworks/Mono.framework/Versions/1.1.1
+prefix=/Library/Frameworks/Mono.framework/Versions/Current
 SUBDIRS=..
 
 all: monodoc
