@@ -8,6 +8,7 @@ namespace ObjCManagedExporter {
 	{
 		private string mMethodDeclaration;
 		private string mGlueMethodName;
+		private string mCSMethodName;
 		private string[] mMessageParts;
 		private string[] mArgumentNames;
 		private string[] mArgumentDeclarationTypes;
@@ -114,6 +115,7 @@ namespace ObjCManagedExporter {
 			mMessageParts = (string[])messageParts.ToArray(typeof(string));
 			
 			mGlueMethodName = string.Empty;
+			mCSMethodName = string.Join("_", mMessageParts);
 			if (mIsClassMethod) mGlueMethodName += "_";
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
@@ -203,6 +205,39 @@ namespace ObjCManagedExporter {
 			w.WriteLine("        protected internal static extern " +
 				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
 		}
+		public void CSClassMethod(string name,System.IO.TextWriter w)
+		{
+			string _type = convertType(mReturnDeclarationType);
+			ArrayList _params = new ArrayList();
+			ArrayList _csparams = new ArrayList();
+
+			//if (mIsClassMethod)
+			//	_params.Add("IntPtr CLASS");
+			//else
+			//	_params.Add("IntPtr THIS");
+			_csparams.Add("Raw");
+
+			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+			{
+				string t = convertType(mArgumentDeclarationTypes[i]);
+				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
+				if(mArgumentDeclarationTypes[i].EndsWith("*"))
+					_csparams.Add("Net2NS(p" + i + ") /* " + mArgumentNames[i] + "*/");
+				else 
+					_csparams.Add("p" + i + "/*" + mArgumentNames[i] + "*/");
+			}
+
+			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
+			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
+
+			w.WriteLine("        public {0} {1} {2} ({3}) ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr); 
+			w.WriteLine("        {");
+			if(mReturnDeclarationType.Equals("id") || mReturnDeclarationType.EndsWith("*"))
+				w.WriteLine("            {0} NS2Net({1}_{2}({3}));", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
+			else 
+				w.WriteLine("            {0} {1}_{2}({3});", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
+			w.WriteLine("        }");
+		}
 
 		private static string convertTypeGlue(string type) 
 		{
@@ -229,6 +264,8 @@ namespace ObjCManagedExporter {
 			switch (type) 
 			{
 				case "BOOL": return "bool";
+				case "unsigned int": return "uint";
+				case "unsigned short": return "ushort";
 				case "long long": return "Int64";
 				case "unsigned long long": return "UInt64";
 				case "unsigned": return "uint";
@@ -238,7 +275,7 @@ namespace ObjCManagedExporter {
 				case "IMP": return "IntPtr /*(" + type + ")*/";
 				default:
 					if (type.EndsWith("*"))
-						return type.StartsWith("NSString") ? "string" : "IntPtr /*(" + type + ")*/";
+						return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
 					break;
 			}
 			return type;

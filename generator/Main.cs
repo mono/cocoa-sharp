@@ -155,6 +155,13 @@ namespace ObjCManagedExporter
 				if(totalMethods > 0) 
 				{
 					TextWriter _gs = new StreamWriter(File.Create(String.Format("src{0}{1}{0}{2}_glue.m", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+					TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+					_cs.WriteLine("using System;");
+					_cs.WriteLine("using System.Runtime.InteropServices;");
+					if(!i.Name.Equals("Foundation")) 
+						_cs.WriteLine("using Apple.Foundation;");
+					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+					_cs.WriteLine("{");
 					foreach(string import in i.Imports)
 						_gs.WriteLine("#import <{0}>", import);
 					foreach(string import in _categoryImports)
@@ -173,11 +180,15 @@ namespace ObjCManagedExporter
 							{ 
 								_addedMethods.Add((string)_methodSig);
 								_toOutput.ObjCMethod(i.Name,_gs);
+								_toOutput.CSGlueMethod(i.Name, i.Name, _cs);
+								_toOutput.CSClassMethod(i.Name, _cs);
 							} 
 							else 
 								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 						}
 					}
+					_cs.WriteLine("}");
+					_cs.Close();
 					_gs.Close();
 				}
 			}
