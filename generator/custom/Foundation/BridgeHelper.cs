@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.11 2004/07/03 03:27:51 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.12 2004/07/03 18:40:24 gnorton Exp $
 //
 
 using System;
@@ -87,6 +87,21 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 		public static object InvokeMethodByObject(Object self, String sel, Object[] args) 
 		{
 			string method = SelectorToMethodName(self.GetType(), sel);
+			// Check to see if we should UpdateMembers()
+			foreach (Attribute attr in Attribute.GetCustomAttributes(GetMethodByTypeAndName(self.GetType(), method)))
+			{
+				ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
+				if (exprtAttr != null && exprtAttr.AutoSync == true) {
+					// Check to make sure that we have members to update
+					if(GetMembers(self.GetType()).Length <= 0) {
+						exprtAttr.AutoSync = false;
+						break;
+					}
+					Console.WriteLine("DEBUG: Auto-updating members on {0}", self.GetType().Name);
+					UpdateMembers((NSObject)self);
+					break;
+				}
+			}
 
 			return self.GetType().InvokeMember(method, 
 				BindingFlags.Default | BindingFlags.InvokeMethod, null, 
@@ -228,9 +243,22 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 				foreach (Attribute attr in Attribute.GetCustomAttributes(mi)) {
 					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
 					if (connectAttr != null) {
-						Names.Add(connectAttr.Name);
-						Types.Add(connectAttr.Type);
-						Sizes.Add(connectAttr.Size);
+						if(connectAttr.Name != null)
+							Names.Add(connectAttr.Name);
+						else
+							Names.Add(mi.Name);
+						if(connectAttr.Type != null)
+							Types.Add(connectAttr.Type);
+						else {
+							//TODO: Full type map - fu here
+							Types.Add("@");
+						}
+						if(connectAttr.Size != -1)
+							Sizes.Add(connectAttr.Size);
+						else {
+							//TODO: Full size map - fu here
+							Sizes.Add(4);
+						}
 						break;
 					}
 				}
@@ -368,6 +396,10 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.12  2004/07/03 18:40:24  gnorton
+// - Fixed ObjCExport to autosync members into ObjC land rather than having to call _UpdateMember();
+// - Fixed ObjCConnect attribute to have initial detected value support
+//
 // Revision 1.11  2004/07/03 03:27:51  gnorton
 // NIB lubbin
 //

@@ -5,7 +5,7 @@ namespace Apple.Foundation {
 	public class ObjCConnectAttribute : Attribute {
 		protected string aName;
 		protected string aType;
-		protected int aSize;
+		protected int aSize = -1;
 		public ObjCConnectAttribute() {}
 		public ObjCConnectAttribute(String name) {
 			this.aName = name;
