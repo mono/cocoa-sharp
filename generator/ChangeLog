@@ -1,3 +1,8 @@
+2005-01-17  Geoff Norton  <gnorton@customerdna.com>
+
+	* custom/Foundation/ObjCMessaging.cs: Convert enums to their
+	underlying type.
+
 2005-01-14  Geoff Norton  <gnorton@customerdna.com>
 
 	* Makefile.am: make distcheck happiness.

@@ -72,8 +72,12 @@ namespace Apple.Tools {
 			object[] realArgs = new object[(args.Length/2)+2];
 			realArgs[0] = receiver;
 			realArgs[1] = sel_registerName(selector);
-			for (int i = 0, j = 2; i < args.Length; i+=2, j++) 
-		                realArgs[j] = args[i+1];
+			for (int i = 0, j = 2; i < args.Length; i+=2, j++) { 
+				if (args[i+1].GetType ().IsEnum)
+					realArgs[j] = Convert.ChangeType (args[i+1], Enum.GetUnderlyingType (args[i+1].GetType ()));
+				else
+			                realArgs[j] = args[i+1];
+			}
 			object o = Activator.CreateInstance(t);
 			object ret = t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
 			if (rettype == typeof(string))
