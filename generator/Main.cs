@@ -104,42 +104,50 @@ namespace ObjCManagedExporter
     
 			throw new Exception("Unable to locate framework " +  _tolocate.Name);
 		}
+
+		private static TextWriter OpenFile(string pathFormat,string fileFormat,string frmwrk,string file)
+		{
+			string path = string.Format(pathFormat, Path.DirectorySeparatorChar, frmwrk);
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			return new StreamWriter(File.Create(string.Format(fileFormat, Path.DirectorySeparatorChar, path, file)));
+		}
         
 		private void OutputFramework(Framework _toprocess) 
 		{
-			IDictionaryEnumerator _structenum = Structs.GetEnumerator();
-			while(_structenum.MoveNext())
+			foreach (Struct s in Structs.Values)
 			{
-				Struct s = (Struct)_structenum.Value;
-				if(s.Framework.Equals(_toprocess.Name)) {
-			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, s.Name)));
+				if(s.Framework.Equals(_toprocess.Name)) 
+				{
+					TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, s.Name);
 					_cs.WriteLine(s.CSStruct);
 					_cs.Close();
 				}
 			}
-			IDictionaryEnumerator _protoenum = Protocols.GetEnumerator();
-			while(_protoenum.MoveNext())
+
+			foreach (Protocol p in Protocols.Values)
 			{
-				ArrayList _addedMethods = new ArrayList();
-				Protocol p = (Protocol)_protoenum.Value;
+				IDictionary _addedMethods = new Hashtable();
 				if(p.Framework.Equals(_toprocess.Name)) {
-			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}I{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
+		  			TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}I{2}.cs.gen", p.Framework, p.Name);
 					_cs.WriteLine("using System;");
 					_cs.WriteLine("using System.Runtime.InteropServices;");
-					_cs.WriteLine("using Apple.Foundation;");
 					if(!p.Framework.Equals("Foundation")) 
-						_cs.WriteLine("using Apple.{0};", p.Framework);
+						_cs.WriteLine("using Apple.Foundation;");
 					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
 					_cs.WriteLine("{");
  					_cs.Write("    public interface I{0}", p.Name);
 					_cs.WriteLine("    {");
-					IDictionaryEnumerator _methodEnum = p.Methods.GetEnumerator();
-					while(_methodEnum.MoveNext()) {
-						Method _toOutput = (Method)_methodEnum.Value;
-						String _methodSig = _toOutput.GlueMethodName;
-						if(!_addedMethods.Contains((string)_methodSig)) 
-						{ 
-							_addedMethods.Add((string)_methodSig);
+
+					foreach (Method _toOutput in p.Methods.Values) 
+					{
+						if (_toOutput.IsUnsupported)
+							continue;
+
+						string _methodSig = _toOutput.GlueMethodName;
+						if(!_addedMethods.Contains(_methodSig)) 
+						{
+							_addedMethods[_methodSig] = true;
 							_toOutput.CSInterfaceMethod(p.Name, _cs);
 						}
 					}
@@ -148,15 +156,14 @@ namespace ObjCManagedExporter
 					_cs.Close();
 				}
 			}
-			IDictionaryEnumerator _enum = Interfaces.GetEnumerator();
-			while(_enum.MoveNext()) 
+
+			foreach (Interface i in Interfaces.Values) 
 			{
 				int totalMethods = 0;
 				ArrayList interfaceMethods = new ArrayList();
-				Interface i = (Interface)_enum.Value;
-				if(!i.Framework.Equals(_toprocess.Name)) {
+				if(!i.Framework.Equals(_toprocess.Name))
 					continue;
-				}
+
 				Console.WriteLine("Interface: {0}:{1}", i.Name, i.Methods.Keys.Count);
 				totalMethods += i.Methods.Keys.Count;
 				// Add all the methods
@@ -167,45 +174,39 @@ namespace ObjCManagedExporter
 					if(proto.Length > 0) 
 					{
 						Console.Write("\t\tProtocol: <{0}>", proto);
-						if(Protocols[proto] != null) 
+						Protocol p = (Protocol)Protocols[proto];
+						if(p != null) 
 						{
-							Console.Write(":{0}", ((Protocol)Protocols[proto]).Methods.Keys.Count); 
-							totalMethods += ((Protocol)Protocols[proto]).Methods.Keys.Count;
-							interfaceMethods.Add(((Protocol)Protocols[proto]).Methods);
+							Console.Write(":{0}", p.Methods.Keys.Count); 
+							totalMethods += p.Methods.Keys.Count;
+							interfaceMethods.Add(p.Methods);
 						}
-						Console.WriteLine("");
+						Console.WriteLine();
 					}
 
-				IDictionaryEnumerator _categoryEnum = Categories.GetEnumerator();
-				ArrayList _categoryImports = new ArrayList();
-				while(_categoryEnum.MoveNext()) 
+				IList _categoryImports = new ArrayList();
+				foreach (DictionaryEntry e in Categories) 
 				{
-					string _key = (string)_categoryEnum.Key;
-					Category _cat = (Category)_categoryEnum.Value;
+					string _key = (string)e.Key;
 					if(_key.EndsWith("_" + i.Name)) 
 					{
+						Category _cat = (Category)e.Value;
 						Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
 						Console.Write(":{0}", _cat.Methods.Keys.Count);
 						totalMethods += _cat.Methods.Keys.Count;
 						interfaceMethods.Add(_cat.Methods);
 						foreach (string _imp in _cat.Imports)
 							_categoryImports.Add(_imp);
-						Console.WriteLine("");
+						Console.WriteLine();
 					}
 				}
 				
 				Console.WriteLine("\tTOTAL:{0}", totalMethods);	
 				if(totalMethods > 0) 
 				{
-					string path = string.Format("src{0}{1}{0}", Path.DirectorySeparatorChar, _toprocess.Name);
-					if (!Directory.Exists(path))
-						Directory.CreateDirectory(path);
-					TextWriter _gs = new StreamWriter(File.Create(string.Format("src{0}{1}{0}{2}_glue.m", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+					TextWriter _gs = OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
+					TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, i.Name);
 
-					path = string.Format("src{0}Apple.{1}{0}", Path.DirectorySeparatorChar, _toprocess.Name);
-					if (!Directory.Exists(path))
-						Directory.CreateDirectory(path);
-					TextWriter _cs = new StreamWriter(File.Create(string.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
 					_cs.WriteLine("using System;");
 					_cs.WriteLine("using System.Runtime.InteropServices;");
 					_cs.WriteLine("using Apple.Foundation;");
