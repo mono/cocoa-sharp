@@ -113,7 +113,7 @@ namespace CocoaSharp {
 				case "BOOL": { apiType = "bool"; glueType = typeof(bool); ocType = OCType.@char; break; }
 				case "SEL": { apiType = "string"; glueType = typeof(IntPtr); ocType = OCType.SEL; break; }
 				case "IMP": { apiType = "IntPtr"; glueType = typeof(IntPtr); ocType = OCType.pointer; break; }
-				case "Class": { apiType = "Foundation.Class"; glueType = typeof(IntPtr); ocType = OCType.Class; break; }
+				case "Class": { apiType = "Apple.Foundation.Class"; glueType = typeof(IntPtr); ocType = OCType.Class; break; }
 				case "Protocol": { apiType = "object"; glueType = typeof(IntPtr); ocType = OCType.id; break; }
 				case "id": { apiType = "object"; glueType = typeof(IntPtr); ocType = OCType.id; break; }
 				case "void": { apiType = "void"; glueType = typeof(void); ocType = OCType.@void; break; }
