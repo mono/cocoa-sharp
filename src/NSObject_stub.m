@@ -12,53 +12,52 @@ NSObject* NSObject_alloc()
 
 NSObject* NSObject_allocWithZone(NSZone *zone)
 {
-	NSLog(@"NSObject_allocWithZone\n");
+	NSLog(@"NSObject_allocWithZone: %@\n", zone);
 	return [NSObject allocWithZone: zone];
 }
 		
 
 NSObject* NSObject_init(NSObject* this)
 {
-	NSLog(@"NSObject_init: %@\n",this);
+	NSLog(@"NSObject_init: %@\n", this);
 	return [this init];
 }
 
-void NSObject_dealloc()
+void NSObject_dealloc(NSObject* this)
 {
-	NSLog(@"NSObject_dealloc \n");
-	NSObject *object = [[NSObject alloc]init];
-	[object dealloc];
+	NSLog(@"NSObject_dealloc: %@\n", this);
+	[this dealloc];
 }	
 
-NSObject* NSObject_copy() 
+NSObject* NSObject_copy(NSObject* this) 
 {
-	NSLog(@"NSObject_copy\n");
-	NSObject *object = [[NSObject alloc]init];
-	[object copy];
+	NSLog(@"NSObject_copy: %@\n", this);
+	return [this copy];
 }
 
 NSObject* NSObject_mutableCopy(NSObject* this)
 {
-	 NSLog(@"NSObject_mutableCopy\n");
-	 [thist mutableCopy];
+	 NSLog(@"NSObject_mutableCopy: %@\n", this);
+	 return [this mutableCopy];
 }
 
-NSString* NSObject_description()
+NSString* NSObject_description(NSObject* this)
 {
-	NSLog(@"NSObject_description\n");
-	return [NSObject description];
+	NSLog(@"NSObject_description: %@\n", this);
+	return [this description];
 }
 
 NSObject* NSObject_replacementObjectForCoder(NSObject* this, NSCoder *aNSCoder)
 {
-	NSLog(@"NSObject_replacementObjectForCoder\n");
+	NSLog(@"NSObject_replacementObjectForCoder: %@, %@\n", this, aNSCoder);
 	return [this replacementObjectForCoder: aNSCoder];
 }
 
 NSObject* awakeAfterUsingCoder(NSObject* this, NSCoder *aNSCoder)
 {
-	NSLog(@"NSObject_awakeAfterUsingCoder\n");
+	NSLog(@"NSObject_awakeAfterUsingCoder: %@, %@\n", this, aNSCoder);
 	return [this awakeAfterUsingCoder: aNSCoder];
+}
 
 void NSObject_release(NSObject* this)
 {
