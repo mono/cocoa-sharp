@@ -8,7 +8,7 @@
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = ViewDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+        {CLASS = WebDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 
 }

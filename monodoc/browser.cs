@@ -110,6 +110,9 @@ public class Controller : NSObject {
 		drawer.open();
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
+//		Node match;
+//		string content = help_tree.RenderUrl("root:", out match);
+//		webView.mainFrame.loadHTMLString_baseURL(content, null);
 	}
 	
 	[ObjCExport("doubleAction")]
@@ -119,21 +122,39 @@ public class Controller : NSObject {
 		if(bi.node.URL != null)
 		{
 			Node n;
-			Console.WriteLine("DEBUG: Going to render URL: {0}", bi.node.URL);
 			string content = "";
-			Console.WriteLine("DEBUG: Attemping HelpSource render.");
 			if(bi.node.tree != null && bi.node.tree.HelpSource != null)
 				content = bi.node.tree.HelpSource.GetText(bi.node.URL, out n);
-			Console.WriteLine("DEBUG: Falling to RootTree render.");
 			if(content == null || content.Equals("") )
 					content = help_tree.RenderUrl(bi.node.URL, out n);
-			Console.WriteLine("DEBUG: Calling loadHTMLString");
+			content=content.Replace("a href='", "a href='http://monodoc/load?");
+			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 			webView.mainFrame.loadHTMLString_baseURL(content, null);
 
 			outlineView.expandItem(bi);
 
 		}
 	}
+
+	[ObjCExport("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
+	public NSURLRequest RequestHandler(WebView sender, object identifier, NSURLRequest initialRequest, NSURLResponse urlResponse, WebDataSource datasource) {
+		Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
+		if(initialRequest.urL.relativeString.IndexOf("http://monodoc/load?") == 0) {
+			string url = initialRequest.urL.relativeString.Replace("http://monodoc/load?", "");
+			string content = "";
+			Node n;
+			content = help_tree.RenderUrl(url, out n);
+			if(content != null && !content.Equals("")) {
+				content=content.Replace("a href='", "a href='http://monodoc/load?");
+				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+				Console.WriteLine("DEBUG: {0}", content);
+				webView.mainFrame.loadHTMLString_baseURL(content, null);
+			}
+			return null;
+		}
+		return initialRequest;
+	}
+
 }
 
 class Browser {
@@ -201,6 +222,18 @@ class BrowserDataSource : NSObject {
 
 	internal RootTree help_tree;
 	internal IList items = new ArrayList();
+
+	public static BrowserItem BrowserItemForNode(Node n) {
+		//WE NEED TO FIND A WAY TO DO THIS THAT ISN'T THIS EXPENSIVE
+		/*
+		foreach (BrowserItem bi in items) {
+			if(bi.node == n)
+				return bi;
+			else
+				BrowserItemForNode(bi.node);
+		}*/
+		return null;
+	}
 
 	public BrowserDataSource(RootTree _tree) {
 		help_tree = _tree;
