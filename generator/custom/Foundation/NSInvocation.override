@@ -1,6 +1,7 @@
 <overrides>
         <method instance="true" sel="getArgument:atIndex:">
-		public object getArgument(int i) {
+		public object getArgument(int i, Type t) {
+			object retVal = null;
 #if UNSAFE
 			unsafe {
 				IntPtr argPtr = Marshal.AllocHGlobal (sizeof(IntPtr));
@@ -8,9 +9,14 @@
 				IntPtr argPtr = Marshal.AllocHGlobal (8 /* void * on 64 bit machine */);
 #endif
 				NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
-				IntPtr ret = Marshal.ReadIntPtr(argPtr);
+				if(t == typeof(int)) 
+					retVal = (object)Marshal.ReadInt32(argPtr);		
+				else {
+					IntPtr ret = Marshal.ReadIntPtr(argPtr);
+					retVal = (object)NS2Net(ret);
+				}
 				Marshal.FreeHGlobal(argPtr);
-				return NS2Net(ret);
+				return retVal;
 #if UNSAFE
 			}
 #endif

@@ -5,6 +5,7 @@ namespace Apple.Foundation {
 	public class ObjCExportAttribute : Attribute {
 		protected string aSelector;
 		protected string aSignature;
+		public ObjCExportAttribute() {}
 		public ObjCExportAttribute(String selector) {
 			this.aSelector = selector;
 		}

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.4 2004/06/26 06:52:32 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.5 2004/06/27 20:41:45 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -73,10 +73,21 @@
 					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
 				case GlueDelegateWhat.forwardInvocation:
 				{
+					IntPtr retVal = IntPtr.Zero;
+
 					NSInvocation invocation = new NSInvocation(arg,false);
 					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
 					
-					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
+					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
+					if(ret != null)
+						if(ret.GetType() == typeof(int)) {
+							retVal = Marshal.AllocHGlobal(4);
+							Marshal.WriteInt32(retVal, (int)ret);
+						} else {
+							retVal = ((NSObject)ret).Raw;
+						}
+					if(retVal != IntPtr.Zero)
+						invocation.setReturnValue(retVal);
 					break;
 				}
 			}
@@ -137,6 +148,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.5  2004/06/27 20:41:45  gnorton
+// Support for NSBrowser and int args/rets
+//
 // Revision 1.4  2004/06/26 06:52:32  urs
 // Remove hardcoding in TypeConvertor, and autoregister new classes
 //

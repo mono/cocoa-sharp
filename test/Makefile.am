@@ -47,9 +47,26 @@ Loader.o: Loader.c
 Bundle.o: Bundle.m
 	gcc -x objective-c -g -c Bundle.m -o Bundle.o
 
+CocoaSharpFinder.exe: CocoaSharpFinder.cs ../build/Apple.Foundation.dll ../build/Apple.WebKit.dll ../build/Apple.AppKit.dll
+	mcs -g CocoaSharpFinder.cs -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:../build/Apple.Foundation.dll
+	cp ../build/*.dll .
+
 CocoaSharpBrowser.exe: CocoaSharpBrowser.cs ../build/Apple.Foundation.dll ../build/Apple.WebKit.dll ../build/Apple.AppKit.dll
 	mcs -g CocoaSharpBrowser.cs -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:../build/Apple.Foundation.dll
 	cp ../build/*.dll .
+
+CocoaSharpFinder: CocoaSharpFinder.exe CocoaSharpFinder.cs Loader libFoundationGlue.dylib libAppKitGlue.dylib libWebKitGlue.dylib Foundation libGlue.so
+	rm -Rf CocoaSharpFinder.app
+	mkdir -p CocoaSharpFinder.app/Contents/MacOS
+	mkdir -p CocoaSharpFinder.app/Contents/Resources
+	cp ../sample/SimpleWindow/*.icns CocoaSharpFinder.app/Contents/Resources
+	cp CocoaSharpFinder.plist CocoaSharpFinder.app/Contents/Info.plist
+	cp CocoaSharpFinder.exe CocoaSharpFinder.app/Contents/Resources/Test.exe
+	cp *.dll* CocoaSharpFinder.app/Contents/Resources
+	cp *Glue* CocoaSharpFinder.app/Contents/Resources
+	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation CocoaSharpFinder.app/Contents/Resources/CoreFoundation
+	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation CocoaSharpFinder.app/Contents/Resources/Foundation
+	cp Loader CocoaSharpFinder.app/Contents/MacOS/CocoaSharpFinder
 
 CocoaSharpBrowser: CocoaSharpBrowser.exe CocoaSharpBrowser.cs Loader libFoundationGlue.dylib libAppKitGlue.dylib libWebKitGlue.dylib Foundation libGlue.so
 	rm -Rf CocoaSharpBrowser.app

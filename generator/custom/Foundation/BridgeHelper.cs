@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.2 2004/06/25 18:43:27 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.3 2004/06/27 20:41:45 gnorton Exp $
 //
 
 using System;
@@ -51,13 +51,14 @@ namespace Apple.Tools
 		{
 			string method = SelectorToMethodName(type, invocation.Selector);
 
-			int numArgs = GetParameterInfosByMethod(
-				GetMethodByTypeAndName(type, method)).Length;
-			object[] retArgs = new object[numArgs];
-			for(int i = 0; i < numArgs; i++)
-				retArgs[i] = invocation.getArgument(i);
+			ArrayList retArgs = new ArrayList();
+			int i = 0;
+			foreach(ParameterInfo pi in  GetParameterInfosByMethod(GetMethodByTypeAndName(type, method))) {
+				retArgs.Add(invocation.getArgument(i, pi.ParameterType));
+				i++;
+			}
 
-			return retArgs;
+			return (object[])retArgs.ToArray(typeof(object));
 		}
 
 		public static object InvokeMethodByObject(Object self, String sel, Object[] args) 
@@ -72,6 +73,11 @@ namespace Apple.Tools
 		public static string GenerateMethodSignature(Type t, String sel) 
 		{
 			string method = SelectorToMethodName(t, sel);
+			foreach (Attribute attr in Attribute.GetCustomAttributes(GetMethodByTypeAndName(t, method)))
+				if (attr.GetType() == typeof(ObjCExportAttribute)) 
+					if ( ((ObjCExportAttribute)attr).Signature != null )
+						return ((ObjCExportAttribute)attr).Signature;
+
 			int totalSize = 8;
 			int curSize = 8;
 			string types = "";
@@ -81,6 +87,8 @@ namespace Apple.Tools
 
 			if(GetMethodByTypeAndName(t, method).ReturnType == typeof(void))
 				types = "v";
+			else if(GetMethodByTypeAndName(t, method).ReturnType == typeof(int))
+				types = "i";
 			else
 				types = "@";
 			
@@ -89,7 +97,10 @@ namespace Apple.Tools
 
 			foreach(ParameterInfo p in GetParameterInfosByMethod(GetMethodByTypeAndName(t, method)))
 			{
-				types += "@" + curSize;
+				if(p.ParameterType == typeof(int)) 
+					types += "i" + curSize;
+				else
+					types += "@" + curSize;
 				curSize += 4;
 			}
 				
@@ -153,6 +164,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.3  2004/06/27 20:41:45  gnorton
+// Support for NSBrowser and int args/rets
+//
 // Revision 1.2  2004/06/25 18:43:27  gnorton
 // Added ObjCExport attribute for subclassing registering selectors
 //
