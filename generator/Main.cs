@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.27 2004/06/24 01:08:43 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.28 2004/06/24 04:36:17 gnorton Exp $
 //
 
 using System;
@@ -65,7 +65,7 @@ namespace ObjCManagedExporter
 			Regex _interfaceRegex = new Regex(@"^@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"^@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(\s*\w*\s*=\s*\d+.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
             
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
@@ -383,9 +383,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.28  2004/06/24 04:36:17  gnorton
+//	Updates to fix build errors; not many left now
+//
 //	Revision 1.27  2004/06/24 01:08:43  gnorton
 //	Core file support so we can add files ot the build that aren't generated
-//
+//	
 //	Revision 1.26  2004/06/23 22:10:19  urs
 //	Adding support for out of dependecy categories, generating a new class named $(class)$(categoryFramework)Extras with a the methods of all categories in same framework
 //	
