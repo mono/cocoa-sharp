@@ -18,8 +18,8 @@ namespace Apple.Tools {
 			string[] argstypes = type.Split('_');
 			Type rettype = System.Type.GetType(argstypes[0]);
 			Type[] args = new Type[argstypes.Length-1]; 
-			for (int i = 0; i < argstypes.Length-1; ++i)
-				args[i] = System.Type.GetType(argstypes[i+1]);
+			for (int i = 0; i < argstypes.Length-1; ++i) 
+				args[i] = System.Type.GetType (argstypes[i+1]);
 
 			if (an == null) {
 				an = new AssemblyName();
@@ -31,7 +31,7 @@ namespace Apple.Tools {
 				module = builder.DefineDynamicModule(an.Name);
 
 			TypeBuilder tb = module.DefineType(type, TypeAttributes.Public);
-			MethodBuilder method = tb.DefinePInvokeMethod("objc_msgSend", "libobjc.dylib", MethodAttributes.PinvokeImpl|MethodAttributes.Static|MethodAttributes.Public, CallingConventions.Standard, rettype, args, CallingConvention.Winapi, CharSet.Auto);
+			tb.DefinePInvokeMethod("objc_msgSend", "libobjc.dylib", MethodAttributes.PinvokeImpl|MethodAttributes.Static|MethodAttributes.Public, CallingConventions.Standard, rettype, args, CallingConvention.Winapi, CharSet.Auto);
 			tb.CreateType();
 			types.Add(type, 1);
 		}
@@ -43,17 +43,28 @@ namespace Apple.Tools {
 		}
 
 		public static object objc_msgSend (IntPtr receiver, string selector, Type rettype) {
-			string type = rettype.ToString() + "_System.IntPtr_System.IntPtr";
+			Type marshalrettype = rettype;
+			if (rettype == typeof (string))
+				marshalrettype = typeof (System.IntPtr);
+
+			string type = marshalrettype.ToString() + "_System.IntPtr_System.IntPtr";
 			Type t = TypeResolve(type).GetType(type);
 			object[] realArgs = new object[2];
 			realArgs[0] = receiver;
 			realArgs[1] = sel_registerName(selector);
-			return t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, null, realArgs);
+			object ret = t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, null, realArgs);
+			if (rettype == typeof(string))
+				ret = Marshal.PtrToStringAuto ((IntPtr)ret);
+			return ret;
 
 		}
 		public static object objc_msgSend (IntPtr receiver, string selector, Type rettype, params object[] args) {
+			Type marshalrettype = rettype;
+			if (rettype == typeof (string))
+				marshalrettype = typeof (System.IntPtr);
+
 			StringBuilder type = new StringBuilder();
-			type.AppendFormat("{0}_System.IntPtr_System.IntPtr", rettype);
+			type.AppendFormat("{0}_System.IntPtr_System.IntPtr", marshalrettype);
 			for (int i = 0; i < args.Length; i+=2) {
 				type.AppendFormat("_{0}", args[i]);
 			}
@@ -64,8 +75,10 @@ namespace Apple.Tools {
 			for (int i = 0, j = 2; i < args.Length; i+=2, j++) 
 		                realArgs[j] = args[i+1];
 			object o = Activator.CreateInstance(t);
-			return t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
-
+			object ret = t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
+			if (rettype == typeof(string))
+				ret = Marshal.PtrToStringAuto ((IntPtr)ret);
+			return ret;
 		}
 	}
 }
