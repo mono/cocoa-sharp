@@ -2,6 +2,7 @@ ASSEMBLY_NAME=generator
 ASSEMBLY=$(ASSEMBLY_NAME).exe
 CLEANFILES=$(ASSEMBLY) 
 DISTCLEANFILES=
+noinst_DATA=generator-run.stamp
 EXTRA_DIST= \
 	Category.cs \
 	CEnum.cs \
