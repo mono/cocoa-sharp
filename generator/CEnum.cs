@@ -4,14 +4,14 @@ using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter {
 
-    public class Struct {
+    public class CEnum {
         private String mName;
         private String mFramework;
-        private String mStruct;
+        private String mEnum;
         
-        public Struct(String _name, String _struct, String _framework) {
+        public CEnum(String _name, String _struct, String _framework) {
             mName = _name;
-	    mStruct = _struct;
+	    mEnum = _struct;
 	    mFramework = _framework;
         }
         
@@ -21,11 +21,11 @@ namespace ObjCManagedExporter {
 	public String Framework {
 		get { return mFramework; }
 	}
-	public String CSStruct {
+	public String CSEnum {
 		get {
 			String structVal = "using System;\n";
 			structVal += "namespace Apple." + mFramework + " {\n";
-			structVal += "public struct " + mName + " {\n" + mStruct + "}\n}";
+			structVal += "protected enum " + mName + " {\n" + mEnum + "}\n}";
 			return structVal;
 		}
 	}

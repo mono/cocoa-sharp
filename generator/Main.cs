@@ -16,6 +16,7 @@ namespace ObjCManagedExporter
 		public IDictionary Interfaces;
 		public IDictionary Protocols;
 		public IDictionary Categories;
+		public IDictionary Enums;
 		public IDictionary Structs;
 
 		public ObjCManagedExporter(string[] args) 
@@ -23,6 +24,7 @@ namespace ObjCManagedExporter
 			Interfaces = new Hashtable();
 			Protocols = new Hashtable();
 			Categories = new Hashtable();
+			Enums = new Hashtable();
 			Structs = new Hashtable();
             
 			foreach (string arg in args) 
@@ -47,7 +49,8 @@ namespace ObjCManagedExporter
 			Regex _interfaceRegex = new Regex(@"^@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"^@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
             
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
 			string _headerData = _fileReader.ReadToEnd();
@@ -88,8 +91,14 @@ namespace ObjCManagedExporter
 			foreach (Match m in _enumRegex.Matches(_headerData)) 
 			{
 				// We found an enum
-				Struct _s = new Struct(m.Groups[2].Value, m.Groups[1].Value, f.Name);
-				Structs.Add(m.Groups[2].Value, _s);
+				CEnum _s = new CEnum(m.Groups[3].Value, m.Groups[2].Value, f.Name);
+				Enums.Add(m.Groups[3].Value, _s);
+			}
+			foreach (Match m in _structRegex.Matches(_headerData)) 
+			{
+				// We found an struct
+				Struct _s = new Struct(m.Groups[3].Value, m.Groups[2].Value, f.Name);
+				Structs.Add(m.Groups[3].Value, _s);
 			}
 		}
         
@@ -115,6 +124,14 @@ namespace ObjCManagedExporter
         
 		private void OutputFramework(Framework _toprocess) 
 		{
+			foreach(CEnum e in Enums.Values)
+			{
+				if(e.Framework.Equals(_toprocess.Name)) {
+			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, e.Name)));
+					_cs.WriteLine(e.CSEnum);
+					_cs.Close();
+				}
+			}
 			foreach (Struct s in Structs.Values)
 			{
 				if(s.Framework.Equals(_toprocess.Name)) 

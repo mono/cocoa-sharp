@@ -298,6 +298,7 @@ namespace ObjCManagedExporter
 
 		private static string convertTypeNative(string type)
 		{
+			type = type.Trim();
 			switch (type) 
 			{
 				case "void": return "void";
