@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.7 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSWindow.cs,v 1.8 2004/06/17 17:41:20 gnorton Exp $
 //
 
 using System;
@@ -38,7 +38,10 @@ namespace Apple.AppKit
 
 		public NSWindow() : this(NSObject__alloc(NSWindow_class),true) {}
 		protected internal NSWindow(IntPtr raw,bool release) : base (raw,release) {}
-
+		public NSWindow(NSRect contentRect, uint aStyle, int bufferingType, bool flag) {
+			SetRaw(NSObject__alloc(NSWindow_class), true);
+			initWithContentRect_styleMask_backing_defer(contentRect, aStyle, bufferingType, flag);
+		}
 		public NSWindow initWithContentRect_styleMask_backing_defer(NSRect contentRect, uint aStyle, int bufferingType, bool flag)
 		{
 			SetRaw(NSWindow_initWithContentRect_styleMask_backing_defer(Raw, contentRect, aStyle, bufferingType, flag),_release);
@@ -70,6 +73,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSWindow.cs,v $
+// Revision 1.8  2004/06/17 17:41:20  gnorton
+// API modification.
+//
+// Allow our inits to be called with crafted constructors.
+//
 // Revision 1.7  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

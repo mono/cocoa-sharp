@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSResponder.cs,v 1.3 2004/06/17 13:06:27 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSResponder.cs,v 1.4 2004/06/17 17:41:20 gnorton Exp $
 //
 
 using System;
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSResponder : NSObject, NSCoding {
-		private NSResponder() : this(IntPtr.Zero,false) {}
+		public NSResponder() : this(IntPtr.Zero,false) {}
 		protected internal NSResponder(IntPtr raw,bool release) : base (raw,release) {}
 	}
 }
@@ -27,6 +27,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSResponder.cs,v $
+// Revision 1.4  2004/06/17 17:41:20  gnorton
+// API modification.
+//
+// Allow our inits to be called with crafted constructors.
+//
 // Revision 1.3  2004/06/17 13:06:27  urs
 // - release cleanup: only call release when requested
 // - loader cleanup

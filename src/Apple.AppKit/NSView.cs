@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.5 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSView.cs,v 1.6 2004/06/17 17:41:20 gnorton Exp $
 //
 
 using System;
@@ -30,6 +30,10 @@ namespace Apple.AppKit
 		
 		public NSView() : this(NSObject__alloc(NSView_class),true) {}
 		protected internal NSView(IntPtr raw,bool release) : base(raw,release) {}
+		public NSView(NSRect frame) {
+			SetRaw(NSObject__alloc(NSView_class), true);
+			initWithFrame(frame);
+		}
 
 		virtual public NSView initWithFrame(NSRect frame) {
 			SetRaw(NSView_initWithFrame(Raw, frame),_release);
@@ -45,6 +49,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSView.cs,v $
+// Revision 1.6  2004/06/17 17:41:20  gnorton
+// API modification.
+//
+// Allow our inits to be called with crafted constructors.
+//
 // Revision 1.5  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

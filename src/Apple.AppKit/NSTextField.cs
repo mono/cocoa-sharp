@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.7 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSTextField.cs,v 1.8 2004/06/17 17:41:20 gnorton Exp $
 //
 
 using System;
@@ -29,6 +29,10 @@ namespace Apple.AppKit
 
 		public NSTextField() : this(NSObject__alloc(NSTextField_class),true) {}
 		protected NSTextField(IntPtr raw,bool release) : base(raw,release) {}
+		public NSTextField(NSRect rect) {
+			SetRaw(NSObject__alloc(NSTextField_class), true);
+			initWithFrame(rect);
+		}
 
 		public bool Editable {
 			set { NSTextField_setEditable(Raw, value); }
@@ -43,6 +47,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSTextField.cs,v $
+// Revision 1.8  2004/06/17 17:41:20  gnorton
+// API modification.
+//
+// Allow our inits to be called with crafted constructors.
+//
 // Revision 1.7  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //

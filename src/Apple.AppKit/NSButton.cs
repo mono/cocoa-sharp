@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.8 2004/06/17 15:58:07 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.9 2004/06/17 17:41:20 gnorton Exp $
 //
 
 using System;
@@ -42,6 +42,10 @@ namespace Apple.AppKit
 		
 		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
 		protected internal NSButton(IntPtr raw,bool release) : base(raw,release) {}
+		public NSButton(NSRect rect) {
+			SetRaw(NSObject__alloc(NSButton_class), true);
+			initWithFrame(rect);
+		}
 
 		public string Title {
 			set { NSButton_setTitle(Raw, Net2NS(value)); }
@@ -56,6 +60,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.9  2004/06/17 17:41:20  gnorton
+// API modification.
+//
+// Allow our inits to be called with crafted constructors.
+//
 // Revision 1.8  2004/06/17 15:58:07  urs
 // Public API cleanup, making properties and using .Net types rather then NS*
 //
