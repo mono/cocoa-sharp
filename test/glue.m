@@ -1,22 +1,8 @@
 #import <objc/objc-class.h>
 #import <Foundation/NSObject.h>
-#import <Foundation/NSProxy.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSMethodSignature.h>
-
-// static code: has to go
-@interface _CSControl : NSObject {}
-- (void) _stop;
-- (void) _swap;
-@end
-
-@implementation _CSControl
-- (void) _stop {}
-- (void) _swap {}
-@end
-// end of static code
-
 
 void AddMethods(Class cls,int count,...) {
     struct objc_method_list *methodsToAdd = (struct objc_method_list *)
@@ -40,75 +26,10 @@ void AddMethods(Class cls,int count,...) {
     class_addMethods(cls, methodsToAdd);
 }
 
-#if 0
-@interface MonoMethodSignature : NSMethodSignature {}
-- (unsigned)frameLength;
-- (const char *)getArgumentTypeAtIndex:(unsigned)index;
-- (BOOL)isOneway;
-- (unsigned)methodReturnLength;
-- (const char *)methodReturnType;
-- (unsigned)numberOfArguments;
-@end
-
-@implementation MonoMethodSignature
-- (unsigned)frameLength { return 160; }
-- (const char *)getArgumentTypeAtIndex:(unsigned)index {
-	if (index == 0) return "@";
-	if (index == 1) return ":";
-	return "v";
-}
-- (BOOL)isOneway { return NO; }
-- (unsigned)methodReturnLength { return 0; }
-- (const char *)methodReturnType { return "v"; }
-- (unsigned)numberOfArguments { return 2; }
-@end
-#endif
-
 NSMethodSignature * MakeMethodSignature(const char *types) {
-    NSLog(@"MakeMethodSignature %s",types);
-	NSMethodSignature *base = [NSMethodSignature signatureWithObjCTypes: types];
-
-#if DEBUG || 1
-	Class cls = [base class];
-	struct objc_ivar_list *ivarList = cls->ivars;
-	int i;
-	
-	for (i = 0; i < ivarList->ivar_count; ++i)
-		NSLog(@"name=%s, type=%s, offset=%i",
-			  ivarList->ivar_list[i].ivar_name,
-			  ivarList->ivar_list[i].ivar_type,
-			  ivarList->ivar_list[i].ivar_offset);
-
-	char *_types;
-	int _nargs;
-	int _sizeOfParams;
-	int _returnValueLength;
-	void* _parmInfoP;
-	object_getInstanceVariable(base,"_types",&_types);
-	object_getInstanceVariable(base,"_nargs",&_nargs);
-	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
-	object_getInstanceVariable(base,"_returnValueLength",&_returnValueLength);
-	object_getInstanceVariable(base,"_parmInfoP",&_parmInfoP);
-
-	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i parmInfoP=%p",_types,_nargs,_sizeOfParams,_returnValueLength,_parmInfoP);
-	
-#endif
-	
-	//object_setInstanceVariable(base,"_types",types);
-	//object_setInstanceVariable(base,"_nargs",nargs);
-	//object_setInstanceVariable(base,"_sizeofParams",sizeOfParams);
-	//object_setInstanceVariable(base,"_returnValueLength",returnValueLength);
-	//object_setInstanceVariable(base,"_parmInfoP",nil);
-
-#if DEBUG && 0
-	object_getInstanceVariable(base,"_types",&_types);
-	object_getInstanceVariable(base,"_nargs",&_nargs);
-	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
-	object_getInstanceVariable(base,"_returnValueLength",&_returnValueLength);
-	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i",_types,_nargs,_sizeOfParams,_returnValueLength);
-#endif
-	
-	return base;
+	NSMethodSignature *ret = [NSMethodSignature signatureWithObjCTypes: types];
+    NSLog(@"MakeMethodSignature %s --> %@",types,ret);
+	return ret;
 }
 
 typedef id (*managedDelegate)(int what,id anInvocation);
@@ -141,7 +62,7 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 		managedDelegate delegate;
 		object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
 
-		signature = delegate(GLUE_methodSignatureForSelector,aSelector);
+		signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
 	}
 	
 	return signature;
@@ -163,7 +84,7 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
 	return base;
 }
 
-id DotNetForwarding_initWithManagedDelegate(id *THIS, managedDelegate delegate) {
+id DotNetForwarding_initWithManagedDelegate(id THIS, managedDelegate delegate) {
 	NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
 	return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
 }

@@ -4,3 +4,4 @@ Apple.*.dll
 lib*Glue.dylib
 Loader
 test-4
+Loader.app
