@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Element.cs,v 1.3 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Element.cs,v 1.4 2004/06/25 02:49:14 gnorton Exp $
 //
 
 using System;
@@ -46,7 +46,7 @@ namespace ObjCManagedExporter
 
 		public virtual string FileNameFormat
 		{
-			get { return "{1}{0}{2}.gen.cs"; }
+			get { return "{1}{0}{2}.cs"; }
 		}
 
 		internal static TextWriter OpenFile(string pathFormat,string fileFormat,string frmwrk,string file)
@@ -118,9 +118,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Element.cs,v $
+//	Revision 1.4  2004/06/25 02:49:14  gnorton
+//	Sample 2 now runs.
+//
 //	Revision 1.3  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.2  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	

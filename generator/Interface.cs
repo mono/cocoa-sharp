@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.17 2004/06/24 19:44:18 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.18 2004/06/25 02:49:14 gnorton Exp $
 //
 
 using System;
@@ -172,7 +172,7 @@ namespace ObjCManagedExporter
 
 			_cs.WriteLine("        #region -- PInvoke Glue API --");
 			foreach (Method _toOutput in AllMethods.Values)
-				_toOutput.CSGlueMethod(ExtrasName, Framework + "Glue", _cs);
+				_toOutput.CSGlueMethod(ExtrasName, Framework + "Glue", _cs, _overrides);
 			_cs.WriteLine("        #endregion");
 			ProcessAddin(_cs, config);
 
@@ -184,9 +184,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.18  2004/06/25 02:49:14  gnorton
+//	Sample 2 now runs.
+//
 //	Revision 1.17  2004/06/24 19:44:18  urs
 //	Cleanup
-//
+//	
 //	Revision 1.16  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
 //	

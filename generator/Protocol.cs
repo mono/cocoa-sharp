@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.8 2004/06/24 18:56:53 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.9 2004/06/25 02:49:14 gnorton Exp $
 //
 
 using System;
@@ -36,7 +36,7 @@ namespace ObjCManagedExporter
 
 		public override string FileNameFormat
 		{
-			get { return "{1}{0}I{2}.gen.cs"; }
+			get { return "{1}{0}I{2}.cs"; }
 		}
 
 		public override void WriteCS(TextWriter _cs, Configuration config)
@@ -77,13 +77,16 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.9  2004/06/25 02:49:14  gnorton
+//	Sample 2 now runs.
+//
 //	Revision 1.8  2004/06/24 18:56:53  gnorton
 //	AppKit compiles
 //	Foundation compiles
 //	Output setMethod() for protocols not just the property so Interfaces are met.
 //	Ignore static protocol methods (.NET doesn't support static in interfaces).
 //	Resolve compiler errors.
-//
+//	
 //	Revision 1.7  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
 //	

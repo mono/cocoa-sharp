@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.30 2004/06/24 14:15:42 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.31 2004/06/25 02:49:14 gnorton Exp $
 //
 
 using System;
@@ -131,12 +131,12 @@ namespace ObjCManagedExporter
 
 		private bool OutputOC
 		{
-			get { return mOutputFlag == string.Empty || mOutputFlag == "OC"; }
+			get { return true; /*return mOutputFlag == string.Empty || mOutputFlag == "OC";*/ }
 		}
 
 		private bool OutputCS
 		{
-			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
+			get { return true; /*mOutputFlag == string.Empty || mOutputFlag == "CS";*/ }
 		}
 
 		private void OutputFramework(Framework _toprocess) 
@@ -376,6 +376,7 @@ namespace ObjCManagedExporter
 	public class Overrides
 	{
 		[XmlElement("method")] public MethodOverride[] Methods;
+		[XmlElement("gluemethod")] public MethodOverride[] GlueMethods;
 	}
 
 	public class MethodOverride {
@@ -386,9 +387,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.31  2004/06/25 02:49:14  gnorton
+//	Sample 2 now runs.
+//
 //	Revision 1.30  2004/06/24 14:15:42  gnorton
 //	Some appkit fixes
-//
+//	
 //	Revision 1.29  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
 //	

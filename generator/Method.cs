@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.33 2004/06/24 20:09:24 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.34 2004/06/25 02:49:14 gnorton Exp $
 //
 
 using System;
@@ -315,13 +315,22 @@ namespace ObjCManagedExporter
 		#endregion
 
 		#region -- C# Glue --
-		public void CSGlueMethod(string name,string glueLib,System.IO.TextWriter w)
+		public void CSGlueMethod(string name,string glueLib,System.IO.TextWriter w, Overrides _o)
 		{
 			if (mIsUnsupported)
 			{
 				w.WriteLine("        // " + mMethodDeclaration + ": not supported");
 				return;
 			}
+			
+			if(_o != null && _o.GlueMethods != null)
+				foreach(MethodOverride _mo in _o.GlueMethods) 
+					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
+						w.WriteLine("        //{0} is overridden", Selector);
+						w.WriteLine(_mo.Method);
+						return;
+					}
+
 
 			string _type = ConvertTypeGlue(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
@@ -396,7 +405,7 @@ namespace ObjCManagedExporter
 				return;
 
 			// Check to see if we're overridden
-			if(_o != null)
+			if(_o != null && _o.Methods != null)
 				foreach(MethodOverride _mo in _o.Methods) 
 					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
 						w.WriteLine("        //{0} is overridden", Selector);
@@ -549,9 +558,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.34  2004/06/25 02:49:14  gnorton
+//	Sample 2 now runs.
+//
 //	Revision 1.33  2004/06/24 20:09:24  urs
 //	fix constructor gen
-//
+//	
 //	Revision 1.32  2004/06/24 18:56:53  gnorton
 //	AppKit compiles
 //	Foundation compiles
