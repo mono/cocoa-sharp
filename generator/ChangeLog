@@ -1,3 +1,12 @@
+2004-16-06	C.J. Collier	<cjcollier@colliertech.org>
+	* typeConversion.pl
+	- Created.  Enter type mapping from ObjC to C#
+
+	* genstubs.pl
+	- Reading in typeConversion.pl and building a hash from it
+	- Cleaned up unsupported function handling slightyl
+	- Created a %cSharp hash that will eventually be populated by %objC.  This is what inspired typeConversion.pl
+
 2004-12-06	Geoff Norton	<gnorton@customerdna.com>
 	* genstubs.pl
 	- BUGFIX: Fixed generation of protocols.
