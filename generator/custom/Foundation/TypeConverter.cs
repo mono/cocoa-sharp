@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.19 2004/09/07 21:08:57 adhamh Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.20 2004/09/07 21:16:37 adhamh Exp $
 //
 
 using System;
@@ -80,10 +80,10 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 				if (c != null)
 					ret = (NSObject)c.Invoke(new object[]{raw,false});
 				else
-					Console.WriteLine("ERROR: No constructor for " + type.FullName + " with (IntPtr,bool) found");
+					NSObject.DebugLog(1, "ERROR: No constructor for " + type.FullName + " with (IntPtr,bool) found");
 			}
 			else
-				Console.WriteLine("ERROR: No class found that derives from NSObject with the name: " + className);
+				NSObject.DebugLog(1, "ERROR: No class found that derives from NSObject with the name: " + className);
 
 			if(ret != null && ret is Apple.Foundation.NSString)
 				return ret.ToString();
@@ -116,6 +116,9 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.20  2004/09/07 21:16:37  adhamh
+// change ERROR messages to also call NSObject.DebugLog instead of Console.WriteLine.
+//
 // Revision 1.19  2004/09/07 21:08:57  adhamh
 // Added code for disabling debug logging.
 //

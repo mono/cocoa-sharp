@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.16 2004/09/07 21:08:57 adhamh Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.17 2004/09/07 21:16:37 adhamh Exp $
 //
 
 using System;
@@ -30,7 +30,7 @@ namespace Apple.Tools
 			bool isValueType = !isNull && valueType.IsPrimitive;
 			IntPtr retVal = Marshal.AllocHGlobal(isValueType ? Math.Max(8,Marshal.SizeOf(value)) : Marshal.SizeOf(typeof(IntPtr)));
 try { NSObject.DebugLog(1, "DEBUG: ObjectToVoidPtr: [value=" + value + "] [type=" + valueType + "] isValueType=" + isValueType + ", ptr=0x{0,8:x}", (int)retVal); } 
-catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
+catch { NSObject.DebugLog(1, "ERROR: ObjectToVoidPtr"); }
 			if(isNull)
 				Marshal.WriteIntPtr(retVal,IntPtr.Zero);
 			else if (isValueType) {
@@ -369,6 +369,9 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.17  2004/09/07 21:16:37  adhamh
+// change ERROR messages to also call NSObject.DebugLog instead of Console.WriteLine.
+//
 // Revision 1.16  2004/09/07 21:08:57  adhamh
 // Added code for disabling debug logging.
 //

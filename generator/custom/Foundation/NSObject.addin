@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.28 2004/09/07 21:08:57 adhamh Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.29 2004/09/07 21:16:37 adhamh Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -256,7 +256,7 @@ NSObject.DebugLog(1, "DEBUG: ObjC us for the delegate 0x{0,8:x}", (int)raw);
 #else
 				SetJIT_HACK_Delegate(managedObject._delegate);
 #endif
-Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw);
+NSObject.DebugLog(1, "ERROR: native object was not registered 0x{0,8:x}", (int)raw);
 #if JIT_HACK_FIXED
 			return null;
 #else
@@ -289,6 +289,9 @@ NSObject.DebugLog(1, "DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.29  2004/09/07 21:16:37  adhamh
+// change ERROR messages to also call NSObject.DebugLog instead of Console.WriteLine.
+//
 // Revision 1.28  2004/09/07 21:08:57  adhamh
 // Added code for disabling debug logging.
 //
