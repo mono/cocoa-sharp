@@ -18,3 +18,6 @@ Loader.o: Loader.c
 
 Bundle.o: Bundle.m
 	gcc -x objective-c -g -c Bundle.m -o Bundle.o
+
+install-data-local:
+	if test -n '@prefix@/bin/CocoaSharpLoader'; then cp ../../build/CocoaSharpLoader @prefix@/bin/CocoaSharpLoader; fi

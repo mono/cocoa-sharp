@@ -5,3 +5,6 @@ all: ../../build/libCocoaSharpGlue.dylib
 
 clean:
 	rm -f ../../build/libCocoaSharpGlue.dylib
+
+install-data-local:
+	if test -n '@prefix@/lib/libCocoaSharpGlue.dylib'; then cp ../../build/libCocoaSharpGlue.dylib @prefix@/lib/libCocoaSharpGlue.dylib; fi

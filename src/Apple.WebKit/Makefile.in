@@ -13,3 +13,5 @@ clean:
 	touch ../../build/Apple.AppKit.dll
 	rm ../../build/Apple.AppKit.dll
 
+install:
+	if test -n '@prefix@/lib/Apple.WebKit.dll'; then cp ../../build/Apple.WebKit.dll* @prefix@/lib; fi

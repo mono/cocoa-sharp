@@ -17,3 +17,4 @@ clean:
 
 maintainer-clean: clean
 
+install:

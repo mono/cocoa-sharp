@@ -11,3 +11,6 @@ maintainer-clean: clean
 clean:
 	touch ../../build/Apple.Foundation.dll
 	rm ../../build/Apple.Foundation.dll
+
+install:
+	if test -n '@prefix@/lib/Apple.Foundation.dll'; then cp ../../build/Apple.Foundation.dll* @prefix@/lib; fi 

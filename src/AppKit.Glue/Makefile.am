@@ -5,3 +5,6 @@ all: ../../build/libAppKitGlue.dylib
 
 clean:
 	rm -f ../../build/libAppKitGlue.dylib
+
+install-data-local:
+	if test -n '@prefix@/lib/libAppKitGlue.dylib'; then cp ../../build/libAppKitGlue.dylib @prefix@/lib/libAppKitGlue.dylib; fi

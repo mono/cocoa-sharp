@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.8 2004/07/02 14:34:58 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.9 2004/07/28 16:58:16 gnorton Exp $
 #
 
 AC_INIT(README)
@@ -95,11 +95,18 @@ src/CocoaSharp.Loader/Makefile
 src/AppKit.Glue/Makefile
 src/Foundation.Glue/Makefile
 src/WebKit.Glue/Makefile
+src/Apple.Foundation/Makefile
+src/Apple.AppKit/Makefile
+src/Apple.WebKit/Makefile
 ])
 
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.9  2004/07/28 16:58:16  gnorton
+# Build system updates so that we have the ability to actually install
+# (no gac for now)
+#
 # Revision 1.8  2004/07/02 14:34:58  urs
 # Bump version of mono dep to 1.0
 #
