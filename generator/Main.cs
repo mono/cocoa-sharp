@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.32 2004/06/25 17:39:10 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.33 2004/06/27 20:27:48 gnorton Exp $
 //
 
 using System;
@@ -131,12 +131,12 @@ namespace ObjCManagedExporter
 
 		private bool OutputOC
 		{
-			get { return true; /*return mOutputFlag == string.Empty || mOutputFlag == "OC";*/ }
+			get { return mOutputFlag == string.Empty || mOutputFlag == "OC"; }
 		}
 
 		private bool OutputCS
 		{
-			get { return true; /*mOutputFlag == string.Empty || mOutputFlag == "CS";*/ }
+			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
 		}
 
 		private void OutputFramework(Framework _toprocess) 
@@ -396,9 +396,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.33  2004/06/27 20:27:48  gnorton
+//	Turn conditional output support back on
+//
 //	Revision 1.32  2004/06/25 17:39:10  urs
 //	Handle char* as argument and return value
-//
+//	
 //	Revision 1.31  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
 //	
