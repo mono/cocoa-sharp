@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.24 2004/07/03 03:27:51 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.25 2004/07/03 03:48:44 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -52,7 +52,15 @@
 		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
-Console.WriteLine("DEBUG: NSRegisterClass {0}", type.Name);
+			string name = type.Name;
+			foreach (Attribute attr in Attribute.GetCustomAttributes(type)) {
+				ObjCRegisterAttribute regAttr = attr as ObjCRegisterAttribute;
+				if(regAttr != null && regAttr.Name != null) {
+					name = regAttr.Name;
+					break;
+				}
+			}
+Console.WriteLine("DEBUG: NSRegisterClass {0} as {1}", type.Name, name);
 			if (sConstructorDelegate == null) {
 				sConstructorDelegate = new ConstructorDelegate(ConstructObject);
 				sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
@@ -78,7 +86,7 @@ Console.WriteLine("DEBUG: NSRegisterClass {0}", type.Name);
 				memberTypes[i] = Marshal.StringToCoTaskMemAnsi(m.Types[i]);
 			}
 			IntPtr retval = IntPtr.Zero;
-			retval = CreateClassDefinition(type.Name, type.BaseType.Name, r.NumMethods, methods, signatures, m.NumMembers, memberNames, memberTypes, m.Sizes); 
+			retval = CreateClassDefinition(name, type.BaseType.Name, r.NumMethods, methods, signatures, m.NumMembers, memberNames, memberTypes, m.Sizes); 
 			for(int i = 0; i < r.NumMethods; i++) {
 				Marshal.FreeCoTaskMem(methods[i]);
 				Marshal.FreeCoTaskMem(signatures[i]);
@@ -272,6 +280,9 @@ Console.WriteLine("DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.25  2004/07/03 03:48:44  gnorton
+// ObjCRegisterAttribute support; we can now overload any ObjCClassname -> .NET Classname mapping
+//
 // Revision 1.24  2004/07/03 03:27:51  gnorton
 // NIB lubbin
 //

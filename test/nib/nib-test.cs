@@ -18,31 +18,32 @@ class MainClass {
 	}
 }
 
-[ObjCExport]
-public class ConverterController : NSObject {
-	[ObjCExport]
-    public Converter converter; 
-	[ObjCExport]
-    public NSTextField dollarField; 
-	[ObjCExport]
-    public NSTextField rateField; 
-	[ObjCExport]
-    public NSTextField totalField; 
+[ObjCRegister("ConverterController")]
+public class MyController : NSObject {
 
-	protected ConverterController(IntPtr raw, bool release) : base(raw,release) {}
+    [ObjCConnect(Name="converter", Type="@", Size=4)]
+    public Converter _converter; 
+    [ObjCConnect(Name="dollarField", Type="@", Size=4)]
+    public NSTextField _dollarField; 
+    [ObjCConnect(Name="rateField", Type="@", Size=4)]
+    public NSTextField _rateField; 
+    [ObjCConnect(Name="totalField", Type="@", Size=4)]
+    public NSTextField _totalField; 
+
+	protected MyController(IntPtr raw, bool release) : base(raw,release) {}
 
 	[ObjCExport("convert:")]
 	public void convert(object sender) {
 	    _UpdateMembers();
         
 Console.WriteLine("ConverterController: convert");
-Console.WriteLine("converter=" + converter);
-Console.WriteLine("dollarField=" + dollarField.stringValue);
-Console.WriteLine("rateField=" + rateField.stringValue);
+Console.WriteLine("converter=" + _converter);
+Console.WriteLine("dollarField=" + _dollarField.stringValue);
+Console.WriteLine("rateField=" + _rateField.stringValue);
 
-        totalField.stringValue = converter.convert(dollarField.stringValue, rateField.stringValue);
+        _totalField.stringValue = _converter.convert(_dollarField.stringValue, _rateField.stringValue);
 
-Console.WriteLine("totalField=" + totalField.stringValue);
+Console.WriteLine("totalField=" + _totalField.stringValue);
 	}
 }
 
