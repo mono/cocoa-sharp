@@ -9,16 +9,41 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.26 2004/06/23 18:18:32 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.27 2004/06/24 02:16:05 gnorton Exp $
 //
 
 using System;
 using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace ObjCManagedExporter 
 {
+
+	[XmlRoot("conversions")]
+	public class TypeConversions
+	{
+		[XmlElement("type")] public NativeData[] Conversions;
+		[XmlElement("regex")] public NativeData[] Regexs;
+		[XmlElement("replace")] public ReplaceData[] Replaces;
+	}
+
+	public class NativeData
+	{
+		[XmlAttribute("native")] public string Native;
+		[XmlAttribute("api")] public string Api;
+		[XmlAttribute("glue")] public string Glue;
+	}
+
+	public class ReplaceData
+	{
+		[XmlAttribute("type")] public string Type;
+		[XmlAttribute("regex")] public string Regex;
+		[XmlAttribute("old")] public string ToReplace;
+		[XmlAttribute("new")] public string ReplaceWith;
+	}
 
 	public class Method 
 	{
@@ -33,6 +58,7 @@ namespace ObjCManagedExporter
 		private string[] mCSGlueArguments;
 		private bool mIsClassMethod, mIsUnsupported, mCSAPIDone;
 		private string mReturnDeclarationType;
+		private static TypeConversions mConversions;
 
 		private static Regex[] sUnsupported = new Regex[] 
 		{
@@ -45,6 +71,11 @@ namespace ObjCManagedExporter
 		#region -- Constructor --
 		public Method(string methodDeclaration) 
 		{
+			XmlSerializer _ser = new XmlSerializer(typeof(TypeConversions));
+			XmlTextReader _xtr = new XmlTextReader("generator/typeconversion.xml");
+			mConversions = (TypeConversions)_ser.Deserialize(_xtr);
+			_xtr.Close();
+
 			mMethodDeclaration = methodDeclaration.Trim();
 
 			// Check for unsupported methods and return commented function
@@ -469,82 +500,41 @@ namespace ObjCManagedExporter
 			return str.Trim();
 		}
 
-		private static string ConvertTypeNative(string type)
-		{
-			type = StripComments(type);
-			switch (type) 
-			{
-				case "void": return "void";
-				case "BOOL": return "bool";
-				case "float": return "float";
-				case "double": return "double";
-				case "unichar": return "char";
-				case "char": return "sbyte";
-				case "unsigned char": case "uint8_t": return "byte";
-				case "short": case "short int":
-					return "short";
-				case "unsigned short": case "unsigned short int":
-					return "ushort";
-				case "int": case "int32_t": case "SInt32":
-					return "int";
-				case "unsigned": case "unsigned int": case "UInt32": case "UTF32Char":
-					return "uint";
-				case "long": case "long int":
-					return "long";
-				case "unsigned long": case "unsigned long int":
-					return "ulong";
-				case "long long": case "int64_t": case "SInt64":
-					return "Int64";
-				case "unsigned long long": case "UInt64":
-					return "UInt64";
-
-				case "OSErr":
-					return "Int16";
-				case "OSType":
-					return "int";
-
-				case "va_list":
-				case "IMP":
-					return "IntPtr /*(" + type + ")*/";
-			}
-
-			if (new Regex(@"char\s*\*").IsMatch(type))
-				return "string";
-
-			return type;
-		}
-
 		private static string ConvertTypeGlue(string type) 
 		{
-			type = ConvertTypeNative(type.Replace("const ",string.Empty));
-			switch (type) 
-			{
-				case "id": case "Class": case "SEL":
-					return "IntPtr /*(" + type + ")*/";
-				default:
-					if (type.EndsWith("*"))
-						return "IntPtr /*(" + type + ")*/";
-					break;
-			}
+			type = StripComments(type.Replace("const ",string.Empty));
+			foreach (NativeData nd in mConversions.Conversions)
+				if(type == nd.Native)
+					return nd.Glue;
+
+			foreach (NativeData nd in mConversions.Regexs)
+				if(new Regex(nd.Native).IsMatch(type))
+					return nd.Glue;
+
+			foreach (ReplaceData rd in mConversions.Replaces)
+				if(rd.Type == "glue")
+					if(new Regex(rd.Regex).IsMatch(type))
+						return type.Replace(rd.ToReplace, rd.ReplaceWith);
+			
 			return type;
 		}
 
 		private static string ConvertType(string type) 
 		{
-			type = ConvertTypeNative(type.Replace("const ",string.Empty));
-			switch (type) 
-			{
-				case "id": return "object";
-				case "Class": return "Class";
-				case "SEL": return "string";
-				default:
-					if (type.EndsWith("*"))
-						if (type.StartsWith("NS"))
-							return type.StartsWith("NSString") ? "string" : type.Replace("*", "").Trim();
-						else
-							return "IntPtr /*(" + type + ")*/";
-					break;
-			}
+			type = StripComments(type.Replace("const ",string.Empty));
+			foreach (NativeData nd in mConversions.Conversions)
+				if(type == nd.Native)
+					return nd.Api;
+
+			foreach (NativeData nd in mConversions.Regexs)
+				if(new Regex(nd.Native).IsMatch(type))
+					return nd.Api;
+
+			foreach (ReplaceData rd in mConversions.Replaces)
+				if(rd.Type == "api")
+					if(new Regex(rd.Regex).IsMatch(type))
+						return type.Replace(rd.ToReplace, rd.ReplaceWith);
+			
 			return type;
 		}
 		#endregion
@@ -552,9 +542,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.27  2004/06/24 02:16:05  gnorton
+//	Updated out typeconversions to be loaded from an XML file; instead of being hard coded.  In the future we wont need to update the app to update the types.
+//
 //	Revision 1.26  2004/06/23 18:18:32  urs
 //	Allow same case get/set properties
-//
+//	
 //	Revision 1.25  2004/06/23 17:55:41  urs
 //	Make test compile with the lasted glue API name change
 //	

@@ -1,0 +1,41 @@
+<conversions>
+	<type native="void" api="void" glue="void" />
+	<type native="BOOL" api="bool" glue="bool" />
+	<type native="float" api="float" glue="float" />
+	<type native="double" api="double" glue="double" />
+	<type native="unichar" api="char" glue="char" />
+	<type native="char" api="sbyte" glue="sbyte" />
+	<type native="unsigned char" api="byte" glue="byte" />
+	<type native="uint8_t" api="byte" glue="byte" />
+	<type native="short" api="short" glue="short" />
+	<type native="short int" api="short" glue="short" />
+	<type native="unsigned short" api="ushort" glue="ushort" />
+	<type native="unsigned short int" api="ushort" glue="ushort" />
+	<type native="int" api="int" glue="int" />
+	<type native="int32_t" api="int" glue="int" />
+	<type native="SInt32" api="int" glue="int" />
+	<type native="unsigned" api="uint" glue="uint" />
+	<type native="unsigned int" api="uint" glue="uint" />
+	<type native="UInt32" api="uint" glue="uint" />
+	<type native="UTF32Char" api="uint" glue="uint" />
+	<type native="long" api="long" glue="long" />
+	<type native="long int" api="long" glue="long" />
+	<type native="unsigned long" api="ulong" glue="ulong" />
+	<type native="unsigned long int" api="ulong" glue="ulong" />
+	<type native="long long" api="Int64" glue="Int64" />
+	<type native="int64_t" api="Int64" glue="Int64" />
+	<type native="SInt64" api="Int64" glue="Int64" />
+	<type native="unsigned long long" api="UInt64" glue="UInt64" />
+	<type native="UInt64" api="UInt64" glue="UInt64" />
+	<type native="OSErr" api="Int16" glue="Int16" />
+	<type native="OSType" api="int" glue="int" />
+	<type native="va_list" api="IntPtr" glue="IntPtr" />
+	<type native="IMP" api="IntPtr" glue="IntPtr" />
+	<type native="id" api="object" glue="IntPtr" />
+	<type native="Class" api="Class" glue="IntPtr" />
+	<type native="SEL" api="string" glue="IntPtr" />
+	<regex native="char\s*\*" glue="string" api="string" />
+	<regex native="NSString\s*\*" glue="string" api="string" />
+	<regex native="[^N][^S].+\s*\*" glue="IntPtr" api="IntPtr" />
+	<replace type="api" regex="NS.+\s*\*" old="*" new="" />
+</conversions>
