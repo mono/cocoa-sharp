@@ -8,7 +8,7 @@ else
 fi
 
 
-/sw/bin/libtoolize --force --copy
+glibtoolize --force --copy
 automake -a
 autoconf
 ./configure --enable-maintainer-mode $*
