@@ -62,7 +62,6 @@ namespace ObjCManagedExporter {
             
             foreach (Match m in _interfaceRegex.Matches(_headerData)) {
                 Interface _i = new Interface(m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value);
-                Console.WriteLine("FILE: {3} 1: {0} 2: {1} 3: {2}", m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value, _toParse.Name);
                 _i.AddMethods(m.Groups[6].Value);
                 Interfaces.Add(_i.Name, _i);
                 _headerData = _headerData.Replace(m.Value, "");
@@ -70,7 +69,7 @@ namespace ObjCManagedExporter {
             
             foreach (Match m in _enumRegex.Matches(_headerData)) {
                 // We found an enum
-                Console.WriteLine("{0}", m.Groups[2].Value);
+                //Console.WriteLine("{0}", m.Groups[2].Value);
             }
          }
         
@@ -84,6 +83,60 @@ namespace ObjCManagedExporter {
             throw new Exception("Unable to locate framework " +  _tolocate.Name);
         }
         
+        private void OutputFramework(Framework _toprocess) {
+		IDictionaryEnumerator _enum = Interfaces.GetEnumerator();
+		while(_enum.MoveNext()) {
+			int totalMethods = 0;
+			ArrayList interfaceMethods = new ArrayList();
+			Interface i = (Interface)_enum.Value;
+			Console.Write("Interface: {0}:{1}", i.Name, i.Methods.Keys.Count);
+			totalMethods += i.Methods.Keys.Count;
+			// Add all the methods
+			interfaceMethods.Add(i.Methods);
+
+			// Process this interface and check to see if it implements any protocols
+			foreach(String proto in i.Protocols) {
+				if(!proto.Equals("")) {
+					Console.Write(" <{0}>", proto);
+					if(Protocols[proto] != null) {
+						Console.Write(":{0}", ((Protocol)Protocols[proto]).Methods.Keys.Count); 
+						totalMethods += ((Protocol)Protocols[proto]).Methods.Keys.Count;
+						interfaceMethods.Add(((Protocol)Protocols[proto]).Methods);
+					}
+				}
+			}
+			IDictionaryEnumerator _categoryEnum = Categories.GetEnumerator();
+			while(_categoryEnum.MoveNext()) {
+				string _key = (string)_categoryEnum.Key;
+				Category _cat = (Category)_categoryEnum.Value;
+				if(_key.EndsWith("_" + i.Name)) {
+					Console.Write(" ({0})", _key.Substring(0, _key.IndexOf("_")));
+					Console.Write(":{0}", _cat.Methods.Keys.Count);
+					totalMethods += _cat.Methods.Keys.Count;
+					interfaceMethods.Add(_cat.Methods);
+				}
+			}
+				
+			Console.WriteLine(" TOTAL:{0}", totalMethods);	
+			if(totalMethods > 0) {
+				// Create the glue
+				for(int j = 0; j < interfaceMethods.Count; j++) {
+					Hashtable _methods = (Hashtable)interfaceMethods[j];
+					ArrayList _addedMethods = new ArrayList();
+					IDictionaryEnumerator _methodEnum = _methods.GetEnumerator();
+					while(_methodEnum.MoveNext()) {
+						if(!_addedMethods.Contains((string)_methodEnum.Key)) { 
+							_addedMethods.Add((string)_methodEnum.Key);
+							Method _toOutput = (Method)_methodEnum.Value;
+							Console.WriteLine(_toOutput.ObjCMethod);
+						} else 
+							Console.WriteLine("DUPLICATE METHOD: {0}", (string)_methodEnum.Key);
+					}
+				}
+			}
+					
+		}
+	}
         private void ProcessFramework(Framework _toprocess) {
             DirectoryInfo _frameworkDirectory = new DirectoryInfo(LocateFramework(_toprocess));
               
@@ -112,6 +165,8 @@ namespace ObjCManagedExporter {
             foreach(Framework f in mConfig.Frameworks)
                 ProcessFramework(f);
 
+            foreach(Framework f in mConfig.Frameworks)
+                OutputFramework(f);
         }   
             
         static void Main(string[] args) {

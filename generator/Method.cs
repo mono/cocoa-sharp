@@ -74,7 +74,7 @@ namespace ObjCManagedExporter {
 			{
 				// If there are no arguments (only matches method name)
 				match = noarg_rx.Match(remainder);
-				messageParts.Add(match.Groups[0].Value);
+				messageParts.Add(match.Groups[1].Value);
 			} else if(arg_rx.IsMatch(remainder)) {
 				// If there are arguments, parse them
 				IList g = new ArrayList(arg_rx.Match(remainder).Groups);
@@ -114,7 +114,11 @@ namespace ObjCManagedExporter {
 		}
         
         public string ObjCMethod {
-            get { return mMethod; }
+            get {
+		if(mIsUnsupported) 
+			return "/* " + mMethod + " */";
+		 return mGlueMethodName; 
+	    }
         }
     }
 }

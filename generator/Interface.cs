@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter {
 
@@ -8,11 +9,13 @@ namespace ObjCManagedExporter {
         private String mName;
         private String mChild;
         private String[] mProtos;
+	private static Regex mMethodRegex = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
         
         public Interface(String _name, String _child, String _protos) {
             mName = _name;
             mChild = _child;
-            mProtos = _protos.Split(new char[]{' ', ','});
+	    _protos = _protos.Replace(" ", "");		
+            mProtos = _protos.Split(new char[]{','});
             mMethods = new Hashtable();
         }
         
@@ -33,8 +36,10 @@ namespace ObjCManagedExporter {
         }
         
         public void AddMethods(String methods) {
-//            if(mMethods[method] == null) 
-//                mMethods.Add(method, new Method(method));
+	      String[] splitMethods = methods.Split('\n');
+	      foreach(string method in splitMethods) 
+		if(mMethodRegex.IsMatch(method) && mMethods[method] == null)
+			mMethods.Add(method, new Method(method));
         }
     }
 }

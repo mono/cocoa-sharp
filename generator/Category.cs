@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter {
 
@@ -7,6 +8,7 @@ namespace ObjCManagedExporter {
         private IDictionary mMethods;
         private String mName;
         private String mClass;
+	private static Regex mMethodRegex = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
         
         public Category(String _name, String _class) {
             mName = _name;
@@ -27,8 +29,10 @@ namespace ObjCManagedExporter {
         }
         
         public void AddMethods(String methods) {
-  //          if(mMethods[method] == null) 
-    //            mMethods.Add(method, new Method(method));
+              String[] splitMethods = methods.Split('\n');
+              foreach(string method in splitMethods)
+                if(mMethodRegex.IsMatch(method) && mMethods[method] == null)
+                        mMethods.Add(method, new Method(method));
         }
     }
 }
