@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.14 2004/08/12 17:22:25 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.15 2004/08/13 20:15:02 adhamh Exp $
 #
 
 AC_INIT(README)
@@ -33,7 +33,7 @@ dnl _AM_DEPENDENCIES(OBJC)
 dnl Of course, hard coding doesn't work for some versions of automake
 OBJCDEPMODE="depmode=gcc"
 AC_SUBST(OBJCDEPMODE)
-
+AC_PREFIX_DEFAULT(/Library/Frameworks/Mono.framework/Versions/Current)
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then
 	AC_MSG_ERROR(['pkg-config' is not in your PATH.])
@@ -116,6 +116,9 @@ src/Apple.WebKit/AssemblyInfo.cs
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.15  2004/08/13 20:15:02  adhamh
+# added support for default prefix
+#
 # Revision 1.14  2004/08/12 17:22:25  gnorton
 # Fix .pc to work with our new gac location
 #
