@@ -1,3 +1,15 @@
+2004-06-10	Geoff Norton	<gnorton@customerdna.com>
+	genstubs.pl:
+		- changed return type of $class * back to id
+		- removed Cocoa.h header
+		- added $class.h header
+		- added NSString.h header for NSLog error fix
+		- added \n to all NSLog
+		- fixed interface parsing
+		- fixed tab / space consistency
+		- fixed regex warning when methodType is undefined
+		- cleaned output to be more descriptive
+
 2004-06-09	C.J. Collier	<cjcollier@colliertech.org>
 
 	* genstubs.pl (parseMethod):
