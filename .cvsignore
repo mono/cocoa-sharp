@@ -1,0 +1,12 @@
+build
+Makefile.in
+.DS_Store
+missing
+install-sh
+configure
+autom4te.cache
+config.guess
+config.sub
+ltmain.sh
+config.status
+config.log
