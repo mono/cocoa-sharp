@@ -20,8 +20,9 @@
 	[NSApplication sharedApplication];
 	[NSApp setApplicationIconImage: [NSImage imageNamed: @"iTools.tiff"]];
 
+	[NSMenu setMenuBarVisible:YES];
 	[NSApp setMainMenu: [[NSMenu alloc] initWithTitle:@"MainMenu"]];
-	
+
 	//create an NSRect and use it to create an CSWindow
 	NSRect contentRect = NSMakeRect(200, 180, 300, 300);
 	//CSWindow is just a subclass of NSWindow.  subclasses of NSWindow are normal.
@@ -29,7 +30,6 @@
 	//make window the main window for the application
 	[window makeMainWindow];
 	
-	[NSMenu setMenuBarVisible:YES];
 
 	
 	//Here is where custom code is implemented to draw the first window, or whatever
@@ -39,4 +39,16 @@
 	[NSApp run];
 	[pool release];	
 }
+
+/*
+ - (void)applicationWillFinishLaunching:(NSNotification *)notification {
+	 // The creation of new menus for the menu bar should be done in applicationWillFinishLaunching.
+	 [self createFlashyMenu];
+	 //[self createTrickyMenu];
+	 //[self createPopUps];
+	 //currentRadioSetting = Radio1Tag;
+	 //currentSwitch1Setting = NO;
+	 //currentSwitch2Setting = NO;
+ } */
+
 @end

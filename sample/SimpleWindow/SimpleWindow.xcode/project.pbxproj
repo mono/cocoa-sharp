@@ -64,6 +64,7 @@
 				08FB779DFE84155DC02AAC07,
 				B2FB249D0679FB2E00F20944,
 				1AB674ADFE9D54B511CA2CBB,
+				B269422A067CCFE1003AAA91,
 			);
 			isa = PBXGroup;
 			name = SimpleWindow;
@@ -188,6 +189,14 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		B269422A067CCFE1003AAA91 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = foo.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		B297DCD006796AF6004CB4CF = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -236,6 +245,34 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		B2C90EF0067D2ED80059924C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CSMenu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2C90EF1067D2ED80059924C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CSMenu.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2C90EF2067D2ED80059924C = {
+			fileRef = B2C90EF0067D2ED80059924C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2C90EF3067D2ED80059924C = {
+			fileRef = B2C90EF1067D2ED80059924C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		B2F08F470676517800AC7C5A = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -274,6 +311,7 @@
 				B2FB24B50679FB5000F20944,
 				B2FB24B60679FB5000F20944,
 				B2FB24B70679FB5000F20944,
+				B2C90EF2067D2ED80059924C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +334,7 @@
 				B2FB24C40679FB6300F20944,
 				B2FB24C50679FB6300F20944,
 				B2FB24C60679FB6300F20944,
+				B2C90EF3067D2ED80059924C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -383,6 +422,7 @@
 		};
 		B2FB24840679FB0300F20944 = {
 			children = (
+				B2C90EF0067D2ED80059924C,
 				B2F08F470676517800AC7C5A,
 				B2543A2D0676D46900CBEB0B,
 				B2A5812F0678E2E500C755B6,
@@ -402,6 +442,7 @@
 				B2A581300678E2E500C755B6,
 				B2A581880678F43300C755B6,
 				B297DCD106796AF6004CB4CF,
+				B2C90EF1067D2ED80059924C,
 			);
 			isa = PBXGroup;
 			name = Classes;

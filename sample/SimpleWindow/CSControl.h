@@ -8,12 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CSWindow.h"
-
+#import "CSMenu.h"
 
 @interface CSControl : NSObject {
 
 }
 - (void)displayWindow;
-- (void)_stop;
++ (void)stop;
 
 @end
