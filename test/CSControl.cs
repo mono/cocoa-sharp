@@ -1,12 +1,15 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Reflection;
 
 using Apple.Foundation;
 using Apple.AppKit;
 
 class CSControl : NSObject {
-	
 	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl));
+
+    [DllImport("Glue")]
+    static extern IntPtr CreateClassDefinition(string name, string superclassName);
 
 	NSButton swap1;
 	public CSControl() : base(NSObject__alloc(CSControl_class)) {}
@@ -15,26 +18,18 @@ class CSControl : NSObject {
 
 	public static IntPtr NSRegisterClass(Type objIndType) {
 		Console.WriteLine("NAME: {0}", objIndType.Name);
-		MethodInfo[] objAllMethods = objIndType.GetMethods();
-		foreach(MethodInfo objIndMethodInfo in objAllMethods)
-		{
+
+		foreach(MethodInfo objIndMethodInfo in objIndType.GetMethods())
 			Console.WriteLine("METH: {0}", objIndMethodInfo.Name);
-		}
 
-		//Get the property info
-		PropertyInfo[] objAllProps = objIndType.GetProperties();
-		foreach(PropertyInfo objIndPropInfo in objAllProps)
-		{
+		foreach(PropertyInfo objIndPropInfo in objIndType.GetProperties())
 			Console.WriteLine("PROP: {0}", objIndPropInfo.Name);
-		}
 
-		//Get the Constructor info...
-		ConstructorInfo[] objAllCons = objIndType.GetConstructors();
-		foreach(ConstructorInfo objIndCons in objAllCons)
-		{
+		foreach(ConstructorInfo objIndCons in objIndType.GetConstructors())
 			Console.WriteLine("CON: {0}", objIndCons.Name);
-		}
-		return NSString.NSClass("NSControl");
+
+		IntPtr cls = CreateClassDefinition(objIndType.Name,"NSObject");
+		return cls;
 	}
 
 	public void displayWindow() {

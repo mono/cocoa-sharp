@@ -38,9 +38,7 @@ main(int argc, const char* argv[]) {
 	int retval;
 	
 	if (argc >= 2)
-	{
 		sFile = argv[1];
-	}
 	
 	printf("file: %s\n",sFile);
 	
@@ -54,10 +52,11 @@ main(int argc, const char* argv[]) {
 	domain = mono_interp_init (sFile);
 #endif
 
-	if(domain == NULL)
-		printf("domain = NULL\n");
-	else
-		printf("domain != NULL\n");
+	if(domain == NULL) {
+	    printf("ERROR: No domain for assembly: %s\n",sFile);
+		exit(1);
+	}
+
 	/*
 	 * We add our special internal call, so that C# code
 	 * can call us back.
@@ -66,15 +65,22 @@ main(int argc, const char* argv[]) {
 					      sFile);
 
 	if(assembly == NULL)
-		printf("assembly = NULL\n");
-	else
-		printf("assembly != NULL\n");
+	{
+	    printf("ERROR: Assembly load failed: %s\n",sFile);
+		exit(1);
+	}
+
 	image = assembly->image;
+
 	if(image == NULL)
-		printf("image: NULL\n");
+	{
+	    printf("ERROR: No assembly image: %s\n",sFile);
+		exit(1);
+	}
+
 	mono_jit_exec (domain, assembly, argc, (char**)argv);
 
-	retval=mono_environment_exitcode_get ();
+	retval = mono_environment_exitcode_get ();
 	
 #if JIT
 	mono_jit_cleanup (domain);
@@ -83,5 +89,3 @@ main(int argc, const char* argv[]) {
 #endif
 	return retval;
 }
-
-
