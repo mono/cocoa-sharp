@@ -96,6 +96,10 @@ public class Controller : NSObject {
 	public NSOutlineView outlineView;
 	[ObjCConnect]
 	public WebView webView;
+	[ObjCConnect]
+	public NSSearchField searchBox;
+	[ObjCConnect]
+	public NSBrowser indexBrowser;
 
 	static RootTree help_tree;
 
@@ -105,9 +109,16 @@ public class Controller : NSObject {
 	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
+	[ObjCExport("userDidSearch:")]
+	public void UserDidSearch(object sender) {
+		Console.WriteLine("DEBUG: Search is now {0}", searchBox.stringValue);
+	}
+
 	[ObjCExport("applicationWillFinishLaunching:")]
 	public void FinishLoading(NSNotification aNotification) {
 		drawer.open();
+		indexBrowser.target = this;
+		indexBrowser.doubleAction = "browserdoubleAction";
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
 		Node match;
@@ -117,6 +128,16 @@ public class Controller : NSObject {
 		webView.mainFrame.loadHTMLString_baseURL(content, null);
 	}
 	
+	[ObjCExport("browserdoubleAction")]
+	public void browserDoubleAction() {
+		IndexEntry entry = IndexDataSource.GetEntry(indexBrowser.selectedRowInColumn(0));
+		Topic t = entry[0];
+		Node match;
+		string content = help_tree.RenderUrl(t.Url, out match);
+		content=content.Replace("a href='", "a href='http://monodoc/load?");
+		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+		webView.mainFrame.loadHTMLString_baseURL(content, null);
+	}
 	[ObjCExport("doubleAction")]
 	public void outlineViewDoubleAction() {
 		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
@@ -223,6 +244,31 @@ Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	}
 }
 
+[ObjCRegister("IndexDataSource")]
+class IndexDataSource : NSObject {
+	static IndexReader index_reader;
+	IndexEntry current_entry = null;
+
+	static IndexDataSource() {
+		index_reader = RootTree.LoadTree().GetIndex();
+	}
+
+	public IndexDataSource(IntPtr raw, bool rel) : base(raw, rel) {}
+
+	public static IndexEntry GetEntry(int entry) {
+		return index_reader.GetIndexEntry(entry);
+	}
+
+	[ObjCExport("browser:numberOfRowsInColumn:")]
+	public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
+		return index_reader.Rows;
+	}
+	[ObjCExport("browser:willDisplayCell:atRow:column:")]
+	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
+		cell.stringValue = index_reader.GetValue(rowNumber);
+		cell.leaf = true;
+	}
+}
 [ObjCRegister("BrowserDataSource")]
 class BrowserDataSource : NSObject {
 

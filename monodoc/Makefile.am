@@ -14,6 +14,7 @@ monodoc:
 	cp ../build/*Glue* monodoc.app/Contents/Resources
 	cp ../build/CocoaSharpLoader monodoc.app/Contents/MacOS/monodoc
 	cp tmp/monodoc.dll monodoc.app/Contents/Resources
+	cp tmp/monodoc.index monodoc.app/Contents/Resources
 	cp -r tmp/sources monodoc.app/Contents/Resources/sources
 	cp tmp/monodoc.xml monodoc.app/Contents/Resources
 
