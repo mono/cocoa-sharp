@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.20 2004/07/02 12:45:10 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.21 2004/07/02 13:29:30 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -54,12 +54,9 @@
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
 Console.WriteLine("DEBUG: NSRegisterClass {0}", type.Name);
 			if (sConstructorDelegate == null) {
-Console.WriteLine("DEBUG: Making delegates");
 				sConstructorDelegate = new ConstructorDelegate(ConstructObject);
 				sGetManagedDelegate = new GetManagedDelegate(GetDelegateForObject);
-Console.WriteLine("DEBUG: Setting delegates");
 				SetConstructorDelegate(sConstructorDelegate,sGetManagedDelegate);
-Console.WriteLine("DEBUG: Done, Setting delegates");
 			}
 
 			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
@@ -98,7 +95,7 @@ Console.WriteLine("DEBUG: Done, Setting delegates");
 
 		~NSObject() {
 			// this will leak memory, but we have to synchronize managed and objc runtime
-#if true || RELEASE_MEM
+#if RELEASE_MEM
 			if (Raw != IntPtr.Zero && _release) {
 Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 				release();
@@ -223,6 +220,9 @@ Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw)
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.21  2004/07/02 13:29:30  urs
+// Cleanup build process again, and checkin bin's for monodoc (as temp solution)
+//
 // Revision 1.20  2004/07/02 12:45:10  urs
 // cleanup
 //

@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.6 2004/07/01 20:48:30 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.7 2004/07/02 13:29:30 urs Exp $
 #
 
 AC_INIT(README)
@@ -91,6 +91,7 @@ monodoc/Makefile
 test/Makefile
 src/Makefile
 src/CocoaSharp.Glue/Makefile
+src/CocoaSharp.Loader/Makefile
 src/AppKit.Glue/Makefile
 src/Foundation.Glue/Makefile
 src/WebKit.Glue/Makefile
@@ -99,6 +100,9 @@ src/WebKit.Glue/Makefile
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.7  2004/07/02 13:29:30  urs
+# Cleanup build process again, and checkin bin's for monodoc (as temp solution)
+#
 # Revision 1.6  2004/07/01 20:48:30  gnorton
 # Make system reorg/cleanup
 #
