@@ -41,26 +41,25 @@ void AddMethods(Class cls,int count,...) {
 
 typedef BOOL (*managedDelegate)(NSInvocation * anInvocation);
 
-@interface DotNetForwarding : NSObject {
-}
-+ (id) initWithManagedDelegate: (managedDelegate) delegate on: (id) base;
-+ (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector on: (id) base;
-+ (void) forwardInvocation: (NSInvocation *) anInvocation on: (id) base;
+//- (id)initWithManagedDelegate:(managedDelegate)delegate
+id glue_initWithManagedDelegate(id base, SEL sel, ...) {
+    NSLog(@"glue_initWithManagedDelegate %@ %s", base, sel_getName(sel));
 
-@end
-
-@implementation DotNetForwarding
-+ (id) initWithManagedDelegate: (managedDelegate) delegate on: (id) base {
-    NSLog(@"initWithManagedDelegate: %@ %p", base, delegate);
-
+	va_list vl;
+	va_start(vl,sel);
+	managedDelegate delegate = va_arg(vl,managedDelegate);
 	object_setInstanceVariable(base,"mDelegate",delegate);
-	
 	return base;
 }
 
-+ (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector on: (id) base {
-    NSLog(@"methodSignatureForSelector: %s", sel_getName(aSelector));
+//- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+id glue_methodSignatureForSelector(id base, SEL sel, ...) {
+	va_list vl;
+	va_start(vl,sel);
+	SEL aSelector = va_arg(vl,SEL);
 	
+    NSLog(@"glue_methodSignatureForSelector %p %s", base, sel_getName(aSelector));
+
 	NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
 	
 	if (!signature)
@@ -70,63 +69,29 @@ typedef BOOL (*managedDelegate)(NSInvocation * anInvocation);
 	return signature;
 }
 
-+ (void) forwardInvocation: (NSInvocation *) anInvocation on: (id) base {
-    NSLog(@"forwardInvocation: %s", sel_getName([anInvocation selector]));
-	
-	managedDelegate delegate;
-	object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
-	
-	if (delegate(anInvocation))
-        return;
-    else
-        [base doesNotRecognizeSelector: [anInvocation selector]];
-}
-
-@end
-
-id DotNetForwarding_initWithManagedDelegate(DotNetForwarding *THIS, managedDelegate delegate) {
-	NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
-	return [DotNetForwarding initWithManagedDelegate: delegate on: THIS];
-}
-
-//- (id)initWithManagedDelegate:(managedDelegate)delegate
-id glue_initWithManagedDelegate(id base, SEL sel, ...) {
-    NSLog(@"glue_initWithManagedDelegate %@ %s", base, sel_getName(sel));
-
-	va_list vl;
-	va_start(vl,sel);
-	managedDelegate delegate = va_arg(vl,managedDelegate);
-
-	id ret = [DotNetForwarding initWithManagedDelegate: delegate on: base];
-	NSLog(@" --> ret = %@",ret);
-	return ret;
-}
-
-//- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
-id glue_methodSignatureForSelector(id base, SEL sel, ...) {
-    NSLog(@"glue_methodSignatureForSelector %p %s", base, sel_getName(sel));
-	
-	va_list vl;
-	va_start(vl,sel);
-	SEL aSelector = va_arg(vl,SEL);
-	
-	return [DotNetForwarding methodSignatureForSelector: aSelector on: base];
-}
-
 //- (void)forwardInvocation:(NSInvocation *)anInvocation;
 id glue_forwardInvocation(id base, SEL sel, ...) {
-    NSLog(@"glue_forwardInvocation: calling delegate %p %s", base, sel_getName(sel));
-
 	va_list vl;
 	va_start(vl,sel);
 	NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
 	
-	[DotNetForwarding forwardInvocation: anInvocation on: base];
+    NSLog(@"glue_forwardInvocation: calling delegate %p %s", base, sel_getName([anInvocation selector]));
+	
+	managedDelegate delegate;
+	object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+	
+	if (!delegate(anInvocation))
+        [base doesNotRecognizeSelector: [anInvocation selector]];
 	return base;
 }
 
+id DotNetForwarding_initWithManagedDelegate(id *THIS, managedDelegate delegate) {
+	NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
+	return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
+}
+
+
 Class CreateClassDefinition(const char * name, const char * superclassName) {
-	//superclassName = "DotNetForwarding";
     NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
     //
@@ -178,7 +143,7 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     ivarList->ivar_count = 1;
     ivarList->ivar_list[0].ivar_name = "mDelegate";
     ivarList->ivar_list[0].ivar_type = @encode(managedDelegate);
-    ivarList->ivar_list[0].ivar_offset = 4;
+    ivarList->ivar_list[0].ivar_offset = super_class->instance_size;
 
     new_class->instance_size = sizeof(void*);
     new_class->ivars = ivarList;
