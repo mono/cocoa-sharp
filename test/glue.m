@@ -4,17 +4,29 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSMethodSignature.h>
 
-typedef id (*constructorDelegate)(id classptr, char *className);
-constructorDelegate cDelegate = nil;
+typedef id (*constructorDelegate)(id THIS, const char *className);
+typedef id (*managedDelegate)(int what,id anInvocation);
+typedef managedDelegate (*getManagedDelegate)(id THIS);
+#define GLUE_methodSignatureForSelector 0
+#define GLUE_forwardInvocation 1
+
+constructorDelegate sConstructorDelegate = nil;
+getManagedDelegate sGetManagedDelegate = nil;
 BOOL sIsGlueVerbose = NO;
-	
-void setConstructorDelegate(constructorDelegate aDelegate) {
-        NSLog(@"Setting delegate");
-        cDelegate = aDelegate;
-}
 
 BOOL IsGlueVerbose() { return sIsGlueVerbose; }
 void SetGlueVerbose(BOOL verbose) { sIsGlueVerbose = verbose; }
+
+void SetConstructorDelegate(constructorDelegate _constructorDelegate,getManagedDelegate _getManagedDelegate) {
+    //if (IsGlueVerbose())
+        NSLog(@"Setting delegates (%p,%p)", _constructorDelegate,_getManagedDelegate);
+    sConstructorDelegate = _constructorDelegate;
+    sGetManagedDelegate = _getManagedDelegate;
+}
+
+const char * GetObjectClassName(id THIS) {
+	return [[THIS className] cString];
+}
 
 void AddMethods(Class cls,int numOfMethods,const char **methods,const char **signatures,IMP method,int count,...) {
     struct objc_method_list *methodsToAdd = (struct objc_method_list *)
@@ -54,10 +66,6 @@ NSMethodSignature * MakeMethodSignature(const char *types) {
     return ret;
 }
 
-typedef id (*managedDelegate)(int what,id anInvocation);
-#define GLUE_methodSignatureForSelector 0
-#define GLUE_forwardInvocation 1
-
 //- (id) initWithManagedDelegate: (managedDelegate) delegate
 id glue_initWithManagedDelegate(id base, SEL sel, ...) {
     if (IsGlueVerbose())
@@ -84,7 +92,10 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
     
     if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
         managedDelegate delegate;
-        object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+        if (class_getInstanceVariable([base class],"mDelegate") != nil)
+            object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+        else
+            delegate = sGetManagedDelegate(base);
 
         aSelector = sel_getUid([[strSel substringFromIndex: 8] cString]);
         signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
@@ -94,8 +105,9 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 }
 
 id glue_initToManaged(id base, SEL sel, ...) {
-	NSLog(@"Deleagate is nil; allocing a new object and assigning base to it...");
-	cDelegate(base, "NSObject");
+    //if (IsGlueVerbose())
+	    NSLog(@"Delagate is nil; allocing a new object and assigning base to it...");
+	sConstructorDelegate(base, GetObjectClassName(base));
 }
     
 //- (void) forwardInvocation: (NSInvocation *) anInvocation;
@@ -248,15 +260,8 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
     return new_class;
 }
 
-const char * GetObjectClassName(id THIS)
-{
-	return [[THIS className] cString];
-}
-
 /*
 int GetInvocationArgumentSize(NSInvocation *invocation, int index) {
 	return sizeof([[invocation methodSignature] getArgumentTypeAtIndex:index]);
 }
 */
-
-

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.11 2004/07/01 20:09:57 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.12 2004/07/01 21:26:03 urs Exp $
 //
 
 using System;
@@ -25,17 +25,8 @@ namespace Apple.Foundation
 		[DllImport("Glue")]
 		protected internal static extern IntPtr GetObjectClassName(IntPtr /*(id)*/ THIS);
 
-		public static object NS2Net(IntPtr raw) 
+		public static Type NS2Type(string className) 
 		{
-			if(raw == IntPtr.Zero)
-				return null;
-
-			lock (NSObject.Objects)
-				if(NSObject.Objects.Contains(raw))
-					return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
-				
-			NSObject ret = null;
-			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
 			Type type = (Type)Name2Type[className];
 
 			if (type == null && Name2Type_init)
@@ -55,18 +46,34 @@ namespace Apple.Foundation
 					}
 				type = (Type)Name2Type[className];
 			}
+			
+			return type;
+		}
+
+		public static object NS2Net(IntPtr raw) 
+		{
+			if(raw == IntPtr.Zero)
+				return null;
+
+			lock (NSObject.Objects)
+				if(NSObject.Objects.Contains(raw))
+					return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
+				
+			NSObject ret = null;
+			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
+			Type type = NS2Type(className);
 
 			if (type != null) {
-				Console.WriteLine("<Using type: " + type.FullName + ", for Objective-C class: " + className);
+Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C class: " + className);
 				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
 					new Type[] {typeof(IntPtr),typeof(bool)},null);
 				if (c != null)
 					ret = (NSObject)c.Invoke(new object[]{raw,false});
 				else
-					Console.WriteLine("No constructor for " + type.FullName + " with (IntPtr,bool) found");
+					Console.WriteLine("ERROR: No constructor for " + type.FullName + " with (IntPtr,bool) found");
 			}
 			else
-				Console.WriteLine(className + " not in Foundation or AppKit");
+				Console.WriteLine("ERROR: No class found that derives from NSObject with the name: " + className);
 
 			if(ret != null && ret is Apple.Foundation.NSString)
 				return ret.ToString();
@@ -93,6 +100,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.12  2004/07/01 21:26:03  urs
+// Support for NIB files: objects that are not constructed by us
+//
 // Revision 1.11  2004/07/01 20:09:57  urs
 // Fix GC issues
 //
