@@ -44,7 +44,13 @@ class Test
 		window.center();
 		window.makeKeyAndOrderFront(null);
 
+		Console.WriteLine("runModalForWindow");
+
 		NSApplication.sharedApplication().runModalForWindow(window);
+
+		Console.WriteLine("Hit enter to stop");
+		Console.ReadLine();
+
 		monoButton.release();
 		pool.release();
 	}
