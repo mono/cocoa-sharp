@@ -1,5 +1,5 @@
-        NSPoint origin;
-        NSSize size;
+        public NSPoint origin;
+        public NSSize size;
 
         public NSRect(NSPoint _origin, NSSize _size) {
                 this.origin = _origin;
