@@ -9,52 +9,37 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.2 2004/06/22 12:04:12 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.3 2004/06/22 13:38:59 urs Exp $
 //
 
 using System;
-using System.Collections;
-using System.Text.RegularExpressions;
+using System.IO;
 
 namespace ObjCManagedExporter 
 {
 
-	public class CEnum 
+	public class CEnum : Element
 	{
-		private string mName;
-		private string mFramework;
-		private string mEnum;
+		public CEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework) {}
         
-		public CEnum(string _name, string _struct, string _framework) 
+		public override void WriteCS(TextWriter _cs)
 		{
-			mName = _name;
-			mEnum = _struct;
-			mFramework = _framework;
-		}
-        
-		public string Name 
-		{
-			get { return mName; }
-		}
-		public string Framework 
-		{
-			get { return mFramework; }
-		}
-		public string CSEnum 
-		{
-			get 
-			{
-				string structVal = "using System;\n";
-				structVal += "namespace Apple." + mFramework + " {\n";
-				structVal += "protected enum " + mName + " {\n" + mEnum + "}\n}";
-				return structVal;
-			}
+			_cs.WriteLine("using System;");
+			_cs.WriteLine("namespace Apple.{0} {{",Framework);
+			_cs.WriteLine("    public enum {0} {{",Name);
+			_cs.Write(mOriginal);
+			_cs.WriteLine("    }");
+			_cs.WriteLine("}");
 		}
 	}
 }
 
 //	$Log: CEnum.cs,v $
+//	Revision 1.3  2004/06/22 13:38:59  urs
+//	More cleanup and refactoring start
+//	Make output actually compile (diverse fixes)
+//
 //	Revision 1.2  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
-//
+//	
 //

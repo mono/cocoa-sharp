@@ -102,6 +102,11 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "Element.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Generator Spec.rtf"
                     BuildAction = "None"
                 />

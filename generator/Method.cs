@@ -9,11 +9,12 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.15 2004/06/22 12:04:12 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.16 2004/06/22 13:38:59 urs Exp $
 //
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter 
@@ -65,8 +66,8 @@ namespace ObjCManagedExporter
 			Match match = sMatch1.Match(mMethodDeclaration);
 
 			string methodType = match.Groups[1].Value;
-			mReturnDeclarationType = match.Groups[2].Value;
-			if (mReturnDeclarationType == null)
+			mReturnDeclarationType = match.Groups[2].Value.Trim();
+			if (mReturnDeclarationType.Length == 0)
 				mReturnDeclarationType = "id";
 			string remainder = match.Groups[3].Value;
 
@@ -102,8 +103,8 @@ namespace ObjCManagedExporter
 					for (int i = 1; i < grps.Count; )
 					{
 						messageParts.Add(grps[i++].Value);
-						string argType = grps[i++].Value;
-						string argName = grps[i++].Value;
+						string argType = grps[i++].Value.Trim();
+						string argName = grps[i++].Value.Trim();
 						remainder = remainder.Replace(grps[0].Value, "");
 
 						if (argType == string.Empty)
@@ -132,7 +133,8 @@ namespace ObjCManagedExporter
 			
 			mGlueMethodName = string.Empty;
 			mCSMethodName = MakeCSMethodName(string.Join("_", mMessageParts));
-			if (mIsClassMethod) mGlueMethodName += "_";
+			if (mIsClassMethod)
+				mGlueMethodName += "_";
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
 
@@ -243,17 +245,17 @@ namespace ObjCManagedExporter
 			ArrayList _params = new ArrayList();
 			ArrayList _csparams = new ArrayList();
 
-			//if (mIsClassMethod)
-			//	_params.Add("IntPtr CLASS");
-			//else
-			//	_params.Add("IntPtr THIS");
-			_csparams.Add("Raw");
+			if (mIsClassMethod)
+				_csparams.Add(name + "_class");
+			else
+				_csparams.Add("Raw");
+			
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
 				string t = convertType(mArgumentDeclarationTypes[i]);
 				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
-				if(mArgumentDeclarationTypes[i].EndsWith("*"))
+				if(t != convertTypeGlue(mArgumentDeclarationTypes[i]))
 					_csparams.Add("Net2NS(p" + i + ") /* " + mArgumentNames[i] + "*/");
 				else 
 					_csparams.Add("p" + i + "/*" + mArgumentNames[i] + "*/");
@@ -263,13 +265,13 @@ namespace ObjCManagedExporter
 			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
 
 			w.WriteLine("        public {0} {1} {2} ({3}) {{", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr); 
-			if(mReturnDeclarationType.Equals("id") || mReturnDeclarationType.EndsWith("*"))
-				w.WriteLine("            {0} NS2Net({1}_{2}({3}));", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
+			if(_type != convertTypeGlue(mReturnDeclarationType))
+				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, csparamsStr);
 			else 
-				w.WriteLine("            {0} {1}_{2}({3});", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
+				w.WriteLine("            {0}{1}_{2}({3});", _type == "void" ? "" : "return ", name, mGlueMethodName, csparamsStr);
 			w.WriteLine("        }");
 
-			if (!mIsClassMethod && mCSMethodName.StartsWith("init") && _type != "void")
+			if (!mIsClassMethod && mCSMethodName.StartsWith("init") && _type == "id" && _params.Count > 0)
 			{
 				w.WriteLine("        public {0} ({1}) {{", name, paramsStr); 
 				w.WriteLine("            SetRaw({0}_{1}({2}),_release);", name, mGlueMethodName, csparamsStr);
@@ -287,8 +289,8 @@ namespace ObjCManagedExporter
 
 			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
 			{
-				//string t = convertType(mArgumentDeclarationTypes[i]);
-				_params.Add("object p" + i + "/*" + mArgumentNames[i] + "*/");
+				string t = convertType(mArgumentDeclarationTypes[i]);
+				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
 			}
 
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
@@ -301,6 +303,7 @@ namespace ObjCManagedExporter
 			{
 				case "delegate":
 				case "this":
+				case "lock":
 				case "base":
 				case "int":
 				case "string":
@@ -320,17 +323,21 @@ namespace ObjCManagedExporter
 				case "BOOL": return "bool";
 				case "float": return "float";
 				case "double": return "double";
-				case "char": case "unichar": return "char";
-				case "unsigned char": return "uchar";
+				case "unichar": return "char";
+				case "char": return "sbyte";
+				case "unsigned char": return "byte";
 				case "unsigned short": return "ushort";
 				case "short": return "short";
-				case "int": case "long int": case "int32_t":
+				case "int": case "long int": case "int32_t": case "SInt32":
 					return "int";
 				case "unsigned": case "unsigned int": case "unsigned long int": 
 					return "uint";
 				case "unsigned long": return "ulong";
 				case "long long": case "int64_t": return "Int64";
 				case "unsigned long long": return "UInt64";
+
+				case "OSType":
+					return "int";
 
 				case "va_list":
 				case "IMP":
@@ -352,8 +359,6 @@ namespace ObjCManagedExporter
 						return "IntPtr /*(" + type + ")*/";
 					break;
 			}
-			if(type.Trim().Equals(""))
-				return "void";
 			return type;
 		}
 
@@ -367,18 +372,23 @@ namespace ObjCManagedExporter
 				case "SEL": return "string";
 				default:
 					if (type.EndsWith("*"))
-						return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
+						if (type.StartsWith("NS"))
+							return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
+						else
+							return "IntPtr /*(" + type + ")*/";
 					break;
 			}
-			if(type.Trim().Equals(""))
-				return "void";
 			return type;
 		}
 	}
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.16  2004/06/22 13:38:59  urs
+//	More cleanup and refactoring start
+//	Make output actually compile (diverse fixes)
+//
 //	Revision 1.15  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
-//
+//	
 //

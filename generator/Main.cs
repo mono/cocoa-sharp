@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.16 2004/06/22 12:04:12 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.17 2004/06/22 13:38:59 urs Exp $
 //
 
 using System;
@@ -129,14 +129,6 @@ namespace ObjCManagedExporter
 			throw new Exception("Unable to locate framework " +  _tolocate.Name);
 		}
 
-		private static TextWriter OpenFile(string pathFormat,string fileFormat,string frmwrk,string file)
-		{
-			string path = string.Format(pathFormat, Path.DirectorySeparatorChar, frmwrk);
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			return new StreamWriter(File.Create(string.Format(fileFormat, Path.DirectorySeparatorChar, path, file)));
-		}
-
 		private bool OutputOC
 		{
 			get { return mOutputFlag == string.Empty || mOutputFlag == "OC"; }
@@ -151,56 +143,22 @@ namespace ObjCManagedExporter
 		{
 			if (OutputCS)
 				foreach(CEnum e in Enums.Values)
-					if(e.Framework.Equals(_toprocess.Name)) {
-						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, e.Name);
-						_cs.WriteLine(e.CSEnum);
-						_cs.Close();
-					}
+					if(e.Framework == _toprocess.Name)
+						e.WriteFile();
 
 			if (OutputCS)
 				foreach (Struct s in Structs.Values)
-					if(s.Framework.Equals(_toprocess.Name)) 
-					{
-						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, s.Name);
-						_cs.WriteLine(s.CSStruct);
-						_cs.Close();
-					}
+					if(s.Framework == _toprocess.Name) 
+						s.WriteFile();
 
 			if (OutputCS)
 				foreach (Protocol p in Protocols.Values)
-					if(p.Framework.Equals(_toprocess.Name)) 
-					{
-						IDictionary _addedMethods = new Hashtable();
-						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}I{2}.cs.gen", p.Framework, p.Name);
-						_cs.WriteLine("using System;");
-						_cs.WriteLine("using System.Runtime.InteropServices;");
-						if(!p.Framework.Equals("Foundation")) 
-							_cs.WriteLine("using Apple.Foundation;");
-						_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
-						_cs.WriteLine("{");
-						_cs.Write("    public interface I{0}", p.Name);
-						_cs.WriteLine("    {");
-
-						foreach (Method _toOutput in p.Methods.Values) 
-						{
-							if (_toOutput.IsUnsupported)
-								continue;
-
-							string _methodSig = _toOutput.GlueMethodName;
-							if(!_addedMethods.Contains(_methodSig)) 
-							{
-								_addedMethods[_methodSig] = true;
-								_toOutput.CSInterfaceMethod(p.Name, _cs);
-							}
-						}
-						_cs.WriteLine("    }");
-						_cs.WriteLine("}");
-						_cs.Close();
-					}
+					if(p.Framework == _toprocess.Name) 
+						p.WriteFile();
 
 			foreach (Interface i in Interfaces.Values) 
 			{
-				if(!i.Framework.Equals(_toprocess.Name))
+				if(i.Framework != _toprocess.Name)
 					continue;
 
 				int totalMethods = 0;
@@ -249,7 +207,7 @@ namespace ObjCManagedExporter
 
 					if (OutputOC)
 					{
-						_gs = OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
+						_gs = Element.OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
 
 						foreach(string import in i.Imports)
 							_gs.WriteLine("#import <{0}>", import);
@@ -260,14 +218,12 @@ namespace ObjCManagedExporter
 					}
 					if (OutputCS)
 					{
-						_cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, i.Name);
+						_cs = i.OpenFile();
 
 						_cs.WriteLine("using System;");
 						_cs.WriteLine("using System.Runtime.InteropServices;");
 						_cs.WriteLine("using Apple.Foundation;");
-						if(_toprocess.Name != "Foundation") 
-							_cs.WriteLine("using Apple.{0};", _toprocess.Name);
-						_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+						_cs.WriteLine("namespace Apple.{0}", i.Framework);
 						_cs.WriteLine("{");
 
 						_cs.Write("    public class {0}", i.Name);
@@ -278,7 +234,7 @@ namespace ObjCManagedExporter
 						_cs.WriteLine("    {");
 
 						_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
-						_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
+						_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == IntPtr.Zero) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
 						_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
 						_cs.WriteLine();
 						_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
@@ -394,7 +350,11 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.17  2004/06/22 13:38:59  urs
+//	More cleanup and refactoring start
+//	Make output actually compile (diverse fixes)
+//
 //	Revision 1.16  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
-//
+//	
 //

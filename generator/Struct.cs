@@ -9,52 +9,39 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Struct.cs,v 1.3 2004/06/22 12:04:12 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Struct.cs,v 1.4 2004/06/22 13:38:59 urs Exp $
 //
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ObjCManagedExporter 
 {
 
-	public class Struct 
+	public class Struct : Element
 	{
-		private string mName;
-		private string mFramework;
-		private string mStruct;
+		public Struct(string _name, string _struct, string _framework) : base(_struct,_name,_framework) {}
         
-		public Struct(string _name, string _struct, string _framework) 
+		public override void WriteCS(TextWriter _cs)
 		{
-			mName = _name;
-			mStruct = _struct;
-			mFramework = _framework;
-		}
-        
-		public string Name 
-		{
-			get { return mName; }
-		}
-		public string Framework 
-		{
-			get { return mFramework; }
-		}
-		public string CSStruct 
-		{
-			get 
-			{
-				string structVal = "using System;\n";
-				structVal += "namespace Apple." + mFramework + " {\n";
-				structVal += "public struct " + mName + " {\n" + mStruct + "}\n}";
-				return structVal;
-			}
+			_cs.WriteLine("using System;");
+			_cs.WriteLine("namespace Apple.{0} {{",Framework);
+			_cs.WriteLine("    public struct {0} {{",Name);
+			_cs.Write(mOriginal);
+			_cs.WriteLine("    }");
+			_cs.WriteLine("}");
 		}
 	}
 }
 
 //	$Log: Struct.cs,v $
+//	Revision 1.4  2004/06/22 13:38:59  urs
+//	More cleanup and refactoring start
+//	Make output actually compile (diverse fixes)
+//
 //	Revision 1.3  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
-//
+//	
 //
