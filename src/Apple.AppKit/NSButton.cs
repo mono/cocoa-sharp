@@ -9,16 +9,17 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.9 2004/06/17 17:41:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.10 2004/06/18 13:54:57 urs Exp $
 //
 
 using System;
-using Apple.Foundation;
 using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace Apple.AppKit
 {
+    using Apple.Foundation;
+
 	public enum NSBezelStyle {
 		NSRoundedBezelStyle = 1,
 		NSRegularSquareBezelStyle = 2,
@@ -60,6 +61,9 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.10  2004/06/18 13:54:57  urs
+// *** empty log message ***
+//
 // Revision 1.9  2004/06/17 17:41:20  gnorton
 // API modification.
 //
