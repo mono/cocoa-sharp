@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/cocoa-sharp
 pkgincludedir = $(includedir)/cocoa-sharp
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run autoconf
-AUTOMAKE = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run autoheader
+ACLOCAL = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run autoconf
+AUTOMAKE = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -69,7 +69,7 @@ target_triplet = powerpc-apple-darwin7.4.0
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /Users/umuff/mono-cvs/cocoa-sharp/missing --run tar
+AMTAR = ${SHELL} /Users/plasma/Documents/Development/mono/cocoa-sharp/missing --run tar
 AR = ar
 AS = @AS@
 AWK = awk
@@ -109,7 +109,7 @@ STRIP = strip
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /Users/umuff/mono-cvs/cocoa-sharp/install-sh
+install_sh = /Users/plasma/Documents/Development/mono/cocoa-sharp/install-sh
 SUBDIRS = 
 subdir = monodoc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

@@ -1,4 +1,7 @@
-all: ../../build/Apple.Foundation.dll
+all: ../../build/Apple.Foundation.dll ../../build/Apple.Foundation.dll.config
+
+../../build/Apple.Foundation.dll.config:
+	cp Apple.Foundation.dll.config ../../build
 
 ../../build/Apple.Foundation.dll: *.cs
 	mcs -nowarn:0108,0114 -g *.cs -target:library -out:../../build/Apple.Foundation.dll
