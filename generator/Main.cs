@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.29 2004/06/24 06:29:36 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.30 2004/06/24 14:15:42 gnorton Exp $
 //
 
 using System;
@@ -190,7 +190,7 @@ namespace ObjCManagedExporter
 					FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
 					foreach(FileSystemInfo _file in _infos) {
 						if(_file.Name.EndsWith(".cs")) {
-							if(!File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
+							if(File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
 								File.Delete(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
 							File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, _toprocess.Name), _file.Name), Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
 						}
@@ -386,9 +386,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.30  2004/06/24 14:15:42  gnorton
+//	Some appkit fixes
+//
 //	Revision 1.29  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
-//
+//	
 //	Revision 1.28  2004/06/24 04:36:17  gnorton
 //	Updates to fix build errors; not many left now
 //	

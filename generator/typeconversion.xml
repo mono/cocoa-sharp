@@ -34,12 +34,26 @@
 	<type native="id" api="object" glue="IntPtr" />
 	<type native="Class" api="Class" glue="IntPtr" />
 	<type native="SEL" api="string" glue="IntPtr" />
+	<type native="NSWorkspaceLaunchOptions" api="uint" glue="uint" />
+	<type native="NSGlyph" api="uint" glue="uint" />
+	<type native="NSFontTraitMask" api="uint" glue="uint" />
+	<type native="NSWindowDepth" api="int" glue="int" />
+	<type native="NSDragOperation" api="int" glue="int" />
+	<type native="NSToolTipTag" api="int" glue="int" />
+	<type native="NSTrackingRectTag" api="int" glue="int" />
+	<type native="NSPointPointer" api="IntPtr" glue="IntPtr" />
+	<type native="NSModalSession" api="IntPtr" glue="IntPtr" />
+	<type native="NSPointArray" api="IntPtr" glue="IntPtr" />
+	<type native="NSRectArray" api="IntPtr" glue="IntPtr" />
+	<type native="NSRectPointer" api="IntPtr" glue="IntPtr" />
+	<type native="NSSizePointer" api="IntPtr" glue="IntPtr" />
 	<type native="NSTimeInterval" api="double" glue="double" />
 	<type native="NSKeyValueObservingOptions" api="uint" glue="uint" />
 	<type native="NSRangePointer" api="IntPtr" glue="IntPtr" />
 	<type native="NSStringEncoding" api="uint" glue="uint" />
 	<type native="NSSocketNativeHandle" api="IntPtr" glue="IntPtr" />
 	<type native="CFRunLoopRef" api="IntPtr" glue="IntPtr" />
+	<type native="id*" glue="IntPtr" api="IntPtr" />
 	<regex native="char\s*\*" glue="string" api="string" />
 	<regex native="NSString\s*\*" glue="string" api="string" />
 	<regex native="[^N][^S].+\s*\*" glue="IntPtr" api="IntPtr" />
