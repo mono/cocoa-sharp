@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.22 2004/06/23 17:52:41 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.23 2004/06/23 18:12:13 gnorton Exp $
 //
 
 using System;
@@ -63,7 +63,7 @@ namespace ObjCManagedExporter
 			Regex _importRegex = new Regex(@"#import <(.+?)>");
 			Regex _commentRegex = new Regex(@"(/\*([^\*]+)\*/$)|(//.+$)", RegexOptions.Multiline);
 			Regex _interfaceRegex = new Regex(@"^@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _protocolRegex = new Regex(@"^@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"^@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _structRegex = new Regex(@"typedef\s+struct\s+(.+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
@@ -167,7 +167,7 @@ namespace ObjCManagedExporter
 
 					if (OutputOC)
 					{
-						_gs = Element.OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
+						_gs = Element.OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
 
 						foreach(string import in i.Imports)
 							_gs.WriteLine("#import <{0}>", import);
@@ -319,9 +319,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.23  2004/06/23 18:12:13  gnorton
+//	Add WebKit to the generator
+//	Change the output directories to be Framework.Glue
+//
 //	Revision 1.22  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
-//
+//	
 //	Revision 1.21  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
 //	
