@@ -31,7 +31,7 @@ namespace Apple.Foundation
 		protected static extern void NSObject_release(IntPtr THIS);
 		
 		[DllImport("Glue")]
-		protected static extern IntPtr Class_instanceMethodSignatureForSelector(IntPtr CLASS, IntPtr sel);
+		protected static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types,int nargs, int sizeOfParams, int returnValueLength);
 		#endregion
 
 		protected enum GlueDelegateWhat {
@@ -45,7 +45,7 @@ namespace Apple.Foundation
 		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation) {
 			switch (what) {
 				case GlueDelegateWhat.methodSignatureForSelector:
-					return Class_instanceMethodSignatureForSelector(NSString.NSClass("_CSControl"),invocation);
+					return MakeMethodSignature("v@:",2,160,0);
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					string method = new NSInvocation(invocation).selector();

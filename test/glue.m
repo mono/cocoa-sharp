@@ -3,6 +3,7 @@
 #import <Foundation/NSProxy.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
+#import <Foundation/NSMethodSignature.h>
 
 // static code: has to go
 @interface _CSControl : NSObject {}
@@ -39,8 +40,70 @@ void AddMethods(Class cls,int count,...) {
     class_addMethods(cls, methodsToAdd);
 }
 
-id Class_instanceMethodSignatureForSelector(Class CLASS, SEL aSelector) {
-	return [CLASS instanceMethodSignatureForSelector: aSelector];
+#if 0
+@interface MonoMethodSignature : NSMethodSignature {}
+- (unsigned)frameLength;
+- (const char *)getArgumentTypeAtIndex:(unsigned)index;
+- (BOOL)isOneway;
+- (unsigned)methodReturnLength;
+- (const char *)methodReturnType;
+- (unsigned)numberOfArguments;
+@end
+
+@implementation MonoMethodSignature
+- (unsigned)frameLength { return 160; }
+- (const char *)getArgumentTypeAtIndex:(unsigned)index {
+	if (index == 0) return "@";
+	if (index == 1) return ":";
+	return "v";
+}
+- (BOOL)isOneway { return NO; }
+- (unsigned)methodReturnLength { return 0; }
+- (const char *)methodReturnType { return "v"; }
+- (unsigned)numberOfArguments { return 2; }
+@end
+#endif
+
+NSMethodSignature * MakeMethodSignature(const char *types,int nargs, int sizeOfParams, int returnValueLength) {
+    NSLog(@"MakeMethodSignature");
+	NSMethodSignature *base = [NSObject instanceMethodSignatureForSelector: @selector(performSelector:withObject:)];
+
+#if DEBUG || 1
+	Class cls = [base class];
+	struct objc_ivar_list *ivarList = cls->ivars;
+	int i;
+	
+	for (i = 0; i < ivarList->ivar_count; ++i)
+		NSLog(@"name=%s, type=%s, offset=%i",
+			  ivarList->ivar_list[i].ivar_name,
+			  ivarList->ivar_list[i].ivar_type,
+			  ivarList->ivar_list[i].ivar_offset);
+
+	char *_types;
+	int _nargs;
+	int _sizeOfParams;
+	int _returnValueLength;
+	object_getInstanceVariable(base,"_types",&_types);
+	object_getInstanceVariable(base,"_nargs",&_nargs);
+	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
+	object_getInstanceVariable(base,"_returnValueLength",&_returnValueLength);
+	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i",_types,_nargs,_sizeOfParams,_returnValueLength);
+#endif
+	
+	object_setInstanceVariable(base,"_types",types);
+	object_setInstanceVariable(base,"_nargs",nargs);
+	object_setInstanceVariable(base,"_sizeofParams",sizeOfParams);
+	object_setInstanceVariable(base,"_returnValueLength",returnValueLength);
+
+#if DEBUG || 1
+	object_getInstanceVariable(base,"_types",&_types);
+	object_getInstanceVariable(base,"_nargs",&_nargs);
+	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
+	object_getInstanceVariable(base,"_returnValueLength",&_returnValueLength);
+	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i",_types,_nargs,_sizeOfParams,_returnValueLength);
+#endif
+	
+	return base;
 }
 
 typedef id (*managedDelegate)(int what,id anInvocation);
