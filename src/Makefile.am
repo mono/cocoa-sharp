@@ -1,1 +1,1 @@
-SUBDIRS=CocoaSharp.Glue AppKit.Glue WebKit.Glue Foundation.Glue Apple.Foundation Apple.AppKit Apple.WebKit CocoaSharp.Glue CocoaSharp.Loader
+SUBDIRS=CocoaSharp.Loader CocoaSharp.Glue AppKit.Glue WebKit.Glue Foundation.Glue Apple.Foundation Apple.AppKit Apple.WebKit CocoaSharp.Glue

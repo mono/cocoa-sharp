@@ -5,7 +5,24 @@ DISTCLEANFILES=AssemblyInfo.cs
 noinst_DATA=$(ASSEMBLY) $(ASSEMBLY).config
 EXTRA_DIST= \
 	$(ASSEMBLY).config \
-	AssemblyInfo.cs.in
+	AssemblyInfo.cs.in \
+	IWebDocumentRepresentation.cs \
+	IWebDocumentSearching.cs \
+	IWebDocumentText.cs \
+	IWebDocumentView.cs \
+	IWebOpenPanelResultListener.cs \
+	IWebPolicyDecisionListener.cs \
+	NSObjectWebKitExtras.cs \
+	WebBackForwardList.cs \
+	WebDataSource.cs \
+	WebDownload.cs \
+	WebFrame.cs \
+	WebFrameView.cs \
+	WebHistory.cs \
+	WebHistoryItem.cs \
+	WebNavigationType.cs \
+	WebPreferences.cs \
+	WebView.cs
 
 references = /r:../Apple.Foundation/Apple.Foundation.dll /r:../Apple.AppKit/Apple.AppKit.dll
 
