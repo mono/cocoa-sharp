@@ -1,5 +1,5 @@
 //
-// $Id: Class.cs,v 1.11 2004/09/05 03:28:25 urs Exp $
+// $Id: Class.cs,v 1.12 2004/09/05 23:50:16 urs Exp $
 //
 
 using System;
@@ -15,6 +15,7 @@ namespace CocoaSharp {
 		private bool isClass;
 		private ArrayList ivars = new ArrayList();
 		private ArrayList methods, classMethods;
+		private IDictionary protocols = new Hashtable();
 	
 		public Class (byte *ptr, MachOFile file) {
 			occlass = *(objc_class *)ptr;
@@ -26,6 +27,7 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref occlass.instance_size);
 			Utils.MakeBigEndian(ref occlass.ivars);
 			Utils.MakeBigEndian(ref occlass.methodLists);
+			Utils.MakeBigEndian(ref occlass.protocols);
 			superClass = file.GetString(occlass.super_class);
 			name = file.GetString(occlass.name);
 			isClass = (occlass.info & 1) != 0;
@@ -52,12 +54,131 @@ namespace CocoaSharp {
 				Utils.MakeBigEndian(ref metaClass.methodLists);
 				classMethods = Method.ProcessMethods(metaClass.methodLists,file);
 			}
-#if false
-			// Process protocols
-			[aClass addProtocolsFromArray:[self processProtocolList:classPtr->protocols]];
-#endif
+
+			AddProtocolsFromArray(ProcessProtocolList(occlass.protocols,file));
+		}
+
+		void AddProtocolsFromArray(IList protocols) {
+			foreach (Protocol p in protocols)
+				AddProtocol(p);
+		}
+
+		void AddProtocol(Protocol p) {
+			if (protocols.Contains(p.Name))
+				protocols[p.Name] = p;
+		}
+
+		static ArrayList ProcessProtocolList(uint protocolListAddr,MachOFile file) {
+			ArrayList protocols = new ArrayList();
+			if (protocolListAddr == 0)
+				return protocols;
+
+			byte *ptr = file.GetPtr(protocolListAddr);
+			objc_protocol_list protocolList = *(objc_protocol_list*)ptr;
+			Utils.MakeBigEndian(ref protocolList.count);
+			uint *protocolPtrs = (uint*)(ptr + Marshal.SizeOf(typeof(objc_protocol_list)));
+			for (int index = 0; index < protocolList.count; index++, protocolPtrs++) {
+				Utils.MakeBigEndian(ref *protocolPtrs);
+				ptr = file.GetPtr(*protocolPtrs);
+				if (ptr != null)
+					protocols.Add(ProcessProtocol(ptr,file));
+			}
+
+			return protocols;
+		}
+
+		static IDictionary mProtocolsByName = new Hashtable();
+		static Protocol ProcessProtocol(byte *ptr,MachOFile file) {
+			objc_protocol protocolPtr = *(objc_protocol*)ptr;
+			Utils.MakeBigEndian(ref protocolPtr.isa);
+			Utils.MakeBigEndian(ref protocolPtr.protocol_name);
+			Utils.MakeBigEndian(ref protocolPtr.protocol_list);
+			Utils.MakeBigEndian(ref protocolPtr.instance_methods);
+			Utils.MakeBigEndian(ref protocolPtr.class_methods);
+			string name = file.GetString(protocolPtr.protocol_name);
+			ArrayList protocols = ProcessProtocolList(protocolPtr.protocol_list,file);
+
+			Protocol protocol = (Protocol)mProtocolsByName[name];
+			if (protocol == null) {
+				protocol = new Protocol(name);
+				mProtocolsByName[name] = protocol;
+			}
+
+			protocol.AddProtocolsFromArray(protocols);
+			if (protocol.instanceMethods.Count == 0)
+				protocol.instanceMethods = ProcessProtocolMethods(protocolPtr.instance_methods,file);
+
+			if (protocol.classMethods.Count == 0)
+				protocol.classMethods = ProcessProtocolMethods(protocolPtr.class_methods,file);
+
+			// TODO (2003-12-09): Maybe we should add any missing methods.  But then we'd lose the original order.
+			return protocol;
+		}
+
+		static ArrayList ProcessProtocolMethods(uint methodsAddr, MachOFile file) {
+			ArrayList methods = new ArrayList();
+			if (methodsAddr == 0)
+				return methods;
+			byte *ptr = file.GetPtr(methodsAddr);
+			objc_protocol_method_list methodsPtr = *(objc_protocol_method_list*)ptr;
+			ptr += Marshal.SizeOf(typeof(objc_protocol_method_list));
+
+			Utils.MakeBigEndian(ref methodsPtr.method_count);
+			for (int index = 0; index < methodsPtr.method_count; index++, ptr += Marshal.SizeOf(typeof(objc_protocol_method))) {
+				objc_protocol_method methodPtr = *(objc_protocol_method*)ptr;
+				Utils.MakeBigEndian(ref methodPtr.name);
+				Utils.MakeBigEndian(ref methodPtr.types);
+				Method method = new Method(file.GetString(methodPtr.name),
+					file.GetString(methodPtr.types)
+				);
+				methods.Insert(0,method);
+			}
+
+			return methods;
 		}
 	}
+
+	public class Protocol {
+		public string Name;
+		public ArrayList instanceMethods = new ArrayList();
+		public ArrayList classMethods = new ArrayList();
+		private IDictionary protocols = new Hashtable();
+
+		public Protocol(string name) { Name = name; }
+
+		public void AddProtocolsFromArray(IList protocols) {
+			foreach (Protocol p in protocols)
+				AddProtocol(p);
+		}
+
+		public void AddProtocol(Protocol p) {
+			if (protocols.Contains(p.Name))
+				protocols[p.Name] = p;
+		}
+	}
+
+	public struct objc_protocol_list {
+		public uint next;
+		public uint count;
+	}
+
+	public struct objc_protocol {
+		public uint isa;
+		public uint protocol_name;
+		public uint protocol_list;
+		public uint instance_methods;
+		public uint class_methods;
+	};
+
+	public struct objc_protocol_method_list {
+		public uint method_count;
+		// Followed by methods
+	};
+
+	public struct objc_protocol_method {
+		public uint name;
+		public uint types;
+	};
 
 	public class Method {
 		private string name, types;
@@ -67,6 +188,11 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref method.types);
 			name = file.GetString(method.name);
 			types = file.GetString(method.types);
+			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
+		}
+		public Method(string name,string types) {
+			this.name = name;
+			this.types = types;
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
 		}
 
