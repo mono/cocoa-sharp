@@ -44,6 +44,23 @@ Loader.o: Loader.c
 Bundle.o: Bundle.m
 	gcc -x objective-c -g -c Bundle.m -o Bundle.o
 
+CocoaSharpBrowser.exe: CocoaSharpBrowser.cs ../build/Apple.Foundation.dll ../build/Apple.WebKit.dll ../build/Apple.AppKit.dll
+	mcs -g CocoaSharpBrowser.cs -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:../build/Apple.Foundation.dll
+	cp ../build/*.dll .
+
+CocoaSharpBrowser: CocoaSharpBrowser.exe CocoaSharpBrowser.cs Loader
+	rm -Rf CocoaSharpBrowser.app
+	mkdir -p CocoaSharpBrowser.app/Contents/MacOS
+	mkdir -p CocoaSharpBrowser.app/Contents/Resources
+	cp ../sample/SimpleWindow/*.icns CocoaSharpBrowser.app/Contents/Resources
+	cp CocoaSharpBrowser.plist CocoaSharpBrowser.app/Contents/Info.plist
+	cp CocoaSharpBrowser.exe CocoaSharpBrowser.app/Contents/Resources/Test.exe
+	cp *.dll* CocoaSharpBrowser.app/Contents/Resources
+	cp *Glue* CocoaSharpBrowser.app/Contents/Resources
+	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation CocoaSharpBrowser.app/Contents/Resources/CoreFoundation
+	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation CocoaSharpBrowser.app/Contents/Resources/Foundation
+	cp Loader CocoaSharpBrowser.app/Contents/MacOS/CocoaSharpBrowser
+
 run2: 2ndTest.exe Loader
 	rm -Rf Loader.app
 	mkdir -p Loader.app/Contents/MacOS
