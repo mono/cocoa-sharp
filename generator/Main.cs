@@ -197,7 +197,7 @@ namespace ObjCManagedExporter
 					_cs.WriteLine("{");
  					_cs.Write("    public class {0}", i.Name);
 					if(i.Child.Length > 0)
-						_cs.Write(" : {0}{1}", i.Child, (i.Protocols.Length > 0 ? "," + String.Join(",", i.Protocols) : ""));
+						_cs.Write(" : {0}{1}", i.Child, (String.Join(",", i.Protocols).Trim() != "" ? "," + String.Join(",", i.Protocols) : ""));
 					if(i.Child.Length == 0 && i.Protocols.Length > 0)
 						_cs.Write(" : {0}", String.Join(",", i.Protocols));
 					_cs.WriteLine("    {");
