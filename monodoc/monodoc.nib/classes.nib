@@ -2,9 +2,9 @@
     IBClasses = (
         {CLASS = BrowserDataSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            CLASS = BrowserDelegate; 
+            CLASS = Controller; 
             LANGUAGE = ObjC; 
-            OUTLETS = {}; 
+            OUTLETS = {drawer = NSDrawer; outlineView = NSOutlineView; }; 
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 

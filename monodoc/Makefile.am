@@ -9,6 +9,7 @@ monodoc:
 	mkdir -p monodoc.app/Contents/MacOS
 	cp ../sample/SimpleWindow/*.icns monodoc.app/Contents/Resources
 	cp monodoc.plist monodoc.app/Contents/Info.plist
+	cp -R monodoc.nib monodoc.app/Contents/Resources
 	cp ../build/*.dll* monodoc.app/Contents/Resources
 	cp ../build/*Glue* monodoc.app/Contents/Resources
 	cp ../build/CocoaSharpLoader monodoc.app/Contents/MacOS/monodoc
