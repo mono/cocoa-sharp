@@ -1,0 +1,9 @@
+2004-06-09	C.J. Collier	<cjcollier@colliertech.org>
+
+	* genstubs.pl (parseMethod):
+	- noted why we are not supporting methods variable args
+	- moved declaration of $methodName to where it is first used
+	- updated $arg_rx to make argument name optional
+	- reformatted Urs' $argType and $argName definition
+	- changed the way the $methodName is assembled
+	- changed the NSLog() call based on what type of method this is

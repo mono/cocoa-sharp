@@ -19,8 +19,10 @@ sub parseMethod {
     # Check for unsupported methods and return commented function
     # Unsupported methods include:
     # <.*>
-    # "..."
     if($origmethod =~ /<.*>/ or
+       # varargs don't work.
+       # Need another method of passing variable number of args (...)
+       # until then, comment such methods as UNSUPPORTED
        $origmethod =~ /\.\.\./
       ) {
 	$origmethod =~ s:/::g;
@@ -55,12 +57,11 @@ sub parseMethod {
     # These are our arrays that store our args, their names and types
     my(@methodName, @type, @name);
 
-    my $methodName;
     my $message;
     my $params;
 
     my $noarg_rx = '^\s*(\w+)\s*([;\{]|$)';
-    my $arg_rx   = '(\w+):\s*(?:\(([^\)]+)\))?\s*(\w+)(?:\s+|;)';
+    my $arg_rx   = '(\w+):\s*(?:\(([^\)]+)\))?\s*(\w+)?(?:\s+|;)';
 
     # The objc message we will be sending
     my @message;
@@ -77,11 +78,17 @@ sub parseMethod {
 	# Fill our arrays from the remainder of the parsed method
 	while(@remainder){
 	    push( @methodName,  shift @remainder );
-            my $argType = shift @remainder;
-            my $argName = shift @remainder;
 
-            if ($argType eq "") { $argType = "id"; }
-            if ($argName eq "") { $argName = $argType; $argType = "id"; }
+	    my $argType = shift @remainder;
+	    my $argName = shift @remainder;
+
+	    $argType = "id" unless $argType;
+
+	    unless ($argName){
+		$argName = $argType;
+		$argType = "id";
+	    }
+	    
 	    push( @type,        $argType );
 	    push( @name,        $argName );
 	}
@@ -109,21 +116,27 @@ sub parseMethod {
     # What object will we be sending messages to?
     my $obj;
 
-    # Always pass a pointer to the current object as the first argument
-    # Except when the method starts with alloc
+    # If the method is a class method
     if($isClassMethod){
 	$obj = $class;
 
-        # The fully-qualified C function name separated by _s (:s don't work)
-        $methodName = join("_",  @methodName);
-        $methodName = "$class\$_$methodName";
+	$class .= '$';
+
+    # If the method is an instance method
     }else{
 	unshift(@params, "$class* THIS");
 	$obj = "THIS";
 
-        # The fully-qualified C function name separated by _s (:s don't work)
-        $methodName = join("_",  $class, @methodName);
     }
+
+    # The fully-qualified C function name separated by _s (:s don't work)
+    my $methodName = join("_",  $class, @methodName);
+
+    # What does the log entry look like?
+    my $logLine = ($isClassMethod ?
+		   "\tNSLog(\@\"$methodName\");" :
+		   "\tNSLog(\@\"$methodName: \%\@\", THIS);"
+		  );
 
     # The parameters to the C function
     $params     = join(", ", @params);
@@ -131,17 +144,16 @@ sub parseMethod {
     # The objc message to send the object
     $message    = join(" ",  @message);
 
-    # TODO: handle ... functions with varargs
-
     # Will we be returning?
     my $retter = ($retType =~ /void/) ? "" : "return ";
 
     # return the method we will be using
     return ( "$retType $methodName ($params) {",
-	     "\tNSLog(\@\"$methodName\");",
+	     $logLine,
 	     "\t${retter}[$obj $message];",
 	     "}"
 	    );	     
+
 }
 
 # Parse file
