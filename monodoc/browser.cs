@@ -126,7 +126,7 @@ public class Controller : NSObject {
 		string content = help_tree.RenderUrl("root:", out match);
 		content=content.Replace("a href='", "a href='http://monodoc/load?");
 		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-		((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
+		((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
 	}
 	
 	[Export("browserdoubleAction")]
@@ -138,7 +138,7 @@ public class Controller : NSObject {
 			string content = help_tree.RenderUrl(t.Url, out match);
 			content=content.Replace("a href='", "a href='http://monodoc/load?");
 			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-			((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
+			((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
 		}
 	}
 	[Export("doubleAction")]
@@ -156,7 +156,7 @@ public class Controller : NSObject {
 						content = help_tree.RenderUrl(bi.node.URL, out n);
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
+				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
 
 				outlineView.expandItem(bi);
 
@@ -180,7 +180,7 @@ Console.WriteLine("\nDEBUG: URL=={0}\n", ((NSURL)initialRequest.urL).relativeStr
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 Console.WriteLine("DEBUG: {0}", content);
-				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
+				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(content, null);
 			}
 			return null;
 		}
@@ -211,7 +211,7 @@ Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8
 	}
 	public BrowserItem(Node _node) {
 		node = _node;
-		caption = new NSString(node.Caption);
+		caption = new NSString (node.Caption);
 		caption.retain ();
 //Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
 	}
@@ -275,9 +275,9 @@ class IndexDataSource : NSObject {
 	[Export("browser:willDisplayCell:atRow:column:")]
 	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
 		if(index_reader == null) 
-			cell.stringValue = new NSString ("Index Not Created");
+			cell.stringValue = "Index Not Created";
 		else
-			cell.stringValue = new NSString (index_reader.GetValue(rowNumber));
+			cell.stringValue = index_reader.GetValue(rowNumber);
 		cell.leaf = true;
 	}
 
