@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.18 2004/06/18 22:36:18 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.19 2004/06/18 22:41:40 gnorton Exp $
 #
 
 use strict;
@@ -690,6 +690,7 @@ sub genCSharpInstanceMethod {
     my @types = defined $objC{'arg types'} ? @{ $objC{'arg types'} } : ();
     my @messageParts = @{ $objC{'message parts'} };
     my $methodName = substr($objC{'method name'}, index($objC{'method name'}, "_")+1);
+    $methodName = $1 if ($methodName =~ /^_(.+)/);
     $methodName = (defined($typeMap{$methodName}) ? $typeMap{$methodName} : $methodName);
 
     if ($objC{'is class method'}) {
@@ -782,9 +783,12 @@ sub getCSharpHash {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.19  2004/06/18 22:41:40  gnorton
+#	Forgot one case for __ statics
+#
 #	Revision 1.18  2004/06/18 22:36:18  gnorton
 #	Better .cs handling; still broken but closer
-#
+#	
 #	Revision 1.17  2004/06/18 17:52:52  urs
 #	Some .cs file gen improv.
 #	
