@@ -121,6 +121,11 @@ namespace ObjCManagedExporter
 			if (mIsClassMethod) mGlueMethodName += "_";
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
+
+		public bool IsUnsupported
+		{
+			get { return mIsUnsupported; }
+		}
         
 		public String GlueMethodName 
 		{
@@ -214,7 +219,8 @@ namespace ObjCManagedExporter
 			w.WriteLine("        protected internal static extern " +
 				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
 		}
-		public void CSClassMethod(string name,System.IO.TextWriter w)
+	
+		public void CSAPIMethod(string name,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
 				return;
@@ -242,13 +248,19 @@ namespace ObjCManagedExporter
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
 			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
 
-			w.WriteLine("        public {0} {1} {2} ({3}) ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr); 
-			w.WriteLine("        {");
+			w.WriteLine("        public {0} {1} {2} ({3}) {{", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr); 
 			if(mReturnDeclarationType.Equals("id") || mReturnDeclarationType.EndsWith("*"))
 				w.WriteLine("            {0} NS2Net({1}_{2}({3}));", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
 			else 
 				w.WriteLine("            {0} {1}_{2}({3});", (_type.Equals("void") ? "" : "return"), name, mGlueMethodName, csparamsStr);
 			w.WriteLine("        }");
+
+			if (!mIsClassMethod && mCSMethodName.StartsWith("init"))
+			{
+				w.WriteLine("        public {0} ({1}) {{", name, paramsStr); 
+				w.WriteLine("            SetRaw({0}_{1}({2}),_release);", name, mGlueMethodName, csparamsStr);
+				w.WriteLine("        }");
+			}
 		}
 
 		private static string convertTypeGlue(string type) 

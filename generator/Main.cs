@@ -10,14 +10,14 @@ namespace ObjCManagedExporter
 
 	class ObjCManagedExporter 
 	{
-		private String mXmlFile = "generator.xml";
+		private string mXmlFile = "generator.xml";
 		private Configuration mConfig;
         
 		public IDictionary Interfaces;
 		public IDictionary Protocols;
 		public IDictionary Categories;
 
-		public ObjCManagedExporter(String[] args) 
+		public ObjCManagedExporter(string[] args) 
 		{
 			Interfaces = new Hashtable();
 			Protocols = new Hashtable();
@@ -30,12 +30,12 @@ namespace ObjCManagedExporter
 			}
                 
 		}
-		public ObjCManagedExporter() : this(new String[] {String.Empty}) {}
+		public ObjCManagedExporter() : this(new string[] {string.Empty}) {}
     
 		private void ParseFile(FileSystemInfo _toParse, Framework f) 
 		{
 			ArrayList _imports = new ArrayList();
-			_imports.Add(String.Format("{0}/{1}", f.Name, _toParse.Name));
+			_imports.Add(string.Format("{0}/{1}", f.Name, _toParse.Name));
 			_imports.Add("Foundation/NSString.h");
 			if(!_toParse.Name.EndsWith(".h")) 
 				return;
@@ -48,7 +48,7 @@ namespace ObjCManagedExporter
 			Regex _enumRegex = new Regex(@"typedef\s+enum\s+{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
             
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
-			String _headerData = _fileReader.ReadToEnd();
+			string _headerData = _fileReader.ReadToEnd();
             
 			// Strip out the comments
 			foreach(Match m in _commentRegex.Matches(_headerData))
@@ -69,8 +69,8 @@ namespace ObjCManagedExporter
 			{
 				Category _c = new Category(m.Groups[2].Value, m.Groups[1].Value);
 				_c.AddMethods(m.Groups[3].Value);
-				_c.Imports = (String[])_imports.ToArray(typeof(String));
-				Categories.Add(String.Format("{0}_{1}", _c.Name, _c.Class), _c);
+				_c.Imports = (string[])_imports.ToArray(typeof(string));
+				Categories.Add(string.Format("{0}_{1}", _c.Name, _c.Class), _c);
 				_headerData = _headerData.Replace(m.Value, "");
 			}
             
@@ -78,7 +78,7 @@ namespace ObjCManagedExporter
 			{
 				Interface _i = new Interface(m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value, f.Name);
 				_i.AddMethods(m.Groups[6].Value);
-				_i.Imports = (String[])_imports.ToArray(typeof(String));
+				_i.Imports = (string[])_imports.ToArray(typeof(string));
 				Interfaces.Add(_i.Name, _i);
 				_headerData = _headerData.Replace(m.Value, "");
 			}
@@ -90,11 +90,11 @@ namespace ObjCManagedExporter
 			}
 		}
         
-		private String LocateFramework(Framework _tolocate) 
+		private string LocateFramework(Framework _tolocate) 
 		{
-			foreach (String sp in mConfig.SearchPaths) 
+			foreach (string sp in mConfig.SearchPaths) 
 			{
-				String rp = sp.Replace("%NAME%", _tolocate.Name);
+				string rp = sp.Replace("%NAME%", _tolocate.Name);
 				if(Directory.Exists(rp))
 					return rp;
 			}
@@ -119,9 +119,8 @@ namespace ObjCManagedExporter
 				interfaceMethods.Add(i.Methods);
 
 				// Process this interface and check to see if it implements any protocols
-				foreach(String proto in i.Protocols) 
-				{
-					if(!proto.Equals("")) 
+				foreach(string proto in i.Protocols) 
+					if(proto.Length > 0) 
 					{
 						Console.Write("\t\tProtocol: <{0}>", proto);
 						if(Protocols[proto] != null) 
@@ -132,7 +131,7 @@ namespace ObjCManagedExporter
 						}
 						Console.WriteLine("");
 					}
-				}
+
 				IDictionaryEnumerator _categoryEnum = Categories.GetEnumerator();
 				ArrayList _categoryImports = new ArrayList();
 				while(_categoryEnum.MoveNext()) 
@@ -154,8 +153,14 @@ namespace ObjCManagedExporter
 				Console.WriteLine("\tTOTAL:{0}", totalMethods);	
 				if(totalMethods > 0) 
 				{
-					TextWriter _gs = new StreamWriter(File.Create(String.Format("src{0}{1}{0}{2}_glue.m", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
-					TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+					string path = string.Format("src{0}{1}{0}", Path.DirectorySeparatorChar, _toprocess.Name);
+					if (!Directory.Exists(path))
+						Directory.CreateDirectory(path);
+					TextWriter _gs = new StreamWriter(File.Create(string.Format("src{0}{1}{0}{2}_glue.m", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
+					path = string.Format("src{0}Apple.{1}{0}", Path.DirectorySeparatorChar, _toprocess.Name);
+					if (!Directory.Exists(path))
+						Directory.CreateDirectory(path);
+					TextWriter _cs = new StreamWriter(File.Create(string.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, i.Name)));
 					_cs.WriteLine("using System;");
 					_cs.WriteLine("using System.Runtime.InteropServices;");
 					if(!i.Name.Equals("Foundation")) 
@@ -166,22 +171,23 @@ namespace ObjCManagedExporter
 						_gs.WriteLine("#import <{0}>", import);
 					foreach(string import in _categoryImports)
 						_gs.WriteLine("#import <{0}>", import);
+
 					// Create the glue
-					ArrayList _addedMethods = new ArrayList();
-					for(int j = 0; j < interfaceMethods.Count; j++) 
+					IDictionary _addedMethods = new Hashtable();
+					foreach (IDictionary _methods in interfaceMethods) 
 					{
-						Hashtable _methods = (Hashtable)interfaceMethods[j];
-						IDictionaryEnumerator _methodEnum = _methods.GetEnumerator();
-						while(_methodEnum.MoveNext()) 
+						foreach (Method _toOutput in _methods.Values)
 						{
-							Method _toOutput = (Method)_methodEnum.Value;
-							String _methodSig = _toOutput.GlueMethodName;
-							if(!_addedMethods.Contains((string)_methodSig)) 
-							{ 
-								_addedMethods.Add((string)_methodSig);
-								_toOutput.ObjCMethod(i.Name,_gs);
-								_toOutput.CSGlueMethod(i.Name, i.Name, _cs);
-								_toOutput.CSClassMethod(i.Name, _cs);
+							if (_toOutput.IsUnsupported)
+								continue;
+
+							string _methodSig = _toOutput.GlueMethodName;
+							if(!_addedMethods.Contains(_methodSig)) 
+							{
+								_addedMethods[_methodSig] = 1;
+								_toOutput.ObjCMethod(i.Name, _gs);
+								_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
+								_toOutput.CSAPIMethod(i.Name, _cs);
 							} 
 							else 
 								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
@@ -249,7 +255,7 @@ namespace ObjCManagedExporter
 		[XmlElement("framework")]
 		public Framework[] Frameworks;
 		[XmlElement("searchpath")]
-		public String[] SearchPaths;
+		public string[] SearchPaths;
 	}
         
 	public class Framework 
