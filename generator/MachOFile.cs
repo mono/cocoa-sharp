@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.13 2004/09/07 20:51:21 urs Exp $
+// $Id: MachOFile.cs,v 1.14 2004/09/07 21:02:43 urs Exp $
 //
 
 using System;
@@ -229,10 +229,10 @@ namespace CocoaSharp {
 					DebugOut(0,"DEBUG: SegmentCommand()");
 					cmd = new SegmentCommand (this, lcmd);
 				} else if (lcmd.cmd == LC_ID_DYLIB || lcmd.cmd == LC_LOAD_DYLIB || lcmd.cmd == LC_LOAD_WEAK_DYLIB) {
-					DebugOut(0,"DEBUG: DylibCommand()");
+					DebugOut(0,"DEBUG: DylibCommand({0,8:x})",lcmd.cmd);
 					cmd = new DylibCommand (this, lcmd);
 				} else { 
-					DebugOut(0,"DEBUG: LoadCommand()");
+					DebugOut(0,"DEBUG: LoadCommand({0,8:x})",lcmd.cmd);
 					cmd = new LoadCommand (this, lcmd);
 				}
 

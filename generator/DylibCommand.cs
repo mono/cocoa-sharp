@@ -1,5 +1,5 @@
 //
-// $Id: DylibCommand.cs,v 1.3 2004/09/03 19:10:05 urs Exp $
+// $Id: DylibCommand.cs,v 1.4 2004/09/07 21:02:43 urs Exp $
 //
 
 using System;
@@ -34,11 +34,18 @@ namespace CocoaSharp {
 	}
 
 
-	[StructLayout(LayoutKind.Explicit)]
+	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_12.html#//apple_ref/doc/c_ref/dylib
+	//
+	// Defines the data used by the dynamic linker to match a shared library against the files that have linked to it. Used exclusively in the dylib_command
+	// data structure.
 	public struct dylib {
-		[FieldOffset(0)] public uint offset;
-		[FieldOffset(4)] public uint timestamp;
-		[FieldOffset(8)] public uint current_version;
-		[FieldOffset(10)] public uint compatability_version;
+		// A data structure of type lc_str. Specifies the name of the shared library.
+		public uint offset;
+		// The date and time when the shared library was built.
+		public uint timestamp;
+		// The current version of the shared library.
+		public uint current_version;
+		// The compatibility version of the shared library.
+		public uint compatability_version;
 	}
 }
