@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.17 2004/06/19 20:42:59 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.18 2004/06/20 02:07:25 urs Exp $
 //
 
 using System;
@@ -22,10 +22,9 @@ namespace Apple.Foundation
 {
 	
 	public class NSObject {
-		public static object NS2Net(IntPtr raw, bool clean) {
-			return TypeConverter.NS2Net(raw, clean);
+		public static object NS2Net(IntPtr raw) {
+			return TypeConverter.NS2Net(raw);
 		}
-		public static object NS2Net(IntPtr raw) { return NS2Net(raw, false); }
 		
 		public static IntPtr Net2NS(object obj) {
 			return TypeConverter.Net2NS(obj);
@@ -34,7 +33,6 @@ namespace Apple.Foundation
 		static IntPtr _NSObject_class;
 		public static IntPtr NSObject__class { get { if (_NSObject_class == IntPtr.Zero) _NSObject_class = Class.Get("NSObject"); return _NSObject_class; } }
 
-		private bool _cleanptr = false;
 		private IntPtr _obj;
 		protected bool _release;
 		static Hashtable Objects = new Hashtable();
@@ -97,9 +95,9 @@ namespace Apple.Foundation
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					NSInvocation invocation = new NSInvocation(arg,false);
-					object[] args = ProcessInvocation(invocation);
+					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
 					
-					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, ProcessInvocation(invocation));
+					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
 					break;
 				}
 			}
@@ -109,8 +107,6 @@ namespace Apple.Foundation
 		public NSObject() : this(NSObject__alloc(IntPtr.Zero),true) {}
 
 		~NSObject() {
-			if(_cleanptr && _obj != IntPtr.Zero) 
-				Marshal.FreeCoTaskMem(_obj);
 			if (Raw != IntPtr.Zero && _release)
 				release();
 		}
@@ -122,11 +118,6 @@ namespace Apple.Foundation
 
 		public IntPtr Raw {
 			get { return _obj; }
-		}
-
-		public bool CleanPtr {
-			get { return _cleanptr; }
-			set { _cleanptr = value; }
 		}
 
 		public void SetRaw(IntPtr raw,bool release) {
@@ -156,19 +147,6 @@ namespace Apple.Foundation
 		public void release() {
 			NSObject_release(Raw);
 			SetRaw(IntPtr.Zero,false);
-		}
-
-		private object[] ProcessInvocation(NSInvocation invocation) {
-			string method = invocation.Selector;
-			if(method.IndexOf(":") > 0)
-				method = method.Substring(0, method.IndexOf(":"));
-
-			int numArgs = BridgeHelper.GetParameterInfosByMethod(BridgeHelper.GetMethodByTypeAndName(this.GetType(), method)).Length;
-			object[] retArgs = new object[numArgs];
-			for(int i = 0; i < numArgs; i++) {
-				retArgs[i] = invocation.getArgument(i);
-			}
-			return retArgs;
 		}
 	}
 
@@ -209,6 +187,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.18  2004/06/20 02:07:25  urs
+// Clean up, move Apple.Tools into Foundation since it will need it
+// No need to allocate memory for getArgumentAtIndex of NSInvocation
+//
 // Revision 1.17  2004/06/19 20:42:59  gnorton
 // Code cleanup (remove some old methods/clean some console.writelines)
 // Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.6 2004/06/19 20:42:59 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSInvocation.cs,v 1.7 2004/06/20 02:07:25 urs Exp $
 //
 
 using System;
@@ -36,9 +36,14 @@ namespace Apple.Foundation
 		protected internal NSInvocation(IntPtr raw,bool release) : base(raw,release) {}
 
 		public object getArgument(int i) {
-			IntPtr argPtr = Marshal.AllocCoTaskMem(GetInvocationArgumentSize(Raw, i+2));
+			IntPtr argPtr = IntPtr.Zero;
 			NSInvocation_getArgument_atIndex(Raw, ref argPtr, i+2);
-			return NS2Net(argPtr, true);
+			// this can be compared to:
+			// id argPtr = nil;
+			// [invocation getArgument: &argPtr atIndex: i+2];
+			// &argPtr is the pointer to the memory and is allocated on the stack
+			// same is true for the argPtr in C#, the 'ref' will pass the pointer to argPtr on the stack
+			return NS2Net(argPtr);
 		}
 
 		public string Selector {
@@ -50,6 +55,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSInvocation.cs,v $
+// Revision 1.7  2004/06/20 02:07:25  urs
+// Clean up, move Apple.Tools into Foundation since it will need it
+// No need to allocate memory for getArgumentAtIndex of NSInvocation
+//
 // Revision 1.6  2004/06/19 20:42:59  gnorton
 // Code cleanup (remove some old methods/clean some console.writelines)
 // Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.
