@@ -7,3 +7,4 @@ Makefile
 Makefile.in
 .deps
 .libs
+.DS_Store
