@@ -11,8 +11,8 @@ namespace Apple.Cocoa.Foundation
 		public NSView() : this(IntPtr.Zero) {}
 		protected internal NSView(IntPtr raw) : base(raw) {}
 
-		public void addSubview(IntPtr aView) {
-			NSView_addSubview(Raw, aView);
+		public void addSubview(NSView aView) {
+			NSView_addSubview(Raw, aView.Raw);
 		}
 	}
 }

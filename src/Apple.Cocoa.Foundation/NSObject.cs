@@ -23,7 +23,7 @@ namespace Apple.Cocoa.Foundation
 			Raw = raw; 
 		}
 
-		protected virtual IntPtr Raw {
+		protected internal virtual IntPtr Raw {
 			get {
 				return _obj;
 			}

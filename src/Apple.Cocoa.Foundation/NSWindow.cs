@@ -46,9 +46,9 @@ namespace Apple.Cocoa.Foundation
 			NSWindow_center(Raw);
 		}
 		
-		public void makeKeyAndOrderFront(IntPtr sender)
+		public void makeKeyAndOrderFront(NSObject sender)
 		{
-			NSWindow_makeKeyAndOrderFront(Raw, sender);
+			NSWindow_makeKeyAndOrderFront(Raw, sender == null ? IntPtr.Zero : sender.Raw);
 		}
 		
 		public NSObject contentView()

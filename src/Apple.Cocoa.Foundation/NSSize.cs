@@ -26,5 +26,7 @@ namespace Apple.Cocoa.Foundation
 				_height = value;
 			}
 		}
+
+		public NSSize(float w, float h) { _width = w; _height = h; }
 	}
 }

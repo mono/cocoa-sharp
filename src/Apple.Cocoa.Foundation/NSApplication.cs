@@ -25,9 +25,9 @@ namespace Apple.Cocoa.Foundation
 			return new NSApplication(NSApplication_sharedApplication());
 		}
 
-		public int runModalForWindow(IntPtr theWindow)
+		public int runModalForWindow(NSWindow theWindow)
 		{
-			return NSApplication_runModalForWindow(Raw, theWindow);
+			return NSApplication_runModalForWindow(Raw, theWindow.Raw);
 		}
 	}
 }

@@ -24,9 +24,9 @@ namespace Apple.Cocoa.Foundation
 			return this;
 		}
 	
-		public void setTarget(IntPtr anObject)
+		public void setTarget(NSObject anObject)
 		{
-			NSControl_setTarget(Raw, anObject);
+			NSControl_setTarget(Raw, anObject.Raw);
 		}
 
 		public void setAction(IntPtr aSelector)
