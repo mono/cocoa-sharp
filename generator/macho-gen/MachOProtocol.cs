@@ -28,8 +28,13 @@ namespace CocoaSharp {
 
 		static internal ICollection ToProtocols(ICollection protocols) {
 			ArrayList ret = new ArrayList();
-			foreach (MachOProtocol protocol in protocols)
-				ret.Add(Protocol.GetProtocol(protocol.Name));
+			foreach (MachOProtocol protocol in protocols) {
+				Protocol p = Protocol.GetProtocol(protocol.Name);
+				if (p != null)
+					ret.Add(p);
+				else
+					Console.WriteLine("Missing protocol: " + protocol.Name);
+			}
 			return ret;
 		}
 

@@ -39,6 +39,10 @@ namespace CocoaSharp {
 
 			bool first = this.instanceMethods == null;
 
+			foreach (Protocol p in protocols)
+				if (p == null)
+					Console.WriteLine("Null protocol in class " + this.Name);
+
 			if (first) {
 				this.parent = parent;
 				this.protocols = protocols != null ? protocols : new ArrayList();
@@ -85,7 +89,10 @@ namespace CocoaSharp {
 			get {
 				ArrayList ret = new ArrayList();
 				foreach (Protocol p in Protocols)
-					ret.Add(p.Name);
+					if (p != null)
+						ret.Add(p.Name);
+					else
+						Console.WriteLine("Null protocol in class " + this.Name);
 				return (string[])ret.ToArray(typeof(string));
 			}
 		}

@@ -19,14 +19,15 @@ namespace CocoaSharp {
 			if (ret != null)
 				return ret;
 			foreach (Protocol protocol in Protocols.Values)
-				if (protocol.Name == name)
+				if (protocol.Name.Substring(1) == name)
 					return protocol;
 			return null;
 		}
 
 		public Protocol(string name, string nameSpace)
 			: base(name, nameSpace, Type.FullName(name, nameSpace),typeof(IntPtr),OCType.id) {
-			Protocols[FullName(name, nameSpace)] = this;
+			Protocols[name.Substring(1)] = this;
+			Protocols[FullName(name.Substring(1), nameSpace)] = this;
 		}
 		public void Initialize(ICollection instanceMethods, ICollection classMethods) {
 			this.instanceMethods = instanceMethods;

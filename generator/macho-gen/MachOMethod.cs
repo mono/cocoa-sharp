@@ -43,7 +43,7 @@ namespace CocoaSharp {
 
 		internal Method ToMethod(string nameSpace, bool isClassMethod) {
 			string _csName = name.Trim(':').Replace(":","_");
-			string selector = (isClassMethod ? "+" : "-") + name;
+			string selector = name;
 			return new Method(_csName,selector,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
 		}
 

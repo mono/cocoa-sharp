@@ -138,7 +138,7 @@ namespace CocoaSharp {
 		public string ReturnDeclarationType { get { return mReturnDeclarationType; } }
 		public string Selector {
 			get {
-				string ret = mIsClassMethod ? "+" : "-";
+				string ret = string.Empty;
 
 				if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
 					return ret + mMessageParts[0];

@@ -89,8 +89,15 @@ namespace CocoaSharp {
 
 		static ICollection ToProtocols(string []protocols) {
 			IList ret = new ArrayList();
-			foreach (string protocol in protocols)
-				ret.Add(Protocol.GetProtocol(protocol));
+			foreach (string protocol in protocols) {
+				if (protocol != "") {
+					Protocol p = Protocol.GetProtocol(protocol);
+					if (p != null)
+						ret.Add(p);
+					else
+						Console.WriteLine("missing protocol: " + protocol);
+				}
+			}
 			return ret;
 		}
 	}

@@ -109,6 +109,7 @@ namespace CocoaSharp {
 		public Method(string name,string selector,string types,TypeUsage returnType, ParameterInfo[] parameters) {
 			this.name = name;
 			this.selector = selector;
+			System.Diagnostics.Debug.Assert(!this.Selector.StartsWith("-"));
 			System.Diagnostics.Debug.Assert(this.Selector.Length > 0);
 			this.types = types;
 
@@ -121,7 +122,7 @@ namespace CocoaSharp {
 #if !WINDOWS
 			this.types = ObjCClassInspector.GetSignature(className,selector);
 #else
-			this.types = returnType.TypeStr + ":@";
+			this.types = returnType.TypeStr + "@0:4";
 			foreach (ParameterInfo p in this.parameters)
 				this.types += p.Type.TypeStr;
 #endif
