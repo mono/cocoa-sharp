@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.15 2004/06/18 13:54:57 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.16 2004/06/18 15:09:31 gnorton Exp $
 #
 
 use strict;
@@ -528,6 +528,22 @@ sub parseDir {
 }
 
 sub makeDirs {
+    #temporary while not clobbering old .cs 
+    unless(-d "tmp"){
+        mkdir "tmp" or die "Couldn't make dir 'tmp': $!";
+    }
+    #temporary while not clobbering old .cs 
+    unless(-d "tmp/src"){
+        mkdir "tmp/src" or die "Couldn't make dir 'tmp': $!";
+    }
+    #temporary while not clobbering old .cs 
+    unless(-d "tmp/src/Apple.Foundation"){
+        mkdir "tmp/src/Apple.Foundation" or die "Couldn't make dir 'tmp': $!";
+    }
+    #temporary while not clobbering old .cs 
+    unless(-d "tmp/src/Apple.AppKit"){
+        mkdir "tmp/src/Apple.AppKit" or die "Couldn't make dir 'tmp': $!";
+    }
     unless(-d "src"){
         mkdir "src" or die "Couldn't make dir 'src': $!";
     }
@@ -618,6 +634,9 @@ sub genObjCStub {
 sub genCSharpStub {
     my %objC = @_;
 
+    # BUG: Why are we getting empty method names in here?
+    return unless defined($objC{'method name'});
+
     my $type = convertTypeGlue($objC{'return type'});
     my @params = ();
     my @names = defined $objC{'arg names'} ? @{ $objC{'arg names'} } : ();
@@ -648,6 +667,8 @@ sub genCSharpStub {
 sub genCSharpInstanceMethod {
     my %objC = @_;
 
+    #BUG: Why are we getting undefined method names in here
+    return unless defined($objC{'method name'});
     my $type = convertType($objC{'return type'});
     my $retter = ($type =~ /void/) ? "" : "return ";
     my @args = ();
@@ -726,9 +747,14 @@ sub getCSharpHash {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.16  2004/06/18 15:09:31  gnorton
+#	* Resolve some warning in the.cs generation
+#	* Temporarily make our tmp directories if needed
+#	* Why are we getting undefined %objC{'method name'} into our generators?
+#
 #	Revision 1.15  2004/06/18 13:54:57  urs
 #	*** empty log message ***
-#
+#	
 #	Revision 1.14  2004/06/17 06:01:15  cjcollier
 #		* typeConversion.pl
 #		- Created.  Enter type mapping from ObjC to C#
