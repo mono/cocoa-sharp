@@ -19,10 +19,9 @@ namespace Apple.AppKit
 
 		protected NSControl(IntPtr raw) : base(raw) {}
 
-		public NSControl initWithFrame(NSRect frameRect)
+		override public IntPtr initWithFrame(NSRect frameRect)
 		{
-			Raw = NSControl_initWithFrame(Raw,frameRect);
-			return this;
+			return NSControl_initWithFrame(Raw,frameRect);
 		}
 	
 		public void setTarget(NSObject anObject)
