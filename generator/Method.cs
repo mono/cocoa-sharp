@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.23 2004/06/23 17:23:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.24 2004/06/23 17:52:41 gnorton Exp $
 //
 
 using System;
@@ -320,7 +320,7 @@ namespace ObjCManagedExporter
 			return true;
 		}
 	
-		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
+		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o)
 		{
 			if (mIsUnsupported || mCSAPIDone)
 				return;
@@ -355,6 +355,15 @@ namespace ObjCManagedExporter
 			
 			if (propOnly)
 				return;
+
+			// Check to see if we're overridden
+			if(_o != null)
+				foreach(MethodOverride _mo in _o.Methods) 
+					if(_mo.Selector == Selector && _mo.InstanceMethod != mIsClassMethod) {
+						w.WriteLine("        //{0} is overridden", Selector);
+						w.WriteLine(_mo.Method);
+						return;
+					}
 
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
 			w.WriteLine("            {0};",ReturnExpression(mReturnDeclarationType,string.Format("{0}_{1}({2})", name, mGlueMethodName, glueArgsStr)));
@@ -542,9 +551,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.24  2004/06/23 17:52:41  gnorton
+//	Added ability to override what the generator outputs on a per-file/per-method basis
+//
 //	Revision 1.23  2004/06/23 17:23:41  urs
 //	Rename glue methods to include argument count to differenciate 'init' from 'init:'.
-//
+//	
 //	Revision 1.22  2004/06/23 17:05:33  urs
 //	Add selector to Method
 //	

@@ -9,13 +9,15 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.7 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.8 2004/06/23 17:52:41 gnorton Exp $
 //
 
 using System;
 using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace ObjCManagedExporter 
 {
@@ -78,6 +80,15 @@ namespace ObjCManagedExporter
 
 		public override void WriteCS(TextWriter _cs, Configuration config)
 		{
+			// Load the overrides for this Interface
+			Overrides _overrides = null;
+			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Framework, Name)))
+                        {
+				XmlSerializer _s = new XmlSerializer(typeof(Overrides));
+				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Framework, Name));
+                        	_overrides = (Overrides)_s.Deserialize(_xmlreader);
+				_xmlreader.Close();
+			}
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
 			_cs.WriteLine("using Apple.Foundation;");
@@ -99,7 +110,7 @@ namespace ObjCManagedExporter
 
 			_cs.WriteLine("        #region -- Properties --");
 			foreach (Method _toOutput in AllMethods.Values)
-				_toOutput.CSAPIMethod(Name,AllMethods, true, _cs);
+				_toOutput.CSAPIMethod(Name,AllMethods, true, _cs, _overrides);
 			_cs.WriteLine("        #endregion");
 			_cs.WriteLine();
 
@@ -129,7 +140,7 @@ namespace ObjCManagedExporter
 
 			_cs.WriteLine("        #region -- Public API --");
 			foreach (Method _toOutput in AllMethods.Values)
-				_toOutput.CSAPIMethod(Name,AllMethods, false, _cs);
+				_toOutput.CSAPIMethod(Name,AllMethods, false, _cs, _overrides);
 			_cs.WriteLine("        #endregion");
 			_cs.WriteLine();
 
@@ -147,9 +158,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.8  2004/06/23 17:52:41  gnorton
+//	Added ability to override what the generator outputs on a per-file/per-method basis
+//
 //	Revision 1.7  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.6  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	

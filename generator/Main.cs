@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.21 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.22 2004/06/23 17:52:41 gnorton Exp $
 //
 
 using System;
@@ -304,12 +304,27 @@ namespace ObjCManagedExporter
 		[XmlElement("output")]
 		public bool Output;
 	}
+
+	[XmlRoot("overrides")]
+	public class Overrides
+	{
+		[XmlElement("method")] public MethodOverride[] Methods;
+	}
+
+	public class MethodOverride {
+		[XmlAttribute("instance")] public bool InstanceMethod;
+		[XmlAttribute("sel")] public String Selector;
+		[XmlText] public String Method;
+	}
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.22  2004/06/23 17:52:41  gnorton
+//	Added ability to override what the generator outputs on a per-file/per-method basis
+//
 //	Revision 1.21  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.20  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	
