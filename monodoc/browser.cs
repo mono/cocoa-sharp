@@ -143,7 +143,7 @@ public class Controller : NSObject {
 	}
 	[Export("doubleAction")]
 	public void outlineViewDoubleAction() {
-		BrowserItem bi = null;//outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
+		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
 		try {
 			if(bi.node.URL != null)
@@ -274,11 +274,11 @@ class IndexDataSource : NSObject {
 	}
 	[Export("browser:willDisplayCell:atRow:column:")]
 	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
-//		if(index_reader == null) 
-//			cell.stringValue = "Index Not Created";
-//		else
-//			cell.stringValue = index_reader.GetValue(rowNumber);
-//		cell.leaf = true;
+		if(index_reader == null) 
+			cell.stringValue = new NSString ("Index Not Created");
+		else
+			cell.stringValue = new NSString (index_reader.GetValue(rowNumber));
+		cell.leaf = true;
 	}
 
 	public static int FindClosest (string text)
