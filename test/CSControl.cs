@@ -26,7 +26,9 @@ class CSControl : NSObject {
 		
 		const int NSBackingStoreBuffered	= 2;
 
-		NSRect contentRect = new NSRect(200, 180, 300, 300);
+		NSApplication.sharedApplication().setApplicationIconImage(NSImage.imageNamed("mono.icns"));
+
+		NSRect contentRect = new NSRect(200, 180, 400, 300);
 
 		NSWindow window = new NSWindow();
 		window.initWithContentRect_styleMask_backing_defer(contentRect, 
@@ -35,19 +37,21 @@ class CSControl : NSObject {
 		window.Title = "Hi Mono";
 
 		NSButton monoButton = new NSButton();
-		monoButton.initWithFrame(new NSRect(20, 20, 74, 17));
+		monoButton.initWithFrame(new NSRect(20, 20, 74, 25));
+		monoButton.BezelStyle = NSBezelStyle.NSRoundedBezelStyle;
 		monoButton.Title = "Dismiss";
 		monoButton.Target = this;
 		monoButton.Action = "_stop";
 		
 		swap1 = new NSButton();
-		swap1.initWithFrame(new NSRect(40, 40, 104, 17));
+		swap1.initWithFrame(new NSRect(20, 50, 350, 25));
+		swap1.BezelStyle = NSBezelStyle.NSRoundedBezelStyle;
 		swap1.Title = "Tickle me";
 		swap1.Target = this;
 		swap1.Action = "_swap";
 
 		NSTextField text = new NSTextField();
-		text.initWithFrame(new NSRect(100, 200, 78, 20));
+		text.initWithFrame(new NSRect(100, 200, 78, 25));
 		text.Editable = false;
 		text.Bezeled = true;
 		text.StringValue = "Hello, Mono";
