@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.27 2004/06/24 02:16:05 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.28 2004/06/24 03:37:07 gnorton Exp $
 //
 
 using System;
@@ -59,6 +59,7 @@ namespace ObjCManagedExporter
 		private bool mIsClassMethod, mIsUnsupported, mCSAPIDone;
 		private string mReturnDeclarationType;
 		private static TypeConversions mConversions;
+		private static IDictionary Conversions;
 
 		private static Regex[] sUnsupported = new Regex[] 
 		{
@@ -75,6 +76,9 @@ namespace ObjCManagedExporter
 			XmlTextReader _xtr = new XmlTextReader("generator/typeconversion.xml");
 			mConversions = (TypeConversions)_ser.Deserialize(_xtr);
 			_xtr.Close();
+			Conversions = new Hashtable();
+			foreach (NativeData nd in mConversions.Conversions)
+				Conversions.Add(nd.Native, nd);
 
 			mMethodDeclaration = methodDeclaration.Trim();
 
@@ -503,9 +507,8 @@ namespace ObjCManagedExporter
 		private static string ConvertTypeGlue(string type) 
 		{
 			type = StripComments(type.Replace("const ",string.Empty));
-			foreach (NativeData nd in mConversions.Conversions)
-				if(type == nd.Native)
-					return nd.Glue;
+			if(Conversions[type] != null)
+				return ((NativeData)Conversions[type]).Glue;
 
 			foreach (NativeData nd in mConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type))
@@ -522,9 +525,8 @@ namespace ObjCManagedExporter
 		private static string ConvertType(string type) 
 		{
 			type = StripComments(type.Replace("const ",string.Empty));
-			foreach (NativeData nd in mConversions.Conversions)
-				if(type == nd.Native)
-					return nd.Api;
+			if(Conversions[type] != null)
+				return ((NativeData)Conversions[type]).Glue;
 
 			foreach (NativeData nd in mConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type))
@@ -542,9 +544,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.28  2004/06/24 03:37:07  gnorton
+//	Some performance increates on the dynamic type converter (convert the <type /> entries to a IDictionary to access an indexer; rather than foreaching)
+//
 //	Revision 1.27  2004/06/24 02:16:05  gnorton
 //	Updated out typeconversions to be loaded from an XML file; instead of being hard coded.  In the future we wont need to update the app to update the types.
-//
+//	
 //	Revision 1.26  2004/06/23 18:18:32  urs
 //	Allow same case get/set properties
 //	
