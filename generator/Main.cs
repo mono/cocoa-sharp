@@ -1,3 +1,17 @@
+//
+//  Main.cs
+//
+//  Authors
+//    - Kangaroo, Geoff Norton
+//    - C.J. Collier, Collier Technologies, <cjcollier@colliertech.org>
+//    - Urs C. Muff, Quark Inc., <umuff@quark.com>
+//    - Adham Findlay
+//
+//  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
+//
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.16 2004/06/22 12:04:12 urs Exp $
+//
+
 using System;
 using System.IO;
 using System.Xml;
@@ -12,6 +26,7 @@ namespace ObjCManagedExporter
 	{
 		private string mXmlFile = "generator.xml";
 		private Configuration mConfig;
+		private string mOutputFlag = string.Empty;
         
 		public IDictionary Interfaces;
 		public IDictionary Protocols;
@@ -28,12 +43,13 @@ namespace ObjCManagedExporter
 			Structs = new Hashtable();
             
 			foreach (string arg in args) 
-			{
-				if(arg.IndexOf("-xml:") > -1)
-					mXmlFile = arg.Substring(5);
-			}
+				if(arg.IndexOf("-xml:") >= 0)
+					mXmlFile = arg.Substring("-xml:".Length);
+				else if(arg.IndexOf("-out:") >= 0)
+					mOutputFlag = arg.Substring("-out:".Length);
                 
 		}
+
 		public ObjCManagedExporter() : this(new string[] {string.Empty}) {}
     
 		private void ParseFile(FileSystemInfo _toParse, Framework f) 
@@ -63,7 +79,6 @@ namespace ObjCManagedExporter
 				_imports.Add(m.Groups[1].Value);
 			foreach (Match m in _protocolRegex.Matches(_headerData)) 
 			{
-            
 				Protocol _p = new Protocol(m.Groups[1].Value, m.Groups[3].Value, f.Name);
 				_p.AddMethods(m.Groups[4].Value);
 				Protocols.Add(_p.Name, _p);
@@ -121,66 +136,75 @@ namespace ObjCManagedExporter
 				Directory.CreateDirectory(path);
 			return new StreamWriter(File.Create(string.Format(fileFormat, Path.DirectorySeparatorChar, path, file)));
 		}
+
+		private bool OutputOC
+		{
+			get { return mOutputFlag == string.Empty || mOutputFlag == "OC"; }
+		}
+
+		private bool OutputCS
+		{
+			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
+		}
         
 		private void OutputFramework(Framework _toprocess) 
 		{
-			foreach(CEnum e in Enums.Values)
-			{
-				if(e.Framework.Equals(_toprocess.Name)) {
-			  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, _toprocess.Name, e.Name)));
-					_cs.WriteLine(e.CSEnum);
-					_cs.Close();
-				}
-			}
-			foreach (Struct s in Structs.Values)
-			{
-				if(s.Framework.Equals(_toprocess.Name)) 
-				{
-					TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, s.Name);
-					_cs.WriteLine(s.CSStruct);
-					_cs.Close();
-				}
-			}
-
-			foreach (Protocol p in Protocols.Values)
-			{
-				IDictionary _addedMethods = new Hashtable();
-				if(p.Framework.Equals(_toprocess.Name)) {
-		  			TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}I{2}.cs.gen", p.Framework, p.Name);
-					_cs.WriteLine("using System;");
-					_cs.WriteLine("using System.Runtime.InteropServices;");
-					if(!p.Framework.Equals("Foundation")) 
-						_cs.WriteLine("using Apple.Foundation;");
-					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
-					_cs.WriteLine("{");
- 					_cs.Write("    public interface I{0}", p.Name);
-					_cs.WriteLine("    {");
-
-					foreach (Method _toOutput in p.Methods.Values) 
-					{
-						if (_toOutput.IsUnsupported)
-							continue;
-
-						string _methodSig = _toOutput.GlueMethodName;
-						if(!_addedMethods.Contains(_methodSig)) 
-						{
-							_addedMethods[_methodSig] = true;
-							_toOutput.CSInterfaceMethod(p.Name, _cs);
-						}
+			if (OutputCS)
+				foreach(CEnum e in Enums.Values)
+					if(e.Framework.Equals(_toprocess.Name)) {
+						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, e.Name);
+						_cs.WriteLine(e.CSEnum);
+						_cs.Close();
 					}
-					_cs.WriteLine("    }");
-					_cs.WriteLine("}");
-					_cs.Close();
-				}
-			}
+
+			if (OutputCS)
+				foreach (Struct s in Structs.Values)
+					if(s.Framework.Equals(_toprocess.Name)) 
+					{
+						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, s.Name);
+						_cs.WriteLine(s.CSStruct);
+						_cs.Close();
+					}
+
+			if (OutputCS)
+				foreach (Protocol p in Protocols.Values)
+					if(p.Framework.Equals(_toprocess.Name)) 
+					{
+						IDictionary _addedMethods = new Hashtable();
+						TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}I{2}.cs.gen", p.Framework, p.Name);
+						_cs.WriteLine("using System;");
+						_cs.WriteLine("using System.Runtime.InteropServices;");
+						if(!p.Framework.Equals("Foundation")) 
+							_cs.WriteLine("using Apple.Foundation;");
+						_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+						_cs.WriteLine("{");
+						_cs.Write("    public interface I{0}", p.Name);
+						_cs.WriteLine("    {");
+
+						foreach (Method _toOutput in p.Methods.Values) 
+						{
+							if (_toOutput.IsUnsupported)
+								continue;
+
+							string _methodSig = _toOutput.GlueMethodName;
+							if(!_addedMethods.Contains(_methodSig)) 
+							{
+								_addedMethods[_methodSig] = true;
+								_toOutput.CSInterfaceMethod(p.Name, _cs);
+							}
+						}
+						_cs.WriteLine("    }");
+						_cs.WriteLine("}");
+						_cs.Close();
+					}
 
 			foreach (Interface i in Interfaces.Values) 
 			{
-				int totalMethods = 0;
-				ArrayList interfaceMethods = new ArrayList();
 				if(!i.Framework.Equals(_toprocess.Name))
 					continue;
 
+				int totalMethods = 0;
+				ArrayList interfaceMethods = new ArrayList();
 				Console.WriteLine("Interface: {0}:{1}", i.Name, i.Methods.Keys.Count);
 				totalMethods += i.Methods.Keys.Count;
 				// Add all the methods
@@ -221,35 +245,45 @@ namespace ObjCManagedExporter
 				Console.WriteLine("\tTOTAL:{0}", totalMethods);	
 				if(totalMethods > 0) 
 				{
-					TextWriter _gs = OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
-					TextWriter _cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, i.Name);
+					TextWriter _gs = null, _cs = null;
 
-					_cs.WriteLine("using System;");
-					_cs.WriteLine("using System.Runtime.InteropServices;");
-					_cs.WriteLine("using Apple.Foundation;");
-					if(_toprocess.Name != "Foundation") 
-						_cs.WriteLine("using Apple.{0};", _toprocess.Name);
-					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
-					_cs.WriteLine("{");
+					if (OutputOC)
+					{
+						_gs = OpenFile("src{0}{1}","{1}{0}{2}_glue.m", _toprocess.Name, i.Name);
 
-					_cs.Write("    public class {0}", i.Name);
-					if(i.Child.Length > 0)
-						_cs.Write(" : {0}{1}", i.Child, (String.Join(", I", i.Protocols).Trim() != "" ? ", I" + String.Join(", I", i.Protocols) : ""));
-					if(i.Child.Length == 0 && i.Protocols.Length > 0)
-						_cs.Write(" : I{0}", String.Join(", I", i.Protocols));
-					_cs.WriteLine("    {");
+						foreach(string import in i.Imports)
+							_gs.WriteLine("#import <{0}>", import);
+						foreach(string import in _categoryImports)
+							_gs.WriteLine("#import <{0}>", import);
 
-					_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
-					_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
-					_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
-					_cs.WriteLine();
-					_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
-					_cs.WriteLine();
+						_gs.WriteLine();
+					}
+					if (OutputCS)
+					{
+						_cs = OpenFile("src{0}Apple.{1}","{1}{0}{2}.cs.gen", _toprocess.Name, i.Name);
 
-					foreach(string import in i.Imports)
-						_gs.WriteLine("#import <{0}>", import);
-					foreach(string import in _categoryImports)
-						_gs.WriteLine("#import <{0}>", import);
+						_cs.WriteLine("using System;");
+						_cs.WriteLine("using System.Runtime.InteropServices;");
+						_cs.WriteLine("using Apple.Foundation;");
+						if(_toprocess.Name != "Foundation") 
+							_cs.WriteLine("using Apple.{0};", _toprocess.Name);
+						_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+						_cs.WriteLine("{");
+
+						_cs.Write("    public class {0}", i.Name);
+						if(i.Child.Length > 0)
+							_cs.Write(" : {0}{1}", i.Child, (string.Join(", I", i.Protocols).Trim() != "" ? ", I" + string.Join(", I", i.Protocols) : ""));
+						if(i.Child.Length == 0 && i.Protocols.Length > 0)
+							_cs.Write(" : I{0}", string.Join(", I", i.Protocols));
+						_cs.WriteLine("    {");
+
+						_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
+						_cs.WriteLine("        protected internal static IntPtr {0}_class {{ get {{ if (_{0}_class == null) _{0}_class = Class.Get(\"{0}\"); return _{0}_class; }} }}",i.Name);
+						_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
+						_cs.WriteLine();
+						_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_class),true) {{}}",i.Name);
+						_cs.WriteLine();
+					}
 
 					// Create the glue
 					IDictionary _addedMethods = new Hashtable();
@@ -264,18 +298,28 @@ namespace ObjCManagedExporter
 							if(!_addedMethods.Contains(_methodSig)) 
 							{
 								_addedMethods[_methodSig] = 1;
-								_toOutput.ObjCMethod(i.Name, _gs);
-								_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
-								_toOutput.CSAPIMethod(i.Name, _cs);
+								if (OutputOC)
+									_toOutput.ObjCMethod(i.Name, _gs);
+								if (OutputCS)
+								{
+									_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
+									_toOutput.CSAPIMethod(i.Name, _cs);
+								}
 							} 
 							else 
 								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 						}
 					}
-					_cs.WriteLine("    }");
-					_cs.WriteLine("}");
-					_cs.Close();
-					_gs.Close();
+
+					if (OutputOC)
+						_gs.Close();
+
+					if (OutputCS)
+					{
+						_cs.WriteLine("    }");
+						_cs.WriteLine("}");
+						_cs.Close();
+					}
 				}
 			}
 		}
@@ -293,7 +337,6 @@ namespace ObjCManagedExporter
 				Console.Write("\b\b\b{0:00}%", complete);
 			}
 			Console.WriteLine("\b\b\b100%");
-
 		}
         
 		private bool LoadConfiguration() 
@@ -304,6 +347,7 @@ namespace ObjCManagedExporter
 				Console.WriteLine("ERROR: Generator cannot run; XML File ({0}) does not exist", mXmlFile);
 				return false;
 			}
+
 			// Deserialize our frameworks file
 			XmlTextReader _xmlreader = new XmlTextReader(mXmlFile);
 			XmlSerializer _serializer = new XmlSerializer(typeof(Configuration));
@@ -348,3 +392,9 @@ namespace ObjCManagedExporter
             
 	}
 }
+
+//	$Log: Main.cs,v $
+//	Revision 1.16  2004/06/22 12:04:12  urs
+//	Cleanup, Headers, -out:[CS|OC], VS proj
+//
+//
