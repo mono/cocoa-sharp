@@ -37,23 +37,31 @@ main(int argc, const char* argv[]) {
 	MonoAssembly *assembly;
 	int retval;
 	
-	if (argc >= 2)
-		sFile = argv[1];
+	char *cwd = getBundleDir();
+	chdir(cwd);
+	char *realFile = (char*)malloc(strlen(sFile)+strlen(cwd)+2);
+	realFile = strcat(cwd, "/");
+	if (argc >= 2 && memcmp(argv[1], "-psn", 4) != 0)
+	{
+		realFile = strcat(realFile, argv[1]);
+	} else {
+		realFile = strcat(realFile, sFile);
+	}	
 	
-	printf("file: %s\n",sFile);
+	printf("file: %s cwd:%s\n",realFile, cwd);
 	
 	/*
 	 * mono_jit_init() creates a domain: each assembly is
 	 * loaded and run in a MonoDomain.
 	 */
 #if JIT
-	domain = mono_jit_init (sFile);
+	domain = mono_jit_init (realFile);
 #else
-	domain = mono_interp_init (sFile);
+	domain = mono_interp_init (realFile);
 #endif
 
 	if(domain == NULL) {
-	    printf("ERROR: No domain for assembly: %s\n",sFile);
+	    printf("ERROR: No domain for assembly: %s\n",realFile);
 		exit(1);
 	}
 
@@ -62,11 +70,11 @@ main(int argc, const char* argv[]) {
 	 * can call us back.
 	 */
 	assembly = mono_domain_assembly_open (domain,
-					      sFile);
+					      realFile);
 
 	if(assembly == NULL)
 	{
-	    printf("ERROR: Assembly load failed: %s\n",sFile);
+	    printf("ERROR: Assembly load failed: %s\n",realFile);
 		exit(1);
 	}
 
@@ -74,7 +82,7 @@ main(int argc, const char* argv[]) {
 
 	if(image == NULL)
 	{
-	    printf("ERROR: No assembly image: %s\n",sFile);
+	    printf("ERROR: No assembly image: %s\n",realFile);
 		exit(1);
 	}
 

@@ -32,14 +32,23 @@ test-4.exe: test-4.cs ../build/Apple.Foundation.dll
 	mcs -g test-4.cs -r:../build/Apple.Foundation.dll
 	cp ../build/*.dll .
 
-Loader: Loader.c
-	gcc -g Loader.c -o Loader `pkg-config --cflags --libs mono`
+Loader: Loader.o Bundle.o
+	gcc Bundle.o Loader.o -o Loader -framework Cocoa `pkg-config --libs mono`
+Loader.o: Loader.c
+	gcc -g -c Loader.c -o Loader.o `pkg-config --cflags mono`
+Bundle.o: Bundle.m
+	gcc -x objective-c -g -c Bundle.m -o Bundle.o
 
 run: Test.exe Loader
+	rm -Rf Loader.app
 	mkdir -p Loader.app/Contents/MacOS
 	mkdir -p Loader.app/Contents/Resources
 	cp ../sample/SimpleWindow/*.icns Loader.app/Contents/Resources
 	cp Info.plist Loader.app/Contents/
-	cp Test.exe Loader.app/Contents/MacOS
+	cp Test.exe Loader.app/Contents/Resources
+	cp *.dll* Loader.app/Contents/Resources
+	cp *Glue* Loader.app/Contents/Resources
+	ln -s /System/Library/Frameworks/CoreFoundation.framework/Versions/Current/CoreFoundation Loader.app/Contents/Resources/CoreFoundation
+	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation Loader.app/Contents/Resources/Foundation
 	cp Loader Loader.app/Contents/MacOS
 	./Loader.app/Contents/MacOS/Loader
