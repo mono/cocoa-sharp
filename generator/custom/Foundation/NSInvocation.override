@@ -2,9 +2,13 @@
 		<method sel="-getArgument:atIndex:">
 		public object getArgument(int i, Type t) {
 			object retVal = null;
-			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
+			IntPtr argPtr = IntPtr.Zero;
+			if (t.IsValueType)
+				argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
+			else
+				argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
 			ObjCMessaging.objc_msgSend(Raw, "getArgument:atIndex:", typeof(void), typeof(IntPtr), argPtr, typeof(int), i+2);
-			retVal = t.IsPrimitive ? Marshal.PtrToStructure(argPtr, t) : NS2Net(Marshal.ReadIntPtr(argPtr));
+			retVal = (t.IsPrimitive || t.IsValueType) ? Marshal.PtrToStructure(argPtr, t) : NS2Net(Marshal.ReadIntPtr(argPtr));
 			Marshal.FreeHGlobal(argPtr);
 			return retVal;
 		}

@@ -24,6 +24,8 @@ namespace Apple.Foundation
 		private static bool Name2Type_init = true;
 		[DllImport("Glue")]
 		protected internal static extern IntPtr GetObjectClassName(IntPtr /*(id)*/ THIS);
+		[DllImport("Glue")]
+		protected internal static extern IntPtr GetObjectSuperClassName(IntPtr /*(id)*/ THIS, int depth);
 
 		public static Type NS2Type(string className) 
 		{
@@ -75,17 +77,17 @@ namespace Apple.Foundation
 				
 			NSObject ret = null;
 			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
-			className = className.Replace ("NSConcrete", "NS");
-			if (className.StartsWith ("NS") && className.EndsWith ("Color"))
-				className = "NSColor";
-			if (className.Equals ("NSPathStore2"))
-				className = "NSString";
-			if (className.Equals ("NSCGSFont"))
-				className = "NSFont";
-			if (className.Equals ("NSCFDictionary"))
-				className = "NSDictionary";
 			Type type = NS2Type(className);
-
+			int i = 0;
+			// Walk up the superclass chain until we find a known type
+			while (type == null) {
+				className = Marshal.PtrToStringAnsi(GetObjectSuperClassName(raw, i));
+				if (className == null || className == "")
+					break;
+				type = NS2Type(className);
+				i++;
+			}
+				
 			if (type != null) {
 NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C class: " + className);
 				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,

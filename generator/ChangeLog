@@ -1,3 +1,12 @@
+2005-01-13  Geoff Norton  <gnorton@customerdna.com>
+
+	* custom/Foundation/TypeConverter.cs: Walk up the className tree
+	to find a known type instead of handling these on a case by case
+	basis.
+	* custom/Foundation/NSInvocation.override: Implement handling of 
+	structures as method arguments.  Things like drawRect:NSRect will work
+	now.
+
 2005-01-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* custom/Foundation/TypeConverter.cs: Handle more objc name munging
