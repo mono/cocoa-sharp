@@ -16,7 +16,6 @@ EXTRA_DIST= \
 	generator-run.stamp
 
 sources = \
-	header-gen/AssemblyInfo.cs \
 	header-gen/Element.cs \
 	header-gen/HeaderCategory.cs \
 	header-gen/HeaderEnum.cs \
@@ -25,7 +24,6 @@ sources = \
 	header-gen/HeaderProtocol.cs \
 	header-gen/HeaderStruct.cs \
 	header-gen/Main.cs \
-	macho-gen/AssemblyInfo.cs \
 	macho-gen/DylibCommand.cs \
 	macho-gen/ICommand.cs \
 	macho-gen/LoadCommand.cs \
@@ -41,10 +39,10 @@ sources = \
 	macho-gen/SegmentCommand.cs \
 	macho-gen/SymbolTable.cs \
 	gen-out/Array.cs \
-	gen-out/AssemblyInfo.cs \
 	gen-out/BitField.cs \
 	gen-out/Category.cs \
 	gen-out/Class.cs \
+	gen-out/Configuration.cs \
 	gen-out/Const.cs \
 	gen-out/Enum.cs \
 	gen-out/ExternalFunction.cs \
