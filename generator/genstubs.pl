@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.16 2004/06/18 15:09:31 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.17 2004/06/18 17:52:52 urs Exp $
 #
 
 use strict;
@@ -669,15 +669,18 @@ sub genCSharpInstanceMethod {
 
     #BUG: Why are we getting undefined method names in here
     return unless defined($objC{'method name'});
+
     my $type = convertType($objC{'return type'});
     my $retter = ($type =~ /void/) ? "" : "return ";
     my @args = ();
     my @params = ();
     my @names = defined $objC{'arg names'} ? @{ $objC{'arg names'} } : ();
     my @types = defined $objC{'arg types'} ? @{ $objC{'arg types'} } : ();
+    my @messageParts = @{ $objC{'message parts'} };
     my $methodName = $objC{'method name'};
 
-    if ( $objC{'is class method'}) {
+    if ($objC{'is class method'}) {
+        $type = "static $type";
         push(@params, "IntPtr.Zero");
     } else {
         push(@params, "Raw");
@@ -694,8 +697,8 @@ sub genCSharpInstanceMethod {
 
     # void setTitle(string aString);
     return (
-        "        public $type $methodName ($args) {",
-        "            $retter $methodName($params);",
+        "        public $type $messageParts[0] ($args) {",
+        "            $retter$methodName ($params);",
         "        }"
     );
 }
@@ -707,9 +710,9 @@ sub convertTypeGlue {
     
     if ($type eq "BOOL") {
         return "bool";
-    } elsif($type eq "id") {
-        return "IntPtr /*($type)*/";
-    } elsif($type =~ /.*\*$/) {
+    } elsif ($type eq "unsigned") {
+        return "uint";
+    } elsif($type eq "id" || $type eq "Class" || $type eq "SEL" || $type eq "IMP" || $type =~ /.*\*$/) {
         return "IntPtr /*($type)*/";
     }
     
@@ -723,11 +726,19 @@ sub convertType {
     
     if ($type eq "BOOL") {
         return "bool";
+    } elsif ($type eq "unsigned") {
+        return "uint";
     } elsif($type eq "id") {
         return "object /*($type)*/";
+    } elsif($type eq "Class") {
+        return "Class";
+    } elsif($type eq "SEL") {
+        return "string /*SEL*/";
+    } elsif($type eq "IMP") {
+        return "IntPtr /*IMP*/";
     } elsif($type =~ /NSString.*\*$/) {
         return "string /*($type)*/";
-    } elsif($type =~ /(w+).*\*$/) {
+    } elsif($type =~ /(\w+).*\*$/) {
         return "$1 /*($type)*/";
     }
     
@@ -747,11 +758,14 @@ sub getCSharpHash {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.17  2004/06/18 17:52:52  urs
+#	Some .cs file gen improv.
+#
 #	Revision 1.16  2004/06/18 15:09:31  gnorton
 #	* Resolve some warning in the.cs generation
 #	* Temporarily make our tmp directories if needed
 #	* Why are we getting undefined %objC{'method name'} into our generators?
-#
+#	
 #	Revision 1.15  2004/06/18 13:54:57  urs
 #	*** empty log message ***
 #	
