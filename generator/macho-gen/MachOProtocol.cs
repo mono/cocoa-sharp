@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOProtocol.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOProtocol.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -21,6 +21,17 @@ namespace CocoaSharp {
 		private IDictionary protocols = new Hashtable();
 
 		internal MachOProtocol(string name) { Name = name; }
+
+		static internal ICollection ToProtocols(ICollection protocols) {
+			ArrayList ret = new ArrayList();
+			foreach (MachOProtocol protocol in protocols)
+				ret.Add(Protocol.GetProtocol(protocol.Name));
+			return ret;
+		}
+
+		internal Protocol ToProtocol(string nameSpace) {
+			return new Protocol(Name, nameSpace, MachOMethod.ToMethods(nameSpace, instanceMethods), MachOMethod.ToMethods(nameSpace, classMethods));
+		}
 
 		internal void AddProtocolsFromArray(IList protocols) {
 			foreach (MachOProtocol p in protocols)
@@ -59,6 +70,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOProtocol.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

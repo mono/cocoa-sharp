@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOCategory.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOCategory.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -18,7 +18,7 @@ namespace CocoaSharp {
 		
 		private objc_category occategory;
 		private string class_name, name;
-		private ArrayList methods, classMethods;
+		private ArrayList instanceMethods, classMethods;
 	
 		unsafe internal MachOCategory (byte *ptr, MachOFile file) {
 			occategory = *(objc_category *)ptr;
@@ -30,8 +30,14 @@ namespace CocoaSharp {
 			name = file.GetString(occategory.category_name);
 			class_name = file.GetString(occategory.class_name);
 			MachOFile.DebugOut(1,"Category: {0} class_name : {1}",name,class_name);
-			methods = MachOMethod.ProcessMethods(occategory.instance_methods,file);
+			instanceMethods = MachOMethod.ProcessMethods(occategory.instance_methods,file);
 			classMethods = MachOMethod.ProcessMethods(occategory.class_methods,file);
+		}
+
+		internal Category ToCategory(string nameSpace) {
+			return new Category(name, nameSpace, Class.GetClass(class_name), 
+				MachOMethod.ToMethods(nameSpace, instanceMethods), 
+				MachOMethod.ToMethods(nameSpace, classMethods));
 		}
 	}
 
@@ -46,6 +52,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOCategory.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

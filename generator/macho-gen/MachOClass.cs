@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOClass.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -62,6 +62,13 @@ namespace CocoaSharp {
 			}
 
 			AddProtocolsFromArray(ProcessProtocolList(occlass.protocols,file));
+		}
+
+		internal Class ToClass(string nameSpace) {
+			return new Class(name, nameSpace, Class.GetClass(superClass), 
+				MachOProtocol.ToProtocols(protocols.Values),
+				MachOIvar.ToVariables(nameSpace, ivars),
+				MachOMethod.ToMethods(nameSpace,methods),MachOMethod.ToMethods(nameSpace,classMethods));
 		}
 
 		void AddProtocolsFromArray(IList protocols) {
@@ -171,6 +178,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOClass.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

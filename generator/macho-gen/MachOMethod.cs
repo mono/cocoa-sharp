@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOMethod.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOMethod.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -26,10 +26,29 @@ namespace CocoaSharp {
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, typesStr);
 			types = MachOType.ParseTypes(typesStr);
 		}
+
 		internal MachOMethod(string name,string types) {
 			this.name = name;
 			this.types = MachOType.ParseTypes(types);
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
+		}
+
+		internal ICollection ToParameters(string nameSpace) {
+			ArrayList ret = new ArrayList();
+			for (int i = 2; i < types.Length; ++i)
+				ret.Add(new ParameterInfo("p" + (i-2),types[i].ToTypeUsage(nameSpace)));
+			return ret;
+		}
+
+		internal Method ToMethod(string nameSpace) {
+			return new Method(name,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
+		}
+
+		static internal ICollection ToMethods(string nameSpace,ICollection methods) {
+			ArrayList ret = new ArrayList();
+			foreach (MachOMethod method in methods)
+				ret.Add(method.ToMethod(nameSpace));
+			return ret;
 		}
 
 		unsafe public static ArrayList ProcessMethods(uint methodLists,MachOFile file) {
@@ -53,6 +72,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOMethod.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

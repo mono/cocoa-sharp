@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOType.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOType.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -375,6 +375,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOType.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

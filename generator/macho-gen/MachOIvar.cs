@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOIvar.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOIvar.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
 //
 
 using System;
@@ -30,6 +30,13 @@ namespace CocoaSharp {
 			MachOFile.DebugOut(1,"\tvar: {0} type=[{3}]->[{1}] offset={2}", name, type, offset, typeName);
 		}
 
+		static internal ICollection ToVariables(string nameSpace,ICollection variables) {
+			ArrayList ret = new ArrayList();
+			foreach (MachOIvar var in variables)
+				ret.Add(var.ToIvar(nameSpace));
+			return ret;
+		}
+
 		internal Ivar ToIvar(string nameSpace) {
 			return new Ivar(name,type.ToType(nameSpace),offset);
 		}
@@ -48,6 +55,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOIvar.cs,v $
+// Revision 1.3  2004/09/09 03:32:22  urs
+// Convert methods from mach-o to out format
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //
