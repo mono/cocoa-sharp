@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.2 2004/06/24 06:29:36 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.3 2004/06/24 20:02:35 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -96,7 +96,7 @@
 		}
 
 		public string ClassName {
-			get { return new NSString(NSObject_className0(Raw)).ToString(); }
+			get { return new NSString(NSObject_className0(Raw),false).ToString(); }
 		}
 
 		// Satisfy INSObject
@@ -107,6 +107,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.3  2004/06/24 20:02:35  urs
+// Fix string issues
+//
 // Revision 1.2  2004/06/24 06:29:36  gnorton
 // Make foundation compile.
 //

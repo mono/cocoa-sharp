@@ -57,7 +57,7 @@
 	<type native="id*" glue="IntPtr" api="IntPtr" />
 	<type native="SEL*" glue="IntPtr" api="IntPtr" />
 	<regex native="char\s*\*" glue="string" api="string" />
-	<regex native="NSString\s*\*" glue="string" api="string" />
+	<regex native="NSString\s*\*" glue="IntPtr" api="string" />
 	<regex native="^[^NS]{2}.+\s*\*" glue="IntPtr" api="IntPtr" />
 	<regex native="NS.+\s*\*" glue="IntPtr"/>
 	<replace type="api" regex="NS.+\s*\*" old="*" new="" />
