@@ -6,4 +6,6 @@ all: ../../build/Apple.AppKit.dll
 maintainer-clean: clean
 
 clean:
+	touch ../../build/Apple.AppKit.dll
 	rm ../../build/Apple.AppKit.dll
+

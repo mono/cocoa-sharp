@@ -6,6 +6,7 @@ all: ../../build/Apple.Foundation.dll
 maintainer-clean: clean
 
 clean:
+	touch ../../build/Apple.Foundation.dll
 	rm ../../build/Apple.Foundation.dll
 
 test:
