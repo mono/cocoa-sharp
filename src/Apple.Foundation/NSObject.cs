@@ -31,7 +31,7 @@ namespace Apple.Foundation
 		protected static extern void NSObject_release(IntPtr THIS);
 		
 		[DllImport("Glue")]
-		protected static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types,int nargs, int sizeOfParams, int returnValueLength);
+		protected static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
 		#endregion
 
 		protected enum GlueDelegateWhat {
@@ -47,37 +47,29 @@ namespace Apple.Foundation
 				case GlueDelegateWhat.methodSignatureForSelector:
 				{
 					string types = "";
-					int nargs = 2;
-					int sizeOfParams = 0;
-					int returnValueLength = 0;
 					
 					// Get the method info for this method.
 					MethodInfo method = this.GetType().GetMethod(NSString.FromSEL(invocation).ToString());
+
 					// Determine the return type and push it onto the types
-					switch(method.ReturnType.ToString()) {
-						case "System.Void":
-							types = types + "v";
-							returnValueLength = 0;
-							break;
-					}
+					if (method.ReturnType == typeof(void))
+						types = "v";
+					else
+						types = "@";
+
 					// Add the id and the selector to the types
-					types = types + "@:";
+					types += "@:";
+
 					// Get the parameters for this method
 					ParameterInfo[] parms = method.GetParameters();
-					// Increment the nargs to include the parms
-					nargs += parms.Length;
 					// Add each parm to the types
 					foreach (ParameterInfo p in parms) {
 						Console.WriteLine("MethodParam: {0}", p.ParameterType.ToString());
-						switch(p.ParameterType.ToString()) {
-							case "System.Void":
-								break;
-						}
+						types += "@";
 					}
-					// WHY?
-					sizeOfParams = 160;
+					
 					// Make the info
-					return MakeMethodSignature(types,nargs,sizeOfParams,returnValueLength);
+					return MakeMethodSignature(types);
 				}
 				case GlueDelegateWhat.forwardInvocation:
 				{

@@ -64,9 +64,9 @@ void AddMethods(Class cls,int count,...) {
 @end
 #endif
 
-NSMethodSignature * MakeMethodSignature(const char *types,int nargs, int sizeOfParams, int returnValueLength) {
-    NSLog(@"MakeMethodSignature");
-	NSMethodSignature *base = [NSObject instanceMethodSignatureForSelector: @selector(performSelector:withObject:)];
+NSMethodSignature * MakeMethodSignature(const char *types) {
+    NSLog(@"MakeMethodSignature %s",types);
+	NSMethodSignature *base = [NSMethodSignature signatureWithObjCTypes: types];
 
 #if DEBUG || 1
 	Class cls = [base class];
@@ -83,19 +83,24 @@ NSMethodSignature * MakeMethodSignature(const char *types,int nargs, int sizeOfP
 	int _nargs;
 	int _sizeOfParams;
 	int _returnValueLength;
+	void* _parmInfoP;
 	object_getInstanceVariable(base,"_types",&_types);
 	object_getInstanceVariable(base,"_nargs",&_nargs);
 	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
 	object_getInstanceVariable(base,"_returnValueLength",&_returnValueLength);
-	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i",_types,_nargs,_sizeOfParams,_returnValueLength);
+	object_getInstanceVariable(base,"_parmInfoP",&_parmInfoP);
+
+	NSLog(@"types=%s, nargs=%i, sizeOfParams=%i, returnValueLength=%i parmInfoP=%p",_types,_nargs,_sizeOfParams,_returnValueLength,_parmInfoP);
+	
 #endif
 	
-	object_setInstanceVariable(base,"_types",types);
-	object_setInstanceVariable(base,"_nargs",nargs);
-	object_setInstanceVariable(base,"_sizeofParams",sizeOfParams);
-	object_setInstanceVariable(base,"_returnValueLength",returnValueLength);
+	//object_setInstanceVariable(base,"_types",types);
+	//object_setInstanceVariable(base,"_nargs",nargs);
+	//object_setInstanceVariable(base,"_sizeofParams",sizeOfParams);
+	//object_setInstanceVariable(base,"_returnValueLength",returnValueLength);
+	//object_setInstanceVariable(base,"_parmInfoP",nil);
 
-#if DEBUG || 1
+#if DEBUG && 0
 	object_getInstanceVariable(base,"_types",&_types);
 	object_getInstanceVariable(base,"_nargs",&_nargs);
 	object_getInstanceVariable(base,"_sizeofParams",&_sizeOfParams);
