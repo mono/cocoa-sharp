@@ -1,4 +1,4 @@
-prefix=/Library/Frameworks/Mono.framework/Versions/1.1.1
+prefix=/Library/Frameworks/Mono.framework/Versions/Current
 SUBDIRS=..
 
 all: test test2 test-4 test-4.exe CocoaSharpBrowser CocoaSharpFinder
