@@ -120,7 +120,7 @@ class Browser : NSObject {
 		help_tree = RootTree.LoadTree ();
 		BrowserController browserController = new BrowserController(help_tree);
 
-		Window = new NSWindow(new NSRect(200, 180, 800, 600),
+		Window = new NSWindow(new NSRect(200, 180, 600, 480),
 			(uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask 
 			| NSWindowMask.NSTitledWindowMask | NSWindowMask.NSResizableWindowMask),
 			NSBackingStoreType.NSBackingStoreBuffered,
@@ -151,7 +151,7 @@ class Browser : NSObject {
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 //		sv.documentView = ov;
 		NSTableColumn c = new NSTableColumn("Caption");
-		c.width = 100;
+		c.width = 225;
 		c.editable = false;
 		c.resizable = true;
 		((NSCell)c.headerCell).stringValue = "Caption";
@@ -173,11 +173,11 @@ class Browser : NSObject {
 		Treebrowser.target = this;
 		Treebrowser.doubleAction = "didDoubleClick";
 		NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
-		Webview = new WebView(new NSRect(250, 0, 550, 600));
+		Webview = new WebView(new NSRect(0, 0, 600, 480));
 		mainFrame = (WebFrame)Webview.mainFrame;
 
 		((NSView)Window.contentView).addSubview(Webview);
-		((NSView)Window.contentView).addSubview(Treebrowser);
+		//((NSView)Window.contentView).addSubview(Treebrowser);
 		
 		drawer.open();
 		
