@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.25 2004/06/23 17:55:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.26 2004/06/23 18:18:32 urs Exp $
 //
 
 using System;
@@ -335,12 +335,13 @@ namespace ObjCManagedExporter
 			{
 				string t = ConvertType(mArgumentDeclarationTypes[0]);
 				string propName = mCSMethodName.Substring(3);
-				string getPropName = propName.Substring(0,1).ToLower() + propName.Substring(1);
 
-				Method get = (Method)methods[getPropName + "0"];
+				Method get = (Method)methods[propName.Substring(0,1).ToLower() + propName.Substring(1) + "0"];
 				
 				if (get == null)
 					get = (Method)methods["is" + propName + "0"];
+				if (get == null)
+					get = (Method)methods[propName + "0"];
 				
 				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
 				if (get != null && get.IsGetMethod(t))
@@ -551,9 +552,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.26  2004/06/23 18:18:32  urs
+//	Allow same case get/set properties
+//
 //	Revision 1.25  2004/06/23 17:55:41  urs
 //	Make test compile with the lasted glue API name change
-//
+//	
 //	Revision 1.24  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
 //	
