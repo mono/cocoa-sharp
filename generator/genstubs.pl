@@ -10,7 +10,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.12 2004/06/16 12:20:26 urs Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/genstubs.pl,v 1.13 2004/06/17 02:55:38 urs Exp $
 #
 
 use strict;
@@ -139,7 +139,7 @@ sub parseMethod {
         unshift(@params, "Class CLASS");
         $receiver = "CLASS";
         $logLine =
-            "\tif (!CLASS) CLASS = NSClassFromString(\@\"$class\");\n";
+            "\tif (!CLASS) CLASS = [$class class];\n";
         $class .= '_';
 
     # If the method is an instance method
@@ -585,9 +585,12 @@ sub genCSharpStub {
 }
 
 #	$Log: genstubs.pl,v $
+#	Revision 1.13  2004/06/17 02:55:38  urs
+#	Some cleanup and POC of glue change
+#
 #	Revision 1.12  2004/06/16 12:20:26  urs
 #	Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
-#
+#	
 #	Revision 1.11  2004/06/15 19:02:09  urs
 #	Add headers
 #	

@@ -36,7 +36,8 @@ main(int argc, const char* argv[]) {
 	MonoImage *image;
 	MonoAssembly *assembly;
 	int retval;
-	
+
+	void *pool = BeginApp();	
 	char *cwd = getBundleDir();
 	chdir(cwd);
 	char *realFile = (char*)malloc(strlen(sFile)+strlen(cwd)+2);
@@ -95,5 +96,6 @@ main(int argc, const char* argv[]) {
 #else
 	mono_interp_cleanup (domain);
 #endif
+	EndApp(pool);
 	return retval;
 }

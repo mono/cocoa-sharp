@@ -4,93 +4,122 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSMethodSignature.h>
 
-void AddMethods(Class cls,int count,...) {
-    struct objc_method_list *methodsToAdd = (struct objc_method_list *)
-        malloc(count*sizeof(struct objc_method) + sizeof(struct objc_method_list));
-    methodsToAdd->method_count = count;
 
-	int i;
-	va_list vl;
-	va_start(vl,count);
-	for (i = 0; i < count; ++i) {
-		SEL name = va_arg(vl,SEL);
-		char *types = va_arg(vl,char *);
-		IMP imp = va_arg(vl,IMP);
-	
-		struct objc_method *meth = methodsToAdd->method_list+i;
-		meth->method_name = name;
-		meth->method_types = types;
-		meth->method_imp = imp;
-	}
+void AddMethods(Class cls,int numOfMethods,const char **methods,const char **signatures,IMP method,int count,...) {
+    struct objc_method_list *methodsToAdd = (struct objc_method_list *)
+        malloc((count+numOfMethods)*sizeof(struct objc_method) + sizeof(struct objc_method_list));
+    methodsToAdd->method_count = count+numOfMethods;
+
+    int i;
+    struct objc_method *meth = methodsToAdd->method_list;
+
+    for (i = 0; i < numOfMethods; ++i) {
+        meth->method_name = sel_getUid(methods[i]);
+        meth->method_types = strdup(signatures[i]);
+        meth->method_imp = method;
+        NSLog(@"  registering method: %s (%s) %p",sel_getName(meth->method_name),meth->method_types,meth->method_imp);
+        ++meth;
+    }
+
+    va_list vl;
+    va_start(vl,count);
+    for (i = 0; i < count; ++i) {
+        meth->method_name = va_arg(vl,SEL);
+        meth->method_types = strdup(va_arg(vl,char *));
+        meth->method_imp = va_arg(vl,IMP);
+        NSLog(@"  registering method: %s (%s) %p",sel_getName(meth->method_name),meth->method_types,meth->method_imp);
+        ++meth;
+    }
 
     class_addMethods(cls, methodsToAdd);
 }
 
 NSMethodSignature * MakeMethodSignature(const char *types) {
-	NSMethodSignature *ret = [NSMethodSignature signatureWithObjCTypes: types];
+    NSMethodSignature *ret = [NSMethodSignature signatureWithObjCTypes: types];
     NSLog(@"MakeMethodSignature %s --> %@",types,ret);
-	return ret;
+    return ret;
 }
 
 typedef id (*managedDelegate)(int what,id anInvocation);
 #define GLUE_methodSignatureForSelector 0
 #define GLUE_forwardInvocation 1
 
-//- (id)initWithManagedDelegate:(managedDelegate)delegate
+//- (id) initWithManagedDelegate: (managedDelegate) delegate
 id glue_initWithManagedDelegate(id base, SEL sel, ...) {
     NSLog(@"glue_initWithManagedDelegate %@ %s", base, sel_getName(sel));
 
-	va_list vl;
-	va_start(vl,sel);
-	managedDelegate delegate = va_arg(vl,managedDelegate);
-	object_setInstanceVariable(base,"mDelegate",delegate);
-	return base;
+    va_list vl;
+    va_start(vl,sel);
+    managedDelegate delegate = va_arg(vl,managedDelegate);
+    object_setInstanceVariable(base,"mDelegate",delegate);
+    return base;
 }
 
-//- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+//- (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 id glue_methodSignatureForSelector(id base, SEL sel, ...) {
-	va_list vl;
-	va_start(vl,sel);
-	SEL aSelector = va_arg(vl,SEL);
-	
+    va_list vl;
+    va_start(vl,sel);
+    SEL aSelector = va_arg(vl,SEL);
+    NSString *strSel = [NSString stringWithCString: sel_getName(aSelector)];
+    
     NSLog(@"glue_methodSignatureForSelector %p %s", base, sel_getName(aSelector));
 
-	NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
-	
-	if (!signature)
-	{
-		managedDelegate delegate;
-		object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+    NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
+    
+    if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
+        managedDelegate delegate;
+        object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
 
-		signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
-	}
-	
-	return signature;
+        aSelector = sel_getUid([[strSel substringFromIndex: 8] cString]);
+        signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
+    }
+    
+    return signature;
 }
 
-//- (void)forwardInvocation:(NSInvocation *)anInvocation;
+//- (void) forwardInvocation: (NSInvocation *) anInvocation;
 id glue_forwardInvocation(id base, SEL sel, ...) {
-	va_list vl;
-	va_start(vl,sel);
-	NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
-	
+    va_list vl;
+    va_start(vl,sel);
+    NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
+
+    SEL aSelector = sel_getUid([[[NSString stringWithCString: sel_getName([anInvocation selector])] substringFromIndex: 8] cString]);
+    [anInvocation setSelector: aSelector];
+
     NSLog(@"glue_forwardInvocation: calling delegate %p %s", base, sel_getName([anInvocation selector]));
-	
-	managedDelegate delegate;
-	object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
-	
-	if (delegate(GLUE_forwardInvocation,anInvocation) != nil)
+
+    managedDelegate delegate;
+    object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+
+    if (delegate(GLUE_forwardInvocation,anInvocation) != nil)
         [base doesNotRecognizeSelector: [anInvocation selector]];
-	return base;
+    return base;
+}
+
+id glue_implementMethod(id base, SEL sel, ...) {
+    va_list vl;
+    va_start(vl,sel);
+
+    Method method = class_getInstanceMethod([base class], sel);
+    SEL forwardSel = sel_getUid([[NSString stringWithFormat: @"_dotNet_%s", sel_getName(sel)] cString]);
+    marg_list margs;
+    marg_malloc(margs, method);
+    NSLog(@"glue_implementMethod %p %s method=%p margs=%p size=%i", base, sel_getName(forwardSel),method,margs,method_getSizeOfArguments(method));
+
+    id ret = (id)objc_msgSend(base, forwardSel);
+    marg_free(margs);
+    return ret;
 }
 
 id DotNetForwarding_initWithManagedDelegate(id THIS, managedDelegate delegate) {
-	NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
-	return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
+    NSLog(@"DotNetForwarding_initWithManagedDelegate: %@",THIS);
+    return glue_initWithManagedDelegate(THIS, @selector(initWithManagedDelegate:), delegate);
 }
 
-
-Class CreateClassDefinition(const char * name, const char * superclassName) {
+Class CreateClassDefinition(const char * name, const char * superclassName/*,int numOfMethods,const char **methods,const char **signatures*/) {
+    int numOfMethods = 2;
+    const char *methods[] = {"_stop","_swap"};
+    const char *signatures[] = { "v@:", "v@:" };
     NSLog(@"creating a subclass of %s named %s", superclassName, name);
 
     //
@@ -159,11 +188,13 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
 
     // Finally, register the class with the runtime.
     objc_addClass( new_class );
-	
-    AddMethods(new_class, 3, 
-			  @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
-			  @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
-			  @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
+
+    AddMethods(new_class, 
+            numOfMethods, methods, signatures, glue_implementMethod,
+            3, 
+            @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
+            @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
+            @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
     
     return new_class;
 }

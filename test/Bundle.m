@@ -10,6 +10,18 @@
  */
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import <AppKit/NSApplication.h>
+
+void * BeginApp() {
+	void * pool = [[NSAutoreleasePool alloc] init];
+	[NSApplication sharedApplication];
+	return pool;
+}
+
+void EndApp(void * pool) {
+	[(id)pool release];
+}
 
 char *getBundleDir() {
 	return [[[NSBundle mainBundle] resourcePath] cString];

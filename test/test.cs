@@ -16,9 +16,6 @@ class Test
 
 	static void Main(string[] args)
 	{
-		NSAutoreleasePool pool = new NSAutoreleasePool();
-		pool.init();
-
 		NSApplication.sharedApplication();
 		NSApplication.setApplicationIconImage(NSImage.imageNamed(new NSString("mono.icns")));
 
@@ -108,6 +105,5 @@ class Test
 		NSApplication.sharedApplication().runModalForWindow(window);
 
 		monoButton.release();
-		pool.release();
 	}
 }
