@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.13 2004/06/17 16:10:45 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.14 2004/06/18 03:42:45 gnorton Exp $
 //
 
 using System;
@@ -75,19 +75,18 @@ namespace Apple.Foundation
 			for(int i = 0; i < r.Methods.Length; i++)
 				Console.WriteLine("{0} {1}", r.Methods[i], r.Signatures[i]);
 			IntPtr retval = IntPtr.Zero;
-			unsafe {
-				IntPtr[] methods = new IntPtr[r.NumMethods];
-				IntPtr[] signatures = new IntPtr[r.NumMethods];
 
-				for(int i = 0; i < r.NumMethods; i++) {
-					methods[i] = Marshal.StringToCoTaskMemAnsi(r.Methods[i]);
-					signatures[i] = Marshal.StringToCoTaskMemAnsi(r.Signatures[i]);
-				}
-				retval = CreateClassDefinition(type.Name, "NSObject", r.NumMethods, methods, signatures); 
-				for(int i = 0; i < r.NumMethods; i++) {
-					Marshal.FreeCoTaskMem(methods[i]);
-					Marshal.FreeCoTaskMem(signatures[i]);
-				}
+			IntPtr[] methods = new IntPtr[r.NumMethods];
+			IntPtr[] signatures = new IntPtr[r.NumMethods];
+
+			for(int i = 0; i < r.NumMethods; i++) {
+				methods[i] = Marshal.StringToCoTaskMemAnsi(r.Methods[i]);
+				signatures[i] = Marshal.StringToCoTaskMemAnsi(r.Signatures[i]);
+			}
+			retval = CreateClassDefinition(type.Name, "NSObject", r.NumMethods, methods, signatures); 
+			for(int i = 0; i < r.NumMethods; i++) {
+				Marshal.FreeCoTaskMem(methods[i]);
+				Marshal.FreeCoTaskMem(signatures[i]);
 			}
 			return retval;
 		}
@@ -186,6 +185,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.14  2004/06/18 03:42:45  gnorton
+// Doesn't need to be unsafe anymore because we can pass IntPtr[] and have it become char ** nicely after our conversion; we still clean up the managed memory tho
+//
 // Revision 1.13  2004/06/17 16:10:45  gnorton
 // Cleanup
 //
