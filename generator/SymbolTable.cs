@@ -1,38 +1,30 @@
 //
-// $Id: SymbolTable.cs,v 1.4 2004/09/03 20:32:17 urs Exp $
+// $Id: SymbolTable.cs,v 1.5 2004/09/03 21:46:29 urs Exp $
 //
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace CocoaSharp 
-{
+namespace CocoaSharp {
 
 	unsafe public class SymbolTable {
 		private objc_symtab ocsymtab;
-	
-		/// <summary>
-		/// Creates a new <see cref="SymbolTable"/> instance.
-		/// </summary>
-		/// <param name="offset">Offset.</param>
-		public SymbolTable (byte *headptr, uint offset, SegmentCommand objcSegment) {
-			byte *ptr = headptr+(int)(offset - objcSegment.VMAddr + objcSegment.FileOffset);
+		private ArrayList classes = new ArrayList();
+
+		public SymbolTable (uint offset, MachOFile file) {
+			byte *ptr = file.GetPtr(offset);
 			ocsymtab = *((objc_symtab *)ptr);
 			Utils.MakeBigEndian(ref ocsymtab.sel_ref_cnt);
-			Utils.MakeBigEndian(ref ocsymtab.sel_ref_cnt);
+			Utils.MakeBigEndian(ref ocsymtab.cls_def_cnt);
 			Utils.MakeBigEndian(ref ocsymtab.cat_def_cnt);
 
 			uint *defptr = (uint*)(ptr + Marshal.SizeOf(ocsymtab));
-			int defIndex = 0;
-			if (ocsymtab.cls_def_cnt > 0) 
-			{
-				for (int index = 0; index < ocsymtab.cls_def_cnt; ++index, ++defptr, ++defIndex) {
-					Class cls = new Class (headptr, *defptr, objcSegment);
-				}
+			for (int i = 0; i < ocsymtab.cls_def_cnt; ++i, ++defptr) {
+				Utils.MakeBigEndian(ref *defptr);
+				Class cls = new Class(*defptr, file);
+				classes.Add(cls);
 			}
-//			for (int i = 0; i < ocsymtab.cls_def_cnt; i++, ptr += (int)Marshal.SizeOf (ocsymtab)) { 
-//				Class cls = new Class ((byte *)ocsymtab.defs.ToInt32 ());
-//			}
 		}
 	}
 

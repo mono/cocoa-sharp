@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.6 2004/09/03 20:05:30 gnorton Exp $
+// $Id: MachOFile.cs,v 1.7 2004/09/03 21:46:29 urs Exp $
 //
 
 using System;
@@ -107,6 +107,60 @@ namespace CocoaSharp {
 			get { return ptr; }
 			set { ptr = value; }
 		}
+		unsafe public byte* HeadPointer {
+			get { return headptr; }
+		}
+
+		public SegmentCommand SegmentContainingAddress(uint offset) {
+			foreach (ICommand cmd in this.commands) {
+				SegmentCommand scmd = cmd as SegmentCommand;
+				if (scmd != null && scmd.ContainsAddress(offset))
+					return scmd;
+			}
+			return null;
+		}
+
+		public SegmentCommand SegmentWithName(string segmentName) {
+			foreach (ICommand cmd in this.commands) {
+				SegmentCommand scmd = cmd as SegmentCommand;
+				if (scmd != null && scmd.Name == segmentName) 
+					return scmd;
+			}
+
+			return null;
+		}
+
+		unsafe public byte * GetPtr(uint offset) {
+			return GetPtr(offset,null);
+		}
+
+		unsafe public byte* GetPtr(uint offset,string segName) {
+			if (offset == 0)
+				return null;
+			SegmentCommand segment = this.SegmentContainingAddress(offset);
+			if (segment == null) {
+				DebugOut(0,"Segment for offset {0} not found",offset);
+				return null;
+			}
+			if (segName != null && segment.Name != segName) {
+				DebugOut(0,"Segment has wrong name {0} != {1}",segment.Name,segName);
+				return null;
+			}
+			return HeadPointer + (int)(offset - segment.VMAddr + segment.FileOffset);
+		}
+
+		public string GetString(uint offset) {
+			unsafe {
+				byte * ptr = GetPtr(offset);
+				if (ptr == null)
+					return null;
+
+				int len = 0;
+				byte *tmp = ptr;
+				while (*tmp++ != 0) ++len;
+				return Marshal.PtrToStringAnsi(new IntPtr(ptr));
+			}
+		}
 
 		public string Filename {
 			get { return filename; }
@@ -116,14 +170,12 @@ namespace CocoaSharp {
 			}
 		}
 
-		public static void DebugOut(int level, string format, params object[] args)
-		{
+		public static void DebugOut(int level, string format, params object[] args) {
 			if (DEBUG_LEVEL >= level) 
 				Console.WriteLine(format,args);
 		}
 
-		public static void DebugOut(string format, params object[] args) 
-		{
+		public static void DebugOut(string format, params object[] args) {
 			DebugOut(1,format,args);
 		}
 
@@ -208,8 +260,8 @@ namespace CocoaSharp {
 
 			unsafe {
 				objc_module ocmodule = new objc_module ();
-				int count = moduleSection.Size / 16;
-				modules = Module.ParseModules (headptr, moduleSection, objcSegment, count);
+				uint count = moduleSection.Size / 16;
+				modules = Module.ParseModules (moduleSection, this, count);
 			}
 		}
 

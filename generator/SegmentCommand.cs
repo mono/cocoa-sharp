@@ -1,5 +1,5 @@
 //
-// $Id: SegmentCommand.cs,v 1.5 2004/09/03 19:10:05 urs Exp $
+// $Id: SegmentCommand.cs,v 1.6 2004/09/03 21:46:29 urs Exp $
 //
 
 using System;
@@ -25,6 +25,42 @@ namespace CocoaSharp {
 
 		public string Name {
 			get { return name; }
+		}
+
+		public bool ContainsAddress(uint offset) {
+			return (offset >= scmd.vmaddr) && (offset < scmd.vmaddr + scmd.vmsize);
+		}
+
+		public Section SectionContainingVMAddr(uint offset) {
+			foreach (Section section in this.sections)
+				if (section.ContainsAddress(offset))
+					return section;
+
+			return null;
+		}
+
+		public uint SegmentOffsetForVMAddr(uint offset) {
+			Section section = this.SectionContainingVMAddr(offset);
+			return section.SegmentOffsetForVMAddr(offset);
+		}
+
+		public Section SectionWithName(string name) {
+			foreach (Section section in this.sections)
+				if (section.Name == name)
+					return section;
+			return null;
+		}
+
+		unsafe public byte* HeadPointer {
+			get { return mfile.HeadPointer; }
+		}
+
+		unsafe public byte* GetPtr(uint offset) {
+			return mfile.GetPtr(offset);
+		}
+
+		public string GetString(uint offset) {
+			return mfile.GetString(offset);
 		}
 
 		public int VMAddr {

@@ -1,5 +1,5 @@
 //
-// $Id: Section.cs,v 1.5 2004/09/03 19:10:05 urs Exp $
+// $Id: Section.cs,v 1.6 2004/09/03 21:46:29 urs Exp $
 //
 
 using System;
@@ -25,12 +25,24 @@ namespace CocoaSharp {
 			get { return sectname; }
 		}
 		
-		public int Offset {
-			get { return (int)sec.offset; }
+		public uint Offset {
+			get { return sec.offset; }
 		}
 		
-		public int Size {
-			get { return (int)sec.size; }
+		public uint Addr {
+			get { return sec.addr; }
+		}
+		
+		public uint Size {
+			get { return sec.size; }
+		}
+
+		public bool ContainsAddress(uint offset) {
+			return (offset >= Addr) && (offset < Addr + Size);
+		}
+
+		public uint SegmentOffsetForVMAddr(uint offset) {
+			return offset - Addr;
 		}
 
 		public void ProcessSection () {

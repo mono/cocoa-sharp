@@ -8,9 +8,9 @@ namespace CocoaSharp {
 		private objc_module ocmodule;
 		private SymbolTable symtab;
 
-		unsafe public Module (objc_module ocmodule, byte *headptr, SegmentCommand objcSegment) {
+		unsafe public Module (objc_module ocmodule, MachOFile file) {
 			this.ocmodule = ocmodule;
-			this.symtab = new SymbolTable (headptr, ocmodule.symtab, objcSegment);
+			this.symtab = new SymbolTable(ocmodule.symtab, file);
 		}
 
 		public int Version {
@@ -25,17 +25,17 @@ namespace CocoaSharp {
 			get { return symtab; }
 		}
 
-		unsafe public static ArrayList ParseModules (byte *headptr, Section moduleSection, SegmentCommand objcSegment, int count) {
+		unsafe public static ArrayList ParseModules (Section moduleSection, MachOFile file, uint count) {
 			ArrayList modules = new ArrayList ();
 			objc_module ocmodule;
 			Console.WriteLine ("Count: {0}", count);
-			byte *ptr = headptr + (int)moduleSection.Offset;
-			for (int i = 0; i < count; i++, ptr += Marshal.SizeOf (ocmodule)) {
+			byte *ptr = file.HeadPointer + (int)moduleSection.Offset;
+			for (int i = 0; i < count; ++i, ptr += Marshal.SizeOf (ocmodule)) {
 				ocmodule = *((objc_module *)ptr);
 				Utils.MakeBigEndian(ref ocmodule.version);
 				Utils.MakeBigEndian(ref ocmodule.size);
 				Utils.MakeBigEndian(ref ocmodule.symtab);
-				modules.Add (new Module (ocmodule, headptr, objcSegment));
+				modules.Add (new Module (ocmodule, file));
 			}
 			return modules;
 		}
