@@ -8,8 +8,8 @@ CoreFoundation: /System/Library/Frameworks/CoreFoundation.framework/Versions/Cur
 Foundation: /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation
 	ln -s /System/Library/Frameworks/Foundation.framework/Versions/Current/Foundation Foundation
 
-libWebKitGlue.dylib: ../src/WebKitGlue.Glue/*.o
-	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libWebKitGlue.dylib ../src/WebKitGlue.Glue/*.o
+libWebKitGlue.dylib: ../src/WebKit.Glue/*.o
+	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libWebKitGlue.dylib ../src/WebKit.Glue/*.o
 
 libFoundationGlue.dylib: ../src/Foundation.Glue/*.o
 	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libFoundationGlue.dylib ../src/Foundation.Glue/*.o
