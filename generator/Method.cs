@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.21 2004/06/23 16:32:35 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.22 2004/06/23 17:05:33 urs Exp $
 //
 
 using System;
@@ -174,6 +174,21 @@ namespace ObjCManagedExporter
 					argTypes.Add(ConvertType(mArgumentDeclarationTypes[i]));
 	
 				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
+			}
+		}
+		
+		public string Selector
+		{
+			get
+			{
+				if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
+					return mMessageParts[0];
+
+				string ret = string.Empty;
+				
+				for(int i = 0; i < mMessageParts.Length; ++i)
+					ret += mMessageParts[i] + ":";
+				return ret;
 			}
 		}
 		#endregion
@@ -527,9 +542,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.22  2004/06/23 17:05:33  urs
+//	Add selector to Method
+//
 //	Revision 1.21  2004/06/23 16:32:35  urs
 //	Add SEL support
-//
+//	
 //	Revision 1.20  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	
