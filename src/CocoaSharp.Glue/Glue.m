@@ -27,7 +27,7 @@ BOOL IsGlueVerbose() { return sIsGlueVerbose; }
 void SetGlueVerbose(BOOL verbose) { sIsGlueVerbose = verbose; }
 
 void SetConstructorDelegate(constructorDelegate _constructorDelegate,getManagedDelegate _getManagedDelegate) {
-    //if (IsGlueVerbose())
+    if (IsGlueVerbose())
         NSLog(@"GLUE: Setting delegates (%p,%p)", _constructorDelegate,_getManagedDelegate);
     sConstructorDelegate = _constructorDelegate;
     sGetManagedDelegate = _getManagedDelegate;
@@ -50,7 +50,8 @@ void SetJIT_HACK_Delegate(managedDelegate delegate) {
 #endif
 
 managedDelegate GetDelegateForBase(id base) {
-    NSLog(@"GLUE: GetDelegateForBase base=%@",base); 
+    if (IsGlueVerbose())
+        NSLog(@"GLUE: GetDelegateForBase base=%@",base); 
     managedDelegate delegate = nil;
     object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
     if (delegate == nil)
@@ -134,7 +135,8 @@ void AddInstanceVariables(Class cls,
             if (IsGlueVerbose())
                 NSLog(@"  registering var: %s (%s) %i",ivar->ivar_name,ivar->ivar_type,ivar->ivar_offset);
         }
-        NSLog(@"GLUE: ivar_size=%i ivar_list=%i", ivar_size, (sizeof(struct objc_ivar_list) + (ivar_count)*sizeof(struct objc_ivar)));
+        if (IsGlueVerbose())
+            NSLog(@"GLUE: ivar_size=%i ivar_list=%i", ivar_size, (sizeof(struct objc_ivar_list) + (ivar_count)*sizeof(struct objc_ivar)));
         cls->instance_size = ivar_size;
         cls->ivars = ivar_list;
     }
@@ -186,7 +188,7 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 }
 
 id glue_initToManaged(id base, SEL sel, ...) {
-    //if (IsGlueVerbose())
+    if (IsGlueVerbose())
         NSLog(@"GLUE: glue_initToManaged (base=%@)",base);
     sConstructorDelegate(base,GetObjectClassName(base));
     return base;

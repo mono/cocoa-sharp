@@ -145,26 +145,28 @@ public class Controller : NSObject {
 	public void outlineViewDoubleAction() {
 		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
-		if(bi.node.URL != null)
-		{
-			Node n;
-			string content = "";
-			if(bi.node.tree != null && bi.node.tree.HelpSource != null)
-				content = bi.node.tree.HelpSource.GetText(bi.node.URL, out n);
-			if(content == null || content.Equals("") )
-					content = help_tree.RenderUrl(bi.node.URL, out n);
-			content=content.Replace("a href='", "a href='http://monodoc/load?");
-			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-			webView.mainFrame.loadHTMLString_baseURL(content, null);
+		try {
+			if(bi.node.URL != null)
+			{
+				Node n;
+				string content = "";
+				if(bi.node.tree != null && bi.node.tree.HelpSource != null)
+					content = bi.node.tree.HelpSource.GetText(bi.node.URL, out n);
+				if(content == null || content.Equals("") )
+						content = help_tree.RenderUrl(bi.node.URL, out n);
+				content=content.Replace("a href='", "a href='http://monodoc/load?");
+				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+				webView.mainFrame.loadHTMLString_baseURL(content, null);
 
-			outlineView.expandItem(bi);
+				outlineView.expandItem(bi);
 
-		}
+			}
+		} catch (Exception e) { Console.WriteLine("ERROR: " + e); }
 	}
 
 	[Export("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
 	public NSURLRequest RequestHandler(WebView sender, object identifier, NSURLRequest initialRequest, NSURLResponse urlResponse, WebDataSource datasource) {
-		Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
+Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
 		if(initialRequest.urL.relativeString.IndexOf("http://monodoc/load?") == 0) {
 			string url = initialRequest.urL.relativeString.Replace("http://monodoc/load?", "");
 			string content = "";
@@ -177,7 +179,7 @@ public class Controller : NSObject {
 			if(content != null && !content.Equals("")) {
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-				Console.WriteLine("DEBUG: {0}", content);
+Console.WriteLine("DEBUG: {0}", content);
 				webView.mainFrame.loadHTMLString_baseURL(content, null);
 			}
 			return null;
@@ -212,7 +214,7 @@ Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8
 		node = _node;
 		caption = new NSString(node.Caption);
 		caption.retain();
-Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
+//Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
 	}
 	~ BrowserItem() {
 Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
@@ -420,7 +422,7 @@ Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	{
 		BrowserItem bi = item as BrowserItem;
 		int count = bi != null ? bi.Count : help_tree.Nodes.Count;
-Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
+//Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " + count);
 		return count;
 	}
 

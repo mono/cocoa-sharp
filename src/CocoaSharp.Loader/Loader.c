@@ -27,11 +27,11 @@ int main(int argc, const char* argv[]) {
 	ChangeToResourceDir();
 
 	printf("DEBUG:\n\tAssembly: %s\n", assemblyName);
-	
+
 	MonoDomain *domain = mono_jit_init (assemblyName);
 
 	if(domain == NULL) {
-	    printf("ERROR: No domain for assembly: %s\n",assemblyName);
+		printf("ERROR: No domain for assembly: %s\n",assemblyName);
 		exit(1);
 	}
 
@@ -39,14 +39,14 @@ int main(int argc, const char* argv[]) {
 		assemblyName);
 
 	if(assembly == NULL) {
-	    printf("ERROR: Assembly load failed: %s\n",assemblyName);
+		printf("ERROR: Assembly load failed: %s\n",assemblyName);
 		exit(1);
 	}
 
 	MonoImage *image = mono_assembly_get_image(assembly);
 
 	if(image == NULL) {
-	    printf("ERROR: No assembly image: %s\n",assemblyName);
+		printf("ERROR: No assembly image: %s\n",assemblyName);
 		exit(1);
 	}
 
