@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.15 2004/06/18 20:13:00 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.Foundation/Attic/NSObject.cs,v 1.16 2004/06/19 17:19:27 gnorton Exp $
 //
 
 using System;
@@ -97,7 +97,9 @@ namespace Apple.Foundation
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					NSInvocation invocation = new NSInvocation(arg,false);
-					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, null);
+					object[] args = ProcessInvocation(invocation);
+					
+					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, ProcessInvocation(invocation));
 					break;
 				}
 			}
@@ -146,6 +148,19 @@ namespace Apple.Foundation
 			NSObject_release(Raw);
 			SetRaw(IntPtr.Zero,false);
 		}
+
+		private object[] ProcessInvocation(NSInvocation invocation) {
+			string method = invocation.Selector;
+			if(method.IndexOf(":") > 0)
+				method = method.Substring(0, method.IndexOf(":"));
+
+			int numArgs = BridgeHelper.GetParameterInfosByMethod(BridgeHelper.GetMethodByTypeAndName(this.GetType(), method)).Length;
+			object[] retArgs = new object[numArgs];
+			for(int i = 0; i < numArgs; i++) {
+				retArgs[i] = invocation.getArgument(i);
+			}
+			return retArgs;
+		}
 	}
 
 	public class Class : NSObject {
@@ -185,6 +200,11 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: NSObject.cs,v $
+// Revision 1.16  2004/06/19 17:19:27  gnorton
+// Broken API fixes.
+// Delegates and methods with multi-argument support working.
+// Argument parsing and casting working for all our known classes.
+//
 // Revision 1.15  2004/06/18 20:13:00  gnorton
 // Support for multi-argument method signatures/calling in .Net
 //

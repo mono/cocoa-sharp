@@ -17,7 +17,8 @@ class CSTextControl : NSControl {
 		SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,CSTextControlDelegate),release);
 	}
 
-	public void controlTextDidEndEditing(String aNotification) {
-		Console.WriteLine("Received delegate method");
+	public void controlTextDidEndEditing(NSConcreteNotification aNotification) {
+		Console.WriteLine("controlTextDidEndEditing(): Received delegate method: {0}", ((Apple.AppKit.NSTextField)aNotification.Object).StringValue);
 	}
+
 }

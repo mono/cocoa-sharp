@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.7 2004/06/19 02:34:32 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSControl.cs,v 1.8 2004/06/19 17:19:27 gnorton Exp $
 //
 
 using System;
@@ -20,6 +20,8 @@ using System.Runtime.InteropServices;
 namespace Apple.AppKit
 {
 	public class NSControl : NSView {
+		protected internal static IntPtr NSControl_class = Class.Get("NSControl");
+
 		[DllImport("AppKitGlue")]
 		protected internal static extern IntPtr NSControl_initWithFrame(IntPtr THIS, NSRect frameRect);
 		[DllImport("AppKitGlue")]
@@ -37,8 +39,8 @@ namespace Apple.AppKit
 		
 		protected NSControl(IntPtr raw,bool release) : base(raw,release) {}
 
-		public NSControl() : this(alloc(),true) {}
-		public NSControl(NSRect frameRect) : this(alloc(),true) {
+		public NSControl() : this(NSObject__alloc(NSControl_class),true) {}
+		public NSControl(NSRect frameRect) : this(NSObject__alloc(NSControl_class),true) {
 		    initWithFrame(frameRect);
 		}
 
@@ -55,12 +57,19 @@ namespace Apple.AppKit
 
 		public string Action
 		{
-			get { return NSString.FromSEL(NSControl_action(Raw)); } set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
+			get { return NSString.FromSEL(NSControl_action(Raw)).ToString(); } set { NSControl_setAction(Raw, NSString.NSSelector(value)); }
 		}
 
 		public string StringValue
 		{
-			get { return (string)NS2Net(NSControl_stringValue(Raw)); } set { NSControl_setStringValue(Raw, Net2NS(value)); }
+			get { 
+				Console.WriteLine("Getting string!!!");
+				NSString mystring = (NSString)NS2Net(NSControl_stringValue(Raw));
+				Console.WriteLine("Casting string!!!");
+				return mystring.ToString(); 
+			} set { 
+				NSControl_setStringValue(Raw, Net2NS(value)); 
+			}
 		}
 	}
 }
@@ -68,6 +77,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSControl.cs,v $
+// Revision 1.8  2004/06/19 17:19:27  gnorton
+// Broken API fixes.
+// Delegates and methods with multi-argument support working.
+// Argument parsing and casting working for all our known classes.
+//
 // Revision 1.7  2004/06/19 02:34:32  urs
 // some cleanup
 //

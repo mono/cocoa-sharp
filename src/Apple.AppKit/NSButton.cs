@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.11 2004/06/19 02:34:32 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/src/Apple.AppKit/Attic/NSButton.cs,v 1.12 2004/06/19 17:19:27 gnorton Exp $
 //
 
 using System;
@@ -50,12 +50,12 @@ namespace Apple.AppKit
 		protected internal NSButton(IntPtr raw,bool release) : base(raw,release) {}
 
 		public NSButton() : this(NSObject__alloc(NSButton_class),true) {}
-		public NSButton(NSRect rect) {
+		public NSButton(NSRect rect) : this(NSObject__alloc(NSButton_class), true) {
 		    initWithFrame(rect);
 		}
 
 		public string Title {
-			get { return NS2Net(NSButton_title(Raw)); } set { NSButton_setTitle(Raw, Net2NS(value)); }
+			get { return (string)NS2Net(NSButton_title(Raw)); } set { NSButton_setTitle(Raw, Net2NS(value)); }
 		}
 
 		public NSBezelStyle BezelStyle {
@@ -67,6 +67,11 @@ namespace Apple.AppKit
 //***************************************************************************
 //
 // $Log: NSButton.cs,v $
+// Revision 1.12  2004/06/19 17:19:27  gnorton
+// Broken API fixes.
+// Delegates and methods with multi-argument support working.
+// Argument parsing and casting working for all our known classes.
+//
 // Revision 1.11  2004/06/19 02:34:32  urs
 // some cleanup
 //
