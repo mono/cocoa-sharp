@@ -70,6 +70,7 @@ namespace Webbrowser {
 			LoadURL(((NSTextField)aNotification.object_).stringValue);
 		}
 		
+                [Export("ButtonClick")]
 		public void ButtonClick() {
 			LoadURL(URLBar.stringValue);
 		}
