@@ -14,6 +14,10 @@ namespace Apple.Foundation
 
 		[DllImport("FoundationGlue")]
 		protected static extern IntPtr NSString_initWithUTF8String(IntPtr THIS, string str);
+                [DllImport("FoundationGlue")]
+                static extern IntPtr NSString_cString(IntPtr THIS);
+                [DllImport("FoundationGlue")]
+                static extern int NSString_length(IntPtr THIS);
 		#endregion
 
         #region -- Foundation --
@@ -38,5 +42,13 @@ namespace Apple.Foundation
 		{
 			return NSClassFromString(new NSString(val).Raw);
 		}
+                public override string ToString()
+                {
+                        return (string)Marshal.PtrToStringAuto(NSString_cString(Raw));
+                }
+                public int length()
+                {
+                        return NSString_length(Raw);
+                }
 	}
 }
