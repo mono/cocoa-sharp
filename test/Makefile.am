@@ -17,6 +17,9 @@ libFoundationGlue.dylib: ../src/Foundation.Glue/*.o
 libAppKitGlue.dylib: ../src/AppKit.Glue/*.o
 	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libAppKitGlue.dylib ../src/AppKit.Glue/*.o
 
+libWebKitGlue.dylib: ../src/WebKit.Glue/*.o
+	gcc -bundle -flat_namespace -undefined suppress -framework Cocoa -o libWebKitGlue.dylib ../src/WebKit.Glue/*.o
+
 libGlue.so: glue.m
 	gcc -g -bundle -flat_namespace -undefined suppress -framework Cocoa -o libGlue.so glue.m
 
@@ -48,7 +51,7 @@ CocoaSharpBrowser.exe: CocoaSharpBrowser.cs ../build/Apple.Foundation.dll ../bui
 	mcs -g CocoaSharpBrowser.cs -r:../build/Apple.AppKit.dll -r:../build/Apple.WebKit.dll -r:../build/Apple.Foundation.dll
 	cp ../build/*.dll .
 
-CocoaSharpBrowser: CocoaSharpBrowser.exe CocoaSharpBrowser.cs Loader
+CocoaSharpBrowser: CocoaSharpBrowser.exe CocoaSharpBrowser.cs Loader libFoundationGlue.dylib libAppKitGlue.dylib libWebKitGlue.dylib Foundation libGlue.so
 	rm -Rf CocoaSharpBrowser.app
 	mkdir -p CocoaSharpBrowser.app/Contents/MacOS
 	mkdir -p CocoaSharpBrowser.app/Contents/Resources

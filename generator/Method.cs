@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.35 2004/06/25 17:39:10 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.36 2004/06/25 22:30:07 urs Exp $
 //
 
 using System;
@@ -36,6 +36,7 @@ namespace ObjCManagedExporter
 		[XmlAttribute("api")] public string Api;
 		[XmlAttribute("glue")] public string Glue;
 		[XmlAttribute("gluearg")] public string GlueArg;
+		[XmlAttribute("format")] public string Format;
 	}
 
 	public class ReplaceData
@@ -289,6 +290,10 @@ namespace ObjCManagedExporter
 
 			ArrayList _message = new ArrayList();
 			ArrayList _params = new ArrayList();
+			string formatArgs = string.Empty, logArgs = string.Empty;
+			string receiver = mIsClassMethod ? "CLASS" : "THIS";
+
+			_params.Add(mIsClassMethod ? "Class CLASS" : "id THIS");
 
 			if (mMessageParts.Length == 1 && mArgumentNames.Length == 0) 
 				_message.Add(mMessageParts[0]);
@@ -296,44 +301,57 @@ namespace ObjCManagedExporter
 			{
 				for(int i = 0; i < mMessageParts.Length; ++i)
 				{
-					_params.Add(string.Format("{0} {1}",mArgumentDeclarationTypes[i],"p" + i));
-					_message.Add(string.Format("{0}: {1}", mMessageParts[i],"p" + i));
+					string pName = "p" + i;
+					_params.Add(string.Format("{0} {1}",mArgumentDeclarationTypes[i],pName));
+					_message.Add(string.Format("{0}: {1}", mMessageParts[i],pName));
+					LogFormatForType(mArgumentDeclarationTypes[i],pName,",",ref formatArgs,ref logArgs);
 				}
 			}
 
 			// The objc message to send the object
 			string message = string.Join(" ", (string[])_message.ToArray(typeof(string)));
-			string receiver, body;
-
-			if(mIsClassMethod) 
-			{
-				// If the method is a class method
-				_params.Insert(0,"Class CLASS");
-				receiver = "CLASS";
-				body = "\tif (!CLASS) CLASS = [" + name + " class];\n";
-			}
-			else
-			{
-				// If the method is an instance method
-				_params.Insert(0,"id THIS");
-				receiver = "THIS";
-				body = string.Empty;
-			}
-
-			// Add the log call
-			body += string.Format("\tNSLog(@\"{0}: %@\\n\", {1});",name + "_" + mGlueMethodName,receiver);
-
 			// The parameters to the C function
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
 
-			// Will we be returning?
-			string retter = mReturnDeclarationType == "void" ? string.Empty : "return ";
+			string expr = "[" + receiver + " " + message + "]";
+			bool isVoid = mReturnDeclarationType == "void";
+			
+			if (!isVoid)
+				LogFormatForType(mReturnDeclarationType,"_ret"," --> ",ref formatArgs,ref logArgs);
 
-			// Return the lines of the wrapper
-			w.WriteLine(mReturnDeclarationType + " " + name + "_" + mGlueMethodName + "(" + paramsStr + ") {");
-			w.WriteLine(body);
-			w.WriteLine("\t" + retter + "[" + receiver + " " + message + "];");
+			w.WriteLine("{0} {1}_{2}({3}) {{",mReturnDeclarationType,name,mGlueMethodName,paramsStr);
+			if (mIsClassMethod)
+				w.WriteLine("\tif (!CLASS) CLASS = [{0} class];",name);
+			if (!isVoid)
+				w.WriteLine("\t{0} _ret = {1};",mReturnDeclarationType,expr);
+			w.WriteLine("\tNSLog(@\"{0}: %@{2}\\n\", {1}{3});",name + "_" + mGlueMethodName, receiver, formatArgs, logArgs);
+			if (isVoid)
+				w.WriteLine("\t{0};",expr);
+			else
+				w.WriteLine("\treturn _ret;");
 			w.WriteLine("}");
+		}
+		
+		private static void LogFormatForType(string type, string a, string sep, ref string format, ref string arg)
+		{
+			NativeData nd = (NativeData)Conversions[type];
+			format += sep;
+			arg += ",";
+			if(nd != null && nd.Format != null)
+			{
+				format += nd.Format;
+				arg += a;
+			}
+			else if (type == "id")
+			{
+				format += "<%@: %p>";
+				arg += "[" + a + " class]," + a;
+			}
+			else
+			{
+				format += "%s";
+				arg += "\"" + type + "\"";
+			}
 		}
 		#endregion
 
@@ -568,8 +586,11 @@ namespace ObjCManagedExporter
 		private static string ConvertType(string type,bool arg) 
 		{
 			type = type.Replace("const ",string.Empty);
-			if(Conversions[type] != null && ((NativeData)Conversions[type]).Api != null)
-				return ((NativeData)Conversions[type]).Api;
+			{
+				NativeData nd = (NativeData)Conversions[type];
+				if(nd != null && nd.Api != null)
+					return nd.Api;
+			}
 
 			foreach (NativeData nd in sConversions.Regexs)
 				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null)
@@ -587,9 +608,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.36  2004/06/25 22:30:07  urs
+//	Add better logging
+//
 //	Revision 1.35  2004/06/25 17:39:10  urs
 //	Handle char* as argument and return value
-//
+//	
 //	Revision 1.34  2004/06/25 02:49:14  gnorton
 //	Sample 2 now runs.
 //	
