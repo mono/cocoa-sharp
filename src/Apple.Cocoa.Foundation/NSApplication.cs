@@ -12,6 +12,8 @@ namespace Apple.Cocoa.Foundation
 
 	public class NSApplication : NSResponder {
 		[DllImport("CoreFoundationGlue")]
+		static extern IntPtr NSApplication_alloc();
+		[DllImport("CoreFoundationGlue")]
 		static extern IntPtr NSApplication_sharedApplication();
 
 		[DllImport("CoreFoundationGlue")]
