@@ -36,3 +36,6 @@ $(ASSEMBLY): $(build_sources)
 
 macho-reader.exe: Ivar.cs Category.cs LoadCommand.cs Class.cs MachOFile.cs Section.cs DylibCommand.cs SegmentCommand.cs ICommand.cs Module.cs Stub.cs SymbolTable.cs
 	$(CSC) /unsafe /out:macho-reader.exe Ivar.cs Category.cs LoadCommand.cs Class.cs MachOFile.cs Section.cs DylibCommand.cs SegmentCommand.cs ICommand.cs Module.cs Stub.cs SymbolTable.cs
+
+AppKit: macho-reader.exe
+	mono macho-reader.exe /System/Library/Frameworks/AppKit.framework/AppKit /System/Library/Frameworks/Foundation.framework/Foundation /System/Library/Frameworks/WebKit.framework/WebKit

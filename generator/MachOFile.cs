@@ -1,5 +1,5 @@
 //
-// $Id: MachOFile.cs,v 1.11 2004/09/07 12:33:39 urs Exp $
+// $Id: MachOFile.cs,v 1.12 2004/09/07 20:07:40 urs Exp $
 //
 
 using System;
@@ -9,33 +9,27 @@ using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
 	public class Utils {
-		public static void MakeBigEndian(ref int value) 
-		{
+		public static void MakeBigEndian(ref int value) {
 			uint tmp = (uint)value;
 			MakeBigEndian(ref tmp);
 			value = (int)tmp;
 		}
 
-		public static void MakeBigEndian(ref uint value) 
-		{
-			if (BitConverter.IsLittleEndian) 
-			{
+		public static void MakeBigEndian(ref uint value) {
+			if (BitConverter.IsLittleEndian) {
 				byte[] bytes = BitConverter.GetBytes(value);
 				value = BitConverter.ToUInt32(new byte[] { bytes[3], bytes[2], bytes[1], bytes[0] },0);
 			}
 		}
 
-		public static void MakeBigEndian(ref short value) 
-		{
+		public static void MakeBigEndian(ref short value) {
 			ushort tmp = (ushort)value;
 			MakeBigEndian(ref tmp);
 			value = (short)tmp;
 		}
 
-		public static void MakeBigEndian(ref ushort value) 
-		{
-			if (BitConverter.IsLittleEndian) 
-			{
+		public static void MakeBigEndian(ref ushort value) {
+			if (BitConverter.IsLittleEndian) {
 				byte[] bytes = BitConverter.GetBytes(value);
 				value = BitConverter.ToUInt16(new byte[] { bytes[1], bytes[0] },0);
 			}
@@ -66,9 +60,10 @@ namespace CocoaSharp {
 		private unsafe byte* ptr;
 		private unsafe byte* headptr;
 		private mach_header header;
-		private static int DEBUG_LEVEL = 0;
 		private ArrayList commands;
 
+		static public IDictionary Types = new Hashtable();
+		static private int DEBUG_LEVEL = 0;
 		static MachOFile () {
 			try {
 				DEBUG_LEVEL = Int32.Parse (System.Environment.GetEnvironmentVariable ("COCOASHARP_GENERATOR_DEBUG_LEVEL"));
@@ -77,9 +72,16 @@ namespace CocoaSharp {
 			}
 		}
 
-		public MachOFile () {
+		public static void DebugOut(int level, string format, params object[] args) {
+			if (DEBUG_LEVEL >= level) 
+				Console.WriteLine(format,args);
 		}
 
+		public static void DebugOut(string format, params object[] args) {
+			DebugOut(1,format,args);
+		}
+
+		public MachOFile () {}
 		public MachOFile (string filename) {
 			commands = new ArrayList ();
 			this.filename = filename;
@@ -180,15 +182,6 @@ namespace CocoaSharp {
 			}
 		}
 
-		public static void DebugOut(int level, string format, params object[] args) {
-			if (DEBUG_LEVEL >= level) 
-				Console.WriteLine(format,args);
-		}
-
-		public static void DebugOut(string format, params object[] args) {
-			DebugOut(1,format,args);
-		}
-
 		private void ParseHeader () {
 			unsafe {
 				this.header = *((mach_header *)Pointer);
@@ -259,8 +252,7 @@ namespace CocoaSharp {
 			ArrayList modules = Module.ParseModules (moduleSection, this);
 		}
 
-		public void Parse () {
-		}
+		public void Parse () {}
 	}
 
 	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_6.html#//apple_ref/doc/uid/20001298/load_command
