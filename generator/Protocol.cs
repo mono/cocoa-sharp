@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.7 2004/06/23 17:14:20 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.8 2004/06/24 18:56:53 gnorton Exp $
 //
 
 using System;
@@ -44,9 +44,11 @@ namespace ObjCManagedExporter
 			IDictionary _addedMethods = new Hashtable();
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
-
-			if(Framework != "Foundation") 
-				_cs.WriteLine("using Apple.Foundation;");
+			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
+                        if (frmwrk != null && frmwrk.Dependencies != null)
+                                foreach (string dependency in frmwrk.Dependencies)
+                                        _cs.WriteLine("using Apple.{0};",dependency);
+                        _cs.WriteLine();
 
 			_cs.WriteLine("namespace Apple.{0} {{", Framework);
 			_cs.WriteLine("    public interface I{0} {{", Name);
@@ -75,9 +77,16 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.8  2004/06/24 18:56:53  gnorton
+//	AppKit compiles
+//	Foundation compiles
+//	Output setMethod() for protocols not just the property so Interfaces are met.
+//	Ignore static protocol methods (.NET doesn't support static in interfaces).
+//	Resolve compiler errors.
+//
 //	Revision 1.7  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
-//
+//	
 //	Revision 1.6  2004/06/23 15:29:29  urs
 //	Major refactor, allow inheriting parent constructors
 //	

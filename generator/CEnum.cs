@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.6 2004/06/24 06:29:36 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/CEnum.cs,v 1.7 2004/06/24 18:56:53 gnorton Exp $
 //
 
 using System;
@@ -35,7 +35,7 @@ namespace ObjCManagedExporter
 		}
 
 		public string IfsBeGone(string mOriginal) {
-			Regex ifRegex = new Regex(@"^#.+$");
+			Regex ifRegex = new Regex(@"^#.+$", RegexOptions.Multiline);
 			if(ifRegex.IsMatch(mOriginal)) 
 				foreach(Match m in ifRegex.Matches(mOriginal))
 					mOriginal = mOriginal.Replace(m.Value, "");
@@ -45,9 +45,16 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: CEnum.cs,v $
+//	Revision 1.7  2004/06/24 18:56:53  gnorton
+//	AppKit compiles
+//	Foundation compiles
+//	Output setMethod() for protocols not just the property so Interfaces are met.
+//	Ignore static protocol methods (.NET doesn't support static in interfaces).
+//	Resolve compiler errors.
+//
 //	Revision 1.6  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
-//
+//	
 //	Revision 1.5  2004/06/23 17:14:20  gnorton
 //	Custom addins supported on a per file basis.
 //	

@@ -5,22 +5,13 @@ using Apple.AppKit;
 
 class Test
 {
-    const int NSBorderlessWindowMask		= 0;
-    const int NSTitledWindowMask		= 1 << 0;
-    const int NSClosableWindowMask		= 1 << 1;
-    const int NSMiniaturizableWindowMask	= 1 << 2;
-    const int NSResizableWindowMask		= 1 << 3;
-
-    const int NSBackingStoreBuffered	 = 2;
-
-
 	static void Main(string[] args)
 	{
-		NSApplication.sharedApplication().setApplicationIconImage(NSImage.imageNamed("mono.icns"));
+		NSApplication.SharedApplication().setApplicationIconImage((NSImage)NSImage.ImageNamed("mono.icns"));
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 300, 300),
-					       NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask,
-					       NSBackingStoreBuffered,
+					       (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
+					       NSBackingStoreType.NSBackingStoreBuffered,
 					       false);
 		window.Title = "Hi Mono";
 
@@ -58,7 +49,7 @@ class Test
 
 		NSButton monoButton = new NSButton(new NSRect(20, 20, 74, 25));
 		monoButton.Title = "Dismiss";
-		monoButton.Target = NSApplication.sharedApplication();
+		monoButton.Target = NSApplication.SharedApplication();
 		monoButton.Action = "stopModal";
 		monoButton.BezelStyle = NSBezelStyle.NSRoundedBezelStyle;
 
@@ -86,6 +77,6 @@ class Test
 		window.center();
 		window.makeKeyAndOrderFront(null);
 
-		NSApplication.sharedApplication().runModalForWindow(window);
+		NSApplication.SharedApplication().runModalForWindow(window);
 	}
 }

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.31 2004/06/24 06:29:36 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.32 2004/06/24 18:56:53 gnorton Exp $
 //
 
 using System;
@@ -360,7 +360,7 @@ namespace ObjCManagedExporter
 	
 		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w, Overrides _o)
 		{
-			if (mIsUnsupported || mCSAPIDone)
+			if (mIsUnsupported)
 				return;
 
 			string _type = ConvertType(mReturnDeclarationType);
@@ -369,7 +369,7 @@ namespace ObjCManagedExporter
 			string glueArgsStr = string.Join(", ", mCSGlueArguments);
 			bool isVoid = _type == "void";
 			
-			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
+			if (!mCSAPIDone && isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
 			{
 				string t = ConvertType(mArgumentDeclarationTypes[0]);
 				string propName = mCSMethodName.Substring(3);
@@ -454,6 +454,8 @@ namespace ObjCManagedExporter
 		{
 			if (mIsUnsupported)
 				return;
+			if (mIsClassMethod)
+				return;
 
 			string _type = ConvertType(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
@@ -465,7 +467,7 @@ namespace ObjCManagedExporter
 			}
 
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
-			w.WriteLine("        {0} {1} {2} ({3}); ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr);
+			w.WriteLine("        {0} {1} ({2}); ", _type, mCSMethodName, paramsStr);
 		}
 		#endregion
 
@@ -510,11 +512,11 @@ namespace ObjCManagedExporter
 		private static string ConvertTypeGlue(string type) 
 		{
 			type = StripComments(type.Replace("const ",string.Empty));
-			if(Conversions[type] != null)
+			if(Conversions[type] != null && ((NativeData)Conversions[type]).Glue != null)
 				return ((NativeData)Conversions[type]).Glue;
 
 			foreach (NativeData nd in mConversions.Regexs)
-				if(new Regex(nd.Native).IsMatch(type))
+				if(new Regex(nd.Native).IsMatch(type) && nd.Glue != null)
 					return nd.Glue;
 
 			foreach (ReplaceData rd in mConversions.Replaces)
@@ -528,11 +530,11 @@ namespace ObjCManagedExporter
 		private static string ConvertType(string type) 
 		{
 			type = StripComments(type.Replace("const ",string.Empty));
-			if(Conversions[type] != null)
+			if(Conversions[type] != null && ((NativeData)Conversions[type]).Api != null)
 				return ((NativeData)Conversions[type]).Api;
 
 			foreach (NativeData nd in mConversions.Regexs)
-				if(new Regex(nd.Native).IsMatch(type))
+				if(new Regex(nd.Native).IsMatch(type) && nd.Api != null)
 					return nd.Api;
 
 			foreach (ReplaceData rd in mConversions.Replaces)
@@ -547,9 +549,16 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.32  2004/06/24 18:56:53  gnorton
+//	AppKit compiles
+//	Foundation compiles
+//	Output setMethod() for protocols not just the property so Interfaces are met.
+//	Ignore static protocol methods (.NET doesn't support static in interfaces).
+//	Resolve compiler errors.
+//
 //	Revision 1.31  2004/06/24 06:29:36  gnorton
 //	Make foundation compile.
-//
+//	
 //	Revision 1.30  2004/06/24 05:21:04  urs
 //	Fix typo
 //	
