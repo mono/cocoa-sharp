@@ -111,7 +111,7 @@ public class Controller : NSObject {
 
 	[Export("userDidSearch:")]
 	public void UserDidSearch(object sender) {
-		int index = IndexDataSource.FindClosest(searchBox.stringValue);
+		int index = IndexDataSource.FindClosest(searchBox.stringValue.ToString ());
 		indexBrowser.selectRow_inColumn(index, 0);
 	}
 
@@ -126,7 +126,7 @@ public class Controller : NSObject {
 		string content = help_tree.RenderUrl("root:", out match);
 		content=content.Replace("a href='", "a href='http://monodoc/load?");
 		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-		webView.mainFrame.loadHTMLString_baseURL(content, null);
+		((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
 	}
 	
 	[Export("browserdoubleAction")]
@@ -138,12 +138,12 @@ public class Controller : NSObject {
 			string content = help_tree.RenderUrl(t.Url, out match);
 			content=content.Replace("a href='", "a href='http://monodoc/load?");
 			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-			webView.mainFrame.loadHTMLString_baseURL(content, null);
+			((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
 		}
 	}
 	[Export("doubleAction")]
 	public void outlineViewDoubleAction() {
-		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
+		BrowserItem bi = null;//outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
 		try {
 			if(bi.node.URL != null)
@@ -156,7 +156,7 @@ public class Controller : NSObject {
 						content = help_tree.RenderUrl(bi.node.URL, out n);
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-				webView.mainFrame.loadHTMLString_baseURL(content, null);
+				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
 
 				outlineView.expandItem(bi);
 
@@ -166,9 +166,9 @@ public class Controller : NSObject {
 
 	[Export("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
 	public NSURLRequest RequestHandler(WebView sender, object identifier, NSURLRequest initialRequest, NSURLResponse urlResponse, WebDataSource datasource) {
-Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
-		if(initialRequest.urL.relativeString.IndexOf("http://monodoc/load?") == 0) {
-			string url = initialRequest.urL.relativeString.Replace("http://monodoc/load?", "");
+Console.WriteLine("\nDEBUG: URL=={0}\n", ((NSURL)initialRequest.urL).relativeString.ToString ());
+		if ( ((NSURL)(initialRequest.urL)).relativeString.ToString().IndexOf("http://monodoc/load?") == 0) {
+			string url = ((NSURL)initialRequest.urL).relativeString.ToString().Replace("http://monodoc/load?", "");
 			string content = "";
 			Node n;
 			try {
@@ -180,7 +180,7 @@ Console.WriteLine("\nDEBUG: URL=={0}\n", initialRequest.urL.relativeString);
 				content=content.Replace("a href='", "a href='http://monodoc/load?");
 				content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
 Console.WriteLine("DEBUG: {0}", content);
-				webView.mainFrame.loadHTMLString_baseURL(content, null);
+				((WebFrame)webView.mainFrame).loadHTMLString_baseURL(new NSString (content), null);
 			}
 			return null;
 		}
@@ -192,13 +192,12 @@ Console.WriteLine("DEBUG: {0}", content);
 class Browser {
 	public Browser() {}
 	public void Run() {
-                NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
-
-		if(!NSBundleAppKitExtras.LoadNibNamed_owner("monodoc.nib", NSApplication.SharedApplication)) {
-			Console.WriteLine("Cant load nib");
-			return;
-		}
-		NSApplication.SharedApplication.run();
+Console.WriteLine ("initing: {0:x}", (int)Apple.Foundation.Class.Get("NSBundle"));
+		Application.Init ();
+Console.WriteLine ("initd");
+		Application.LoadFramework ("WebKit");
+		Application.LoadNib ("monodoc.nib");
+		Application.Run ();
 	}
 }
 
@@ -213,7 +212,7 @@ Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8
 	public BrowserItem(Node _node) {
 		node = _node;
 		caption = new NSString(node.Caption);
-		caption.retain();
+		caption.retain ();
 //Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
 	}
 	~ BrowserItem() {
@@ -275,11 +274,11 @@ class IndexDataSource : NSObject {
 	}
 	[Export("browser:willDisplayCell:atRow:column:")]
 	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
-		if(index_reader == null) 
-			cell.stringValue = "Index Not Created";
-		else
-			cell.stringValue = index_reader.GetValue(rowNumber);
-		cell.leaf = true;
+//		if(index_reader == null) 
+//			cell.stringValue = "Index Not Created";
+//		else
+//			cell.stringValue = index_reader.GetValue(rowNumber);
+//		cell.leaf = true;
 	}
 
 	public static int FindClosest (string text)
