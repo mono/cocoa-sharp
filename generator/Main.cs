@@ -16,12 +16,14 @@ namespace ObjCManagedExporter
 		public IDictionary Interfaces;
 		public IDictionary Protocols;
 		public IDictionary Categories;
+		public IDictionary Structs;
 
 		public ObjCManagedExporter(string[] args) 
 		{
 			Interfaces = new Hashtable();
 			Protocols = new Hashtable();
 			Categories = new Hashtable();
+			Structs = new Hashtable();
             
 			foreach (string arg in args) 
 			{
@@ -86,7 +88,8 @@ namespace ObjCManagedExporter
 			foreach (Match m in _enumRegex.Matches(_headerData)) 
 			{
 				// We found an enum
-				//Console.WriteLine("{0}", m.Groups[2].Value);
+				Struct _s = new Struct(m.Groups[2].Value, m.Groups[1].Value, f.Name);
+				Structs.Add(m.Groups[2].Value, _s);
 			}
 		}
         
@@ -104,19 +107,27 @@ namespace ObjCManagedExporter
         
 		private void OutputFramework(Framework _toprocess) 
 		{
+			IDictionaryEnumerator _structenum = Structs.GetEnumerator();
+			while(_structenum.MoveNext())
+			{
+				Struct s = (Struct)_structenum.Value;
+		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, s.Framework, s.Name)));
+				_cs.WriteLine(s.CSStruct);
+				_cs.Close();
+			}
 			IDictionaryEnumerator _protoenum = Protocols.GetEnumerator();
 			while(_protoenum.MoveNext())
 			{
 				ArrayList _addedMethods = new ArrayList();
 				Protocol p = (Protocol)_protoenum.Value;
-		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
+		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}I{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
 				_cs.WriteLine("using System;");
 				_cs.WriteLine("using System.Runtime.InteropServices;");
 				if(!p.Framework.Equals("Foundation")) 
 					_cs.WriteLine("using Apple.Foundation;");
 				_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
 				_cs.WriteLine("{");
- 				_cs.Write("    public interface {0}", p.Name);
+ 				_cs.Write("    public interface I{0}", p.Name);
 				_cs.WriteLine("    {");
 				IDictionaryEnumerator _methodEnum = p.Methods.GetEnumerator();
 				while(_methodEnum.MoveNext()) {
@@ -199,9 +210,9 @@ namespace ObjCManagedExporter
 
 					_cs.Write("    public class {0}", i.Name);
 					if(i.Child.Length > 0)
-						_cs.Write(" : {0}{1}", i.Child, (String.Join(",", i.Protocols).Trim() != "" ? "," + String.Join(",", i.Protocols) : ""));
+						_cs.Write(" : {0}{1}", i.Child, (String.Join(", I", i.Protocols).Trim() != "" ? ", I" + String.Join(", I", i.Protocols) : ""));
 					if(i.Child.Length == 0 && i.Protocols.Length > 0)
-						_cs.Write(" : {0}", String.Join(",", i.Protocols));
+						_cs.Write(" : I{0}", String.Join(", I", i.Protocols));
 					_cs.WriteLine("    {");
 
 					_cs.WriteLine("        protected internal static IntPtr _{0}_class;",i.Name);
