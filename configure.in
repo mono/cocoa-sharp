@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.13 2004/08/11 15:34:15 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.14 2004/08/12 17:22:25 gnorton Exp $
 #
 
 AC_INIT(README)
@@ -70,6 +70,7 @@ else
 fi
 
 GACUTIL_FLAGS='/package $(PACKAGE) /gacdir $(libdir)'
+AC_SUBST(GACUTIL_FLAGS)
 AC_PATH_PROG(GACUTIL, gacutil, no)
 if test "x$GACUTIL" = "xno" ; then
         AC_MSG_ERROR([No gacutil tool found])
@@ -115,6 +116,9 @@ src/Apple.WebKit/AssemblyInfo.cs
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.14  2004/08/12 17:22:25  gnorton
+# Fix .pc to work with our new gac location
+#
 # Revision 1.13  2004/08/11 15:34:15  gnorton
 # Bump to 0.1.1 and tag for our distcheck release of 0.1
 #
