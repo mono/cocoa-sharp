@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.40 2004/06/28 22:07:43 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.41 2004/06/28 22:59:43 gnorton Exp $
 //
 
 using System;
@@ -461,7 +461,7 @@ namespace ObjCManagedExporter
 			string prefix = sel.Substring(0,1);
 			sel = sel.Substring(4,sel.Length-5);
 
-			Method get = (Method)methods[prefix + sel.Substring(1,1).ToLower() + sel.Substring(1)];
+			Method get = (Method)methods[prefix + sel.Substring(0,1).ToLower() + sel.Substring(1)];
 			
 			if (get == null)
 				get = (Method)methods[prefix + "is" + propName];
@@ -470,6 +470,18 @@ namespace ObjCManagedExporter
 			
 			propName = MakeCSMethodName(propName);
 			return get;
+		}
+		
+		public Method GetSetMethod(IDictionary methods, out string propName)
+		{
+			propName = MakeCSMethodName(mCSMethodName);
+			string sel = Selector;
+			string prefix = sel.Substring(0,1);
+			sel = sel.Substring(1,1).ToUpper() + sel.Substring(2,sel.Length-2);
+
+            Method set = (Method)methods[prefix + "set" + sel + ":"];
+			
+			return set;
 		}
 
         private void GenerateProperty(string name,System.IO.TextWriter w, Method get, Method set, string propName) {
@@ -541,11 +553,11 @@ namespace ObjCManagedExporter
                     if(propMap.SetSelector != null)
                         setMethod = (Method)methods[propMap.SetSelector];
                     GenerateProperty(name, w, getMethod, setMethod, propMap.Name);
+                    return;
                 }
                 if(Mapping is MethodMapping) {
                      // Output according to map
                 }
-                return;
             }
 			
 			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
@@ -561,8 +573,9 @@ namespace ObjCManagedExporter
 
 			if (!mIsClassMethod && !isVoid && mArgumentDeclarationTypes.Length == 0)
 			{
-				string _propName = MakeCSMethodName(mCSMethodName);
-				GenerateProperty(name, w, this, null, _propName); 
+                string _propName;
+                Method set = GetSetMethod(methods, out _propName);
+				GenerateProperty(name, w, this, set, _propName); 
 			    return;
 			}
 
@@ -816,9 +829,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.41  2004/06/28 22:59:43  gnorton
+//	Bugfixes
+//
 //	Revision 1.40  2004/06/28 22:07:43  gnorton
 //	Updates/bugfixes
-//
+//	
 //	Revision 1.39  2004/06/28 21:31:22  gnorton
 //	Initial mapping support in the gen.
 //	
