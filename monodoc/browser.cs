@@ -150,9 +150,11 @@ class Browser : NSObject {
 		NSOutlineView ov = new NSOutlineView(new NSRect(new NSPoint(0,0),sv.contentSize));
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		sv.documentView = ov;
+		ov.addTableColumn(new NSTableColumn("First"));
+		ov.addTableColumn(new NSTableColumn("Second"));
+		ov.addTableColumn(new NSTableColumn("Third"));
 		ov.dataSource = browserController;
-		ov.reloadData();
-		
+ 		
 		tabViewItem = new NSTabViewItem("Index");
 		tabViewItem.label = "Index";
 		tabView.addTabViewItem(tabViewItem);
