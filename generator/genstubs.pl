@@ -437,9 +437,9 @@ sub parseFile {
 	print("This shouldn't happen.  \$destdir = '$destdir'\n");
     }
 
-    open OUT, ">$wrapperFile" or die "Can't open $wrapperFile: $!";
-    print OUT join($/, @csout);
-    close OUT;
+#    open OUT, ">$wrapperFile" or die "Can't open $wrapperFile: $!";
+#    print OUT join($/, @csout);
+#    close OUT;
 
     my $numMethods = int(keys %methods);
     print " $numMethods methods in $name.\n";
