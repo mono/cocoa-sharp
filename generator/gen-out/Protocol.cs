@@ -30,8 +30,15 @@ namespace CocoaSharp {
 			Protocols[FullName(name.Substring(1), nameSpace)] = this;
 		}
 		public void Initialize(ICollection instanceMethods, ICollection classMethods) {
-			this.instanceMethods = instanceMethods;
-			this.classMethods = classMethods;
+			bool first = this.instanceMethods == null;
+
+			if (first) {
+				this.instanceMethods = instanceMethods;
+				this.classMethods = classMethods;
+			} else {
+				this.instanceMethods = Method.MergeMethods(this.instanceMethods, instanceMethods);
+				this.classMethods = Method.MergeMethods(this.classMethods, classMethods);
+			}
 		}
 
 		// -- Public Properties --

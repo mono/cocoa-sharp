@@ -128,17 +128,33 @@ namespace CocoaSharp {
 #endif
 		}
 
+		public static ICollection MergeMethods(ICollection headerMethods, ICollection machoMethods) {
+			IDictionary header = new Hashtable();
+			foreach (Method m in headerMethods)
+				header[m.Selector] = m;
+			foreach (Method m in machoMethods)
+				if (header.Contains(m.Selector))
+					((Method)header[m.Selector]).Merge(m);
+				else
+					header[m.Selector] = m;
+			return header.Values;
+		}
 		public void Merge(Method machoMethod) {
 			bool match = this.returnType.Merge(machoMethod.ReturnType);
 			int ndx = 0;
 			foreach (ParameterInfo p in this.parameters)
 				if (!p.Merge(machoMethod.parameters[ndx++]))
 					match = false;
+#if DEBUG
 			if (!match) {
-				Console.WriteLine("objC	 method = " + this.Selector + " types=" + this.Types + ", decl=" + this.declaration);
-				Console.WriteLine("machO method = " + machoMethod.Selector + " types=" + machoMethod.Types);
+				Console.WriteLine("DEBUG: objC	 method = " + this.AsDebugString());
+				Console.WriteLine("DEBUG: machO method = " + machoMethod.AsDebugString());
 			}
+#endif
 			this.types = machoMethod.types;
+		}
+		internal string AsDebugString() {
+			return this.Name + ", selector: " + this.Selector + " types=" + this.Types + ", decl=" + this.declaration;
 		}
 
 		// -- Public Properties --

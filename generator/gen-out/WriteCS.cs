@@ -49,7 +49,7 @@ namespace CocoaSharp {
 				}
 			}
 
-			Console.WriteLine("\b\b\b\b100% (" + this.mOutputElements.Count + " left)");
+			Console.WriteLine("\b\b\b100% (" + this.mOutputElements.Count + " left)");
 		}
 
 		#region -- Members --

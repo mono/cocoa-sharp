@@ -45,7 +45,7 @@ namespace CocoaSharp {
 		}
 
 		public void WriteFile(Configuration config) {
-			Console.WriteLine("Output " + Type.FullName(this.Name, this.Namespace) + ", " + this.GetType().Name);
+			//Console.WriteLine("Output " + Type.FullName(this.Name, this.Namespace) + ", " + this.GetType().Name);
 			TextWriter _cs = OpenFile();
 			WriteCS(_cs, config);
 			_cs.Close();

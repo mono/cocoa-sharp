@@ -148,6 +148,8 @@ namespace CocoaSharp {
 				return ret;
 			}
 		}
+		public string FullSelector { get { return (this.IsClassMethod ? "+" : "-") + Selector; } }
+
 		#endregion
 
 		public void BuildArgs(string name) {
@@ -186,7 +188,7 @@ namespace CocoaSharp {
 				TypeUsage.FromDecl(this.mReturnDeclarationType),paramInfos, this.MethodDeclaration);
 		}
 
-		public static ICollection ToMethods(ICollection methods,bool classMethod) {
+		public static ICollection ToMethods(ElementWithMethods container, ICollection methods,bool classMethod) {
 			IList ret = new ArrayList();
 			foreach (HeaderMethod m in methods)
 				if (m.IsClassMethod == classMethod) {

@@ -201,11 +201,6 @@ namespace CocoaSharp {
 				RemoveString(ref _headerData, m.Value);
 			}
 
-			foreach (Match m in _funcPtrRegex.Matches(_headerData)) {
-				Console.WriteLine("DEBUG: typedef detected: retType=" + m.Groups["retType"].Value + ", funcPtrName=" + m.Groups["funcPtrName"].Value);
-				RemoveString(ref _headerData, m.Value);
-			}
-
 			while (true) {
 				pos = _headerData.IndexOf("typedef");
 				if (pos < 0)
@@ -258,7 +253,7 @@ namespace CocoaSharp {
 						}
 					}
 				} else {
-					Console.WriteLine("Ignore unknown typedef pattern: " + typedef);
+					//Console.WriteLine("Ignore unknown typedef pattern: " + typedef);
 				}
 			}
 
@@ -370,15 +365,11 @@ namespace CocoaSharp {
 				// Process this interface and check to see if it implements any protocols
 				foreach(string proto in i.Protocols) 
 					if(proto.Length > 0) {
-						//Console.Write("\t\tProtocol: <{0}>", proto);
 						HeaderProtocol p = (HeaderProtocol)Protocols[proto];
-						if(p != null) {
-							//	Console.Write(":{0}", p.Methods.Keys.Count); 
+						if(p != null)
 							i.AddAllMethods(p.Methods.Values,true);
-						}
-						//else
-						//	Console.Write(":missing"); 
-						//Console.WriteLine();
+						else
+							Console.WriteLine("\t\tProtocol <" + proto + ">:missing"); 
 					}
 
 				IDictionary _categoryImports = new Hashtable();

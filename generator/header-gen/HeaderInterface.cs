@@ -71,7 +71,7 @@ namespace CocoaSharp {
 				if (method.IsUnsupported)
 					continue;
 
-				string _methodSig = method.Selector;
+				string _methodSig = method.FullSelector;
 				if(!mAllMethods.Contains(_methodSig)) 
 					mAllMethods[_methodSig] = method;
 				else if (!isProtocol)
@@ -82,8 +82,8 @@ namespace CocoaSharp {
 		public override OutputElement ToOutput() {
 			mClass.Initialize(Class.GetClass(Parent),
 				ToProtocols(Protocols),new Ivar[0],
-				HeaderMethod.ToMethods(mAllMethods.Values,false),
-				HeaderMethod.ToMethods(mAllMethods.Values,true));
+				HeaderMethod.ToMethods(this,mAllMethods.Values,false),
+				HeaderMethod.ToMethods(this,mAllMethods.Values,true));
 			return mClass;
 		}
 

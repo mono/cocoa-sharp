@@ -55,21 +55,9 @@ namespace CocoaSharp {
 					this.variables = variables;
 				else
 					System.Diagnostics.Debug.Assert(this.variables.Count == variables.Count);
-				this.instanceMethods = MergeMethods(this.instanceMethods, instanceMethods);
-				this.classMethods = MergeMethods(this.classMethods, classMethods);
+				this.instanceMethods = Method.MergeMethods(this.instanceMethods, instanceMethods);
+				this.classMethods = Method.MergeMethods(this.classMethods, classMethods);
 			}
-		}
-
-		static ICollection MergeMethods(ICollection headerMethods, ICollection machoMethods) {
-			IDictionary header = new Hashtable();
-			foreach (Method m in headerMethods)
-				header[m.Selector] = m;
-			foreach (Method m in machoMethods)
-				if (header.Contains(m.Selector))
-					((Method)header[m.Selector]).Merge(m);
-				else
-					header[m.Selector] = m;
-			return header.Values;
 		}
 
 		// -- Public Properties --

@@ -33,8 +33,9 @@ namespace CocoaSharp {
 		}
 
 		public override OutputElement ToOutput() {
-			mProtocol.Initialize(HeaderMethod.ToMethods(this.Methods.Values,false),
-				HeaderMethod.ToMethods(this.Methods.Values,true));
+			mProtocol.Initialize(
+				HeaderMethod.ToMethods(this, this.Methods.Values, false),
+				HeaderMethod.ToMethods(this, this.Methods.Values, true));
 			return mProtocol;
 		}
 	}
