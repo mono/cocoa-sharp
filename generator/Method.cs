@@ -2,7 +2,8 @@ using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 
-namespace ObjCManagedExporter {
+namespace ObjCManagedExporter 
+{
 
 	public class Method 
 	{
@@ -51,7 +52,7 @@ namespace ObjCManagedExporter {
 
 			string methodType = match.Groups[1].Value;
 			mReturnDeclarationType = match.Groups[2].Value;
-			if (mReturnDeclarationType == string.Empty)
+			if (mReturnDeclarationType == null)
 				mReturnDeclarationType = "id";
 			string remainder = match.Groups[3].Value;
 
@@ -80,27 +81,28 @@ namespace ObjCManagedExporter {
 			} 
 			else if(arg_rx.IsMatch(remainder)) 
 			{
-				while(arg_rx.IsMatch(remainder)) {
-				// If there are arguments, parse them
-				GroupCollection grps = arg_rx.Match(remainder).Groups;
-				for (int i = 1; i < grps.Count; )
+				while(arg_rx.IsMatch(remainder)) 
 				{
-					messageParts.Add(grps[i++].Value);
-					string argType = grps[i++].Value;
-					string argName = grps[i++].Value;
-					remainder = remainder.Replace(grps[0].Value, "");
-
-					if (argType == string.Empty)
-						argType = "id";
-					else if (argName == string.Empty)
+					// If there are arguments, parse them
+					GroupCollection grps = arg_rx.Match(remainder).Groups;
+					for (int i = 1; i < grps.Count; )
 					{
-						argName = argType;
-						argType = "id";
-					}
+						messageParts.Add(grps[i++].Value);
+						string argType = grps[i++].Value;
+						string argName = grps[i++].Value;
+						remainder = remainder.Replace(grps[0].Value, "");
+
+						if (argType == string.Empty)
+							argType = "id";
+						else if (argName == string.Empty)
+						{
+							argName = argType;
+							argType = "id";
+						}
             
-					argTypes.Add(argType);
-					argNames.Add(argName);
-				}
+						argTypes.Add(argType);
+						argNames.Add(argName);
+					}
 				}
 				mArgumentNames = (string[])argNames.ToArray(typeof(string));
 				mArgumentDeclarationTypes = (string[])argTypes.ToArray(typeof(string));
@@ -120,7 +122,8 @@ namespace ObjCManagedExporter {
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
         
-		public String GlueMethodName {
+		public String GlueMethodName 
+		{
 			get { return mGlueMethodName; }
 		}
 	
@@ -183,6 +186,12 @@ namespace ObjCManagedExporter {
 
 		public void CSGlueMethod(string name,string glueLib,System.IO.TextWriter w)
 		{
+			if (mIsUnsupported)
+			{
+				w.WriteLine("// " + name + mGlueMethodName + ": not supported");
+				return;
+			}
+
 			string _type = convertTypeGlue(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
 
@@ -207,6 +216,9 @@ namespace ObjCManagedExporter {
 		}
 		public void CSClassMethod(string name,System.IO.TextWriter w)
 		{
+			if (mIsUnsupported)
+				return;
+
 			string _type = convertType(mReturnDeclarationType);
 			ArrayList _params = new ArrayList();
 			ArrayList _csparams = new ArrayList();
