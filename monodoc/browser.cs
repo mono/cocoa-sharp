@@ -88,21 +88,25 @@ class Driver {
 }
 
 [ObjCRegister("Controller")]
-class Controller : NSObject {
+public class Controller : NSObject {
 
 	[ObjCConnect]
 	public NSDrawer drawer;
-
 	[ObjCConnect]
 	public NSOutlineView outlineView;
-
 	[ObjCConnect]
 	public WebView webView;
+
+	static RootTree help_tree;
+
+	static Controller() {
+		help_tree = RootTree.LoadTree();
+	}
 	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
 	[ObjCExport("windowDidBecomeMain:")]
-	public void UpdateModal(object aNotification) {
+	public void UpdateModal(NSNotification aNotification) {
 		drawer.open();
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
@@ -117,10 +121,13 @@ class Controller : NSObject {
 			Node n;
 			Console.WriteLine("DEBUG: Going to render URL: {0}", bi.node.URL);
 			string content = "";
+			Console.WriteLine("DEBUG: Attemping HelpSource render.");
 			if(bi.node.tree != null && bi.node.tree.HelpSource != null)
 				content = bi.node.tree.HelpSource.GetText(bi.node.URL, out n);
-			if(content.Equals("") )
-				content = RootTree.LoadTree().RenderUrl(bi.node.URL, out n);
+			Console.WriteLine("DEBUG: Falling to RootTree render.");
+			if(content == null || content.Equals("") )
+					content = help_tree.RenderUrl(bi.node.URL, out n);
+			Console.WriteLine("DEBUG: Calling loadHTMLString");
 			webView.mainFrame.loadHTMLString_baseURL(content, null);
 
 			outlineView.expandItem(bi);
@@ -190,25 +197,25 @@ Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 }
 
 [ObjCRegister("BrowserDataSource")]
-class BrowserController : NSObject {
+class BrowserDataSource : NSObject {
 
 	internal RootTree help_tree;
 	internal IList items = new ArrayList();
 
-	public BrowserController(RootTree _tree) {
+	public BrowserDataSource(RootTree _tree) {
 		help_tree = _tree;
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
 Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
 	}
 
-	public BrowserController(IntPtr raw, bool rel) : base(raw, rel) {
+	public BrowserDataSource(IntPtr raw, bool rel) : base(raw, rel) {
 		help_tree = RootTree.LoadTree();
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
 
 	}
-	~ BrowserController () {
+	~ BrowserDataSource () {
 Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	}
 
