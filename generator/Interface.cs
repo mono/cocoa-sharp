@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.9 2004/06/23 17:55:41 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.10 2004/06/23 18:31:51 urs Exp $
 //
 
 using System;
@@ -91,7 +91,11 @@ namespace ObjCManagedExporter
 			}
 			_cs.WriteLine("using System;");
 			_cs.WriteLine("using System.Runtime.InteropServices;");
-			_cs.WriteLine("using Apple.Foundation;");
+
+			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
+			if (frmwrk != null && frmwrk.Dependencies != null)
+				foreach (string dependency in frmwrk.Dependencies)
+					_cs.WriteLine("using Apple.{0};",dependency);
 			_cs.WriteLine();
 			_cs.WriteLine("namespace Apple.{0} {{", Framework);
 
@@ -158,9 +162,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.10  2004/06/23 18:31:51  urs
+//	Add dependency for frameworks
+//
 //	Revision 1.9  2004/06/23 17:55:41  urs
 //	Make test compile with the lasted glue API name change
-//
+//	
 //	Revision 1.8  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
 //	

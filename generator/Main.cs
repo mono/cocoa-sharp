@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.23 2004/06/23 18:12:13 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.24 2004/06/23 18:31:51 urs Exp $
 //
 
 using System;
@@ -295,6 +295,14 @@ namespace ObjCManagedExporter
 		public string AddinPath;
 		[XmlElement("overridepath")]
 		public string OverridePath;
+		
+		public Framework GetFramework(string which)
+		{
+			foreach (Framework frmwrk in Frameworks)
+				if (frmwrk.Name == which)
+					return frmwrk;
+			return null;
+		}
 	}
         
 	public class Framework 
@@ -303,6 +311,8 @@ namespace ObjCManagedExporter
 		public string Name;
 		[XmlElement("output")]
 		public bool Output;
+		[XmlElement("dependency")]
+		public string[] Dependencies;
 	}
 
 	[XmlRoot("overrides")]
@@ -319,10 +329,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.24  2004/06/23 18:31:51  urs
+//	Add dependency for frameworks
+//
 //	Revision 1.23  2004/06/23 18:12:13  gnorton
 //	Add WebKit to the generator
 //	Change the output directories to be Framework.Glue
-//
+//	
 //	Revision 1.22  2004/06/23 17:52:41  gnorton
 //	Added ability to override what the generator outputs on a per-file/per-method basis
 //	

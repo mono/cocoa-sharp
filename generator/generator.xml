@@ -6,10 +6,13 @@
 	<framework>
 		<name>AppKit</name>
 		<output>true</output>
+		<dependency>Foundation</dependency>
 	</framework>
 	<framework>
 		<name>WebKit</name>
 		<output>true</output>
+		<dependency>Foundation</dependency>
+		<dependency>AppKit</dependency>
 	</framework>
 	<searchpath>/System/Library/Frameworks/%NAME%.framework/Headers</searchpath>
 	<searchpath>/Library/Frameworks/%NAME%.framework/Headers</searchpath>
