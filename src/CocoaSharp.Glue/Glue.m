@@ -44,12 +44,15 @@ void SetJIT_HACK_Delegate(managedDelegate delegate) {
 #endif
 
 managedDelegate GetDelegateForBase(id base) {
+    NSLog(@"GLUE: GetDelegateForBase\n"); 
     managedDelegate delegate;
-    if (class_getInstanceVariable([base class],"mDelegate") != nil)
-        object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
-    else
+    object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+    if (delegate == nil)
 #if JIT_HACK
-        { sGetManagedDelegate(base); delegate = sJIT_HACK_Delegate; }
+        { 
+            sConstructorDelegate(base, GetObjectClassName(base));
+            sGetManagedDelegate(base); delegate = sJIT_HACK_Delegate; 
+	}
 #else
         delegate = sGetManagedDelegate(base);
 #endif
@@ -120,10 +123,7 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
     
     if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
         managedDelegate delegate;
-        if (class_getInstanceVariable([base class],"mDelegate") != nil)
-            object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
-        else
-            delegate = sGetManagedDelegate(base);
+	delegate = GetDelegateForBase(base);
 
         aSelector = sel_getUid([[strSel substringFromIndex: 8] cString]);
         signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
@@ -135,7 +135,6 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 id glue_initToManaged(id base, SEL sel, ...) {
     //if (IsGlueVerbose())
         NSLog(@"GLUE: glue_initToManaged (base=%@)",base);
-    sConstructorDelegate(base, GetObjectClassName(base));
 }
     
 //- (void) forwardInvocation: (NSInvocation *) anInvocation;
@@ -144,6 +143,8 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
     va_start(vl,sel);
     NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
 
+    NSLog(@"GLUE: glue_forwardInvocation called.");
+
     SEL aSelector = sel_getUid([[[NSString stringWithCString: sel_getName([anInvocation selector])] substringFromIndex: 8] cString]);
     [anInvocation setSelector: aSelector];
 
@@ -151,10 +152,7 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
         NSLog(@"GLUE: glue_forwardInvocation: calling delegate %p %s", base, sel_getName([anInvocation selector]));
 
     managedDelegate delegate;
-    if (class_getInstanceVariable([base class],"mDelegate") != nil)
-        object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
-    else
-        delegate = sGetManagedDelegate(base);
+    delegate=GetDelegateForBase(base);
 
     if (delegate(GLUE_forwardInvocation,anInvocation) != nil)
         [base doesNotRecognizeSelector: [anInvocation selector]];
@@ -284,17 +282,6 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
                 numOfMethods, methods, signatures, glue_implementMethod,
                 3, 
                 @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
-                @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
-                @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
-    }
-    else
-    {
-        NSLog(@"GLUE: class %s already existing, just registering methods", name);
-
-        AddMethods(new_class, 
-                numOfMethods, methods, signatures, glue_implementMethod,
-                3, 
-                @selector(init), "@8@0:4", glue_initToManaged,
                 @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
                 @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
     }

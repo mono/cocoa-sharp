@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.21 2004/07/02 13:29:30 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.22 2004/07/02 17:15:27 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -211,7 +211,7 @@ Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw)
 #if JIT_HACK_FIXED
 			return null;
 #else
-			SetJIT_HACK_Delegate(null);
+			return;
 #endif
 		}
 
@@ -220,6 +220,9 @@ Console.WriteLine("ERROR: native object was not registered 0x{0,8:x}", (int)raw)
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.22  2004/07/02 17:15:27  gnorton
+// NIB hack workaround fixed.
+//
 // Revision 1.21  2004/07/02 13:29:30  urs
 // Cleanup build process again, and checkin bin's for monodoc (as temp solution)
 //
