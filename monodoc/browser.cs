@@ -35,7 +35,7 @@ class Driver {
 				}
 
 				Node n;
-				RootTree help_tree = RootTree.LoadTree ();
+				RootTree help_tree = RootTree.LoadTree();
 				string res = help_tree.RenderUrl (args [i+1], out n);
 				if (res != null){
 					Console.WriteLine (res);
@@ -86,10 +86,12 @@ class Driver {
 
 [ObjCRegister("Controller")]
 class Controller : NSObject {
-	[ObjCConnect(Name="drawer",Type="@",Size=4)]
+	[ObjCConnect]
 	public NSDrawer drawer;
 	[ObjCConnect]
 	public NSOutlineView outlineView;
+	[ObjCConnect]
+	public NSTextView textView;
 
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
@@ -104,7 +106,14 @@ class Controller : NSObject {
 	
 	[ObjCExport("doubleAction")]
 	public void outlineViewDoubleAction() {
-		Console.WriteLine("\n\n\n\n\nDouble clicked the OV\n\n\n\n\n");
+		BrowserItem bi = outlineView.itemAtRow(outlineView.selectedRow) as BrowserItem;
+		Console.WriteLine("Going to load {0}", bi);
+		if(bi.node.URL != null)
+		{
+//			string content = Driver.help_tree.RenderUrl(bi.node.URL, out bi.node);
+			string content = "FooBar!";
+			textView.textStorage.attributedString = new NSAttributedString(content);
+		}
 	}
 }
 
@@ -180,7 +189,7 @@ Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
 	}
 
 	public BrowserController(IntPtr raw, bool rel) : base(raw, rel) {
-		help_tree = RootTree.LoadTree ();
+		help_tree = RootTree.LoadTree();
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
 

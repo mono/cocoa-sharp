@@ -9,7 +9,7 @@
         {
             CLASS = Controller; 
             LANGUAGE = ObjC; 
-            OUTLETS = {drawer = NSDrawer; outlineView = NSOutlineView; }; 
+            OUTLETS = {drawer = NSDrawer; outlineView = NSOutlineView; textView = NSTextView; }; 
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
