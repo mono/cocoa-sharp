@@ -869,7 +869,6 @@
   <property name="indexOfSelectedItem" noverbose="false" get="-indexOfSelectedItem" getsignature="i8@0:4" />
   <property name="informativeText" noverbose="false" get="-informativeText" set="-setInformativeText:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="infoDictionary" noverbose="false" get="-infoDictionary" getsignature="@8@0:4" />
-  <property name="init" noverbose="false" get="-init" getsignature="@8@0:4" />
   <property name="initialFirstResponder" noverbose="false" get="-initialFirstResponder" set="-setInitialFirstResponder:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="initialRequest" noverbose="false" get="-initialRequest" getsignature="@8@0:4" />
   <property name="initialValues" noverbose="false" get="-initialValues" set="-setInitialValues:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
@@ -2905,6 +2904,7 @@
   <method name="indicatorImageInTableColumn" noverbose="false" selector="-indicatorImageInTableColumn:" signature="@12@0:4@8" />
   <method name="indicesOfObjectsByEvaluatingObjectSpecifier" noverbose="false" selector="-indicesOfObjectsByEvaluatingObjectSpecifier:" />
   <method name="indicesOfObjectsByEvaluatingWithContainer_count" noverbose="false" selector="-indicesOfObjectsByEvaluatingWithContainer:count:" signature="^i16@0:4@8^i12" />
+  <method name="init" noverbose="false" selector="-init" signature="@8@0:4" />
   <method name="initAndTestWithTests" noverbose="false" selector="-initAndTestWithTests:" signature="@12@0:4@8" />
   <method name="initByReferencingFile" noverbose="false" selector="-initByReferencingFile:" signature="@12@0:4@8" />
   <method name="initByReferencingURL" noverbose="false" selector="-initByReferencingURL:" signature="@12@0:4@8" />
