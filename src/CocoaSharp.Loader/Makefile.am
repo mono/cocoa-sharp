@@ -1,23 +1,16 @@
-SUBDIRS=
+INCLUDES= \
+	@MONO_CFLAGS@
 
-all: CocoaSharpLoader
-
-clean:
-	rm -f ../../build/CocoaSharpLoader
-	rm -f CocoaSharpLoader
-	rm -f *.o
-
-maintainer-clean: clean
-
-CocoaSharpLoader: Loader.o Bundle.o
-	gcc Bundle.o Loader.o -o CocoaSharpLoader -framework Cocoa `pkg-config --libs mono`
-	cp CocoaSharpLoader ../../build
-
-Loader.o: Loader.c
-	gcc -g -c Loader.c -o Loader.o `pkg-config --cflags mono`
+bin_PROGRAMS=CocoaSharpLoader
+CocoaSharpLoader_SOURCES = \
+	Bundle.m \
+	Loader.c
 
 Bundle.o: Bundle.m
-	gcc -x objective-c -g -c Bundle.m -o Bundle.o
+	gcc -x objective-c -c Bundle.m
 
-install-data-local:
-	if test -n '@prefix@/bin/CocoaSharpLoader'; then cp ../../build/CocoaSharpLoader @prefix@/bin/CocoaSharpLoader; fi
+Loader.o: Loader.c
+	gcc -c Loader.c @MONO_CFLAGS@
+
+CocoaSharpLoader$(EXEEXT):
+	gcc Bundle.o Loader.o -o CocoaSharpLoader -framework Cocoa @MONO_LIBS@

@@ -1,10 +1,144 @@
-all: ../../build/libAppKitGlue.dylib
+lib_LTLIBRARIES=libAppKitGlue.la
 
-../../build/libAppKitGlue.dylib: *.m
-	gcc -dynamiclib -flat_namespace -undefined suppress -framework Cocoa -o ../../build/libAppKitGlue.dylib *.m
+libAppKitGlue_la_SOURCES =				\
+	NSActionCell_glue.m \
+	NSAffineTransform_glue.m \
+	NSAlert_glue.m \
+	NSAppleScriptAppKitExtras_glue.m \
+	NSApplication_glue.m \
+	NSArrayController_glue.m \
+	NSATSTypesetter_glue.m \
+	NSAttributedStringAppKitExtras_glue.m \
+	NSBezierPath_glue.m \
+	NSBitmapImageRep_glue.m \
+	NSBox_glue.m \
+	NSBrowser_glue.m \
+	NSBrowserCell_glue.m \
+	NSBundleAppKitExtras_glue.m \
+	NSButton_glue.m \
+	NSButtonCell_glue.m \
+	NSCachedImageRep_glue.m \
+	NSCell_glue.m \
+	NSClipView_glue.m \
+	NSCoderAppKitExtras_glue.m \
+	NSColor_glue.m \
+	NSColorList_glue.m \
+	NSColorPanel_glue.m \
+	NSColorPicker_glue.m \
+	NSColorWell_glue.m \
+	NSComboBox_glue.m \
+	NSComboBoxCell_glue.m \
+	NSControl_glue.m \
+	NSController_glue.m \
+	NSCursor_glue.m \
+	NSCustomImageRep_glue.m \
+	NSDocument_glue.m \
+	NSDocumentController_glue.m \
+	NSDrawer_glue.m \
+	NSEPSImageRep_glue.m \
+	NSEvent_glue.m \
+	NSFileWrapper_glue.m \
+	NSFont_glue.m \
+	NSFontDescriptor_glue.m \
+	NSFontManager_glue.m \
+	NSFontPanel_glue.m \
+	NSForm_glue.m \
+	NSFormCell_glue.m \
+	NSGlyphGenerator_glue.m \
+	NSGlyphInfo_glue.m \
+	NSGraphicsContext_glue.m \
+	NSHelpManager_glue.m \
+	NSImage_glue.m \
+	NSImageCell_glue.m \
+	NSImageRep_glue.m \
+	NSImageView_glue.m \
+	NSInputManager_glue.m \
+	NSInputServer_glue.m \
+	NSLayoutManager_glue.m \
+	NSMatrix_glue.m \
+	NSMenu_glue.m \
+	NSMenuItem_glue.m \
+	NSMenuItemCell_glue.m \
+	NSMenuView_glue.m \
+	NSMovie_glue.m \
+	NSMovieView_glue.m \
+	NSMutableAttributedStringAppKitExtras_glue.m \
+	NSMutableParagraphStyle_glue.m \
+	NSNib_glue.m \
+	NSNibConnector_glue.m \
+	NSNibControlConnector_glue.m \
+	NSNibOutletConnector_glue.m \
+	NSObjectAppKitExtras_glue.m \
+	NSObjectController_glue.m \
+	NSOpenGLContext_glue.m \
+	NSOpenGLPixelBuffer_glue.m \
+	NSOpenGLPixelFormat_glue.m \
+	NSOpenGLView_glue.m \
+	NSOpenPanel_glue.m \
+	NSOutlineView_glue.m \
+	NSPanel_glue.m \
+	NSParagraphStyle_glue.m \
+	NSPasteboard_glue.m \
+	NSPDFImageRep_glue.m \
+	NSPICTImageRep_glue.m \
+	NSPopUpButton_glue.m \
+	NSPopUpButtonCell_glue.m \
+	NSPrinter_glue.m \
+	NSPrintInfo_glue.m \
+	NSPrintOperation_glue.m \
+	NSProgressIndicator_glue.m \
+	NSQuickDrawView_glue.m \
+	NSResponder_glue.m \
+	NSRulerMarker_glue.m \
+	NSRulerView_glue.m \
+	NSSavePanel_glue.m \
+	NSScreen_glue.m \
+	NSScroller_glue.m \
+	NSScrollView_glue.m \
+	NSSearchField_glue.m \
+	NSSearchFieldCell_glue.m \
+	NSSecureTextField_glue.m \
+	NSSecureTextFieldCell_glue.m \
+	NSSegmentedCell_glue.m \
+	NSSegmentedControl_glue.m \
+	NSShadow_glue.m \
+	NSSimpleHorizontalTypesetter_glue.m \
+	NSSlider_glue.m \
+	NSSliderCell_glue.m \
+	NSSound_glue.m \
+	NSSpeechRecognizer_glue.m \
+	NSSpeechSynthesizer_glue.m \
+	NSSpellChecker_glue.m \
+	NSSplitView_glue.m \
+	NSStatusBar_glue.m \
+	NSStatusItem_glue.m \
+	NSStepper_glue.m \
+	NSStepperCell_glue.m \
+	NSStringAppKitExtras_glue.m \
+	NSTableColumn_glue.m \
+	NSTableHeaderCell_glue.m \
+	NSTableHeaderView_glue.m \
+	NSTableView_glue.m \
+	NSTabView_glue.m \
+	NSTabViewItem_glue.m \
+	NSText_glue.m \
+	NSTextAttachment_glue.m \
+	NSTextAttachmentCell_glue.m \
+	NSTextContainer_glue.m \
+	NSTextField_glue.m \
+	NSTextFieldCell_glue.m \
+	NSTextStorage_glue.m \
+	NSTextTab_glue.m \
+	NSTextView_glue.m \
+	NSToolbar_glue.m \
+	NSToolbarItem_glue.m \
+	NSTypesetter_glue.m \
+	NSURLAppKitExtras_glue.m \
+	NSUserDefaultsController_glue.m \
+	NSView_glue.m \
+	NSWindow_glue.m \
+	NSWindowController_glue.m \
+	NSWorkspace_glue.m 
 
-clean:
-	rm -f ../../build/libAppKitGlue.dylib
-
-install-data-local:
-	if test -n '@prefix@/lib/libAppKitGlue.dylib'; then cp ../../build/libAppKitGlue.dylib @prefix@/lib/libAppKitGlue.dylib; fi
+libAppKitGlue_la_LDFLAGS = -module -x objective-c -framework Cocoa
+libAppKitGlue_la_LIBADD = 

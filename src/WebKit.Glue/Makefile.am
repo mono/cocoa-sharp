@@ -1,9 +1,13 @@
-all: ../../build/libWebKitGlue.dylib
+lib_LTLIBRARIES=libWebKitGlue.la
 
-../../build/libWebKitGlue.dylib: WebBackForwardList_glue.m WebHistoryItem_glue.m WebView_glue.m WebDataSource_glue.m WebHistory_glue.m WebFrame_glue.m WebPreferences_glue.m NSObjectWebKitExtras_glue.m
-	gcc -dynamiclib -flat_namespace -undefined suppress -framework Cocoa -o ../../build/libWebKitGlue.dylib WebBackForwardList_glue.m WebHistoryItem_glue.m WebView_glue.m WebDataSource_glue.m WebHistory_glue.m WebFrame_glue.m WebPreferences_glue.m NSObjectWebKitExtras_glue.m
-clean:
-	rm -f ../../build/libWebKitGlue.dylib
+libWebKitGlue_la_SOURCES =				\
+	WebBackForwardList_glue.m \
+	WebHistoryItem_glue.m \
+	WebView_glue.m \
+	WebDataSource_glue.m \
+	WebHistory_glue.m \
+	WebFrame_glue.m \
+	WebPreferences_glue.m
 
-install-data-local:
-	if test -n '@prefix@/lib/libWebKitGlue.dylib'; then cp ../../build/libWebKitGlue.dylib @prefix@/lib/libWebKitGlue.dylib; fi
+libWebKitGlue_la_LDFLAGS = -module -x objective-c -framework Cocoa
+libWebKitGlue_la_LIBADD = 

@@ -1,10 +1,7 @@
-all: ../../build/libCocoaSharpGlue.dylib
+lib_LTLIBRARIES=libCocoaSharpGlue.la
 
-../../build/libCocoaSharpGlue.dylib: *.m
-	gcc -g -bundle -flat_namespace -undefined suppress -framework Cocoa -o ../../build/libCocoaSharpGlue.dylib *.m
+libCocoaSharpGlue_la_SOURCES =				\
+	Glue.m
 
-clean:
-	rm -f ../../build/libCocoaSharpGlue.dylib
-
-install-data-local:
-	if test -n '@prefix@/lib/libCocoaSharpGlue.dylib'; then cp ../../build/libCocoaSharpGlue.dylib @prefix@/lib/libCocoaSharpGlue.dylib; fi
+libCocoaSharpGlue_la_LDFLAGS = -module -x objective-c -framework Cocoa
+libCocoaSharpGlue_la_LIBADD = 
