@@ -9,7 +9,7 @@
 #
 #  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 #
-#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.11 2004/08/10 19:04:21 gnorton Exp $
+#	$Header: /home/miguel/third-conversion/public/cocoa-sharp/configure.in,v 1.12 2004/08/10 19:15:18 gnorton Exp $
 #
 
 AC_INIT(README)
@@ -98,8 +98,6 @@ AC_OUTPUT([
 cocoa-sharp.pc
 Makefile
 generator/Makefile
-#monodoc/Makefile
-#test/Makefile
 src/Makefile
 src/CocoaSharp.Glue/Makefile
 src/CocoaSharp.Loader/Makefile
@@ -117,6 +115,9 @@ src/Apple.WebKit/AssemblyInfo.cs
 #***************************************************************************
 #
 # $Log: configure.in,v $
+# Revision 1.12  2004/08/10 19:15:18  gnorton
+# auto* cleanup
+#
 # Revision 1.11  2004/08/10 19:04:21  gnorton
 # auto* build system redone
 #

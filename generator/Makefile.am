@@ -3,9 +3,18 @@ ASSEMBLY=$(ASSEMBLY_NAME).exe
 CLEANFILES=$(ASSEMBLY) 
 DISTCLEANFILES=
 noinst_DATA=generator-run.stamp
-EXTRA_DIST= 
+EXTRA_DIST= \ 
+	Category.cs \
+	CEnum.cs \
+	Element.cs \
+	Interface.cs \
+	Main.cs \
+	Method.cs \
+	ObjCClassInspector.cs \
+	Protocol.cs \
+	Struct.cs 
 
-sources= \
+sources = \
 	Category.cs \
 	CEnum.cs \
 	Element.cs \
