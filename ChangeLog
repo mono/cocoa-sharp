@@ -1,3 +1,9 @@
+2004-06-10	Urs C Muff	<umuff@quark.com>
+	genstubs.pl
+		- using '__' instead of '$_' for class names
+		- using 'import' instead of 'include' for double include guard (makes NSString_stub.m compile)
+		- don't output $class__alloc on NSObject, since NSObject already has a class method alloc
+
 2004-06-10	Geoff Norton	<gnorton@customerdna.com>
 	genstubs.pl:
 		- changed return type of $class * back to id

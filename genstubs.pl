@@ -118,7 +118,7 @@ sub parseMethod {
     if($isClassMethod){
         $obj = $class;
 
-        $class .= '$';
+        $class .= '_';
 
     # If the method is an instance method
     }else{
@@ -171,8 +171,8 @@ sub parseFile {
     (my (undef, undef, undef, undef, $dirpart)) = split(/\//, $filename);
     $dirpart =~ s/\.framework//;
     my $interface = $class;
-    push(@out, "#include <$dirpart/$class.h>");
-    push(@out, "#include <Foundation/NSString.h>");
+    push(@out, "#import <$dirpart/$class.h>");
+    push(@out, "#import <Foundation/NSString.h>");
 
     open(FILE, "<$filename") or die "Couldn't open $filename: $!";
 
@@ -183,7 +183,6 @@ sub parseFile {
 
         # Keep #include lines
         if($line =~ /#import/){
-            $line =~ s/#import/#include/;
             push(@out, $line);
             next;
         }
@@ -207,11 +206,11 @@ sub parseFile {
 
     push(@out,
          "",
-         "$class * ${class}_alloc(){",
-         "\tNSLog(\@\"${class}_alloc()\\n\");",
-         "\treturn [ $class alloc ];",
+         "$class * ${class}__alloc(){",
+         "\tNSLog(\@\"${class}__alloc()\\n\");",
+         "\treturn [$class alloc];",
          "}"
-        );
+        ) unless $class =~ /NSObject/;
 
     print " $methods methods.\n";
     return @out;
