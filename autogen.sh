@@ -1,4 +1,13 @@
-aclocal
+
+#Simple test for OS X
+if [ -d /Library/Frameworks/Mono.framework/Versions/0.95/share/aclocal ]; then
+    aclocal -I /Library/Frameworks/Mono.framework/Versions/0.95/share/aclocal
+else
+    echo "Not OS X"
+    aclocal
+fi
+
+
 libtoolize --force --copy
 automake -a
 autoconf
