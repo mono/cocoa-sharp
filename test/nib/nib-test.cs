@@ -18,13 +18,18 @@ class MainClass {
 	}
 }
 
+// Example of a registered class overriding the objc name->.net name mapping
 [ObjCRegister("ConverterController")]
 public class MyController : NSObject {
 
+    // Example of a ObjCConnect with full definition
     [ObjCConnect(Name="converter", Type="@", Size=4)]
     public Converter _converter; 
-    [ObjCConnect(Name="dollarField", Type="@", Size=4)]
-    public NSTextField _dollarField; 
+
+    // Example of a ObjCConnect detecting
+    [ObjCConnect]
+    public NSTextField dollarField; 
+
     [ObjCConnect(Name="rateField", Type="@", Size=4)]
     public NSTextField _rateField; 
     [ObjCConnect(Name="totalField", Type="@", Size=4)]
@@ -34,14 +39,13 @@ public class MyController : NSObject {
 
 	[ObjCExport("convert:")]
 	public void convert(object sender) {
-	    _UpdateMembers();
         
 Console.WriteLine("ConverterController: convert");
 Console.WriteLine("converter=" + _converter);
-Console.WriteLine("dollarField=" + _dollarField.stringValue);
+Console.WriteLine("dollarField=" + dollarField.stringValue);
 Console.WriteLine("rateField=" + _rateField.stringValue);
 
-        _totalField.stringValue = _converter.convert(_dollarField.stringValue, _rateField.stringValue);
+        _totalField.stringValue = _converter.convert(dollarField.stringValue, _rateField.stringValue);
 
 Console.WriteLine("totalField=" + _totalField.stringValue);
 	}
