@@ -14,11 +14,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_CPU = "";
-				GCC_MODEL_PPC64 = NO;
-				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				OPTIMIZATION_CFLAGS = "-O0";
 				ZERO_LINK = YES;
 			};
@@ -58,7 +54,7 @@
 			mainGroup = 08FB7794FE84155DC02AAC07;
 			projectDirPath = "";
 			targets = (
-				8DD76F960486AA7600D96B5E,
+				B2FB247A0679FAF400F20944,
 			);
 		};
 		08FB7794FE84155DC02AAC07 = {
@@ -66,7 +62,9 @@
 				08FB7795FE84155DC02AAC07,
 				C6859EA2029092E104C91782,
 				08FB779DFE84155DC02AAC07,
+				B2FB249D0679FB2E00F20944,
 				1AB674ADFE9D54B511CA2CBB,
+				B2FB247D0679FAF400F20944,
 			);
 			isa = PBXGroup;
 			name = SimpleWindow;
@@ -75,8 +73,9 @@
 		};
 		08FB7795FE84155DC02AAC07 = {
 			children = (
+				B2FB24920679FB1B00F20944,
+				B2FB24840679FB0300F20944,
 				32A70AAB03705E1F00C91783,
-				08FB7796FE84155DC02AAC07,
 			);
 			isa = PBXGroup;
 			name = Source;
@@ -123,7 +122,7 @@
 //1A4
 		1AB674ADFE9D54B511CA2CBB = {
 			children = (
-				8DD76FA10486AA7600D96B5E,
+				B2FB247B0679FAF400F20944,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -153,125 +152,6 @@
 //322
 //323
 //324
-//8D0
-//8D1
-//8D2
-//8D3
-//8D4
-		8DD76F960486AA7600D96B5E = {
-			buildPhases = (
-				8DD76F970486AA7600D96B5E,
-				8DD76F990486AA7600D96B5E,
-				8DD76F9B0486AA7600D96B5E,
-				8DD76F9D0486AA7600D96B5E,
-				8DD76F9E0486AA7600D96B5E,
-			);
-			buildRules = (
-			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_ENABLE_TRIGRAPHS = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = SimpleWindow_Prefix.pch;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SimpleWindow;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-			);
-			isa = PBXNativeTarget;
-			name = SimpleWindow;
-			productInstallPath = "$(HOME)/bin";
-			productName = SimpleWindow;
-			productReference = 8DD76FA10486AA7600D96B5E;
-			productType = "com.apple.product-type.tool";
-		};
-		8DD76F970486AA7600D96B5E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8DD76F990486AA7600D96B5E = {
-			buildActionMask = 2147483647;
-			files = (
-				8DD76F9A0486AA7600D96B5E,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8DD76F9A0486AA7600D96B5E = {
-			fileRef = 08FB7796FE84155DC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
-		8DD76F9B0486AA7600D96B5E = {
-			buildActionMask = 2147483647;
-			files = (
-				8DD76F9C0486AA7600D96B5E,
-				B23E7157066EE6760022D01B,
-				B23E7158066EE6760022D01B,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8DD76F9C0486AA7600D96B5E = {
-			fileRef = 08FB779EFE84155DC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		8DD76F9D0486AA7600D96B5E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8DD76F9E0486AA7600D96B5E = {
-			buildActionMask = 8;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				8DD76F9F0486AA7600D96B5E,
-			);
-			isa = PBXCopyFilesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		8DD76F9F0486AA7600D96B5E = {
-			fileRef = C6859EA3029092ED04C91782;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		8DD76FA10486AA7600D96B5E = {
-			explicitFileType = "compiled.mach-o.executable";
-			includeInIndex = 0;
-			isa = PBXFileReference;
-			path = SimpleWindow;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-//8D0
-//8D1
-//8D2
-//8D3
-//8D4
 //B20
 //B21
 //B22
@@ -293,14 +173,361 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		B23E7157066EE6760022D01B = {
+		B2543A2D0676D46900CBEB0B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CSWindow.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2543A2E0676D46900CBEB0B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CSWindow.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B297DCD006796AF6004CB4CF = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CSControl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B297DCD106796AF6004CB4CF = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CSControl.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B297DD6C06797181004CB4CF = {
+			explicitFileType = image;
+			isa = PBXFileReference;
+			path = chess.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2A5812F0678E2E500C755B6 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CSApplication.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2A581300678E2E500C755B6 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CSApplication.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2A581870678F43300C755B6 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CSWindowController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2A581880678F43300C755B6 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CSWindowController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2F08F470676517800AC7C5A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = Utils.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2F08F480676517800AC7C5A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = Utils.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2FB24760679FAF400F20944 = {
+			buildActionMask = 2147483647;
+			files = (
+				B2FB24B30679FB5000F20944,
+				B2FB24B40679FB5000F20944,
+				B2FB24B50679FB5000F20944,
+				B2FB24B60679FB5000F20944,
+				B2FB24B70679FB5000F20944,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2FB24770679FAF400F20944 = {
+			buildActionMask = 2147483647;
+			files = (
+				B2FB269F0679FDA700F20944,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2FB24780679FAF400F20944 = {
+			buildActionMask = 2147483647;
+			files = (
+				B2FB24C10679FB6300F20944,
+				B2FB24C20679FB6300F20944,
+				B2FB24C30679FB6300F20944,
+				B2FB24C40679FB6300F20944,
+				B2FB24C50679FB6300F20944,
+				B2FB24C60679FB6300F20944,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2FB24790679FAF400F20944 = {
+			buildActionMask = 2147483647;
+			files = (
+				B2FB26790679FBF700F20944,
+				B2FB267A0679FBF700F20944,
+				B2FB267B0679FBF700F20944,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2FB247A0679FAF400F20944 = {
+			buildPhases = (
+				B2FB24760679FAF400F20944,
+				B2FB24770679FAF400F20944,
+				B2FB24780679FAF400F20944,
+				B2FB24790679FAF400F20944,
+				B2FB24D20679FB7A00F20944,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "CSWindow-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = CSWindow;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = CSWindow;
+			productName = CSWindow;
+			productReference = B2FB247B0679FAF400F20944;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>CSWindow</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>com.MySoftwareCompany.CSWindow</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0d1</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		B2FB247B0679FAF400F20944 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = CSWindow.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B2FB247D0679FAF400F20944 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			name = "CSWindow-Info.plist";
+			path = "/usr/local/mono/cocoa-sharp/SimpleWindow/CSWindow-Info.plist";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		B2FB24840679FB0300F20944 = {
+			children = (
+				B2F08F470676517800AC7C5A,
+				B2543A2D0676D46900CBEB0B,
+				B2A5812F0678E2E500C755B6,
+				B2A581870678F43300C755B6,
+				B297DCD006796AF6004CB4CF,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2FB24920679FB1B00F20944 = {
+			children = (
+				08FB7796FE84155DC02AAC07,
+				B2F08F480676517800AC7C5A,
+				B2543A2E0676D46900CBEB0B,
+				B2A581300678E2E500C755B6,
+				B2A581880678F43300C755B6,
+				B297DCD106796AF6004CB4CF,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2FB249D0679FB2E00F20944 = {
+			children = (
+				B2FB269E0679FDA700F20944,
+				B297DD6C06797181004CB4CF,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2FB24B30679FB5000F20944 = {
+			fileRef = B2F08F470676517800AC7C5A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24B40679FB5000F20944 = {
+			fileRef = B2543A2D0676D46900CBEB0B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24B50679FB5000F20944 = {
+			fileRef = B2A5812F0678E2E500C755B6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24B60679FB5000F20944 = {
+			fileRef = B2A581870678F43300C755B6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24B70679FB5000F20944 = {
+			fileRef = B297DCD006796AF6004CB4CF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C10679FB6300F20944 = {
+			fileRef = 08FB7796FE84155DC02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C20679FB6300F20944 = {
+			fileRef = B2F08F480676517800AC7C5A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C30679FB6300F20944 = {
+			fileRef = B2543A2E0676D46900CBEB0B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C40679FB6300F20944 = {
+			fileRef = B2A581300678E2E500C755B6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C50679FB6300F20944 = {
+			fileRef = B2A581880678F43300C755B6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24C60679FB6300F20944 = {
+			fileRef = B297DCD106796AF6004CB4CF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB24D20679FB7A00F20944 = {
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				B2FB24D70679FBA400F20944,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2FB24D70679FBA400F20944 = {
+			fileRef = B297DD6C06797181004CB4CF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB26790679FBF700F20944 = {
 			fileRef = B23E7155066EE6760022D01B;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		B23E7158066EE6760022D01B = {
+		B2FB267A0679FBF700F20944 = {
 			fileRef = B23E7156066EE6760022D01B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB267B0679FBF700F20944 = {
+			fileRef = 08FB779EFE84155DC02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B2FB269E0679FDA700F20944 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			path = iTools.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		B2FB269F0679FDA700F20944 = {
+			fileRef = B2FB269E0679FDA700F20944;
 			isa = PBXBuildFile;
 			settings = {
 			};
