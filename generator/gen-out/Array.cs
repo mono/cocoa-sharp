@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Array.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -13,7 +13,7 @@ using System;
 namespace CocoaSharp {
 	public class Array : Type {
 		public Array(Type elementType,int dim) 
-		      : base(null,null,elementType.ApiType + "[]",typeof(IntPtr),OCType.array) {
+		      : base(elementType.ApiType + "[]",null,elementType.ApiType + "[]",typeof(IntPtr),OCType.array) {
 			this.elementType = elementType;
 			this.dim = dim;
 		}

@@ -18,8 +18,14 @@ namespace CocoaSharp {
 
 	public class HeaderEnum : Element {
 		EnumItem[] mItems;
+		Enum mEnum;
+
 		public HeaderEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework)
 		{
+			if (_name == "NSSliderType")
+				_name = "NSSliderType";
+			mEnum = (Enum)Type.RegisterType(this.Name, this.Framework, typeof(Enum));
+
 			ArrayList items = new ArrayList();
 			foreach (string line in _enum.Split(',')) {
 				string [] valueSep = line.Split('=');
@@ -33,7 +39,8 @@ namespace CocoaSharp {
 		}
 
 		public override OutputElement ToOutput() {
-			return new Enum(this.Name,this.Framework,mItems);
+			mEnum.Initialize(mItems);
+			return mEnum;
 		}
 	}
 }

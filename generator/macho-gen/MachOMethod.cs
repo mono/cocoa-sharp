@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOMethod.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -24,13 +24,13 @@ namespace CocoaSharp {
 			name = file.GetString(method.name);
 			typesStr = file.GetString(method.types);
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, typesStr);
-			types = MachOType.ParseTypes(typesStr);
+			types = MachOType.ParseTypes(file.Namespace, typesStr);
 		}
 
-		internal MachOMethod(string name,string types) {
+		internal MachOMethod(string nameSpace, string name,string types) {
 			this.name = name;
 			this.typesStr = types;
-			this.types = MachOType.ParseTypes(types);
+			this.types = MachOType.ParseTypes(nameSpace, types);
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
 		}
 

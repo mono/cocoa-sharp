@@ -39,6 +39,10 @@ namespace CocoaSharp {
 			get { return mFramework; }
 		}
 
+		public string FullName {
+			get { return Type.FullName(this.Name, this.Framework); }
+		}
+
 		public abstract OutputElement ToOutput();
 
 		public static ICollection ToOutput(ICollection collection) {

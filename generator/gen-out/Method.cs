@@ -110,10 +110,11 @@ namespace CocoaSharp {
 			this.name = name;
 			this.selector = selector;
 			System.Diagnostics.Debug.Assert(this.Selector.Length > 0);
-			try {
-				this.types = types != null ? types : ObjCClassInspector.GetSignature(name,selector);
-			}
-			catch {}
+			this.types = types;
+#if !WINDOWS
+			if (types == null)
+				this.types = ObjCClassInspector.GetSignature(name,selector);
+#endif
 			this.returnType = returnType;
 			this.parameters = parameters;
 		}

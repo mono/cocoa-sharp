@@ -15,8 +15,10 @@ using System.IO;
 
 namespace CocoaSharp {
 	public class Enum : Type {
-		public Enum(string name, string nameSpace, ICollection items) 
+		public Enum(string name, string nameSpace) 
 			: base(name, nameSpace,nameSpace + "." + name,typeof(System.Enum),OCType.@int) {
+		}
+		public void Initialize(ICollection items) {
 			this.items = items;
 		}
 

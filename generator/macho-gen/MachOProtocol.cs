@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOProtocol.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id$
 //
 
 using System;
@@ -19,8 +19,12 @@ namespace CocoaSharp {
 		internal ArrayList instanceMethods = new ArrayList();
 		internal ArrayList classMethods = new ArrayList();
 		private IDictionary protocols = new Hashtable();
+		private Protocol mProtocol;
 
-		internal MachOProtocol(string name) { Name = name; }
+		internal MachOProtocol(string name, string nameSpace) {
+			Name = name;
+			mProtocol = (Protocol)Type.RegisterType("@" + name, nameSpace, typeof(Protocol));
+		}
 
 		static internal ICollection ToProtocols(ICollection protocols) {
 			ArrayList ret = new ArrayList();
@@ -30,7 +34,8 @@ namespace CocoaSharp {
 		}
 
 		internal Protocol ToProtocol(string nameSpace) {
-			return new Protocol(Name, nameSpace, MachOMethod.ToMethods(nameSpace, instanceMethods), MachOMethod.ToMethods(nameSpace, classMethods));
+			mProtocol.Initialize(MachOMethod.ToMethods(nameSpace, instanceMethods), MachOMethod.ToMethods(nameSpace, classMethods));
+			return mProtocol;
 		}
 
 		internal void AddProtocolsFromArray(IList protocols) {

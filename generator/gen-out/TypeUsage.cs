@@ -18,7 +18,12 @@ namespace CocoaSharp {
 		}
 
 		public static TypeUsage FromDecl(string objcDecl) {
-			return new TypeUsage(Type.FromDecl(objcDecl), TypeModifiers.none);
+			TypeModifiers mods = TypeModifiers.none;
+			if (objcDecl.StartsWith("const ")) {
+				objcDecl = objcDecl.Substring("const ".Length);
+				mods |= TypeModifiers.@const;
+			}
+			return new TypeUsage(Type.FromDecl(objcDecl), mods);
 		}
 
 		// -- Public Properties --

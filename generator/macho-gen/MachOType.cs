@@ -56,12 +56,61 @@ namespace CocoaSharp {
 		public OCType kind = OCType.id;
 		public TypeModifiers modifiers;
 		public int offset, arrayDim, bitCount;
-		public string name;
+		public string name, nameSpace;
 		public MachOType reference;
 		public MachOType[] fields;
+		public TypeUsage typeUsage;
+
+		private MachOType(string nameSpace) { this.nameSpace = nameSpace; }
 
 		public bool IsPrimitive {
 			get { return kind != OCType.structure && kind != OCType.array && kind != OCType.pointer && kind != OCType.union; }
+		}
+
+		public string DeclType {
+			get {
+				string decl = Type.OCTypeToDeclType(kind);
+				if (decl == null) {
+					switch (kind) {
+						case OCType.id:
+							decl = this.name == "id" ? "id" : this.name + " *";
+							break;
+						case OCType.array:
+							decl = this.reference.DeclType + "[" + this.arrayDim + "]";
+							break;
+						case OCType.bit_field:
+							decl = "int:" + this.bitCount;
+							break;
+						case OCType.pointer:
+							decl = (this.reference.kind == OCType.undefined_type ? "void" : this.reference.DeclType) + " *";
+							break;
+						case OCType.structure:
+							decl = "struct " + this.name;
+							break;
+						case OCType.undefined_type:
+							break;
+						case OCType.union:
+							decl = "union " + this.name;
+							break;
+						default:
+							decl = null;
+							break;
+					}
+				}
+				return decl;
+			}
+		}
+
+		public void RegisterType() {
+			Type type = Type.FromOcType(this.kind, this.name);
+			if (type == null) {
+				string decl = this.DeclType;
+				if (decl != null)
+					type = Type.FromDecl(decl);
+				else
+					type = new Type(name, nameSpace, this.ApiType, this.GlueType, this.kind);
+			}
+			this.typeUsage = new TypeUsage(type, modifiers);
 		}
 
 		public override string ToString() {
@@ -108,13 +157,13 @@ namespace CocoaSharp {
 		}
 
 		internal TypeUsage ToTypeUsage(string nameSpace) {
-			return new TypeUsage(ToType(nameSpace),modifiers);
+			return typeUsage;
 		}
 		internal Type ToType(string nameSpace) {
-			return new Type(name,nameSpace,ApiType,GlueType,kind);
+			return typeUsage.Type;
 		}
 
-		static public MachOType[] ParseTypes(string types) {
+		static public MachOType[] ParseTypes(string nameSpace, string types) {
 			ArrayList ret = new ArrayList();
 #if DEBUG
 			bool hasNonPrimitive = false;
@@ -123,19 +172,19 @@ namespace CocoaSharp {
 			string tmp = types;
 			do {
 				tmp = tmp.Substring(read);
-				MachOType t = ParseType(tmp,true,out read);
+				MachOType t = ParseType(nameSpace, tmp,true,out read);
 #if DEBUG
 				if (!hasNonPrimitive)
 					hasNonPrimitive = !t.IsPrimitive;
 #endif
 				ret.Add(t);
 			} while (read < tmp.Length);
-#if DEBUG_OUT
+#if DEBUG
 			if (hasNonPrimitive) {
-				MachOFile.DebugOut(0,"Parsing '{0}'",types);
-				MachOFile.DebugOut(0,"   ret={0}",ret[0]);
+				MachOFile.DebugOut(1,"Parsing '{0}'",types);
+				MachOFile.DebugOut(1,"   ret={0}",ret[0]);
 				for (int i = 3; i < ret.Count; ++i)
-					MachOFile.DebugOut(0,"   #{0}={1}",i-3,ret[i]);
+					MachOFile.DebugOut(1,"   #{0}={1}",i-3,ret[i]);
 			}
 #endif
 			return (MachOType[])ret.ToArray(typeof(MachOType));
@@ -151,20 +200,20 @@ namespace CocoaSharp {
 			return 0;
 		}
 
-		static public MachOType ParseType(string type) {
+		static public MachOType ParseType(string nameSpace, string type) {
 			int tmpRead;
-			return ParseType(type,false,out tmpRead);
+			return ParseType(nameSpace, type,false,out tmpRead);
 		}
 		
-		static MachOType ParseSubType(string type, ref int read) {
+		static MachOType ParseSubType(string nameSpace, string type, ref int read) {
 			int tmpRead;
-			MachOType ret = ParseType(type.Substring(read),false,out tmpRead);
+			MachOType ret = ParseType(nameSpace, type.Substring(read),false,out tmpRead);
 			read += tmpRead;
 			return ret;
 		}
 
-		static public MachOType ParseType(string type,bool readOff,out int read) {
-			MachOType ret = new MachOType();
+		static public MachOType ParseType(string nameSpace, string type,bool readOff,out int read) {
+			MachOType ret = new MachOType(nameSpace);
 			read = 0;
 			MachOFile.DebugOut(1,"- Parsing '{0}'",type);
 			bool cont;
@@ -173,8 +222,10 @@ namespace CocoaSharp {
 				switch (type[read]) {
 					case '@': // id
 						++read;
+						if (ret.name == null)
+							ret.name = "id";
 						ret.kind = OCType.id;
-						cont = ret.name == null && read < type.Length && type[read] == '"';
+						cont = ret.name == "id" && read < type.Length && type[read] == '"';
 						break;
 					case '#': // Class
 						++read;
@@ -247,10 +298,11 @@ namespace CocoaSharp {
 					case '^': // any pointer
 						++read;
 						ret.kind = OCType.pointer;
-						ret.reference = ParseSubType(type,ref read);
+						ret.reference = ParseSubType(nameSpace, type,ref read);
 						break;
 					case '?': // an undefined type
 						++read;
+						ret.name = "?";
 						ret.kind = OCType.undefined_type;
 						break;
 					case 'b': // a bitfield
@@ -261,8 +313,8 @@ namespace CocoaSharp {
 					case '[': // begin an array
 						++read;
 						ret.kind = OCType.array;
-						ret.arrayDim = ParseInt(type,ref read);
-						ret.reference = ParseSubType(type,ref read);
+						ret.arrayDim = ParseInt(type, ref read);
+						ret.reference = ParseSubType(nameSpace, type, ref read);
 						if (type[read] != ']')
 							MachOFile.DebugOut(0,"ERROR: array does not end with ']' ({0}) #{1}",type,read);
 						else
@@ -289,7 +341,7 @@ namespace CocoaSharp {
 							if (type[read] == '=')
 								++read;
 							while (type[read] != close)
-								fields.Add(ParseSubType(type,ref read));
+								fields.Add(ParseSubType(nameSpace, type,ref read));
 							if (type[read] == close)
 								++read;
 							else
@@ -351,6 +403,7 @@ namespace CocoaSharp {
 			if (readOff && read < type.Length)
 				ret.offset = ParseInt(type,ref read);
 
+			ret.RegisterType();
 			return ret;
 		}
 	}

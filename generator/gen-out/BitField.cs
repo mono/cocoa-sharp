@@ -5,14 +5,14 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: BitField.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
 
 namespace CocoaSharp {
 	public class BitField : Type {
-		public BitField(int bits) : base(null,null,"int",typeof(int),OCType.bit_field) {
+		public BitField(int bits) : base("int:" + bits,null,"int",typeof(int),OCType.bit_field) {
 			this.bits = bits;
 		}
 

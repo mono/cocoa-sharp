@@ -66,15 +66,24 @@ namespace CocoaSharp {
 			if(!_toParse.Name.EndsWith(".h")) 
 				return;
 
-			Regex _importRegex = new Regex(@"#import <(.+?)>");
+			Regex _importRegex = new Regex(@"#import <(.+?)>|#include <(.+?)>");
+			Regex _ifdefRegex = new Regex(
+				@"(#if .*$)|(#ifdef .*$)|(#elif .*$)|(#else.*$)|(#end.*$)", RegexOptions.Multiline
+			);
 			Regex _commentRegex = new Regex(@"(/\*([^\*]+)\*/$)|(//.+$)", RegexOptions.Multiline);
 			Regex _interfaceRegex = new Regex(@"@interface\s+(\w+)(\s*:\s*(\w+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _protocolRegex = new Regex(@"@protocol\s+(\w+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _categoryRegex = new Regex(@"@interface\s+(\w+)\s*\((\w+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(\w+?\s+)?{(\w+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
+			Regex _enumRegex = new Regex(@"typedef\s+enum\s+(\w+?\s+)?{(\w+?^\s*\w+\s*=\s*\d+,.+?|.+?^\s*\w+\s*=\s*\w+,?.+?|.+?^\s*\w+,.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
 			Regex _structRegex = new Regex(@"typedef\s+struct\s+(\w+?\s+)?{(.+?)}\s+(\w+)", RegexOptions.Multiline | RegexOptions.Singleline);
-			Regex _classForwardDeclRegex = new Regex(@"@class\s+\w+;");
-			Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+\w+;");
+			Regex _classForwardDeclRegex = new Regex(@"@class\s+[,\w\s]+;");
+			Regex _protocolForwardDeclRegex = new Regex(@"@protocol\s+[,\w\s]+;");
+
+#if FUNC_PTR
+	new Regex(@"^\s*(?<ret>\w+)\s*\*?\s*\(\*(?<name>\w+)\)\s*\((?<args>.+?)\);", RegexOptions.Multiline | RegexOptions.Singleline);
+	foreach(Match m in _enumRegex.Matches(_headerData))
+		Console.WriteLine ("ret := {0} name := {1} args := {2}", m.Groups["ret"], m.Groups["name"], m.Groups["args"]);
+#endif
 
 			TextReader _fileReader = new StreamReader(_toParse.FullName);
 			string _headerData = _fileReader.ReadToEnd();
@@ -82,6 +91,10 @@ namespace CocoaSharp {
 			// Strip out the comments
 			foreach(Match m in _commentRegex.Matches(_headerData))
 				_headerData = _headerData.Replace(m.Value, "");
+
+			foreach (Match m in _ifdefRegex.Matches(_headerData)) {
+				_headerData = _headerData.Replace(m.Value, "");
+			}
 
 			foreach(Match m in _classForwardDeclRegex.Matches(_headerData)) {
 				//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": class: " + m.Value);
@@ -152,6 +165,9 @@ namespace CocoaSharp {
 					Structs[m.Groups[3].Value] = _s;
 				_headerData = _headerData.Replace(m.Value, "");
 			}
+
+			_headerData = _headerData.Trim();
+			System.Diagnostics.Debug.Assert(_headerData.IndexOf("NSSliderType") < 0);
 			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
 		}
 

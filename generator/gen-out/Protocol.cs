@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Protocol.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -24,9 +24,11 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		public Protocol(string name, string nameSpace, ICollection instanceMethods, ICollection classMethods)
-			: base(name, nameSpace, nameSpace + "." + name,null,OCType.id) {
-			Protocols[nameSpace + "." + name] = this;
+		public Protocol(string name, string nameSpace)
+			: base(name, nameSpace, Type.FullName(name, nameSpace),typeof(IntPtr),OCType.id) {
+			Protocols[FullName(name, nameSpace)] = this;
+		}
+		public void Initialize(ICollection instanceMethods, ICollection classMethods) {
 			this.instanceMethods = instanceMethods;
 			this.classMethods = classMethods;
 		}

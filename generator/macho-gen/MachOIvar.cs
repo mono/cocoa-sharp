@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOIvar.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id$
 //
 
 using System;
@@ -25,7 +25,7 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref ivar.offset);
 			name = file.GetString(ivar.name);
 			string typeName = file.GetString(ivar.type);
-			type = MachOType.ParseType(typeName);
+			type = MachOType.ParseType(file.Namespace, typeName);
 			offset = ivar.offset;
 			MachOFile.DebugOut(1,"\tvar: {0} type=[{3}]->[{1}] offset={2}", name, type, offset, typeName);
 		}

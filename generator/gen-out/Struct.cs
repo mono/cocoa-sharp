@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Struct.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
@@ -14,8 +14,10 @@ using System.IO;
 
 namespace CocoaSharp {
 	public class Struct : Type {
-		public Struct(string name,string nameSpace,ICollection items)
+		public Struct(string name,string nameSpace)
 			: base(name,nameSpace,nameSpace + "." + name,typeof(System.ValueType),OCType.structure) {
+		}
+		public void Initialize(ICollection items) {
 			this.items = items;
 		}
 

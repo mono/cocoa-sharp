@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.6 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -22,6 +22,7 @@ namespace CocoaSharp {
 		private ArrayList ivars = new ArrayList();
 		private ArrayList methods, classMethods;
 		private IDictionary protocols = new Hashtable();
+		private Class mClass;
 
 		unsafe internal MachOClass (byte *ptr, MachOFile file) {
 			occlass = *(objc_class *)ptr;
@@ -36,6 +37,7 @@ namespace CocoaSharp {
 			Utils.MakeBigEndian(ref occlass.protocols);
 			superClass = file.GetString(occlass.super_class);
 			name = file.GetString(occlass.name);
+			mClass = (Class)Type.RegisterType(this.name, file.Namespace, typeof(Class));
 			isClass = (occlass.info & 1) != 0;
 			MachOFile.DebugOut(1,"Class: {0} : {1} iSize={2} info={3,8:x} isClass={4}",name,superClass,occlass.instance_size,occlass.info,isClass);
 
@@ -65,10 +67,11 @@ namespace CocoaSharp {
 		}
 
 		public Class ToClass(string nameSpace) {
-			return new Class(name, nameSpace, Class.GetClass(superClass), 
+			mClass.Initialize(Class.GetClass(superClass), 
 				MachOProtocol.ToProtocols(protocols.Values),
 				MachOIvar.ToVariables(nameSpace, ivars),
 				MachOMethod.ToMethods(nameSpace,methods),MachOMethod.ToMethods(nameSpace,classMethods));
+			return mClass;
 		}
 
 		void AddProtocolsFromArray(IList protocols) {
@@ -113,7 +116,7 @@ namespace CocoaSharp {
 
 			MachOProtocol protocol = (MachOProtocol)mProtocolsByName[name];
 			if (protocol == null) {
-				protocol = new MachOProtocol(name);
+				protocol = new MachOProtocol(name, file.Namespace);
 				mProtocolsByName[name] = protocol;
 			}
 
@@ -141,7 +144,8 @@ namespace CocoaSharp {
 				objc_protocol_method methodPtr = *(objc_protocol_method*)ptr;
 				Utils.MakeBigEndian(ref methodPtr.name);
 				Utils.MakeBigEndian(ref methodPtr.types);
-				MachOMethod method = new MachOMethod(file.GetString(methodPtr.name),
+				MachOMethod method = new MachOMethod(file.Namespace, 
+					file.GetString(methodPtr.name),
 					file.GetString(methodPtr.types)
 				);
 				methods.Insert(0,method);

@@ -5,14 +5,14 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Pointer.cs,v 1.3 2004/09/20 20:18:23 gnorton Exp $
+// $Id$
 //
 
 using System;
 
 namespace CocoaSharp {
 	public class Pointer : Type {
-		public Pointer(Type reference) : base(null,null,"IntPtr/*FIXME*/",typeof(IntPtr),OCType.pointer) {
+		public Pointer(Type reference) : base(reference.Name + " *",null,"IntPtr/*FIXME*/",typeof(IntPtr),OCType.pointer) {
 			this.reference = reference;
 		}
 

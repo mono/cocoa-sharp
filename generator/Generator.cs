@@ -105,14 +105,20 @@ namespace CocoaSharp {
 
 			exporter.BuildInterfaces();
 
+			Console.WriteLine("Add Enums");
 			csWriter.AddRange(HeaderEnum.ToOutput(exporter.Enums.Values));
+			Console.WriteLine("Add Structs");
 			csWriter.AddRange(HeaderStruct.ToOutput(exporter.Structs.Values));
+			Console.WriteLine("Add Protocols");
 			csWriter.AddRange(HeaderProtocol.ToOutput(exporter.Protocols.Values));
+			Console.WriteLine("Add Interfaces");
 			csWriter.AddRange(HeaderInterface.ToOutput(exporter.Interfaces.Values));
 
+			Console.WriteLine("Add Mach-O Classes");
 			foreach (MachOFile mfile in mFiles)
 				csWriter.AddRange(mfile.Classes);
 
+			Console.WriteLine("Output per namespace");
 			foreach (Framework f in mConfig.Frameworks)
 				csWriter.OutputNamespace(f.NameSpace);
 

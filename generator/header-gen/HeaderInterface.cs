@@ -30,7 +30,7 @@ namespace CocoaSharp {
 		private Class mClass;
 
 		public HeaderInterface(string _name, string _parent, string _protos, string _framework) : base(_name,_framework) {
-			mClass = Class.GetClass(_name);
+			mClass = (Class)Type.RegisterType(this.Name, this.Framework, typeof(Class));
 
 			mParent = _parent;
 			_protos = _protos.Replace(" ", "");		
@@ -80,10 +80,11 @@ namespace CocoaSharp {
 		}
 
 		public override OutputElement ToOutput() {
-			return new Class(Name,Framework,Class.GetClass(Parent),
+			mClass.Initialize(Class.GetClass(Parent),
 				ToProtocols(Protocols),new Ivar[0],
 				HeaderMethod.ToMethods(mAllMethods.Values,false),
 				HeaderMethod.ToMethods(mAllMethods.Values,true));
+			return mClass;
 		}
 
 		static ICollection ToProtocols(string []protocols) {

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Class.cs,v 1.7 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -28,11 +28,14 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		public Class(string name, string nameSpace, Class parent, 
+		public Class(string name, string nameSpace)
+			: base(name, nameSpace, Type.FullName(name, nameSpace), typeof(IntPtr), OCType.id) {
+			Classes[Type.FullName(name, nameSpace)] = this;
+		}
+
+		public void Initialize(Class parent, 
 			ICollection protocols, ICollection variables, 
-			ICollection instanceMethods, ICollection classMethods
-		) : base(name, nameSpace, nameSpace + "." + name, null, OCType.id) {
-			Classes[nameSpace + "." + name] = this;
+			ICollection instanceMethods, ICollection classMethods) {
 			this.parent = parent;
 			this.protocols = protocols != null ? protocols : new ArrayList();
 			this.variables = variables != null ? variables : new ArrayList();

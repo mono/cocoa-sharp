@@ -21,13 +21,12 @@ namespace CocoaSharp {
 
 	public class HeaderStruct : Element {
 		StructItem[] mItems;
+		Struct mStruct;
+
 		public HeaderStruct(string _name, string _struct, string _framework) : base(_struct,_name,_framework)
 		{
-			foreach (Match m in new Regex(
-				@"(#if .*$)|(#ifdef .*$)|(#elif .*$)|(#else .*$)|(#end.*$)", RegexOptions.Multiline
-				).Matches(_struct)) {
-				_struct = _struct.Replace(m.Value, "");
-			}
+			mStruct = (Struct)Type.RegisterType(this.Name, this.Framework, typeof(Struct));
+
 			ArrayList items = new ArrayList();
 			foreach (string line in _struct.Split(';')) {
 				string l = line.Trim();
@@ -47,7 +46,8 @@ namespace CocoaSharp {
 		}
 
 		public override OutputElement ToOutput() {
-			return new Struct(this.Name,this.Framework,mItems);
+			mStruct.Initialize(mItems);
+			return mStruct;
 		}
 	}
 }

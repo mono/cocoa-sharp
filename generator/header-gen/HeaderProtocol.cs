@@ -21,8 +21,10 @@ namespace CocoaSharp {
 
 	public class HeaderProtocol : ElementWithMethods {
 		private string[] mChildren;
+		private Protocol mProtocol;
 
 		public HeaderProtocol(string _name, string _children, string _framework) : base(_name,_framework) {
+			mProtocol = (Protocol)Type.RegisterType("@" + _name, _framework, typeof(Protocol));
 			mChildren = _children.Split(new char[]{' ', ','});
 		}
 
@@ -31,9 +33,9 @@ namespace CocoaSharp {
 		}
 
 		public override OutputElement ToOutput() {
-			return new Protocol(Name,Framework,
-				HeaderMethod.ToMethods(this.Methods.Values,false),
+			mProtocol.Initialize(HeaderMethod.ToMethods(this.Methods.Values,false),
 				HeaderMethod.ToMethods(this.Methods.Values,true));
+			return mProtocol;
 		}
 	}
 }
