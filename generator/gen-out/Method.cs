@@ -266,7 +266,7 @@ namespace CocoaSharp {
 					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
 						get.ReturnType, 
 						string.Format("ObjCMessaging.objc_msgSend({0},{2},typeof({1}))", 
-				            isClassMethod ? "_classPtr" : "Raw",
+				            isClassMethod ? className + "_classPtr" : "Raw",
 				            get.ReturnType.ApiType, 
 				            "\"" + get.Selector + "\"")));
 				}
@@ -278,7 +278,7 @@ namespace CocoaSharp {
 					w.Write(" set;");
 				else {
 					w.WriteLine("            set {{ ObjCMessaging.objc_msgSend({0},{1},typeof(void),typeof({2}),{3}); }}", 
-						isClassMethod ? "_classPtr" : "Raw",
+						isClassMethod ? className + "_classPtr" : "Raw",
 						"\"" + set.Selector + "\"",
 						set.Parameters[0].Type.GlueType,
 						ArgumentExpression(set.Parameters[0].Type,"value"));
@@ -313,8 +313,8 @@ namespace CocoaSharp {
 			return paramsStr;
 		}
 
-		private string GlueArgumentsString(bool isClassMethod) {
-			string glueArgsStr = isClassMethod ? "_classPtr" : "Raw";
+		private string GlueArgumentsString(bool isClassMethod, string className) {
+			string glueArgsStr = isClassMethod ? className + "_classPtr" : "Raw";
 			glueArgsStr += ",\"" + Selector + "\"";
 			glueArgsStr += ",typeof(" + ReturnType.GlueType + ")";
 			foreach (ParameterInfo p in Parameters) {
@@ -335,7 +335,7 @@ namespace CocoaSharp {
 				isProtocol ? ";" : "{");
 			if (!isProtocol) {
 				w.WriteLine("            {0};",ReturnExpression(ReturnType,
-					string.Format("{0}.{1}({2})", "ObjCMessaging", "objc_msgSend", GlueArgumentsString(isClassMethod))));
+					string.Format("{0}.{1}({2})", "ObjCMessaging", "objc_msgSend", GlueArgumentsString(isClassMethod, className))));
 				w.WriteLine("        }");
 			}
 			

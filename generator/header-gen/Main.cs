@@ -309,10 +309,12 @@ namespace CocoaSharp {
 #endif
 		}
 
+#if false
 		static void Main(string[] args) {
 			ObjCManagedExporter exporter = new ObjCManagedExporter(args);
 			exporter.Run();
 		}
+#endif
 	}
 }
 

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Configuration.cs,v 1.2 2004/09/21 04:28:54 urs Exp $
+// $Id$
 //
 
 using System;
@@ -26,6 +26,7 @@ namespace CocoaSharp {
 		public string CorePath;
 		
 		public Framework GetFramework(string which) {
+			which = which.Replace ("Apple.", "");
 			foreach (Framework frmwrk in Frameworks)
 				if (frmwrk.Name == which)
 					return frmwrk;
