@@ -4,7 +4,15 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSMethodSignature.h>
 
+typedef id (*constructorDelegate)(id classptr, char *className);
+constructorDelegate cDelegate = nil;
 BOOL sIsGlueVerbose = NO;
+	
+void setConstructorDelegate(constructorDelegate aDelegate) {
+        NSLog(@"Setting delegate");
+        cDelegate = aDelegate;
+}
+
 BOOL IsGlueVerbose() { return sIsGlueVerbose; }
 void SetGlueVerbose(BOOL verbose) { sIsGlueVerbose = verbose; }
 
@@ -85,6 +93,11 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
     return signature;
 }
 
+id glue_initToManaged(id base, SEL sel, ...) {
+	NSLog(@"Deleagate is nil; allocing a new object and assigning base to it...");
+	cDelegate(base, "NSObject");
+}
+    
 //- (void) forwardInvocation: (NSInvocation *) anInvocation;
 id glue_forwardInvocation(id base, SEL sel, ...) {
     va_list vl;
@@ -226,7 +239,8 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
 
     AddMethods(new_class, 
             numOfMethods, methods, signatures, glue_implementMethod,
-            3, 
+            4, 
+            @selector(init), "@8@0:4", glue_initToManaged,
             @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
             @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
             @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
@@ -244,3 +258,5 @@ int GetInvocationArgumentSize(NSInvocation *invocation, int index) {
 	return sizeof([[invocation methodSignature] getArgumentTypeAtIndex:index]);
 }
 */
+
+
