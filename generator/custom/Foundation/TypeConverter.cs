@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.17 2004/09/07 11:14:45 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.18 2004/09/07 11:36:30 urs Exp $
 //
 
 using System;
@@ -96,10 +96,12 @@ Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C cla
 				return IntPtr.Zero;
 			if (obj is IntPtr)
 				return (IntPtr)obj;
+#if false
                         if (obj is IConvertible) {
                                 int val = Convert.ToInt32(obj);
                                 return (IntPtr)val;
                         }
+#endif
 			NSObject nsObj = obj as NSObject;
 			if (nsObj != null)
 				return nsObj.Raw;
@@ -114,6 +116,9 @@ Console.WriteLine("DEBUG: Using type: " + type.FullName + ", for Objective-C cla
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.18  2004/09/07 11:36:30  urs
+// Remove breaking change
+//
 // Revision 1.17  2004/09/07 11:14:45  urs
 // Add some fixes for NSPropertyListFormat
 //
