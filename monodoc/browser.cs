@@ -90,11 +90,10 @@ class Browser : NSObject {
 	NSWindowController Windowcontroller;
 	// The main window
 	NSWindow Window;
-	// Where we show the help tree
-	NSBrowser Treebrowser;
 	// Where we render the contents
 	WebView Webview;
 	WebFrame mainFrame;
+	NSOutlineView ov;
 
 	//
 	// Left-hand side Browsers
@@ -143,23 +142,27 @@ class Browser : NSObject {
 		NSTabViewItem tabViewItem = new NSTabViewItem("Contents");
 		tabViewItem.label = "Contents";
 		tabView.addTabViewItem(tabViewItem);
-//		NSScrollView sv = new NSScrollView(tabView.contentRect);
-//		sv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//		tabViewItem.view = sv;
+		NSScrollView sv = new NSScrollView(tabView.contentRect);
+		sv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+		sv.hasVerticalScroller = true;
+		sv.hasHorizontalScroller = true;
+		sv.autohidesScrollers = true;
+		tabViewItem.view = sv;
 
-		NSOutlineView ov = new NSOutlineView(tabView.contentRect);
+		ov = new NSOutlineView(sv.documentVisibleRect);
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//		sv.documentView = ov;
+		sv.documentView = ov;
 		NSTableColumn c = new NSTableColumn("Caption");
-		c.width = 200;
+		c.width = sv.contentSize.width;
 		c.editable = false;
 		c.resizable = true;
-		((NSCell)c.headerCell).stringValue = "Caption";
+		((NSCell)c.headerCell).stringValue = "";
 		ov.addTableColumn(c);
 		ov.outlineTableColumn = c;
 
-		tabViewItem.view = ov;		
 		ov.dataSource = browserController;
+		ov.target = this;
+		ov.doubleAction = "selectedItem";
  		
 		tabViewItem = new NSTabViewItem("Index");
 		tabViewItem.label = "Index";
@@ -168,39 +171,23 @@ class Browser : NSObject {
 		tabViewItem.label = "Search";
 		tabView.addTabViewItem(tabViewItem);
 	
-		Treebrowser = new NSBrowser(new NSRect(0, 0, 250, 600));
-		Treebrowser.delegate_ = browserController;
-		Treebrowser.target = this;
-		Treebrowser.doubleAction = "didDoubleClick";
 		NSBundle.BundleWithPath("/System/Library/Frameworks/WebKit.framework").load();
 		Webview = new WebView(new NSRect(0, 0, 600, 480));
 		mainFrame = (WebFrame)Webview.mainFrame;
 
 		((NSView)Window.contentView).addSubview(Webview);
-		//((NSView)Window.contentView).addSubview(Treebrowser);
 		
 		drawer.open();
 		
 		Windowcontroller.showWindow(NSApplication.SharedApplication);
 	}
 
-	[ObjCExport("didDoubleClick")]
+	[ObjCExport("selectedItem")]
 	public void DoubleClick() {
-		try {
-			int curCol = Treebrowser.selectedColumn;
-			ArrayList nodesInColumn = help_tree.Nodes;
-			if(curCol > 0) {
-				for(int i = 0; i < curCol; i++) {
-					int rowInCol = Treebrowser.selectedRowInColumn(i);
-					nodesInColumn = ((Node)nodesInColumn[rowInCol]).Nodes;
-				}
-			}
-			int clickedCell = (int)Treebrowser.selectedRowInColumn(curCol);
-			Node clickedNode = ((Node)nodesInColumn[clickedCell]);
-			mainFrame.loadHTMLString_baseURL(help_tree.RenderUrl(clickedNode.URL, out clickedNode), null);
-		} catch (Exception e) {
-			Console.WriteLine(e);
-		}
+		BrowserItem bi = ov.itemAtRow(ov.selectedRow) as BrowserItem;
+		Console.WriteLine("Going to load {0}", bi);
+		if(bi.node.IsLeaf)
+			mainFrame.loadHTMLString_baseURL(help_tree.RenderUrl(bi.node.URL, out bi.node), null);
 	}
 
 /*
@@ -283,7 +270,7 @@ class BrowserItem : NSObject {
 	public object ValueAt(object identifier)
 	{
 Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
-		return node != null ? node.Caption : "null";
+		return node != null ? node.Caption : "";
 	}
 	public override string ToString()
 	{
@@ -337,37 +324,5 @@ Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item +
 		return bi == null ? null : bi.ValueAt(tableColumn.identifier);
 	}
 	
-	[ObjCExport(Selector="browser:numberOfRowsInColumn:",Signature="i16@0:4@8i12")]
-	public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
-		if(columnNumber > 0) {
-			ArrayList nodes = help_tree.Nodes;
-			for(int i = 0; i < columnNumber; i++) {
-				int rowInCol = browser.selectedRowInColumn(i);
-				nodes = ((Node)nodes[rowInCol]).Nodes;
-			}
-			return nodes.Count;
-		} else {
-			return help_tree.Nodes.Count;
-		}
-	}
-
-	[ObjCExport(Selector="browser:willDisplayCell:atRow:column:", Signature="v24@0:4@8@12i16i20")]
-	public void WillDisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
-		if(columnNumber > 0) {
-			// Walk the tree
-			ArrayList nodes = help_tree.Nodes;
-			for(int i = 0; i < columnNumber; i++) {
-				int rowInCol = browser.selectedRowInColumn(i);
-				nodes = ((Node)nodes[rowInCol]).Nodes;
-			}
-			Node n = (Node)nodes[rowNumber];
-			cell.stringValue = n.Caption; 
-			cell.leaf = n.IsLeaf;
-		} else {
-			Node n = (Node)help_tree.Nodes[rowNumber];
-			cell.stringValue = n.Caption; 
-			cell.leaf = n.IsLeaf;
-		}
    }
-}
 }
