@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Main.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Main.cs,v 1.3 2004/09/18 17:30:17 urs Exp $
 //
 
 using System;
@@ -164,55 +164,6 @@ namespace CocoaSharp {
 			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
 		}
 
-		private void OutputFramework(Framework _toprocess) {
-			Console.Write("Output framework ({0}): ", _toprocess.Name);
-			Console.Write("00%");
-
-			if (OutputCS) {
-#if false
-				foreach(HeaderEnum e in Enums.Values)
-					if(e.Framework == _toprocess.Name)
-						e.WriteFile(mConfig);
-
-				foreach (HeaderStruct s in Structs.Values)
-					if(s.Framework == _toprocess.Name) 
-						s.WriteFile(mConfig);
-
-				foreach (HeaderProtocol p in Protocols.Values)
-					if(p.Framework == _toprocess.Name) 
-						p.WriteFile(mConfig);
-#endif
-			}
-
-			int count = 0;
-			foreach (HeaderInterface i in Interfaces.Values) {
-				if(i.Framework != _toprocess.Name)
-					continue;
-
-#if false
-				if (OutputOC)
-					i.WriteOCFile(mConfig);
-
-				if (OutputCS)
-					i.WriteFile(mConfig);
-#endif
-
-				Console.Write("\b\b\b{0:00}%", count++/(float)Interfaces.Count*100);
-			}
-			if (OutputCS)
-				if(Directory.Exists(Path.Combine(mConfig.CorePath, _toprocess.Name))) {
-					DirectoryInfo _frameworkDirectory = new DirectoryInfo(Path.Combine(mConfig.CorePath, _toprocess.Name));
-					FileSystemInfo[] _infos = _frameworkDirectory.GetFileSystemInfos();
-					foreach(FileSystemInfo _file in _infos) {
-						if(_file.Name.EndsWith(".cs")) {
-							if(File.Exists(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name)))
-								File.Delete(Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
-							File.Copy(Path.Combine(Path.Combine(mConfig.CorePath, _toprocess.Name), _file.Name), Path.Combine(Path.Combine("src", "Apple." + _toprocess.Name), _file.Name));
-						}
-					}
-				}
-			Console.WriteLine("\b\b\b100%");
-		}
 
 		private void ProcessFramework(Framework _toprocess) {
 			ObjCClassInspector.AddBundle(_toprocess.Name);
@@ -322,8 +273,14 @@ namespace CocoaSharp {
 
 			BuildInterfaces();
 
+			WriteCS csWriter = new WriteCS(mConfig);
+			csWriter.AddRange(HeaderEnum.ToOutput(this.Enums));
+			csWriter.AddRange(HeaderStruct.ToOutput(this.Structs));
+			csWriter.AddRange(HeaderProtocol.ToOutput(this.Protocols));
+			csWriter.AddRange(HeaderInterface.ToOutput(this.Interfaces));
+
 			foreach(Framework f in mConfig.Frameworks)
-				OutputFramework(f);
+				csWriter.OutputNamespace(f.Name);
 
 			Console.WriteLine("Code generation successful");
 #if false
@@ -340,9 +297,12 @@ namespace CocoaSharp {
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.3  2004/09/18 17:30:17  urs
+//	Move CS output gen into gen-out
+//
 //	Revision 1.2  2004/09/11 00:41:22  urs
 //	Move Output to gen-out
-//
+//	
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
 //	

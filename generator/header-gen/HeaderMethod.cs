@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderMethod.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderMethod.cs,v 1.3 2004/09/18 17:30:17 urs Exp $
 //
 
 using System;
@@ -198,13 +198,28 @@ namespace CocoaSharp {
 			mCSGlueArguments = (string[])_glueArgs.ToArray(typeof(string));
 #endif
 		}
+
+		public Method ToOutput() {
+			return new Method(this.mCSMethodName,this.Selector,null,null,null);
+		}
+
+		public static ICollection ToMethods(ICollection methods,bool classMethod) {
+			IList ret = new ArrayList();
+			foreach (HeaderMethod m in methods)
+				if (m.IsClassMethod == classMethod)
+					ret.Add(m.ToOutput());
+			return ret;
+		}
 	}
 }
 
 //	$Log: HeaderMethod.cs,v $
+//	Revision 1.3  2004/09/18 17:30:17  urs
+//	Move CS output gen into gen-out
+//
 //	Revision 1.2  2004/09/11 00:41:22  urs
 //	Move Output to gen-out
-//
+//	
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
 //	

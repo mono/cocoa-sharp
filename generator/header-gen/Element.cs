@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Element.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Element.cs,v 1.3 2004/09/18 17:30:17 urs Exp $
 //
 
 using System;
@@ -38,6 +38,15 @@ namespace CocoaSharp {
 		public string Framework {
 			get { return mFramework; }
 		}
+
+		public abstract OutputElement ToOutput();
+
+		public static ICollection ToOutput(ICollection collection) {
+			IList ret = new ArrayList();
+			foreach (HeaderStruct s in collection)
+				ret.Add(s.ToOutput());
+			return ret;
+		}
 	}
 
 	public abstract class ElementWithMethods : Element {
@@ -63,9 +72,12 @@ namespace CocoaSharp {
 }
 
 //	$Log: Element.cs,v $
+//	Revision 1.3  2004/09/18 17:30:17  urs
+//	Move CS output gen into gen-out
+//
 //	Revision 1.2  2004/09/11 00:41:22  urs
 //	Move Output to gen-out
-//
+//	
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
 //	

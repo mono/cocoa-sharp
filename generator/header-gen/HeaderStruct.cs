@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderStruct.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderStruct.cs,v 1.3 2004/09/18 17:30:17 urs Exp $
 //
 
 using System;
@@ -21,13 +21,20 @@ namespace CocoaSharp {
 
 	public class HeaderStruct : Element {
 		public HeaderStruct(string _name, string _struct, string _framework) : base(_struct,_name,_framework) {}
+
+		public override OutputElement ToOutput() {
+			return new Struct(this.Name,this.Framework,new StructItem[0]);
+		}
 	}
 }
 
 //	$Log: HeaderStruct.cs,v $
+//	Revision 1.3  2004/09/18 17:30:17  urs
+//	Move CS output gen into gen-out
+//
 //	Revision 1.2  2004/09/11 00:41:22  urs
 //	Move Output to gen-out
-//
+//	
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
 //	
