@@ -1,0 +1,27 @@
+2004-12-06	C.J. Collier	<cjcollier@colliertech.org>
+
+	* genstubs.pl (global)
+	- Created global variables %imported, $appKitPath, $foundationPath
+	- Got rid of $getProtocols
+	- commented negation of autoflush operator ($|)
+	- printing some satus messages
+
+	
+	* genstubs.pl (parseMethod)
+	- added comment noting that we should only generate code within a delimiter
+	- cleaned up the method parsing regex
+	- added code to parse methods missing a return type
+	- renamed $obj to $receiver
+	- printing a message if there's a duplicate method
+	- storing localtime in a variable
+	- renamed $class to $name (class is misleading)
+	- removed $skip stuff - replaced with commentsBeGone() :)
+
+	* genstubs.pl (parseFile)
+	- added code to traverse #import lines
+	- not adding an alloc() function if it already exists
+
+	* genstubs.pl (commentsBeGone)
+	- Created
+	
+	
