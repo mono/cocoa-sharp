@@ -26,9 +26,6 @@ class CSControl : NSObject {
 		
 		const int NSBackingStoreBuffered	= 2;
 
-		NSAutoreleasePool pool = new NSAutoreleasePool();
-		pool.init();
-
 		NSApplication.sharedApplication();
 		NSRect contentRect = new NSRect(200, 180, 300, 300);
 
@@ -64,8 +61,11 @@ class CSControl : NSObject {
 
 		NSApplication.sharedApplication().runModalForWindow(window);
 
+		GC.Collect();
+		window.release();
 		monoButton.release();
-		pool.release();
+		swap1.release();
+		text.release();
 	}
 
 	public void _stop() {
