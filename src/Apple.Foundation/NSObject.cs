@@ -45,7 +45,40 @@ namespace Apple.Foundation
 		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation) {
 			switch (what) {
 				case GlueDelegateWhat.methodSignatureForSelector:
-					return MakeMethodSignature("v@:",2,160,0);
+				{
+					string types = "";
+					int nargs = 2;
+					int sizeOfParams = 0;
+					int returnValueLength = 0;
+					
+					// Get the method info for this method.
+					MethodInfo method = this.GetType().GetMethod(NSString.FromSEL(invocation).ToString());
+					// Determine the return type and push it onto the types
+					switch(method.ReturnType.ToString()) {
+						case "System.Void":
+							types = types + "v";
+							returnValueLength = 0;
+							break;
+					}
+					// Add the id and the selector to the types
+					types = types + "@:";
+					// Get the parameters for this method
+					ParameterInfo[] parms = method.GetParameters();
+					// Increment the nargs to include the parms
+					nargs += parms.Length;
+					// Add each parm to the types
+					foreach (ParameterInfo p in parms) {
+						Console.WriteLine("MethodParam: {0}", p.ParameterType.ToString());
+						switch(p.ParameterType.ToString()) {
+							case "System.Void":
+								break;
+						}
+					}
+					// WHY?
+					sizeOfParams = 160;
+					// Make the info
+					return MakeMethodSignature(types,nargs,sizeOfParams,returnValueLength);
+				}
 				case GlueDelegateWhat.forwardInvocation:
 				{
 					string method = new NSInvocation(invocation).selector();
