@@ -25,8 +25,10 @@ sources = \
 	Protocol.cs \
 	Struct.cs 
 
+build_sources = $(addprefix $(srcdir)/, $(sources)) 
+
 generator-run.stamp: $(ASSEMBLY)
 	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml) && touch $(srcdir)/generator-run.stamp
 
-$(ASSEMBLY): $(sources) 
-	$(CSC) /out:$(ASSEMBLY) $(sources)
+$(ASSEMBLY): $(build_sources) 
+	$(CSC) /out:$(ASSEMBLY) $(build_sources)
