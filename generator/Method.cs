@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.22 2004/06/23 17:05:33 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.23 2004/06/23 17:23:41 urs Exp $
 //
 
 using System;
@@ -137,10 +137,10 @@ namespace ObjCManagedExporter
 			mMessageParts = (string[])messageParts.ToArray(typeof(string));
 			
 			mGlueMethodName = string.Empty;
-			mCSMethodName = MakeCSMethodName(string.Join("_", mMessageParts));
+			mCSMethodName = MakeCSMethodName(mMessageParts[0] /*string.Join("_", mMessageParts)*/);
 			if (mIsClassMethod)
 				mGlueMethodName += "_";
-			mGlueMethodName += string.Join("_",mMessageParts);
+			mGlueMethodName += string.Join("_",mMessageParts) + mArgumentNames.Length;
 		}
 		#endregion
 
@@ -337,10 +337,10 @@ namespace ObjCManagedExporter
 				string propName = mCSMethodName.Substring(3);
 				string getPropName = propName.Substring(0,1).ToLower() + propName.Substring(1);
 
-				Method get = (Method)methods[getPropName];
+				Method get = (Method)methods[getPropName + "0"];
 				
 				if (get == null)
-					get = (Method)methods["is" + propName];
+					get = (Method)methods["is" + propName + "0"];
 				
 				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
 				if (get != null && get.IsGetMethod(t))
@@ -542,9 +542,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.23  2004/06/23 17:23:41  urs
+//	Rename glue methods to include argument count to differenciate 'init' from 'init:'.
+//
 //	Revision 1.22  2004/06/23 17:05:33  urs
 //	Add selector to Method
-//
+//	
 //	Revision 1.21  2004/06/23 16:32:35  urs
 //	Add SEL support
 //	
