@@ -186,7 +186,7 @@ class Browser : NSObject {
 	public void DoubleClick() {
 		BrowserItem bi = ov.itemAtRow(ov.selectedRow) as BrowserItem;
 		Console.WriteLine("Going to load {0}", bi);
-		if(bi.node.IsLeaf)
+		if(bi.node.URL != null)
 			mainFrame.loadHTMLString_baseURL(help_tree.RenderUrl(bi.node.URL, out bi.node), null);
 	}
 
