@@ -55,7 +55,7 @@
     newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Quit" action:NULL keyEquivalent:@"q"];
 	[newItem setKeyEquivalentModifierMask: NSCommandKeyMask];
 
-	CSControl *control = [[CSControl alloc] init];
+	//CSControl *control = [[CSControl alloc] init];
     [newItem setTarget: [CSControl class]];
     [newItem setAction:@selector(stop)];
 	//[control release];

@@ -64,7 +64,6 @@
 				08FB779DFE84155DC02AAC07,
 				B2FB249D0679FB2E00F20944,
 				1AB674ADFE9D54B511CA2CBB,
-				B269422A067CCFE1003AAA91,
 			);
 			isa = PBXGroup;
 			name = SimpleWindow;
@@ -189,13 +188,18 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		B269422A067CCFE1003AAA91 = {
-			fileEncoding = 4;
+		B283E33C067D64E300EDD127 = {
 			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			path = foo.m;
+			lastKnownFileType = image.icns;
+			path = mono.icns;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		B283E33D067D64E300EDD127 = {
+			fileRef = B283E33C067D64E300EDD127;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		B297DCD006796AF6004CB4CF = {
 			fileEncoding = 4;
@@ -319,8 +323,8 @@
 		B2FB24770679FAF400F20944 = {
 			buildActionMask = 2147483647;
 			files = (
-				B2FB269F0679FDA700F20944,
 				B2F3D2F2067AACBE00AC2F31,
+				B283E33D067D64E300EDD127,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,8 +455,8 @@
 		};
 		B2FB249D0679FB2E00F20944 = {
 			children = (
+				B283E33C067D64E300EDD127,
 				B2F3D2F1067AACBE00AC2F31,
-				B2FB269E0679FDA700F20944,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -548,19 +552,6 @@
 		};
 		B2FB267B0679FBF700F20944 = {
 			fileRef = 08FB779EFE84155DC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		B2FB269E0679FDA700F20944 = {
-			isa = PBXFileReference;
-			lastKnownFileType = image.tiff;
-			path = iTools.tiff;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		B2FB269F0679FDA700F20944 = {
-			fileRef = B2FB269E0679FDA700F20944;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -14,7 +14,7 @@
 @implementation CSControl
 - (void)displayWindow
 {
-	//
+	///
 	CSWindow *window = [NSApp mainWindow];
 
 	[window setTitle: @"Hi mono"];
@@ -65,7 +65,8 @@
 	//make sure the window is centered on the screen.
 	[window center];
 	//no matter what, bring window to the front.
-	[window orderFrontRegardless];
+	[window makeKeyAndOrderFront: window];
+	//[window makeKeyWindow];
 	[menu release];
 }
 

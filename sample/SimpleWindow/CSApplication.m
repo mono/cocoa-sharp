@@ -18,7 +18,7 @@
 	//want to hide behind NIBs and NSApplicationMain.
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
 	[NSApplication sharedApplication];
-	[NSApp setApplicationIconImage: [NSImage imageNamed: @"iTools.tiff"]];
+	[NSApp setApplicationIconImage: [NSImage imageNamed: @"mono.icns"]];
 
 	[NSMenu setMenuBarVisible:YES];
 	[NSApp setMainMenu: [[NSMenu alloc] initWithTitle:@"MainMenu"]];
