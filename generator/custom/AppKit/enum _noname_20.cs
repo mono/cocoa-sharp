@@ -1,0 +1,26 @@
+namespace Apple.AppKit {
+    public enum _noname_20 : uint {
+        NSLeftMouseDownMask = 1 << NSEventType.NSLeftMouseDown,
+        NSLeftMouseUpMask = 1 << NSEventType.NSLeftMouseUp,
+        NSRightMouseDownMask = 1 << NSEventType.NSRightMouseDown,
+        NSRightMouseUpMask = 1 << NSEventType.NSRightMouseUp,
+        NSMouseMovedMask = 1 << NSEventType.NSMouseMoved,
+        NSLeftMouseDraggedMask = 1 << NSEventType.NSLeftMouseDragged,
+        NSRightMouseDraggedMask = 1 << NSEventType.NSRightMouseDragged,
+        NSMouseEnteredMask = 1 << NSEventType.NSMouseEntered,
+        NSMouseExitedMask = 1 << NSEventType.NSMouseExited,
+        NSKeyDownMask = 1 << NSEventType.NSKeyDown,
+        NSKeyUpMask = 1 << NSEventType.NSKeyUp,
+        NSFlagsChangedMask = 1 << NSEventType.NSFlagsChanged,
+        NSAppKitDefinedMask = 1 << NSEventType.NSAppKitDefined,
+        NSSystemDefinedMask = 1 << NSEventType.NSSystemDefined,
+        NSApplicationDefinedMask = 1 << NSEventType.NSApplicationDefined,
+        NSPeriodicMask = 1 << NSEventType.NSPeriodic,
+        NSCursorUpdateMask = 1 << NSEventType.NSCursorUpdate,
+        NSScrollWheelMask = 1 << NSEventType.NSScrollWheel,
+        NSOtherMouseDownMask = 1 << NSEventType.NSOtherMouseDown,
+        NSOtherMouseUpMask = 1 << NSEventType.NSOtherMouseUp,
+        NSOtherMouseDraggedMask = 1 << NSEventType.NSOtherMouseDragged,
+        NSAnyEventMask = 0xffffffffU,
+    }
+}
