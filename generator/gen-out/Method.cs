@@ -439,7 +439,7 @@ namespace CocoaSharp {
 			mMaps.Sort();
 			toOutput.Properties = (PropertyMapping[])mMaps.ToArray(typeof(PropertyMapping));
 
-			if ((File.GetAttributes(Path.Combine(Configuration.XmlPath,"mapping.xml")) & FileAttributes.ReadOnly) == 0) {
+			if (!File.Exists (Path.Combine (Configuration.XmlPath, "mapping.xml")) || (File.GetAttributes(Path.Combine(Configuration.XmlPath,"mapping.xml")) & FileAttributes.ReadOnly) == 0) {
 				XmlSerializer _ser = new XmlSerializer(typeof(Mappings));
 				StreamWriter _sw = new StreamWriter(Path.Combine(Configuration.XmlPath,"mapping.xml"));
 				_ser.Serialize(_sw, toOutput);
