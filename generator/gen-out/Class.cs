@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Class.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
+// $Id: Class.cs,v 1.6 2004/09/20 22:31:18 gnorton Exp $
 //
 
 using System;
@@ -82,9 +82,9 @@ namespace CocoaSharp {
 
 			// Load the overrides for this Interface
 			Overrides _overrides = null;
-			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace, Name))) {
+			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, Name))) {
 				XmlSerializer _s = new XmlSerializer(typeof(Overrides));
-				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace, Name));
+				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Namespace.Replace("Apple.", "")/*FIXME*/, Name));
 				_overrides = (Overrides)_s.Deserialize(_xmlreader);
 				_xmlreader.Close();
 			}
@@ -107,6 +107,8 @@ namespace CocoaSharp {
 				_cs.Write(" : {0}{1}", Parent.Namespace + "." + Parent.Name, string.Join(", I", ProtocolNames).Trim());
 			if(Parent == null && Protocols.Count > 0)
 				_cs.Write(" : {1}I{0}", string.Join(", I", ProtocolNames), (Name != "NSObject" ? "NSObject," : ""));
+            if(Parent == null && Protocols.Count == 0 && Name != "NSObject")
+                _cs.Write(" : NSObject");
 			_cs.WriteLine(" {");
 
 #if !CAT
@@ -133,7 +135,7 @@ namespace CocoaSharp {
 			if (Name != "NSObject")
 				_cs.WriteLine("        public {0}() : base() {{}}",Name);
 			if (Name == "NSString")
-				_cs.WriteLine("        public NSString(string str) : this(NSString__stringWithCString1(IntPtr.Zero,str),false) {}");
+				_cs.WriteLine("        public NSString(string str) : this((IntPtr)ObjCMessaging.objc_msgSend(NSString_classPtr,\"stringWithCString:\",typeof(IntPtr),typeof(string),str),false) {}");
 			_cs.WriteLine();
 #if CAT
 			if (mExtrasFor != null)
@@ -178,6 +180,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Class.cs,v $
+// Revision 1.6  2004/09/20 22:31:18  gnorton
+// Generator v3 now generators Foundation in a compilable glueless state.
+//
 // Revision 1.5  2004/09/20 20:18:23  gnorton
 // More refactoring; Foundation almost gens properly now.
 //

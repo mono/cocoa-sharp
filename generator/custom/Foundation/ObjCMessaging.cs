@@ -37,17 +37,13 @@ namespace Apple.Tools {
 		}
 		static Assembly TypeResolve(string type)
 		{
-			Console.WriteLine ("TypeResolve fired for: {0}", type);
 			if (types[type] == null)
 				GenerateAssembly(type);
-			foreach (Type t in module.Assembly.GetTypes ())
-				Console.WriteLine ("AssemblyType:={0}", t);
 			return module.Assembly;
 		}
 
 		public static object objc_msgSend (IntPtr receiver, string selector, Type rettype) {
 			string type = rettype.ToString() + "_System.IntPtr_System.IntPtr";
-			Console.WriteLine ("Looking for {0}", type);
 			Type t = TypeResolve(type).GetType(type);
 			object[] realArgs = new object[2];
 			realArgs[0] = receiver;
@@ -65,8 +61,8 @@ namespace Apple.Tools {
 			object[] realArgs = new object[(args.Length/2)+2];
 			realArgs[0] = receiver;
 			realArgs[1] = sel_registerName(selector);
-			for (int i = 1; i < args.Length; i+=2) 
-		                realArgs[i+2] = args[i];
+			for (int i = 0; i < args.Length; i+=2) 
+		                realArgs[i+2] = args[i+1];
 			object o = Activator.CreateInstance(t);
 			return t.InvokeMember("objc_msgSend", BindingFlags.InvokeMethod|BindingFlags.Public|BindingFlags.Static, null, o, realArgs);
 

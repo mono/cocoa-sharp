@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.30 2004/09/08 12:04:05 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.31 2004/09/20 22:31:18 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -148,7 +148,7 @@ NSObject.DebugLog(1, "DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Ra
 			else
 				cls = (IntPtr)NSClasses[myType];
 
-			SetRaw(NSObject__alloc0(cls),true);
+			SetRaw((IntPtr)ObjCMessaging.objc_msgSend(cls, "alloc", typeof(IntPtr)),true);
 			if (class_getInstanceMethod(cls, NSString.NSSelector("initWithManagedDelegate:")) != IntPtr.Zero) {
 				_delegate = new BridgeDelegate(this.MethodInvoker);
 				SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,_delegate),_release);
@@ -293,6 +293,9 @@ NSObject.DebugLog(1, "DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.31  2004/09/20 22:31:18  gnorton
+// Generator v3 now generators Foundation in a compilable glueless state.
+//
 // Revision 1.30  2004/09/08 12:04:05  urs
 // Shut up Glue if env var "COCOASHARP_DEBUG_LEVEL" is not set to at least 1.
 //

@@ -3,7 +3,7 @@
 		public object getArgument(int i, Type t) {
 			object retVal = null;
 			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(IntPtr)));
-			NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
+			ObjCMessaging.objc_msgSend(Raw, "getArgument:atIndex:", typeof(void), typeof(IntPtr), argPtr, typeof(int), i+2);
 			retVal = t.IsPrimitive ? Marshal.PtrToStructure(argPtr, t) : NS2Net(Marshal.ReadIntPtr(argPtr));
 			Marshal.FreeHGlobal(argPtr);
 			return retVal;
@@ -14,10 +14,10 @@
 		public object /*(void *)*/ returnValue {
 			set
 			{
-				if (methodSignature.methodReturnLength == 0)
+				if (((NSMethodSignature)methodSignature).methodReturnLength == 0)
 					return;
 				IntPtr retVal = BridgeHelper.ObjectToVoidPtr(value);
-				NSInvocation_setReturnValue1(Raw,retVal);
+				ObjCMessaging.objc_msgSend(Raw, "setReturnValue:", typeof(void), typeof(IntPtr), retVal);
 				Marshal.FreeHGlobal(retVal);
 			}
 		}

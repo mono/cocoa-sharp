@@ -18,18 +18,18 @@ namespace Apple.Foundation {
                 */
 
                 #region -- Foundation --
-                [DllImport("/System/Library/Frameworks/Foundation.framework/Foundation")]
-                protected static extern IntPtr /*(Class)*/ NSClassFromString(IntPtr /*(NSString*)*/ str);
+		[DllImport("libobjc.dylib")]
+                public static extern IntPtr /*(Class)*/ objc_getClass(string className);
                 #endregion
 
                 public static IntPtr Get(string className) {
-                        return NSClassFromString(new NSString(className).Raw);
+                        return objc_getClass(className);
                 }
 
                 private Class() : this(IntPtr.Zero,false) {}
 
                 protected internal Class(IntPtr raw,bool release) : base(raw,release) {}
-                public Class(string name) : this(NSClassFromString(new NSString(name).Raw),false) {}
+                public Class(string name) : base (Class.Get(name), false) {}
 
                 public string Name {
                         get { return ClassName; }

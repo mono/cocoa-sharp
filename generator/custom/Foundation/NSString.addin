@@ -20,12 +20,15 @@
 		}
 		
 		public override string ToString() {
-			return cString;
+			return (string)ObjCMessaging.objc_msgSend(Raw, "cString", typeof(string));
 		}
 
 //***************************************************************************
 //
 // $Log: NSString.addin,v $
+// Revision 1.9  2004/09/20 22:31:18  gnorton
+// Generator v3 now generators Foundation in a compilable glueless state.
+//
 // Revision 1.8  2004/07/01 20:09:57  urs
 // Fix GC issues
 //

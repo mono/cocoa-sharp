@@ -1,14 +1,14 @@
 <overrides>
 	<method sel="-release" >
                 public void release() {
-                        NSObject_release0(Raw);
+                        ObjCMessaging.objc_msgSend(Raw, "release", typeof(void));
                         SetRaw(IntPtr.Zero,false);
                 }
 	</method>
 
 	<method sel="-class" >
                 public Class class_ {
-                        get { return new Class(NSObject_class0(Raw),false); }
+                        get { return new Class((IntPtr)ObjCMessaging.objc_msgSend(Raw, "class", typeof(IntPtr)),false); }
                 }
 	</method>
 </overrides>

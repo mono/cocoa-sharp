@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Type.cs,v 1.4 2004/09/20 20:18:23 gnorton Exp $
+// $Id: Type.cs,v 1.5 2004/09/20 22:31:18 gnorton Exp $
 //
 
 using System;
@@ -54,7 +54,7 @@ namespace CocoaSharp {
             }
         }
 		// -- Public Properties --
-        public string GlueType { get { return glueType.FullName; } }
+        public string GlueType { get { return ocType == OCType.@void ? "void" : glueType.FullName; } }
 		public string ApiType { get { return apiType; } }
 		public OCType OCType { get { return ocType; } }
 
@@ -94,6 +94,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Type.cs,v $
+// Revision 1.5  2004/09/20 22:31:18  gnorton
+// Generator v3 now generators Foundation in a compilable glueless state.
+//
 // Revision 1.4  2004/09/20 20:18:23  gnorton
 // More refactoring; Foundation almost gens properly now.
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Method.cs,v 1.5 2004/09/20 20:18:23 gnorton Exp $
+// $Id: Method.cs,v 1.6 2004/09/20 22:31:18 gnorton Exp $
 //
 
 using System;
@@ -109,7 +109,7 @@ namespace CocoaSharp {
 		public Method(string name,string selector, string types,TypeUsage returnType, ParameterInfo[] parameters) {
 			this.name = name;
 			this.selector = selector;
-			this.types = types;
+			this.types = types != null ? types : ObjCClassInspector.GetSignature(name,selector);
 			this.returnType = returnType;
 			this.parameters = parameters;
 		}
@@ -260,7 +260,7 @@ namespace CocoaSharp {
 				else {
 					w.WriteLine("            get {{ {0}; }}", ReturnExpression(
 						get.ReturnType, 
-						string.Format("({1})ObjCMessaging.objc_msgSend({0},{2},typeof({1}))", 
+						string.Format("ObjCMessaging.objc_msgSend({0},{2},typeof({1}))", 
 				            isClassMethod ? "_classPtr" : "Raw",
 				            get.ReturnType.ApiType, 
 				            "\"" + get.Selector + "\"")));
@@ -330,7 +330,7 @@ namespace CocoaSharp {
 				isProtocol ? ";" : "{");
 			if (!isProtocol) {
 				w.WriteLine("            {0};",ReturnExpression(ReturnType,
-					string.Format("{3}{0}.{1}({2})", "ObjCMessaging", "objc_msgSend", GlueArgumentsString(isClassMethod), (ReturnType.ApiType != "void" ? "(" + ReturnType.ApiType + ")" : ""))));
+					string.Format("{0}.{1}({2})", "ObjCMessaging", "objc_msgSend", GlueArgumentsString(isClassMethod))));
 				w.WriteLine("        }");
 			}
 			
@@ -355,7 +355,6 @@ namespace CocoaSharp {
 							NameMappings[FullSelector(isClassMethod)] = GenerateMethodMapping(isClassMethod,className);
 						return;
 					}
-
 			GenerateCSMethod(isClassMethod,className,methods,propOnly,w,false);
 		}
 		
@@ -364,11 +363,11 @@ namespace CocoaSharp {
 			pm.Name = propName;
 			if(get != null) {
 				pm.GetSelector = get.FullSelector(isClassMethod);
-				pm.GetSignature = ObjCClassInspector.GetSignature(name,pm.GetSelector);
+				pm.GetSignature = get.Types;
 			}
 			if(set != null) {
 				pm.SetSelector = set.FullSelector(isClassMethod);
-				pm.SetSignature = ObjCClassInspector.GetSignature(name,pm.SetSelector);
+				pm.SetSignature = set.Types;
 			}
 			return pm;
 		}
@@ -377,7 +376,7 @@ namespace CocoaSharp {
 			MethodMapping mm = new MethodMapping();
 			mm.Name = Name;
 			mm.Selector = FullSelector(isClassMethod);
-			mm.Signature = ObjCClassInspector.GetSignature(name,mm.Selector);
+			mm.Signature = Types;
 			return mm;
 		}
 
@@ -420,14 +419,14 @@ namespace CocoaSharp {
 
 		private static string ReturnExpression(TypeUsage type,string expression) {
 			if(type.Type.OCType == OCType.SEL)
-				return string.Format("return NSString.FromSEL({0}).ToString()", expression);
+				return string.Format("return NSString.FromSEL((IntPtr){0}).ToString()", expression);
 			if(type.Type.GlueType == "System.String" && type.Type.OCType == OCType.char_ptr)
-				return string.Format("return Marshal.PtrToStringAnsi({0})", expression);
+				return string.Format("return Marshal.PtrToStringAnsi((IntPtr){0})", expression);
 			if(type.Type.NeedConversion)
-				return string.Format("return ({0})NSObject.NS2Net({1})", type.ApiType, expression);
+				return string.Format("return ({0})NSObject.NS2Net((IntPtr){1})", type.ApiType, expression);
 			if (type.Type.OCType == OCType.@void)
 				return expression;
-			return "return " + expression;
+			return "return (" + type.Type.ApiType + ")" + expression;
 		}
 
 		private static string ArgumentExpression(TypeUsage type,string expression) {
@@ -625,6 +624,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Method.cs,v $
+// Revision 1.6  2004/09/20 22:31:18  gnorton
+// Generator v3 now generators Foundation in a compilable glueless state.
+//
 // Revision 1.5  2004/09/20 20:18:23  gnorton
 // More refactoring; Foundation almost gens properly now.
 //
