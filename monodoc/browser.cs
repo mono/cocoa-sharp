@@ -132,12 +132,14 @@ public class Controller : NSObject {
 	[ObjCExport("browserdoubleAction")]
 	public void browserDoubleAction() {
 		IndexEntry entry = IndexDataSource.GetEntry(indexBrowser.selectedRowInColumn(0));
-		Topic t = entry[0];
-		Node match;
-		string content = help_tree.RenderUrl(t.Url, out match);
-		content=content.Replace("a href='", "a href='http://monodoc/load?");
-		content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
-		webView.mainFrame.loadHTMLString_baseURL(content, null);
+		if(entry != null) {
+			Topic t = entry[0];
+			Node match;
+			string content = help_tree.RenderUrl(t.Url, out match);
+			content=content.Replace("a href='", "a href='http://monodoc/load?");
+			content=content.Replace("a href=\"", "a href=\"http://monodoc/load?");
+			webView.mainFrame.loadHTMLString_baseURL(content, null);
+		}
 	}
 	[ObjCExport("doubleAction")]
 	public void outlineViewDoubleAction() {
@@ -257,21 +259,32 @@ class IndexDataSource : NSObject {
 	public IndexDataSource(IntPtr raw, bool rel) : base(raw, rel) {}
 
 	public static IndexEntry GetEntry(int entry) {
-		return index_reader.GetIndexEntry(entry);
+		if(index_reader != null)
+			return index_reader.GetIndexEntry(entry);
+		else
+			return null;
 	}
 
 	[ObjCExport("browser:numberOfRowsInColumn:")]
 	public int NumberOfRowsInColumn(NSBrowser browser, int columnNumber) {
+		if(index_reader == null)
+			return 1;
 		return index_reader.Rows;
 	}
 	[ObjCExport("browser:willDisplayCell:atRow:column:")]
 	public void DisplayCell(NSBrowser browser, NSBrowserCell cell, int rowNumber, int columnNumber) {
-		cell.stringValue = index_reader.GetValue(rowNumber);
+		if(index_reader == null) 
+			cell.stringValue = "Index Not Created";
+		else
+			cell.stringValue = index_reader.GetValue(rowNumber);
 		cell.leaf = true;
 	}
 
 	public static int FindClosest (string text)
         {
+		if(index_reader == null)
+			return 1;
+
                 int low = 0;
                 int top = index_reader.Rows-1;
                 int high = top;
