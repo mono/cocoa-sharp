@@ -126,6 +126,7 @@ EXTRA_DIST= \
 	NSNumberFormatter.cs \
 	NSObject.cs \
 	NSOutputStream.cs \
+	NSPathStore2.cs \
 	NSPipe.cs \
 	NSPoint.cs \
 	NSPort.cs \
@@ -339,6 +340,7 @@ sources= \
 	NSNumberFormatter.cs \
 	NSObject.cs \
 	NSOutputStream.cs \
+	NSPathStore2.cs \
 	NSPipe.cs \
 	NSPoint.cs \
 	NSPort.cs \
