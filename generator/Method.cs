@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.37 2004/06/28 19:18:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.38 2004/06/28 19:20:38 gnorton Exp $
 //
 
 using System;
@@ -21,6 +21,29 @@ using System.Xml.Serialization;
 
 namespace ObjCManagedExporter 
 {
+
+	[XmlRoot("mappings")]
+	public class Mappings
+	{
+		[XmlElement("property")] public PropertyMapping[] Properties;
+		[XmlElement("method")] public MethodMapping[] Methods;
+	}
+
+	public class PropertyMapping {
+		[XmlAttribute("name")] public string Name;
+		[XmlAttribute("instance")] public bool Instance;
+		[XmlAttribute("get")] public string GetSelector;
+		[XmlAttribute("set")] public string SetSelector;
+		[XmlAttribute("returntype")] public string ReturnType;
+	}
+
+	public class MethodMapping {
+		[XmlAttribute("name")] public string Name;
+		[XmlAttribute("instance")] public bool Instance;
+		[XmlAttribute("selector")] public string Selector;
+		[XmlAttribute("returntype")] public string ReturnType;
+	}
+		
 
 	[XmlRoot("conversions")]
 	public class TypeConversions
@@ -679,9 +702,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.38  2004/06/28 19:20:38  gnorton
+//	Added mapping classes
+//
 //	Revision 1.37  2004/06/28 19:18:31  urs
 //	Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
-//
+//	
 //	Revision 1.36  2004/06/25 22:30:07  urs
 //	Add better logging
 //	
