@@ -6,7 +6,9 @@
             CLASS = Controller; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                backMenuItem = NSMenuItem; 
                 drawer = NSBrowser; 
+                forwardMenuItem = NSMenuItem; 
                 indexBrowser = id; 
                 outlineView = NSOutlineView; 
                 searchBox = NSSearchField; 
@@ -14,7 +16,6 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = IndexDataSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = WebDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
