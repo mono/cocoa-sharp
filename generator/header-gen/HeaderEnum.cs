@@ -9,42 +9,26 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderEnum.cs,v 1.1 2004/09/09 13:18:53 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderEnum.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace CocoaSharp {
 
 	public class HeaderEnum : Element {
 		public HeaderEnum(string _name, string _enum, string _framework) : base(_enum,_name,_framework) {}
-
-		public override void WriteCS(TextWriter _cs, Configuration config) {
-			_cs.WriteLine("using System;");
-			_cs.WriteLine("namespace Apple.{0} {{",Framework);
-			_cs.WriteLine("    public enum {0} {{",Name);
-			_cs.Write(IfsBeGone(mOriginal));
-			ProcessAddin(_cs, config);
-			_cs.WriteLine("    }");
-			_cs.WriteLine("}");
-		}
-
-		public string IfsBeGone(string mOriginal) {
-			Regex ifRegex = new Regex(@"^#.+$", RegexOptions.Multiline);
-			if(ifRegex.IsMatch(mOriginal)) 
-				foreach(Match m in ifRegex.Matches(mOriginal))
-					mOriginal = mOriginal.Replace(m.Value, "");
-			return mOriginal;
-		}
 	}
 }
 
 //	$Log: HeaderEnum.cs,v $
+//	Revision 1.2  2004/09/11 00:41:22  urs
+//	Move Output to gen-out
+//
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
-//
+//	
 //	Revision 1.7  2004/06/24 18:56:53  gnorton
 //	AppKit compiles
 //	Foundation compiles

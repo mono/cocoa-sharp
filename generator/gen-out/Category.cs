@@ -5,11 +5,12 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Category.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: Category.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
 using System.Collections;
+using System.IO;
 
 namespace CocoaSharp {
 	public class Category : OutputElement {
@@ -29,11 +30,18 @@ namespace CocoaSharp {
 		private Class class_;
 		private ICollection instanceMethods;
 		private ICollection classMethods;
+
+		public override void WriteCS(TextWriter _cs, Configuration config) {
+			throw new NotSupportedException();
+		}
 	}
 }
 
 //
 // $Log: Category.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

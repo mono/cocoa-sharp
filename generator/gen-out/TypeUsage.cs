@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: TypeUsage.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: TypeUsage.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -20,6 +20,8 @@ namespace CocoaSharp {
 		// -- Public Properties --
 		public Type Type { get { return type; } }
 		public TypeModifiers TypeModifiers { get { return typeModifiers; } }
+		public string GlueType { get { return Type.GlueType; } }
+		public string ApiType { get { return Type.ApiType; } }
 
 		// -- Members --
 		private Type type;
@@ -39,6 +41,9 @@ namespace CocoaSharp {
 
 //
 // $Log: TypeUsage.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOType.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id: MachOType.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -311,7 +311,7 @@ namespace CocoaSharp {
 								++read;
 							else
 								MachOFile.DebugOut(0,"ERROR: structure/union does not end with '{1}' ({0})",type.Substring(read),close);
-	
+
 							ret.fields = (MachOType[])fields.ToArray(typeof(MachOType));
 						}
 						else
@@ -375,6 +375,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOType.cs,v $
+// Revision 1.4  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.3  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

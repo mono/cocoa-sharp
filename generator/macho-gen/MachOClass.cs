@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id: MachOClass.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -22,7 +22,7 @@ namespace CocoaSharp {
 		private ArrayList ivars = new ArrayList();
 		private ArrayList methods, classMethods;
 		private IDictionary protocols = new Hashtable();
-	
+
 		unsafe internal MachOClass (byte *ptr, MachOFile file) {
 			occlass = *(objc_class *)ptr;
 			Utils.MakeBigEndian(ref occlass.isa);
@@ -178,6 +178,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOClass.cs,v $
+// Revision 1.4  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.3  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

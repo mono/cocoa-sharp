@@ -5,11 +5,13 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Enum.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: Enum.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
+using System.IO;
 
 namespace CocoaSharp {
 	public class Enum : Type {
@@ -23,6 +25,25 @@ namespace CocoaSharp {
 
 		// -- Members --
 		private ICollection items;
+
+		// -- Methods --
+		public override void WriteCS(TextWriter _cs, Configuration config) {
+			_cs.WriteLine("using System;");
+			_cs.WriteLine("namespace {0} {{",Namespace);
+			_cs.WriteLine("    public enum {0} {{",Name);
+			_cs.Write(IfsBeGone(""/*mOriginal*/));
+			ProcessAddin(_cs, config);
+			_cs.WriteLine("    }");
+			_cs.WriteLine("}");
+		}
+
+		static private string IfsBeGone(string original) {
+			Regex ifRegex = new Regex(@"^#.+$", RegexOptions.Multiline);
+			if(ifRegex.IsMatch(original)) 
+				foreach(Match m in ifRegex.Matches(original))
+					original = original.Replace(m.Value, "");
+			return original;
+		}
 	}
 
 	public class EnumItem {
@@ -40,6 +61,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Enum.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

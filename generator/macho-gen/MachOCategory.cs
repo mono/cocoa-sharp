@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOCategory.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id: MachOCategory.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -19,7 +19,7 @@ namespace CocoaSharp {
 		private objc_category occategory;
 		private string class_name, name;
 		private ArrayList instanceMethods, classMethods;
-	
+
 		unsafe internal MachOCategory (byte *ptr, MachOFile file) {
 			occategory = *(objc_category *)ptr;
 			Utils.MakeBigEndian(ref occategory.category_name);
@@ -52,6 +52,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOCategory.cs,v $
+// Revision 1.4  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.3  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

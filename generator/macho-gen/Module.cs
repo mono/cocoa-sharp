@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Module.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: Module.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -13,7 +13,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
-	
+
 	internal class Module {
 		private objc_module ocmodule;
 		private SymbolTable symtab;

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: DylibCommand.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: DylibCommand.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -13,14 +13,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
-	
+
 	internal class DylibCommand : ICommand {
 
 		private load_command lcmd;
 		private dylib dld;
 		private string name;
 		private MachOFile mfile;
-	
+
 		internal DylibCommand (MachOFile mfile, load_command lcmd) {
 			this.mfile = mfile;
 			this.lcmd = lcmd;
@@ -58,6 +58,9 @@ namespace CocoaSharp {
 
 //
 // $Log: DylibCommand.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOMethod.cs,v 1.3 2004/09/09 03:32:22 urs Exp $
+// $Id: MachOMethod.cs,v 1.4 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -15,33 +15,34 @@ using System.Runtime.InteropServices;
 namespace CocoaSharp {
 
 	internal class MachOMethod {
-		private string name;
+		private string name, typesStr;
 		private MachOType[] types;
 
 		internal MachOMethod(objc_method method, MachOFile file) {
 			Utils.MakeBigEndian(ref method.name);
 			Utils.MakeBigEndian(ref method.types);
 			name = file.GetString(method.name);
-			string typesStr = file.GetString(method.types);
+			typesStr = file.GetString(method.types);
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, typesStr);
 			types = MachOType.ParseTypes(typesStr);
 		}
 
 		internal MachOMethod(string name,string types) {
 			this.name = name;
+			this.typesStr = types;
 			this.types = MachOType.ParseTypes(types);
 			MachOFile.DebugOut(1,"\tmethod: {0} types={1}", name, types);
 		}
 
-		internal ICollection ToParameters(string nameSpace) {
+		internal ParameterInfo[] ToParameters(string nameSpace) {
 			ArrayList ret = new ArrayList();
 			for (int i = 2; i < types.Length; ++i)
 				ret.Add(new ParameterInfo("p" + (i-2),types[i].ToTypeUsage(nameSpace)));
-			return ret;
+			return (ParameterInfo[])ret.ToArray(typeof(ParameterInfo));
 		}
 
 		internal Method ToMethod(string nameSpace) {
-			return new Method(name,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
+			return new Method(name.Replace(":","_"),name,typesStr,this.types[0].ToTypeUsage(nameSpace),ToParameters(nameSpace));
 		}
 
 		static internal ICollection ToMethods(string nameSpace,ICollection methods) {
@@ -72,6 +73,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOMethod.cs,v $
+// Revision 1.4  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.3  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

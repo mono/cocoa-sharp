@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderInterface.cs,v 1.1 2004/09/09 13:18:53 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderInterface.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -75,125 +75,16 @@ namespace CocoaSharp {
 					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 			}
 		}
-
-		public void WriteOCFile(Configuration config) {
-			TextWriter _gs = OpenFile("src{0}{1}.Glue","{1}{0}{2}_glue.m", Framework, Name);
-
-			foreach(string import in Imports)
-				_gs.WriteLine("#import <{0}>", import);
-
-			_gs.WriteLine("BOOL sIs{0}Verbose = NO; BOOL sIs{0}VerboseInit = NO; void Init{0}Verbose() {{ if (sIs{0}VerboseInit) return; sIs{0}VerboseInit = YES; sIs{0}Verbose = getenv(\"COCOASHARP_DEBUG_LEVEL\") != 0 && atoi(getenv(\"COCOASHARP_DEBUG_LEVEL\")) >= 1; }}",Name);
-			_gs.WriteLine("BOOL Is{0}Verbose() {{ Init{0}Verbose(); return sIs{0}Verbose; }}",Name);
-			_gs.WriteLine("void Set{0}Verbose(BOOL verbose) {{ sIs{0}Verbose = verbose; }}",Name);
-			_gs.WriteLine();
-
-			foreach (HeaderMethod _toOutput in AllMethods.Values)
-				_toOutput.ObjCMethod(ExtrasName, _gs);
-			_gs.Close();
-		}
-
-		public override void WriteCS(TextWriter _cs, Configuration config) {
-			foreach (HeaderMethod _toOutput in AllMethods.Values)
-				_toOutput.ClearCSAPIDone();
-
-			// Load the overrides for this Interface
-			Overrides _overrides = null;
-			if(File.Exists(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Framework, Name))) {
-				XmlSerializer _s = new XmlSerializer(typeof(Overrides));
-				XmlTextReader _xmlreader = new XmlTextReader(String.Format("{0}{1}{2}{1}{3}.override", config.OverridePath, Path.DirectorySeparatorChar, Framework, Name));
-				_overrides = (Overrides)_s.Deserialize(_xmlreader);
-				_xmlreader.Close();
-			}
-			_cs.WriteLine("using System;");
-			_cs.WriteLine("using System.Collections;");
-			_cs.WriteLine("using System.Runtime.InteropServices;");
-
-			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
-			if (frmwrk != null && frmwrk.Dependencies != null)
-				foreach (string dependency in frmwrk.Dependencies)
-					_cs.WriteLine("using Apple.{0};",dependency);
-			_cs.WriteLine();
-			_cs.WriteLine("namespace Apple.{0} {{", Framework);
-
-			_cs.Write("    public class {0}", Name);
-			if(Parent.Length > 0)
-				_cs.Write(" : {0}{1}", Parent, (string.Join(", I", Protocols).Trim() != "" ? ", I" + string.Join(", I", Protocols) : ""));
-			if(Parent.Length == 0 && Protocols.Length > 0)
-				_cs.Write(" : I{0}", string.Join(", I", Protocols));
-			_cs.WriteLine(" {");
-
-			if (mExtrasFor == null) {
-				_cs.WriteLine("        #region -- Internal Members --");
-				_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",Name);
-				_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Apple.Foundation.Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
-				_cs.WriteLine("        [DllImport(\"{0}\")]",Framework + "Glue");
-				_cs.WriteLine("        protected extern static bool Is{0}Verbose();",Name);
-				_cs.WriteLine("        [DllImport(\"{0}\")]",Framework + "Glue");
-				_cs.WriteLine("        protected extern static void Set{0}Verbose(bool verbose);",Name);
-				_cs.WriteLine("        public static bool _Verbose {{ get {{ return Is{0}Verbose(); }} set {{ Set{0}Verbose(value); }} }}",Name);
-				_cs.WriteLine("        #endregion");
-				_cs.WriteLine();
-			}
-
-			_cs.WriteLine("        #region -- Properties --");
-			foreach (HeaderMethod _toOutput in AllMethods.Values)
-				_toOutput.CSAPIMethod(ExtrasName,AllMethods, true, _cs, _overrides);
-			_cs.WriteLine("        #endregion");
-			_cs.WriteLine();
-
-			_cs.WriteLine("        #region -- Constructors --");
-			if (Name != "NSObject" && Name != "NSProxy")
-				_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
-			if (Name != "NSObject")
-				_cs.WriteLine("        public {0}() : base() {{}}",Name);
-			if (Name == "NSString")
-				_cs.WriteLine("        public NSString(string str) : this(NSString__stringWithCString1(IntPtr.Zero,str),false) {}");
-			_cs.WriteLine();
-			if (mExtrasFor != null)
-				_cs.WriteLine("        public {0}({1} o) : base(o.Raw,false) {{}}",Name,mExtrasFor);
-			HeaderInterface cur = this;
-			IDictionary constructors = new Hashtable();
-			constructors["IntPtr,bool"] = true;
-			if (Name == "NSString")
-				constructors["string"] = true;
-			while (cur != null) {
-				foreach (HeaderMethod _toOutput in cur.AllMethods.Values) {
-					if (!_toOutput.IsConstructor)
-						continue;
-					string sig = _toOutput.CSConstructorSignature;
-					if (!constructors.Contains(sig)) {
-						_toOutput.CSConstructor(Name,_cs);
-						constructors[sig] = true;
-					}
-				}
-				cur = cur.ParentInterface;
-			}
-			_cs.WriteLine("        #endregion");
-			_cs.WriteLine();
-
-			_cs.WriteLine("        #region -- Public API --");
-			foreach (HeaderMethod _toOutput in AllMethods.Values)
-				_toOutput.CSAPIMethod(ExtrasName,AllMethods, false, _cs, _overrides);
-			_cs.WriteLine("        #endregion");
-			_cs.WriteLine();
-
-			_cs.WriteLine("        #region -- PInvoke Glue API --");
-			foreach (HeaderMethod _toOutput in AllMethods.Values)
-				_toOutput.CSGlueMethod(ExtrasName, Framework + "Glue", _cs, _overrides);
-			_cs.WriteLine("        #endregion");
-			ProcessAddin(_cs, config);
-
-			_cs.WriteLine("    }");
-			_cs.WriteLine("}");
-			_cs.Close();
-		}
 	}
 }
 
 //	$Log: HeaderInterface.cs,v $
+//	Revision 1.2  2004/09/11 00:41:22  urs
+//	Move Output to gen-out
+//
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
-//
+//	
 //	Revision 1.25  2004/09/08 12:04:05  urs
 //	Shut up Glue if env var "COCOASHARP_DEBUG_LEVEL" is not set to at least 1.
 //	

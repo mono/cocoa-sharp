@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOFile.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: MachOFile.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -341,7 +341,7 @@ namespace CocoaSharp {
 
 		public void Parse () {}
 	}
-	
+
 	internal class SymTabCommand : ICommand {
 		private MachOFile mfile;
 		private load_command lcmd;
@@ -369,7 +369,7 @@ namespace CocoaSharp {
 			MachOFile.DebugOut(0,"\tSymTab Command: symoff={0,8:x} nsyms={1} stroff={2,8:x} strsize={3}", scmd.symoff, scmd.nsyms, scmd.stroff, scmd.strsize);
 		}
 	}
-	
+
 	// http://developer.apple.com/documentation/DeveloperTools/Conceptual/MachORuntime/FileStructure/chapter_4_section_23.html#//apple_ref/doc/uid/20001298/symtab_command
 	//
 	// The data structure for the LC_SYMTAB load command. Describes the size and location of the symbol table data structures.
@@ -443,14 +443,14 @@ namespace CocoaSharp {
 		 * to NO_SECT.
 		 */
 	}
-	
+
 	/*
 	 * Symbols with a index into the string table of zero (n_un.n_strx == 0) are
 	 * defined to have a null, "", name.  Therefore all string indexes to non null
 	 * names must not have a zero string index.  This is bit historical information
 	 * that has never been well documented.
 	 */
-	
+
 	internal enum N_TYPE : byte {
 		/*
 		 * Values for N_TYPE bits of the n_type field.
@@ -471,7 +471,7 @@ namespace CocoaSharp {
 		// by 4. If the load command data does not divide evenly by 4, add bytes containing zeros to the end until it does.
 		internal uint cmdsize;
 	}
-	
+
 	// Commands				Data structures			Purpose
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// LC_SEGMENT			segment_command			Defines a segment of this file to be mapped into the address space of the process that loads this file. It also includes 
@@ -546,6 +546,9 @@ namespace CocoaSharp {
 
 //
 // $Log: MachOFile.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

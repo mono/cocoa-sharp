@@ -5,11 +5,12 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Struct.cs,v 1.2 2004/09/09 03:32:22 urs Exp $
+// $Id: Struct.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
 using System.Collections;
+using System.IO;
 
 namespace CocoaSharp {
 	public class Struct : Type {
@@ -23,6 +24,17 @@ namespace CocoaSharp {
 
 		// -- Members --
 		private ICollection items;
+
+		// -- Methods --
+		public override void WriteCS(TextWriter _cs, Configuration config) {
+			_cs.WriteLine("using System;");
+			_cs.WriteLine("namespace {0} {{",Namespace);
+			_cs.WriteLine("    public struct {0} {{",Name);
+			//_cs.WriteLine("/*" + mOriginal + "*/");
+			ProcessAddin(_cs, config);
+			_cs.WriteLine("    }");
+			_cs.WriteLine("}");
+		}
 	}
 
 	public class StructItem {
@@ -40,6 +52,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Struct.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 03:32:22  urs
 // Convert methods from mach-o to out format
 //

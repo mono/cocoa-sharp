@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Section.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
+// $Id: Section.cs,v 1.3 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -13,9 +13,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
-	
+
 	internal class Section {
-	
+
 		private MachOFile mfile;
 		private segment_command scmd;
 		private section sec;
@@ -145,6 +145,9 @@ namespace CocoaSharp {
 
 //
 // $Log: Section.cs,v $
+// Revision 1.3  2004/09/11 00:41:22  urs
+// Move Output to gen-out
+//
 // Revision 1.2  2004/09/09 02:33:04  urs
 // Fix build
 //

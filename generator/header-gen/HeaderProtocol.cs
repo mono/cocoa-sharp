@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderProtocol.cs,v 1.1 2004/09/09 13:18:53 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/HeaderProtocol.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -29,62 +29,16 @@ namespace CocoaSharp {
 		public string[] Children {
 			get { return mChildren; } set { mChildren = value; }
 		}
-
-		public override string FileNameFormat {
-			get { return "{1}{0}I{2}.cs"; }
-		}
-
-		public override void WriteCS(TextWriter _cs, Configuration config) {
-			IDictionary allMethods = new Hashtable();
-			foreach (HeaderMethod method in Methods.Values) {
-				if (method.IsUnsupported)
-					continue;
-
-				string _methodSig = method.Selector;
-				if(!allMethods.Contains(_methodSig)) 
-					allMethods[_methodSig] = method;
-				else 
-					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
-			}
-			foreach (HeaderMethod _toOutput in allMethods.Values)
-				_toOutput.ClearCSAPIDone();
-
-			_cs.WriteLine("using System;");
-			_cs.WriteLine("using System.Runtime.InteropServices;");
-			Framework frmwrk = config != null ? config.GetFramework(Framework) : null;
-			if (frmwrk != null && frmwrk.Dependencies != null)
-				foreach (string dependency in frmwrk.Dependencies)
-					_cs.WriteLine("using Apple.{0};",dependency);
-			_cs.WriteLine();
-
-			_cs.WriteLine("namespace Apple.{0} {{", Framework);
-			_cs.WriteLine("    public interface I{0} {{", Name);
-
-			_cs.WriteLine("        #region -- Properties --");
-			foreach (HeaderMethod _toOutput in allMethods.Values)
-				_toOutput.CSInterfaceMethod(Name,allMethods, true, _cs);
-			_cs.WriteLine("        #endregion");
-			_cs.WriteLine();
-
-			_cs.WriteLine("        #region -- Public API --");
-			foreach (HeaderMethod _toOutput in allMethods.Values)
-				_toOutput.CSInterfaceMethod(Name,allMethods, false, _cs);
-			_cs.WriteLine("        #endregion");
-
-			string _realName = Name;
-			Name = "I" + Name;
-			ProcessAddin(_cs, config);
-			Name = _realName;
-			_cs.WriteLine("    }");
-			_cs.WriteLine("}");
-		}
 	}
 }
 
 //	$Log: HeaderProtocol.cs,v $
+//	Revision 1.2  2004/09/11 00:41:22  urs
+//	Move Output to gen-out
+//
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
-//
+//	
 //	Revision 1.13  2004/09/07 20:51:21  urs
 //	Fix line endings
 //	

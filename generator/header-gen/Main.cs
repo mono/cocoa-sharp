@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Main.cs,v 1.1 2004/09/09 13:18:53 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/header-gen/Main.cs,v 1.2 2004/09/11 00:41:22 urs Exp $
 //
 
 using System;
@@ -145,14 +145,14 @@ namespace CocoaSharp {
 			}
 			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
 		}
-        
+
 		private string LocateFramework(Framework _tolocate) {
 			foreach (string sp in mConfig.SearchPaths) {
 				string rp = sp.Replace("%NAME%", _tolocate.Name);
 				if(Directory.Exists(rp))
 					return rp;
 			}
-    
+
 			throw new Exception("Unable to locate framework " +  _tolocate.Name);
 		}
 
@@ -169,6 +169,7 @@ namespace CocoaSharp {
 			Console.Write("00%");
 
 			if (OutputCS) {
+#if false
 				foreach(HeaderEnum e in Enums.Values)
 					if(e.Framework == _toprocess.Name)
 						e.WriteFile(mConfig);
@@ -180,6 +181,7 @@ namespace CocoaSharp {
 				foreach (HeaderProtocol p in Protocols.Values)
 					if(p.Framework == _toprocess.Name) 
 						p.WriteFile(mConfig);
+#endif
 			}
 
 			int count = 0;
@@ -187,11 +189,13 @@ namespace CocoaSharp {
 				if(i.Framework != _toprocess.Name)
 					continue;
 
+#if false
 				if (OutputOC)
 					i.WriteOCFile(mConfig);
 
 				if (OutputCS)
 					i.WriteFile(mConfig);
+#endif
 
 				Console.Write("\b\b\b{0:00}%", count++/(float)Interfaces.Count*100);
 			}
@@ -224,7 +228,7 @@ namespace CocoaSharp {
 			}
 			Console.WriteLine("\b\b\b100%");
 		}
-		
+
 		private void BuildInterfaces() {
 			IDictionary extras = new Hashtable();
 			foreach (HeaderInterface i in Interfaces.Values) {
@@ -308,11 +312,11 @@ namespace CocoaSharp {
 			mConfig = (Configuration)_serializer.Deserialize(_xmlreader);
 			return true;
 		}
-        
+
 		public void Run() {
 			if(!LoadConfiguration())
 				return;
-                    
+
 			foreach(Framework f in mConfig.Frameworks)
 				ProcessFramework(f);
 
@@ -322,78 +326,26 @@ namespace CocoaSharp {
 				OutputFramework(f);
 
 			Console.WriteLine("Code generation successful");
+#if false
 			Console.WriteLine("Updating mapping.");
 			HeaderMethod.SaveMapping();
-		}   
-            
+#endif
+		}
+
 		static void Main(string[] args) {
 			ObjCManagedExporter exporter = new ObjCManagedExporter(args);
 			exporter.Run();
 		}
 	}
-
-	[XmlRoot("generator")]
-	public class Configuration {
-		[XmlElement("framework")]
-		public Framework[] Frameworks;
-		[XmlElement("searchpath")]
-		public string[] SearchPaths;
-		[XmlElement("addinpath")]
-		public string AddinPath;
-		[XmlElement("overridepath")]
-		public string OverridePath;
-		[XmlElement("corepath")]
-		public string CorePath;
-		
-		public Framework GetFramework(string which) {
-			foreach (Framework frmwrk in Frameworks)
-				if (frmwrk.Name == which)
-					return frmwrk;
-			return null;
-		}
-	}
-        
-	public class Framework {
-		[XmlElement("name")]
-		public string Name;
-		[XmlElement("output")]
-		public bool Output;
-		[XmlElement("dependency")]
-		public string[] Dependencies;
-		
-		public bool ContainsDependency(string dep) {
-			if (dep == Name)
-				return true;
-			if (Dependencies == null)
-				return false;
-				
-			foreach (string dependency in Dependencies)
-				if (dependency == dep)
-					return true;
-			return false;
-		}
-	}
-
-	[XmlRoot("overrides")]
-	public class Overrides {
-		[XmlElement("method")]
-		public MethodOverride[] Methods;
-		[XmlElement("gluemethod")]
-		public MethodOverride[] GlueMethods;
-	}
-
-	public class MethodOverride {
-		[XmlAttribute("sel")]
-		public String Selector;
-		[XmlText]
-		public String Method;
-	}
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.2  2004/09/11 00:41:22  urs
+//	Move Output to gen-out
+//
 //	Revision 1.1  2004/09/09 13:18:53  urs
 //	Check header generator back in.
-//
+//	
 //	Revision 1.40  2004/09/07 20:51:21  urs
 //	Fix line endings
 //	
