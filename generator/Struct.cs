@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Struct.cs,v 1.5 2004/06/22 15:13:18 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Struct.cs,v 1.6 2004/06/23 15:29:29 urs Exp $
 //
 
 using System;
@@ -37,9 +37,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Struct.cs,v $
+//	Revision 1.6  2004/06/23 15:29:29  urs
+//	Major refactor, allow inheriting parent constructors
+//
 //	Revision 1.5  2004/06/22 15:13:18  urs
 //	New fixing
-//
+//	
 //	Revision 1.4  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)

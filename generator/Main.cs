@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.19 2004/06/22 19:54:21 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.20 2004/06/23 15:29:29 urs Exp $
 //
 
 using System;
@@ -138,72 +138,32 @@ namespace ObjCManagedExporter
 		{
 			get { return mOutputFlag == string.Empty || mOutputFlag == "CS"; }
 		}
-        
+
 		private void OutputFramework(Framework _toprocess) 
 		{
 			if (OutputCS)
+			{
 				foreach(CEnum e in Enums.Values)
 					if(e.Framework == _toprocess.Name)
 						e.WriteFile();
 
-			if (OutputCS)
 				foreach (Struct s in Structs.Values)
 					if(s.Framework == _toprocess.Name) 
 						s.WriteFile();
 
-			if (OutputCS)
 				foreach (Protocol p in Protocols.Values)
 					if(p.Framework == _toprocess.Name) 
 						p.WriteFile();
+			}
 
 			foreach (Interface i in Interfaces.Values) 
 			{
 				if(i.Framework != _toprocess.Name)
 					continue;
 
-				int totalMethods = 0;
-				ArrayList interfaceMethods = new ArrayList();
-				Console.WriteLine("Interface: {0}:{1}", i.Name, i.Methods.Keys.Count);
-				totalMethods += i.Methods.Keys.Count;
-				// Add all the methods
-				interfaceMethods.Add(i.Methods);
-
-				// Process this interface and check to see if it implements any protocols
-				foreach(string proto in i.Protocols) 
-					if(proto.Length > 0) 
-					{
-						Console.Write("\t\tProtocol: <{0}>", proto);
-						Protocol p = (Protocol)Protocols[proto];
-						if(p != null) 
-						{
-							Console.Write(":{0}", p.Methods.Keys.Count); 
-							totalMethods += p.Methods.Keys.Count;
-							interfaceMethods.Add(p.Methods);
-						}
-						Console.WriteLine();
-					}
-
-				IList _categoryImports = new ArrayList();
-				foreach (DictionaryEntry e in Categories) 
+				if(i.AllMethods.Count > 0) 
 				{
-					string _key = (string)e.Key;
-					if(_key.EndsWith("_" + i.Name)) 
-					{
-						Category _cat = (Category)e.Value;
-						Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
-						Console.Write(":{0}", _cat.Methods.Keys.Count);
-						totalMethods += _cat.Methods.Keys.Count;
-						interfaceMethods.Add(_cat.Methods);
-						foreach (string _imp in _cat.Imports)
-							_categoryImports.Add(_imp);
-						Console.WriteLine();
-					}
-				}
-				
-				Console.WriteLine("\tTOTAL:{0}", totalMethods);	
-				if(totalMethods > 0) 
-				{
-					TextWriter _gs = null, _cs = null;
+					TextWriter _gs = null;
 
 					if (OutputOC)
 					{
@@ -211,80 +171,16 @@ namespace ObjCManagedExporter
 
 						foreach(string import in i.Imports)
 							_gs.WriteLine("#import <{0}>", import);
-						foreach(string import in _categoryImports)
-							_gs.WriteLine("#import <{0}>", import);
 
 						_gs.WriteLine();
-					}
-					if (OutputCS)
-					{
-						_cs = i.OpenFile();
 
-						_cs.WriteLine("using System;");
-						_cs.WriteLine("using System.Runtime.InteropServices;");
-						_cs.WriteLine("using Apple.Foundation;");
-						_cs.WriteLine("namespace Apple.{0}", i.Framework);
-						_cs.WriteLine("{");
-
-						_cs.Write("    public class {0}", i.Name);
-						if(i.Child.Length > 0)
-							_cs.Write(" : {0}{1}", i.Child, (string.Join(", I", i.Protocols).Trim() != "" ? ", I" + string.Join(", I", i.Protocols) : ""));
-						if(i.Child.Length == 0 && i.Protocols.Length > 0)
-							_cs.Write(" : I{0}", string.Join(", I", i.Protocols));
-						_cs.WriteLine("    {");
-
-						_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",i.Name);
-						_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",i.Name);
-						_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",i.Name);
-						_cs.WriteLine();
-						_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_classPtr),true) {{}}",i.Name);
-						_cs.WriteLine();
-					}
-
-					IDictionary _addedMethods = new Hashtable();
-					foreach (IDictionary _methods in interfaceMethods) 
-					{
-						foreach (Method _toOutput in _methods.Values)
-						{
-							if (_toOutput.IsUnsupported)
-								continue;
-
-							string _methodSig = _toOutput.GlueMethodName;
-							if(!_addedMethods.Contains(_methodSig)) 
-							{
-								_addedMethods[_methodSig] = _toOutput;
-								if (OutputOC)
-									_toOutput.ObjCMethod(i.Name, _gs);
-							} 
-							else 
-								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
-						}
-					}
-
-					if (OutputCS)
-					{
-						_cs.WriteLine("        #region -- PInvoke Glue API --");
-						foreach (Method _toOutput in _addedMethods.Values)
-							_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
-						_cs.WriteLine("        #endregion");
-						_cs.WriteLine("        #region -- Public API --");
-						foreach (Method _toOutput in _addedMethods.Values)
-							_toOutput.CSAPIMethod(i.Name,_addedMethods, true, _cs);
-						foreach (Method _toOutput in _addedMethods.Values)
-							_toOutput.CSAPIMethod(i.Name,_addedMethods, false, _cs);
-						_cs.WriteLine("        #endregion");
-					}
-
-
-					if (OutputOC)
+						foreach (Method _toOutput in i.AllMethods.Values)
+							_toOutput.ObjCMethod(i.Name, _gs);
 						_gs.Close();
+					}
 
 					if (OutputCS)
-					{
-						_cs.WriteLine("    }");
-						_cs.WriteLine("}");
-						_cs.Close();
-					}
+						i.WriteFile();
 				}
 			}
 		}
@@ -303,7 +199,54 @@ namespace ObjCManagedExporter
 			}
 			Console.WriteLine("\b\b\b100%");
 		}
-        
+		
+		private void BuildInterfaces()
+		{ 
+			foreach (Interface i in Interfaces.Values) 
+			{
+				ArrayList interfaceMethods = new ArrayList();
+				Console.WriteLine("Interface: {0}:{1}", i.Name, i.Methods.Keys.Count);
+				if (i.Parent.Length > 0)
+					i.ParentInterface = (Interface)Interfaces[i.Parent];
+				i.AddAllMethods(i.Methods.Values);
+
+				// Process this interface and check to see if it implements any protocols
+				foreach(string proto in i.Protocols) 
+					if(proto.Length > 0) 
+					{
+						Console.Write("\t\tProtocol: <{0}>", proto);
+						Protocol p = (Protocol)Protocols[proto];
+						if(p != null) 
+						{
+							Console.Write(":{0}", p.Methods.Keys.Count); 
+							i.AddAllMethods(p.Methods.Values);
+						}
+						else
+							Console.Write(":missing"); 
+						Console.WriteLine();
+					}
+
+				ArrayList _categoryImports = new ArrayList(i.Imports);
+				foreach (DictionaryEntry e in Categories) 
+				{
+					string _key = (string)e.Key;
+					if(_key.EndsWith("_" + i.Name)) 
+					{
+						Category _cat = (Category)e.Value;
+						Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
+						Console.Write(":{0}", _cat.Methods.Keys.Count);
+						i.AddAllMethods(_cat.Methods.Values);
+						foreach (string _imp in _cat.Imports)
+							_categoryImports.Add(_imp);
+						Console.WriteLine();
+					}
+				}
+				i.Imports = (string[])_categoryImports.ToArray(typeof(string));
+
+				Console.WriteLine("\tTOTAL:{0}", i.AllMethods.Count);
+			}
+		}
+
 		private bool LoadConfiguration() 
 		{
 			// Ensure the file exists
@@ -327,6 +270,8 @@ namespace ObjCManagedExporter
                     
 			foreach(Framework f in mConfig.Frameworks)
 				ProcessFramework(f);
+
+			BuildInterfaces();
 
 			foreach(Framework f in mConfig.Frameworks)
 				OutputFramework(f);
@@ -358,9 +303,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.20  2004/06/23 15:29:29  urs
+//	Major refactor, allow inheriting parent constructors
+//
 //	Revision 1.19  2004/06/22 19:54:21  urs
 //	Add property support
-//
+//	
 //	Revision 1.18  2004/06/22 15:13:18  urs
 //	New fixing
 //	

@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.5 2004/06/22 13:38:59 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Interface.cs,v 1.6 2004/06/23 15:29:29 urs Exp $
 //
 
 using System;
@@ -20,61 +20,139 @@ using System.Text.RegularExpressions;
 namespace ObjCManagedExporter 
 {
 
-	public class Interface : Element
+	public class Interface : ElementWithMethods
 	{
-		private IDictionary mMethods;
-		private string mChild;
+		private string mParent;
+		private Interface mParentInterface;
 		private string[] mProtos;
 		private string[] mImports;
-		private static Regex mMethodRegex = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
-        
-		public Interface(string _name, string _child, string _protos, string _framework) : base(string.Empty,_name,_framework) 
+		private IDictionary mAllMethods;
+
+		public Interface(string _name, string _parent, string _protos, string _framework) : base(_name,_framework) 
 		{
-			mChild = _child;
+			mParent = _parent;
 			_protos = _protos.Replace(" ", "");		
 			mProtos = _protos.Split(new char[]{','});
-			mMethods = new Hashtable();
+			mAllMethods = new Hashtable();
 		}
-        
-		public string Child 
+
+		public string Parent 
 		{
-			get { return mChild; } set { mChild = value; }
+			get { return mParent; }
 		}
-        
+
+		public Interface ParentInterface
+		{
+			get { return mParentInterface; } set { mParentInterface = value; }
+		}
+
 		public string[] Protocols 
 		{
-			get { return mProtos; } set { mProtos = value; }
+			get { return mProtos; }
 		}
-        
+
 		public string[] Imports 
 		{
 			get { return mImports; } set { mImports = value; }
 		}
-        
-		public IDictionary Methods 
+
+		public IDictionary AllMethods
 		{
-			get { return mMethods; }
+			get { return mAllMethods; }
 		}
-        
-		public void AddMethods(string methods) 
+
+		public void AddAllMethods(ICollection methods)
 		{
-			string[] splitMethods = methods.Split('\n');
-			foreach(string method in splitMethods) 
-				if(mMethodRegex.IsMatch(method) && mMethods[method] == null)
-					mMethods.Add(method, new Method(method));
+			foreach (Method method in methods)
+			{
+				if (method.IsUnsupported)
+					continue;
+
+				string _methodSig = method.GlueMethodName;
+				if(!mAllMethods.Contains(_methodSig)) 
+					mAllMethods[_methodSig] = method;
+				else 
+					Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
+			}
 		}
 
 		public override void WriteCS(TextWriter _cs)
 		{
+			_cs.WriteLine("using System;");
+			_cs.WriteLine("using System.Runtime.InteropServices;");
+			_cs.WriteLine("using Apple.Foundation;");
+			_cs.WriteLine();
+			_cs.WriteLine("namespace Apple.{0} {{", Framework);
+
+			_cs.Write("    public class {0}", Name);
+			if(Parent.Length > 0)
+				_cs.Write(" : {0}{1}", Parent, (string.Join(", I", Protocols).Trim() != "" ? ", I" + string.Join(", I", Protocols) : ""));
+			if(Parent.Length == 0 && Protocols.Length > 0)
+				_cs.Write(" : I{0}", string.Join(", I", Protocols));
+			_cs.WriteLine(" {");
+
+			_cs.WriteLine("        #region -- Internal Members --");
+			_cs.WriteLine("        protected internal static IntPtr _{0}_classPtr;",Name);
+			_cs.WriteLine("        protected internal static IntPtr {0}_classPtr {{ get {{ if (_{0}_classPtr == IntPtr.Zero) _{0}_classPtr = Class.Get(\"{0}\"); return _{0}_classPtr; }} }}",Name);
+			_cs.WriteLine("        #endregion");
+			_cs.WriteLine();
+
+			_cs.WriteLine("        #region -- Properties --");
+			foreach (Method _toOutput in AllMethods.Values)
+				_toOutput.CSAPIMethod(Name,AllMethods, true, _cs);
+			_cs.WriteLine("        #endregion");
+			_cs.WriteLine();
+
+			_cs.WriteLine("        #region -- Constructors --");
+			_cs.WriteLine("        protected internal {0}(IntPtr raw,bool release) : base(raw,release) {{}}",Name);
+			_cs.WriteLine();
+			_cs.WriteLine("        public {0}() : this(NSObject__alloc({0}_classPtr),true) {{}}",Name);
+			Interface cur = this;
+			IDictionary constructors = new Hashtable();
+			while (cur != null)
+			{
+				foreach (Method _toOutput in cur.AllMethods.Values)
+				{
+					if (!_toOutput.IsConstructor)
+						continue;
+					string sig = _toOutput.CSConstructorSignature;
+					if (!constructors.Contains(sig))
+					{
+						_toOutput.CSConstructor(Name,_cs);
+						constructors[sig] = true;
+					}
+				}
+				cur = cur.ParentInterface;
+			}
+			_cs.WriteLine("        #endregion");
+			_cs.WriteLine();
+
+			_cs.WriteLine("        #region -- Public API --");
+			foreach (Method _toOutput in AllMethods.Values)
+				_toOutput.CSAPIMethod(Name,AllMethods, false, _cs);
+			_cs.WriteLine("        #endregion");
+			_cs.WriteLine();
+
+			_cs.WriteLine("        #region -- PInvoke Glue API --");
+			foreach (Method _toOutput in AllMethods.Values)
+				_toOutput.CSGlueMethod(Name, Framework + "Glue", _cs);
+			_cs.WriteLine("        #endregion");
+
+			_cs.WriteLine("    }");
+			_cs.WriteLine("}");
+			_cs.Close();
 		}
 	}
 }
 
 //	$Log: Interface.cs,v $
+//	Revision 1.6  2004/06/23 15:29:29  urs
+//	Major refactor, allow inheriting parent constructors
+//
 //	Revision 1.5  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)
-//
+//	
 //	Revision 1.4  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
 //	

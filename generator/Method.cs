@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.19 2004/06/22 19:54:21 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.20 2004/06/23 15:29:29 urs Exp $
 //
 
 using System;
@@ -22,13 +22,16 @@ namespace ObjCManagedExporter
 
 	public class Method 
 	{
+		#region -- Members --
 		private string mMethodDeclaration;
 		private string mGlueMethodName;
 		private string mCSMethodName;
 		private string[] mMessageParts;
 		private string[] mArgumentNames;
 		private string[] mArgumentDeclarationTypes;
-		private bool mIsClassMethod, mIsUnsupported;
+		private string[] mCSAPIParameters;
+		private string[] mCSGlueArguments;
+		private bool mIsClassMethod, mIsUnsupported, mCSAPIDone;
 		private string mReturnDeclarationType;
 
 		private static Regex[] sUnsupported = new Regex[] 
@@ -37,7 +40,9 @@ namespace ObjCManagedExporter
 			new Regex(@"\.\.\.")
 		};
 		private static Regex sMatch1 = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
+		#endregion
 
+		#region -- Constructor --
 		public Method(string methodDeclaration) 
 		{
 			mMethodDeclaration = methodDeclaration.Trim();
@@ -63,7 +68,9 @@ namespace ObjCManagedExporter
 			}
 
 			// \s*([+-])\s*(?:\(([^\)]+)\))?(.+)
-			Match match = sMatch1.Match(mMethodDeclaration);
+			string methodDecl = mMethodDeclaration.Replace("oneway ",string.Empty);
+			methodDecl = methodDecl.Replace("IBAction","void");
+			Match match = sMatch1.Match(methodDecl);
 
 			string methodType = match.Groups[1].Value;
 			mReturnDeclarationType = match.Groups[2].Value.Trim();
@@ -72,7 +79,6 @@ namespace ObjCManagedExporter
 			string remainder = match.Groups[3].Value;
 
 			mIsClassMethod = methodType == "+";
-			mReturnDeclarationType = mReturnDeclarationType.Replace("oneway ",string.Empty);
 
 			// get rid of comments
 			// remainder =~ s://.*::;
@@ -136,7 +142,9 @@ namespace ObjCManagedExporter
 				mGlueMethodName += "_";
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
+		#endregion
 
+		#region -- Properties --
 		public bool IsUnsupported
 		{
 			get { return mIsUnsupported; }
@@ -146,7 +154,58 @@ namespace ObjCManagedExporter
 		{
 			get { return mGlueMethodName; }
 		}
-		
+
+		public bool IsConstructor
+		{
+			get { return !mIsUnsupported
+				&& !mIsClassMethod && mCSMethodName.StartsWith("init") 
+				&& mReturnDeclarationType == "id" && mArgumentDeclarationTypes.Length > 0; }
+		}
+
+		public string CSConstructorSignature
+		{
+			get
+			{
+				if (!IsConstructor)
+					return null;
+	
+				ArrayList argTypes = new ArrayList();
+				for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+					argTypes.Add(convertType(mArgumentDeclarationTypes[i]));
+	
+				return string.Join(",",(string[])argTypes.ToArray(typeof(string)));
+			}
+		}
+		#endregion
+
+		public void BuildArgs(string name)
+		{
+			if (mCSAPIParameters != null)
+				return;
+
+			ArrayList _params = new ArrayList();
+			ArrayList _glueArgs = new ArrayList();
+
+			if (mIsClassMethod)
+				_glueArgs.Add(name + "_classPtr");
+			else
+				_glueArgs.Add("Raw");
+			
+			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+			{
+				string t = convertType(mArgumentDeclarationTypes[i]);
+				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
+				if(t != convertTypeGlue(mArgumentDeclarationTypes[i]))
+					_glueArgs.Add("Net2NS(p" + i + ") /* " + mArgumentNames[i] + "*/");
+				else 
+					_glueArgs.Add("p" + i + "/*" + mArgumentNames[i] + "*/");
+			}
+
+			mCSAPIParameters = (string[])_params.ToArray(typeof(string));
+			mCSGlueArguments = (string[])_glueArgs.ToArray(typeof(string));
+		}
+
+		#region -- Objective-C --
 		public void ObjCMethod(string name,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
@@ -203,12 +262,14 @@ namespace ObjCManagedExporter
 			w.WriteLine("\t" + retter + "[" + receiver + " " + message + "];");
 			w.WriteLine("}");
 		}
+		#endregion
 
+		#region -- C# Glue --
 		public void CSGlueMethod(string name,string glueLib,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
 			{
-				w.WriteLine("// " + name + mGlueMethodName + ": not supported");
+				w.WriteLine("        // " + mMethodDeclaration + ": not supported");
 				return;
 			}
 
@@ -234,42 +295,28 @@ namespace ObjCManagedExporter
 			w.WriteLine("        protected internal static extern " +
 				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
 		}
+		#endregion
+
+		#region -- C# Public API --
 		public bool IsGetMethod(string type)
 		{
 			if (type != convertType(mReturnDeclarationType))
 				return false;
 			if (mArgumentDeclarationTypes.Length > 0)
 				return false;
-			mIsUnsupported = true;
+			mCSAPIDone = true;
 			return true;
-		}	
+		}
+	
 		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
 		{
-			if (mIsUnsupported)
+			if (mIsUnsupported || mCSAPIDone)
 				return;
 
 			string _type = convertType(mReturnDeclarationType);
-			ArrayList _params = new ArrayList();
-			ArrayList _csparams = new ArrayList();
-
-			if (mIsClassMethod)
-				_csparams.Add(name + "_classPtr");
-			else
-				_csparams.Add("Raw");
-			
-
-			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-			{
-				string t = convertType(mArgumentDeclarationTypes[i]);
-				_params.Add(t + " p" + i + "/*" + mArgumentNames[i] + "*/");
-				if(t != convertTypeGlue(mArgumentDeclarationTypes[i]))
-					_csparams.Add("Net2NS(p" + i + ") /* " + mArgumentNames[i] + "*/");
-				else 
-					_csparams.Add("p" + i + "/*" + mArgumentNames[i] + "*/");
-			}
-
-			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
-			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
+			BuildArgs(name);
+			string paramsStr = string.Join(", ", mCSAPIParameters);
+			string glueArgsStr = string.Join(", ", mCSGlueArguments);
 			bool isVoid = _type == "void";
 			
 			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
@@ -287,16 +334,16 @@ namespace ObjCManagedExporter
 				if (get != null && get.IsGetMethod(t))
 				{
 					if(t != convertTypeGlue(mArgumentDeclarationTypes[0]))
-						w.WriteLine("            get {{ return ({0})NS2Net({1}_{2}({3})); }}", t, name, get.GlueMethodName, _csparams[0]);
+						w.WriteLine("            get {{ return ({0})NS2Net({1}_{2}({3})); }}", t, name, get.GlueMethodName, mCSGlueArguments[0]);
 					else 
-						w.WriteLine("            get {{ return {0}_{1}({2}); }}", name, get.GlueMethodName, _csparams[0]);
+						w.WriteLine("            get {{ return {0}_{1}({2}); }}", name, get.GlueMethodName, mCSGlueArguments[0]);
 				}
 				if (t != convertTypeGlue(mArgumentDeclarationTypes[0]))
-					w.WriteLine("            set {{ {0}_{1}({2},Net2NS(value)); }}", name, mGlueMethodName, _csparams[0]);
+					w.WriteLine("            set {{ {0}_{1}({2},Net2NS(value)); }}", name, mGlueMethodName, mCSGlueArguments[0]);
 				else
-					w.WriteLine("            set {{ {0}_{1}({2},value); }}", name, mGlueMethodName, _csparams[0]);
+					w.WriteLine("            set {{ {0}_{1}({2},value); }}", name, mGlueMethodName, mCSGlueArguments[0]);
 				w.WriteLine("        }");
-				mIsUnsupported = true;
+				mCSAPIDone = true;
 				
 				return;
 			}
@@ -306,19 +353,29 @@ namespace ObjCManagedExporter
 
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
 			if(_type != convertTypeGlue(mReturnDeclarationType))
-				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, csparamsStr);
+				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, glueArgsStr);
 			else 
-				w.WriteLine("            {0}{1}_{2}({3});", isVoid ? "" : "return ", name, mGlueMethodName, csparamsStr);
+				w.WriteLine("            {0}{1}_{2}({3});", isVoid ? "" : "return ", name, mGlueMethodName, glueArgsStr);
 			w.WriteLine("        }");
-
-			if (!mIsClassMethod && mCSMethodName.StartsWith("init") && _type == "id" && _params.Count > 0)
-			{
-				w.WriteLine("        public {0} ({1}) {{", name, paramsStr); 
-				w.WriteLine("            SetRaw({0}_{1}({2}),_release);", name, mGlueMethodName, csparamsStr);
-				w.WriteLine("        }");
-			}
 		}
 
+		public void CSConstructor(string name,TextWriter w)
+		{
+			if (!IsConstructor)
+				return;
+
+			BuildArgs(name);
+			ArrayList args = new ArrayList();
+			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+				args.Add("p" + i);
+
+			w.WriteLine("        public {0}({1}) {{", name, string.Join(", ", mCSAPIParameters));
+			w.WriteLine("            {0}({1});", mCSMethodName, string.Join(", ", (string[])args.ToArray(typeof(string))));
+			w.WriteLine("        }");
+		}
+		#endregion
+
+		#region -- C# Interface --
 		public void CSInterfaceMethod(string name,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
@@ -336,7 +393,9 @@ namespace ObjCManagedExporter
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
 			w.WriteLine("        {0} {1} {2} ({3}); ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr);
 		}
+		#endregion
 
+		#region -- Private Functions --
 		private static string MakeCSMethodName(string name)
 		{
 			switch (name) 
@@ -471,13 +530,17 @@ namespace ObjCManagedExporter
 			}
 			return type;
 		}
+		#endregion
 	}
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.20  2004/06/23 15:29:29  urs
+//	Major refactor, allow inheriting parent constructors
+//
 //	Revision 1.19  2004/06/22 19:54:21  urs
 //	Add property support
-//
+//	
 //	Revision 1.18  2004/06/22 15:13:18  urs
 //	New fixing
 //	

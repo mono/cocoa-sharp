@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.5 2004/06/22 13:38:59 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Protocol.cs,v 1.6 2004/06/23 15:29:29 urs Exp $
 //
 
 using System;
@@ -20,34 +20,18 @@ using System.Text.RegularExpressions;
 namespace ObjCManagedExporter 
 {
 
-	public class Protocol : Element
+	public class Protocol : ElementWithMethods
 	{
-		private IDictionary mMethods;
 		private string[] mChildren;
-		private static Regex mMethodRegex = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
         
-		public Protocol(string _name, string _children, string _framework) : base(string.Empty,_name,_framework)
+		public Protocol(string _name, string _children, string _framework) : base(_name,_framework)
 		{
 			mChildren = _children.Split(new char[]{' ', ','});
-			mMethods = new Hashtable();
 		}
         
 		public string[] Children 
 		{
 			get { return mChildren; } set { mChildren = value; }
-		}
-        
-		public IDictionary Methods 
-		{
-			get { return mMethods; }
-		}
-        
-		public void AddMethods(string methods) 
-		{
-			string[] splitMethods = methods.Split('\n');
-			foreach(string method in splitMethods)
-				if(mMethodRegex.IsMatch(method) && mMethods[method] == null)
-					mMethods.Add(method, new Method(method));
 		}
 
 		public override string FileNameFormat
@@ -86,10 +70,13 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Protocol.cs,v $
+//	Revision 1.6  2004/06/23 15:29:29  urs
+//	Major refactor, allow inheriting parent constructors
+//
 //	Revision 1.5  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)
-//
+//	
 //	Revision 1.4  2004/06/22 12:04:12  urs
 //	Cleanup, Headers, -out:[CS|OC], VS proj
 //	
