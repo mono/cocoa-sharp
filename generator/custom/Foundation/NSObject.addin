@@ -1,0 +1,146 @@
+//
+//  NSObject.cs
+//
+//  Authors
+//    - C.J. Collier, Collier Technologies, <cjcollier@colliertech.org>
+//    - Urs C. Muff, Quark Inc., <umuff@quark.com>
+//    - Kangaroo, Geoff Norton
+//    - Adham Findlay
+//
+//  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
+//
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.1 2004/06/24 03:47:30 urs Exp $
+//
+
+		public static object NS2Net(IntPtr raw) {
+			return TypeConverter.NS2Net(raw);
+		}
+		
+		public static IntPtr Net2NS(object obj) {
+			return TypeConverter.Net2NS(obj);
+		}
+	
+		private IntPtr _obj;
+		protected bool _release;
+		static Hashtable Objects = new Hashtable();
+
+		#region -- Glue --
+		[DllImport("Glue")]
+		protected internal static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
+
+		[DllImport("Glue")]
+		protected static extern IntPtr /*(Class)*/ CreateClassDefinition(string name, string superclassName, int nummethods, IntPtr[] methods, IntPtr[] signatures);
+
+		[DllImport("Glue")]
+		protected static extern IntPtr /*(id)*/ DotNetForwarding_initWithManagedDelegate(IntPtr THIS, BridgeDelegate managedDelegate);
+		#endregion
+
+		protected enum GlueDelegateWhat {
+			methodSignatureForSelector = 0,
+			forwardInvocation = 1,
+		}
+		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
+		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type, String superclass) {
+			ObjCClassRepresentation r = BridgeHelper.GenerateObjCRepresentation(type);
+			IntPtr retval = IntPtr.Zero;
+
+			IntPtr[] methods = new IntPtr[r.NumMethods];
+			IntPtr[] signatures = new IntPtr[r.NumMethods];
+
+			for(int i = 0; i < r.NumMethods; i++) {
+				methods[i] = Marshal.StringToCoTaskMemAnsi(r.Methods[i]);
+				signatures[i] = Marshal.StringToCoTaskMemAnsi(r.Signatures[i]);
+			}
+			retval = CreateClassDefinition(type.Name, superclass, r.NumMethods, methods, signatures); 
+			for(int i = 0; i < r.NumMethods; i++) {
+				Marshal.FreeCoTaskMem(methods[i]);
+				Marshal.FreeCoTaskMem(signatures[i]);
+			}
+			return retval;
+		}
+		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr arg) {
+			switch (what) {
+				case GlueDelegateWhat.methodSignatureForSelector:
+					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
+				case GlueDelegateWhat.forwardInvocation:
+				{
+					NSInvocation invocation = new NSInvocation(arg,false);
+					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
+					
+					BridgeHelper.InvokeMethodByObject(this, invocation.Selector, args);
+					break;
+				}
+			}
+			return IntPtr.Zero;
+		}
+
+		~NSObject() {
+			if (Raw != IntPtr.Zero && _release)
+				release();
+		}
+		
+
+		protected internal NSObject(IntPtr raw,bool release) {
+			SetRaw(raw,release);
+		}
+
+		public IntPtr Raw {
+			get { return _obj; }
+		}
+
+		public void SetRaw(IntPtr raw,bool release) {
+		    if (raw != IntPtr.Zero)
+			    Objects [raw] = new WeakReference (this);
+			_obj = raw;
+			_release = release;
+		}
+
+		public string ClassName {
+			get { return new NSString(NSObject_className0(Raw),false).ToString(); }
+		}
+
+//***************************************************************************
+//
+// $Log: NSObject.addin,v $
+// Revision 1.1  2004/06/24 03:47:30  urs
+// initial custom stuff
+//
+// Revision 1.19  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
+// Revision 1.18  2004/06/20 02:07:25  urs
+// Clean up, move Apple.Tools into Foundation since it will need it
+// No need to allocate memory for getArgumentAtIndex of NSInvocation
+//
+// Revision 1.17  2004/06/19 20:42:59  gnorton
+// Code cleanup (remove some old methods/clean some console.writelines)
+// Modify NS2Net and NSObject destructor to be able to FreeCoTaskMem that we allocate in our argument parser.
+//
+// Revision 1.16  2004/06/19 17:19:27  gnorton
+// Broken API fixes.
+// Delegates and methods with multi-argument support working.
+// Argument parsing and casting working for all our known classes.
+//
+// Revision 1.15  2004/06/18 20:13:00  gnorton
+// Support for multi-argument method signatures/calling in .Net
+//
+// Revision 1.14  2004/06/18 03:42:45  gnorton
+// Doesn't need to be unsafe anymore because we can pass IntPtr[] and have it become char ** nicely after our conversion; we still clean up the managed memory tho
+//
+// Revision 1.13  2004/06/17 16:10:45  gnorton
+// Cleanup
+//
+// Revision 1.12  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
+// Revision 1.11  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
+// Revision 1.10  2004/06/17 05:48:00  gnorton
+// Modified to move non apple stuff out of NSObject
+//
+// Revision 1.9  2004/06/16 12:20:27  urs
+// Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
+//
+//***************************************************************************

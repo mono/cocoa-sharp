@@ -1,1 +1,41 @@
-/* This will be added to the bottom of NSString.cs in a region */
+		#region -- Foundation --
+		[DllImport("Foundation")]
+		protected static extern IntPtr /*(SEL)*/ NSSelectorFromString(IntPtr /*(NSString*)*/ str);
+		[DllImport("Foundation")]
+		static extern IntPtr /*(NSString*)*/ NSStringFromSelector(IntPtr /*SEL)*/ sel);
+		#endregion
+		
+		public static NSString FromString(string val) {
+			return new NSString(val);
+		}
+		public static IntPtr /*(SEL)*/ NSSelector(string val) {
+			return NSSelectorFromString(new NSString(val).Raw);
+		}
+		public static NSString FromSEL(IntPtr /*(SEL)*/ sel) {
+			return new NSString(NSStringFromSelector(sel),false);
+		}
+		
+		public override string ToString() {
+			return (string)Marshal.PtrToStringAuto(NSString_cString0(Raw));
+		}
+
+//***************************************************************************
+//
+// $Log: NSString.addin,v $
+// Revision 1.2  2004/06/24 03:47:30  urs
+// initial custom stuff
+//
+// Revision 1.10  2004/06/23 17:55:46  urs
+// Make test compile with the lasted glue API name change
+//
+// Revision 1.9  2004/06/17 15:58:07  urs
+// Public API cleanup, making properties and using .Net types rather then NS*
+//
+// Revision 1.8  2004/06/17 13:06:27  urs
+// - release cleanup: only call release when requested
+// - loader cleanup
+//
+// Revision 1.7  2004/06/16 12:20:27  urs
+// Add CVS headers comments, authors and Copyright info, feel free to add your name or change what is appropriate
+//
+//***************************************************************************

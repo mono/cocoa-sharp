@@ -1,0 +1,14 @@
+<overrides>
+	<method instance="true" sel="release" >
+                public void release() {
+                        NSObject_release0(Raw);
+                        SetRaw(IntPtr.Zero,false);
+                }
+	</method>
+
+	<method instance="true" sel="class" >
+                public Class Class {
+                        get { return new Class(NSObject_class0(Raw),false); }
+                }
+	</method>
+</overrides>
