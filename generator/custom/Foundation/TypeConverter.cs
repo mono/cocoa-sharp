@@ -76,6 +76,8 @@ namespace Apple.Foundation
 			NSObject ret = null;
 			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
 			className = className.Replace ("NSConcrete", "NS");
+			if (className.StartsWith ("NS") && className.EndsWith ("Color"))
+				className = "NSColor";
 			Type type = NS2Type(className);
 
 			if (type != null) {

@@ -1,3 +1,10 @@
+2005-01-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* custom/Foundation/TypeConverter.cs: Handle NSColor name munging.
+	* gen-out/Method.cs: Call getType on structs; not pass ValueType to 
+	the invoker.
+	* gen-out/Type.cs: Dont convert structs.
+
 2004-16-06	C.J. Collier	<cjcollier@colliertech.org>
 	* typeConversion.pl
 	- Created.  Enter type mapping from ObjC to C#

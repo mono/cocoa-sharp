@@ -307,6 +307,7 @@ namespace CocoaSharp {
 					case OCType.@void:
 					case OCType.@char:
 					case OCType.unsigned_char:
+					case OCType.structure:
 					case OCType.pointer: // FIXME
 					   return false;
 					case OCType.array:
@@ -314,7 +315,6 @@ namespace CocoaSharp {
 					case OCType.Class:
 					case OCType.id:
 					case OCType.SEL:
-					case OCType.structure:
 					case OCType.undefined_type:
 					case OCType.union:
 					default: 

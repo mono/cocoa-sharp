@@ -357,8 +357,11 @@ namespace CocoaSharp {
 			glueArgsStr += ",\"" + Selector + "\"";
 			glueArgsStr += ",typeof(" + ReturnType.GlueType + ")";
 			foreach (ParameterInfo p in Parameters) {
+				string pType = "typeof(" + p.Type.GlueType + ")";
+				if (p.Type.GlueType == "System.ValueType")
+					pType = ArgumentExpression(p.Type,p.Name) + ".GetType()";
 				glueArgsStr += ",";
-				glueArgsStr += "typeof(" + p.Type.GlueType + ")";
+				glueArgsStr += pType;
 				glueArgsStr += ",";
 				glueArgsStr += ArgumentExpression(p.Type,p.Name);
 			}
