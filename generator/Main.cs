@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.25 2004/06/23 20:45:18 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.26 2004/06/23 22:10:19 urs Exp $
 //
 
 using System;
@@ -175,7 +175,7 @@ namespace ObjCManagedExporter
 						_gs.WriteLine();
 
 						foreach (Method _toOutput in i.AllMethods.Values)
-							_toOutput.ObjCMethod(i.Name, _gs);
+							_toOutput.ObjCMethod(i.ExtrasName, _gs);
 						_gs.Close();
 					}
 
@@ -201,7 +201,8 @@ namespace ObjCManagedExporter
 		}
 		
 		private void BuildInterfaces()
-		{ 
+		{
+			IDictionary extras = new Hashtable();
 			foreach (Interface i in Interfaces.Values) 
 			{
 				Framework frmwrk = mConfig.GetFramework(i.Framework);
@@ -236,14 +237,17 @@ namespace ObjCManagedExporter
 						Category _cat = (Category)e.Value;
 						if (!frmwrk.ContainsDependency(_cat.Framework))
 						{
-							Console.WriteLine("\t\tCategory: ({0}) ignored (no dependency to {1})", _key.Substring(0, _key.IndexOf("_")), _cat.Framework);
+							Interface catInter = GetCategoryInterface(extras,i,_cat);
+							
+							Console.WriteLine("\t\tCategory: ({0}) added to {1} (no dependency to {2})", 
+								_key.Substring(0, _key.IndexOf("_")), catInter.Name, _cat.Framework);
+							catInter.AddAllMethods(_cat.Methods.Values);
 							continue;
 						}
 						Console.Write("\t\tCategory: ({0})", _key.Substring(0, _key.IndexOf("_")));
 						Console.Write(":{0}", _cat.Methods.Keys.Count);
 						i.AddAllMethods(_cat.Methods.Values);
-						foreach (string _imp in _cat.Imports)
-							_categoryImports.Add(_imp);
+						_categoryImports.AddRange(_cat.Imports);
 						Console.WriteLine();
 					}
 				}
@@ -251,6 +255,25 @@ namespace ObjCManagedExporter
 
 				Console.WriteLine("\tTOTAL:{0}", i.AllMethods.Count);
 			}
+			foreach (DictionaryEntry e in extras)
+				Interfaces[e.Key] = e.Value;
+		}
+		
+		private Interface GetCategoryInterface(IDictionary extras,Interface extrasFor,Category _cat)
+		{
+			string extraName = extrasFor.Name + _cat.Framework + "Extras";
+			Interface ret = (Interface)extras[extraName];
+			if (ret == null)
+			{
+				ret = new Interface(extraName,extrasFor.Name,string.Empty,_cat.Framework);
+				ret.Imports = extrasFor.Imports;
+				ret.SetExtrasFor(extrasFor);
+				extras[extraName] = ret;
+			}
+			ArrayList imports = new ArrayList(ret.Imports);
+			imports.AddRange(_cat.Imports);
+			ret.Imports = (string[])imports.ToArray(typeof(string));
+			return ret;
 		}
 
 		private bool LoadConfiguration() 
@@ -348,9 +371,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.26  2004/06/23 22:10:19  urs
+//	Adding support for out of dependecy categories, generating a new class named $(class)$(categoryFramework)Extras with a the methods of all categories in same framework
+//
 //	Revision 1.25  2004/06/23 20:45:18  urs
 //	Only add category of dependent frameworks, this might be changed in the future, but would require a new class
-//
+//	
 //	Revision 1.24  2004/06/23 18:31:51  urs
 //	Add dependency for frameworks
 //	
