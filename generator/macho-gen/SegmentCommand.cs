@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: SegmentCommand.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: SegmentCommand.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
 	
-	public class SegmentCommand : ICommand {
+	internal class SegmentCommand : ICommand {
 	
 		private MachOFile mfile;
 		private load_command lcmd;
@@ -23,22 +23,22 @@ namespace CocoaSharp {
 		private string name;
 		private ArrayList sections;
 
-		public SegmentCommand (MachOFile mfile, load_command lcmd) {
+		internal SegmentCommand (MachOFile mfile, load_command lcmd) {
 			this.mfile = mfile;
 			this.lcmd = lcmd;
 			sections = new ArrayList ();
 		}
 
-		public string Name {
+		internal string Name {
 			get { return name; }
 		}
 
-		public bool ContainsAddress(uint offset) {
+		internal bool ContainsAddress(uint offset) {
 			int off = (int)(offset-scmd.vmaddr);
 			return (off >= 0) && (off < scmd.vmsize);
 		}
 
-		public Section SectionContainingVMAddr(uint offset) {
+		internal Section SectionContainingVMAddr(uint offset) {
 			foreach (Section section in this.sections)
 				if (section.ContainsAddress(offset))
 					return section;
@@ -46,39 +46,39 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		public uint SegmentOffsetForVMAddr(uint offset) {
+		internal uint SegmentOffsetForVMAddr(uint offset) {
 			Section section = this.SectionContainingVMAddr(offset);
 			return section.SegmentOffsetForVMAddr(offset);
 		}
 
-		public Section SectionWithName(string name) {
+		internal Section SectionWithName(string name) {
 			foreach (Section section in this.sections)
 				if (section.Name == name)
 					return section;
 			return null;
 		}
 
-		unsafe public byte* HeadPointer {
+		unsafe internal byte* HeadPointer {
 			get { return mfile.HeadPointer; }
 		}
 
-		unsafe public byte* GetPtr(uint offset) {
+		unsafe internal byte* GetPtr(uint offset) {
 			return mfile.GetPtr(offset);
 		}
 
-		public string GetString(uint offset) {
+		internal string GetString(uint offset) {
 			return mfile.GetString(offset);
 		}
 
-		public uint VMAddr {
+		internal uint VMAddr {
 			get { return scmd.vmaddr; }
 		}
 
-		public uint FileOffset {
+		internal uint FileOffset {
 			get { return scmd.fileoff; }
 		}
 
-		public ArrayList Sections {
+		internal ArrayList Sections {
 			get { return sections; }
 		}
 
@@ -148,3 +148,9 @@ namespace CocoaSharp {
 		internal uint flags;
 	}
 }
+
+//
+// $Log: SegmentCommand.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: ICommand.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: ICommand.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -13,7 +13,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
-	public interface ICommand {
+	internal interface ICommand {
 		void ProcessCommand ();
 	}
 }
+
+//
+// $Log: ICommand.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

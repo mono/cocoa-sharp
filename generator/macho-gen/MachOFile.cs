@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOFile.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: MachOFile.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -144,15 +144,15 @@ namespace CocoaSharp {
 			ProcessModules ();
 		}
 
-		unsafe public byte* Pointer {
+		unsafe internal byte* Pointer {
 			get { return ptr; }
 			set { ptr = value; }
 		}
-		unsafe public byte* HeadPointer {
+		unsafe internal byte* HeadPointer {
 			get { return headptr; }
 		}
 
-		public SegmentCommand SegmentContainingAddress(uint offset) {
+		internal SegmentCommand SegmentContainingAddress(uint offset) {
 			foreach (ICommand cmd in this.commands) {
 				SegmentCommand scmd = cmd as SegmentCommand;
 				if (scmd != null && scmd.ContainsAddress(offset))
@@ -161,7 +161,7 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		public SegmentCommand SegmentWithName(string segmentName) {
+		internal SegmentCommand SegmentWithName(string segmentName) {
 			foreach (ICommand cmd in this.commands) {
 				SegmentCommand scmd = cmd as SegmentCommand;
 				if (scmd != null && scmd.Name == segmentName) 
@@ -171,7 +171,7 @@ namespace CocoaSharp {
 			return null;
 		}
 		
-		public ICommand SegmentWithType(System.Type type) {
+		internal ICommand SegmentWithType(System.Type type) {
 			foreach (ICommand cmd in this.commands)
 				if (type.IsInstanceOfType(cmd)) 
 					return cmd;
@@ -179,7 +179,7 @@ namespace CocoaSharp {
 			return null;
 		}
 
-		unsafe public byte * GetPtr(uint offset) {
+		unsafe internal byte * GetPtr(uint offset) {
 			return GetPtr(offset,null);
 		}
 
@@ -342,20 +342,20 @@ namespace CocoaSharp {
 		public void Parse () {}
 	}
 	
-	public class SymTabCommand : ICommand {
+	internal class SymTabCommand : ICommand {
 		private MachOFile mfile;
 		private load_command lcmd;
 		private symtab_command scmd;
 
-		public SymTabCommand(MachOFile mfile, load_command lcmd) {
+		internal SymTabCommand(MachOFile mfile, load_command lcmd) {
 			this.mfile = mfile;
 			this.lcmd = lcmd;
 		}
 
-		public uint SymOff { get { return scmd.symoff; } }
-		public uint NSyms { get { return scmd.nsyms; } }
-		public uint StrOff { get { return scmd.stroff; } }
-		public uint StrSize { get { return scmd.strsize; } }
+		internal uint SymOff { get { return scmd.symoff; } }
+		internal uint NSyms { get { return scmd.nsyms; } }
+		internal uint StrOff { get { return scmd.stroff; } }
+		internal uint StrSize { get { return scmd.strsize; } }
 
 		public void ProcessCommand () {
 			unsafe {
@@ -543,3 +543,9 @@ namespace CocoaSharp {
 		internal uint flags;
 	}
 }
+
+//
+// $Log: MachOFile.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

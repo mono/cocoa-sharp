@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Section.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: Section.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
 	
-	public class Section {
+	internal class Section {
 	
 		private MachOFile mfile;
 		private segment_command scmd;
@@ -22,37 +22,37 @@ namespace CocoaSharp {
 		private string segname;
 		private string sectname;
 
-		public Section (MachOFile mfile, segment_command scmd) {
+		internal Section (MachOFile mfile, segment_command scmd) {
 			this.mfile = mfile;
 			this.scmd = scmd;
 		}
 
-		public string Name {
+		internal string Name {
 			get { return sectname; }
 		}
 		
-		public uint Offset {
+		internal uint Offset {
 			get { return sec.offset; }
 		}
 		
-		public uint Addr {
+		internal uint Addr {
 			get { return sec.addr; }
 		}
 		
-		public uint Size {
+		internal uint Size {
 			get { return sec.size; }
 		}
 
-		public bool ContainsAddress(uint offset) {
+		internal bool ContainsAddress(uint offset) {
 			int off = (int)(offset-Addr);
 			return (off >= 0) && (off < Size);
 		}
 
-		public uint SegmentOffsetForVMAddr(uint offset) {
+		internal uint SegmentOffsetForVMAddr(uint offset) {
 			return offset - Addr;
 		}
 
-		public void ProcessSection () {
+		internal void ProcessSection () {
 			unsafe {
 				sec = *((section *)mfile.Pointer);
 				Utils.MakeBigEndian(ref sec.addr);
@@ -142,3 +142,9 @@ namespace CocoaSharp {
 		internal uint reserved2;
 	}
 }
+
+//
+// $Log: Section.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOClass.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: MachOClass.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -74,7 +74,7 @@ namespace CocoaSharp {
 				protocols[p.Name] = p;
 		}
 
-		static ArrayList ProcessProtocolList(uint protocolListAddr,MachOFile file) {
+		unsafe static ArrayList ProcessProtocolList(uint protocolListAddr,MachOFile file) {
 			ArrayList protocols = new ArrayList();
 			if (protocolListAddr == 0)
 				return protocols;
@@ -94,7 +94,7 @@ namespace CocoaSharp {
 		}
 
 		static IDictionary mProtocolsByName = new Hashtable();
-		static MachOProtocol ProcessProtocol(byte *ptr,MachOFile file) {
+		unsafe static MachOProtocol ProcessProtocol(byte *ptr,MachOFile file) {
 			objc_protocol protocolPtr = *(objc_protocol*)ptr;
 			Utils.MakeBigEndian(ref protocolPtr.isa);
 			Utils.MakeBigEndian(ref protocolPtr.protocol_name);
@@ -121,7 +121,7 @@ namespace CocoaSharp {
 			return protocol;
 		}
 
-		static ArrayList ProcessProtocolMethods(uint methodsAddr, MachOFile file) {
+		unsafe static ArrayList ProcessProtocolMethods(uint methodsAddr, MachOFile file) {
 			ArrayList methods = new ArrayList();
 			if (methodsAddr == 0)
 				return methods;
@@ -168,3 +168,9 @@ namespace CocoaSharp {
 		internal uint imp;
 	}
 }
+
+//
+// $Log: MachOClass.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

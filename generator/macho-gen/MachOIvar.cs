@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOIvar.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: MachOIvar.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -29,10 +29,14 @@ namespace CocoaSharp {
 			offset = ivar.offset;
 			MachOFile.DebugOut(1,"\tvar: {0} type=[{3}]->[{1}] offset={2}", name, type, offset, typeName);
 		}
+
+		internal Ivar ToIvar(string nameSpace) {
+			return new Ivar(name,type.ToType(nameSpace),offset);
+		}
 	}
 
 	internal struct objc_ivar_list {
-		internal int ivar_count;
+		internal uint ivar_count;
 	};
 
 	internal struct objc_ivar {
@@ -40,5 +44,10 @@ namespace CocoaSharp {
 		internal uint type;
 		internal int offset;
 	};
-
 }
+
+//
+// $Log: MachOIvar.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

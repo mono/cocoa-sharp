@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: Module.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: Module.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -14,12 +14,12 @@ using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
 	
-	public class Module {
+	internal class Module {
 		private objc_module ocmodule;
 		private SymbolTable symtab;
 		private string name;
 
-		unsafe static public Module NewModule(byte *ptr, MachOFile file) {
+		unsafe static internal Module NewModule(byte *ptr, MachOFile file) {
 			objc_module ocmodule = *((objc_module *)ptr);
 			Utils.MakeBigEndian(ref ocmodule.version);
 			Utils.MakeBigEndian(ref ocmodule.size);
@@ -30,7 +30,7 @@ namespace CocoaSharp {
 				return new Module(ocmodule, symPtr, file);
 			return null;
 		}
-		unsafe public Module(objc_module ocmodule, byte *symPtr, MachOFile file) {
+		unsafe internal Module(objc_module ocmodule, byte *symPtr, MachOFile file) {
 			this.ocmodule = ocmodule;
 			name = file.GetString(ocmodule.name);
 			MachOFile.DebugOut(1,"Module: {0} version={1}, size={2}, symtab={3,8:x}", name, ocmodule.version, ocmodule.size, ocmodule.symtab);

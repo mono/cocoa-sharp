@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: LoadCommand.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: LoadCommand.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -14,12 +14,12 @@ using System.Runtime.InteropServices;
 
 namespace CocoaSharp {
 	
-	public class LoadCommand : ICommand {
+	internal class LoadCommand : ICommand {
 
 		private MachOFile mfile;
 		private load_command lcmd;
 	
-		public LoadCommand (MachOFile mfile, load_command lcmd) {
+		internal LoadCommand (MachOFile mfile, load_command lcmd) {
 			this.mfile = mfile;
 			this.lcmd = lcmd;
 		}
@@ -31,3 +31,9 @@ namespace CocoaSharp {
 		}
 	}
 }
+
+//
+// $Log: LoadCommand.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

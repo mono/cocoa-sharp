@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: SymbolTable.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: SymbolTable.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -53,3 +53,9 @@ namespace CocoaSharp {
 		internal ushort cat_def_cnt;
 	}
 }
+
+//
+// $Log: SymbolTable.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

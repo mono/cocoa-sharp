@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOMethod.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: MachOMethod.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -50,3 +50,9 @@ namespace CocoaSharp {
 		}
 	}
 }
+
+//
+// $Log: MachOMethod.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//

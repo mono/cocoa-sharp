@@ -5,7 +5,7 @@
 //
 //  Copyright (c) 2004 Quark Inc.  All rights reserved.
 //
-// $Id: MachOType.cs,v 1.1 2004/09/09 01:18:47 urs Exp $
+// $Id: MachOType.cs,v 1.2 2004/09/09 02:33:04 urs Exp $
 //
 
 using System;
@@ -63,6 +63,7 @@ namespace CocoaSharp {
 		public bool IsPrimitive {
 			get { return kind != OCType.structure && kind != OCType.array && kind != OCType.pointer && kind != OCType.union; }
 		}
+
 		public override string ToString() {
 			string detail = reference != null ? reference.ToString() : "";
 			switch (kind) {
@@ -91,7 +92,45 @@ namespace CocoaSharp {
 				ret += " offset=" + offset;
 			return ret;
 		}
-		
+
+		internal System.Type SystemType {
+			get {
+				switch (this.kind) {
+					case OCType.array: return typeof(Array);
+					case OCType.bit_field: return typeof(int);
+					case OCType.@bool: return typeof(bool);
+					case OCType.@char: return typeof(sbyte);
+					case OCType.char_ptr: return typeof(string);
+					case OCType.Class: return typeof(IntPtr);
+					case OCType.@double: return typeof(double);
+					case OCType.@float: return typeof(float);
+					case OCType.id: return typeof(IntPtr);
+					case OCType.@int: return typeof(int);
+					case OCType.@long: return typeof(int);
+					case OCType.long_long: return typeof(long);
+					case OCType.pointer: return typeof(IntPtr);
+					case OCType.SEL: return typeof(IntPtr);
+					case OCType.@short: return typeof(short);
+					case OCType.structure: return typeof(ValueType);
+					case OCType.undefined_type: return typeof(IntPtr);
+					case OCType.union: return typeof(IntPtr);
+					case OCType.unsigned_char: return typeof(byte);
+					case OCType.unsigned_int: return typeof(uint);
+					case OCType.unsigned_long: return typeof(uint);
+					case OCType.unsigned_long_long: return typeof(ulong);
+					case OCType.unsigned_short: return typeof(ushort);
+					case OCType.@void: return typeof(void);
+					default: return null;
+				}
+			}
+		}
+		internal TypeUsage ToTypeUsage(string nameSpace) {
+			return new TypeUsage(ToType(nameSpace),modifiers);
+		}
+		internal Type ToType(string nameSpace) {
+			return new Type(name,nameSpace,SystemType,kind);
+		}
+
 		static public MachOType[] ParseTypes(string types) {
 			ArrayList ret = new ArrayList();
 #if DEBUG
@@ -333,3 +372,9 @@ namespace CocoaSharp {
 		}
 	}
 }
+
+//
+// $Log: MachOType.cs,v $
+// Revision 1.2  2004/09/09 02:33:04  urs
+// Fix build
+//
