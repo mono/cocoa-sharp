@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.18 2004/06/22 15:13:18 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Main.cs,v 1.19 2004/06/22 19:54:21 urs Exp $
 //
 
 using System;
@@ -241,7 +241,6 @@ namespace ObjCManagedExporter
 						_cs.WriteLine();
 					}
 
-					// Create the glue
 					IDictionary _addedMethods = new Hashtable();
 					foreach (IDictionary _methods in interfaceMethods) 
 					{
@@ -253,19 +252,29 @@ namespace ObjCManagedExporter
 							string _methodSig = _toOutput.GlueMethodName;
 							if(!_addedMethods.Contains(_methodSig)) 
 							{
-								_addedMethods[_methodSig] = 1;
+								_addedMethods[_methodSig] = _toOutput;
 								if (OutputOC)
 									_toOutput.ObjCMethod(i.Name, _gs);
-								if (OutputCS)
-								{
-									_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
-									_toOutput.CSAPIMethod(i.Name, _cs);
-								}
 							} 
 							else 
 								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 						}
 					}
+
+					if (OutputCS)
+					{
+						_cs.WriteLine("        #region -- PInvoke Glue API --");
+						foreach (Method _toOutput in _addedMethods.Values)
+							_toOutput.CSGlueMethod(i.Name, _toprocess.Name + "Glue", _cs);
+						_cs.WriteLine("        #endregion");
+						_cs.WriteLine("        #region -- Public API --");
+						foreach (Method _toOutput in _addedMethods.Values)
+							_toOutput.CSAPIMethod(i.Name,_addedMethods, true, _cs);
+						foreach (Method _toOutput in _addedMethods.Values)
+							_toOutput.CSAPIMethod(i.Name,_addedMethods, false, _cs);
+						_cs.WriteLine("        #endregion");
+					}
+
 
 					if (OutputOC)
 						_gs.Close();
@@ -345,14 +354,16 @@ namespace ObjCManagedExporter
 		public string Name;
 		[XmlElement("output")]
 		public bool Output;
-            
 	}
 }
 
 //	$Log: Main.cs,v $
+//	Revision 1.19  2004/06/22 19:54:21  urs
+//	Add property support
+//
 //	Revision 1.18  2004/06/22 15:13:18  urs
 //	New fixing
-//
+//	
 //	Revision 1.17  2004/06/22 13:38:59  urs
 //	More cleanup and refactoring start
 //	Make output actually compile (diverse fixes)

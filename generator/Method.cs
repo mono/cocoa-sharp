@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.18 2004/06/22 15:13:18 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.19 2004/06/22 19:54:21 urs Exp $
 //
 
 using System;
@@ -36,7 +36,7 @@ namespace ObjCManagedExporter
 			new Regex(@"<.*>"),
 			new Regex(@"\.\.\.")
 		};
-		private static Regex sMatch1 = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)"); 
+		private static Regex sMatch1 = new Regex(@"\s*([+-])\s*(?:\(([^\)]+)\))?(.+)");
 
 		public Method(string methodDeclaration) 
 		{
@@ -72,13 +72,12 @@ namespace ObjCManagedExporter
 			string remainder = match.Groups[3].Value;
 
 			mIsClassMethod = methodType == "+";
-
 			mReturnDeclarationType = mReturnDeclarationType.Replace("oneway ",string.Empty);
 
 			// get rid of comments
 			// remainder =~ s://.*::;
 			// remainder =~ s:/\*.*\*/::;
-    
+
 			// These arrays store our method names, their arg names and types
 			Regex noarg_rx = new Regex(@"^\s*(\w+)\s*([;\{]|$)");
 			Regex arg_rx   = new Regex(@"(\w+):\s*(?:\(([^\)]+)\))?\s*(\w+)?(?:\s+|;)");
@@ -114,7 +113,7 @@ namespace ObjCManagedExporter
 							argName = argType;
 							argType = "id";
 						}
-            
+
 						argTypes.Add(argType);
 						argNames.Add(argName);
 					}
@@ -147,7 +146,7 @@ namespace ObjCManagedExporter
 		{
 			get { return mGlueMethodName; }
 		}
-	
+		
 		public void ObjCMethod(string name,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
@@ -235,8 +234,16 @@ namespace ObjCManagedExporter
 			w.WriteLine("        protected internal static extern " +
 				_type + " " + name + "_" + mGlueMethodName + " (" + paramsStr + ");");
 		}
-	
-		public void CSAPIMethod(string name,System.IO.TextWriter w)
+		public bool IsGetMethod(string type)
+		{
+			if (type != convertType(mReturnDeclarationType))
+				return false;
+			if (mArgumentDeclarationTypes.Length > 0)
+				return false;
+			mIsUnsupported = true;
+			return true;
+		}	
+		public void CSAPIMethod(string name,IDictionary methods,bool propOnly,System.IO.TextWriter w)
 		{
 			if (mIsUnsupported)
 				return;
@@ -263,12 +270,45 @@ namespace ObjCManagedExporter
 
 			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
 			string csparamsStr = string.Join(", ", (string[])_csparams.ToArray(typeof(string)));
+			bool isVoid = _type == "void";
+			
+			if (isVoid && mArgumentDeclarationTypes.Length == 1 && mCSMethodName.StartsWith("set"))
+			{
+				string t = convertType(mArgumentDeclarationTypes[0]);
+				string propName = mCSMethodName.Substring(3);
+				string getPropName = propName.Substring(0,1).ToLower() + propName.Substring(1);
+
+				Method get = (Method)methods[getPropName];
+				
+				if (get == null)
+					get = (Method)methods["is" + propName];
+				
+				w.WriteLine("        public {0}{1} {2} {{", (mIsClassMethod ? "static " : ""), t, propName);
+				if (get != null && get.IsGetMethod(t))
+				{
+					if(t != convertTypeGlue(mArgumentDeclarationTypes[0]))
+						w.WriteLine("            get {{ return ({0})NS2Net({1}_{2}({3})); }}", t, name, get.GlueMethodName, _csparams[0]);
+					else 
+						w.WriteLine("            get {{ return {0}_{1}({2}); }}", name, get.GlueMethodName, _csparams[0]);
+				}
+				if (t != convertTypeGlue(mArgumentDeclarationTypes[0]))
+					w.WriteLine("            set {{ {0}_{1}({2},Net2NS(value)); }}", name, mGlueMethodName, _csparams[0]);
+				else
+					w.WriteLine("            set {{ {0}_{1}({2},value); }}", name, mGlueMethodName, _csparams[0]);
+				w.WriteLine("        }");
+				mIsUnsupported = true;
+				
+				return;
+			}
+			
+			if (propOnly)
+				return;
 
 			w.WriteLine("        public {0}{1} {2} ({3}) {{", (mIsClassMethod ? "static " : ""), _type, mCSMethodName, paramsStr); 
 			if(_type != convertTypeGlue(mReturnDeclarationType))
 				w.WriteLine("            return ({0})NS2Net({1}_{2}({3}));", _type, name, mGlueMethodName, csparamsStr);
 			else 
-				w.WriteLine("            {0}{1}_{2}({3});", _type == "void" ? "" : "return ", name, mGlueMethodName, csparamsStr);
+				w.WriteLine("            {0}{1}_{2}({3});", isVoid ? "" : "return ", name, mGlueMethodName, csparamsStr);
 			w.WriteLine("        }");
 
 			if (!mIsClassMethod && mCSMethodName.StartsWith("init") && _type == "id" && _params.Count > 0)
@@ -339,9 +379,26 @@ namespace ObjCManagedExporter
 			return name;
 		}
 
+		internal static string StripComments(string str)
+		{
+			int ndx = str.IndexOf("/*");
+			while (ndx >= 0)
+			{
+				int ndx2 = str.IndexOf("*/",ndx,str.Length-ndx);
+				if (ndx2 >= ndx)
+				{
+					str = str.Remove(ndx,ndx2-ndx+2);
+					ndx = str.IndexOf("/*");
+				}
+				else
+					ndx = -1;
+			}
+			return str.Trim();
+		}
+
 		private static string convertTypeNative(string type)
 		{
-			type = type.Trim();
+			type = StripComments(type);
 			switch (type) 
 			{
 				case "void": return "void";
@@ -418,9 +475,12 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.19  2004/06/22 19:54:21  urs
+//	Add property support
+//
 //	Revision 1.18  2004/06/22 15:13:18  urs
 //	New fixing
-//
+//	
 //	Revision 1.17  2004/06/22 14:16:20  urs
 //	Minor fix
 //	
