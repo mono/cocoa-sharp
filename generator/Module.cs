@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 namespace CocoaSharp {
 	
 	public class Module {
-
 		private objc_module ocmodule;
 		private SymbolTable symtab;
 
@@ -31,10 +30,11 @@ namespace CocoaSharp {
 			objc_module ocmodule;
 			Console.WriteLine ("Count: {0}", count);
 			byte *ptr = headptr + (int)moduleSection.Offset;
-			for (int i = 0; i < count; i++, ptr+=Marshal.SizeOf (ocmodule)) {
+			for (int i = 0; i < count; i++, ptr += Marshal.SizeOf (ocmodule)) {
 				ocmodule = *((objc_module *)ptr);
 				Utils.MakeBigEndian(ref ocmodule.version);
 				Utils.MakeBigEndian(ref ocmodule.size);
+				Utils.MakeBigEndian(ref ocmodule.symtab);
 				modules.Add (new Module (ocmodule, headptr, objcSegment));
 			}
 			return modules;

@@ -5,15 +5,17 @@ namespace CocoaSharp {
 
 	unsafe public class Class {
 		
-		private objc_class occlass;
+		public objc_class occlass;
 	
 		public Class (byte *headptr, uint offset, SegmentCommand objcSegment) {
-			occlass = *((objc_class *)(headptr+(int)(offset - objcSegment.VMAddr + objcSegment.FileOffset)));
+			Utils.MakeBigEndian(ref offset);
+			byte *ptr = headptr+(int)(offset - objcSegment.VMAddr + objcSegment.FileOffset);
+			occlass = *(objc_class *)ptr;
 			Utils.MakeBigEndian(ref occlass.version);
 			Utils.MakeBigEndian(ref occlass.info);
 			Utils.MakeBigEndian(ref occlass.instance_size);
-
-			Console.WriteLine ("Class: {0}", Marshal.PtrToStringAuto (occlass.name));
+			string name = Marshal.PtrToStringAnsi(new IntPtr(ptr + 8));
+			Console.WriteLine ("Class: {0}", name);
 		}
 	}
 
