@@ -290,7 +290,7 @@ namespace CocoaSharp {
 						get.ReturnType, 
 						string.Format("ObjCMessaging.objc_msgSend({0},{2},typeof({1}))", 
 				            isClassMethod ? className + "_classPtr" : "Raw",
-				            get.ReturnType.ApiType, 
+				            get.ReturnType.GlueType, 
 				            "\"" + get.Selector + "\"")));
 				}
 				get.SetCSAPIDone();
