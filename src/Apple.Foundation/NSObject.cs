@@ -29,18 +29,33 @@ namespace Apple.Foundation
 
 		[DllImport("FoundationGlue")]
 		protected static extern void NSObject_release(IntPtr THIS);
-		#endregion
 		
-		protected delegate bool BridgeDelegate(IntPtr /*(NSInvocation*)*/ invocation);
+		[DllImport("Glue")]
+		protected static extern IntPtr Class_instanceMethodSignatureForSelector(IntPtr CLASS, IntPtr sel);
+		#endregion
+
+		protected enum GlueDelegateWhat {
+			methodSignatureForSelector = 0,
+			forwardInvocation = 1,
+		}
+		protected delegate IntPtr BridgeDelegate(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation);
 		protected static IntPtr /*(Class)*/ NSRegisterClass(Type type) {
 			return CreateClassDefinition(type.Name,"NSObject");
 		}
-		protected bool MethodInvoker(IntPtr /*(NSInvocation*)*/ invocation) {
-			string method = new NSInvocation(invocation).selector();
-			
-			this.GetType().InvokeMember(method, 
-				BindingFlags.Default | BindingFlags.InvokeMethod, null, this, null);
-			return true;
+		protected IntPtr MethodInvoker(GlueDelegateWhat what,IntPtr /*(NSInvocation*)*/ invocation) {
+			switch (what) {
+				case GlueDelegateWhat.methodSignatureForSelector:
+					return Class_instanceMethodSignatureForSelector(NSString.NSClass("_CSControl"),invocation);
+				case GlueDelegateWhat.forwardInvocation:
+				{
+					string method = new NSInvocation(invocation).selector();
+					
+					this.GetType().InvokeMember(method, 
+												BindingFlags.Default | BindingFlags.InvokeMethod, null, this, null);
+					break;
+				}
+			}
+			return IntPtr.Zero;
 		}
 		
 		public NSObject() : this(NSObject__alloc(IntPtr.Zero)) {}

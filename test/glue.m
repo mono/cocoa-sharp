@@ -39,7 +39,13 @@ void AddMethods(Class cls,int count,...) {
     class_addMethods(cls, methodsToAdd);
 }
 
-typedef BOOL (*managedDelegate)(NSInvocation * anInvocation);
+id Class_instanceMethodSignatureForSelector(Class CLASS, SEL aSelector) {
+	return [CLASS instanceMethodSignatureForSelector: aSelector];
+}
+
+typedef id (*managedDelegate)(int what,id anInvocation);
+#define GLUE_methodSignatureForSelector 0
+#define GLUE_forwardInvocation 1
 
 //- (id)initWithManagedDelegate:(managedDelegate)delegate
 id glue_initWithManagedDelegate(id base, SEL sel, ...) {
@@ -63,8 +69,12 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 	NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
 	
 	if (!signature)
-		// static code: has to change
-		signature = [_CSControl instanceMethodSignatureForSelector: aSelector];
+	{
+		managedDelegate delegate;
+		object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
+
+		signature = delegate(GLUE_methodSignatureForSelector,aSelector);
+	}
 	
 	return signature;
 }
@@ -80,7 +90,7 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
 	managedDelegate delegate;
 	object_getInstanceVariable(base,"mDelegate",(void**)&delegate);
 	
-	if (!delegate(anInvocation))
+	if (delegate(GLUE_forwardInvocation,anInvocation) != nil)
         [base doesNotRecognizeSelector: [anInvocation selector]];
 	return base;
 }
@@ -145,7 +155,7 @@ Class CreateClassDefinition(const char * name, const char * superclassName) {
     ivarList->ivar_list[0].ivar_type = @encode(managedDelegate);
     ivarList->ivar_list[0].ivar_offset = super_class->instance_size;
 
-    new_class->instance_size = sizeof(void*);
+    new_class->instance_size = sizeof(managedDelegate);
     new_class->ivars = ivarList;
 
     //
