@@ -43,8 +43,12 @@ namespace CocoaSharp {
 		public TextWriter OpenFile() {
             return OpenFile("src{0}{1}", this.FileNameFormat, Namespace, Name);
 		}
+		
+		protected virtual bool IsEmpty() { return false; }
 
 		public void WriteFile(Configuration config) {
+			if (IsEmpty())
+				return;
 			//Console.WriteLine("Output " + Type.FullName(this.Name, this.Namespace) + ", " + this.GetType().Name);
 			TextWriter _cs = OpenFile();
 			WriteCS(_cs, config);

@@ -45,6 +45,8 @@ namespace CocoaSharp {
 			_cs.WriteLine("}");
 		}
 
+		protected override bool IsEmpty() { return items.Count == 0; }
+
 		static private string IfsBeGone(string original) {
 			Regex ifRegex = new Regex(@"^#.+$", RegexOptions.Multiline);
 			if(ifRegex.IsMatch(original)) 

@@ -98,6 +98,9 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 			else
 				NSObject.DebugLog(1, "ERROR: No class found that derives from NSObject with the name: " + className);
 
+			if(ret != null && ret is Apple.Foundation.NSString)
+				return ret.ToString();
+
 			return ret != null ? ret : new NSObject(raw,false);
 		}
 		
@@ -107,10 +110,10 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 			if (obj is IntPtr)
 				return (IntPtr)obj;
 #if false
-                        if (obj is IConvertible) {
-                                int val = Convert.ToInt32(obj);
-                                return (IntPtr)val;
-                        }
+			if (obj is IConvertible) {
+				int val = Convert.ToInt32(obj);
+				return (IntPtr)val;
+			}
 #endif
 			NSObject nsObj = obj as NSObject;
 			if (nsObj != null)

@@ -38,7 +38,7 @@ namespace Apple.AppKit
 
 		public static void LoadFramework (string frameworkName)
 		{
-			NSBundle frmwrkBundle = (NSBundle)NSBundle.BundleWithPath (new NSString ("/System/Library/Frameworks/" + frameworkName + ".framework"));
+			NSBundle frmwrkBundle = (NSBundle)NSBundle.BundleWithPath ("/System/Library/Frameworks/" + frameworkName + ".framework");
 			frmwrkBundle.load ();
 		}
 			

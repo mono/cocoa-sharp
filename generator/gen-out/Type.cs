@@ -66,6 +66,12 @@ namespace CocoaSharp {
 			}
 			tmp.Add(this);
 
+			switch (FullName(name, nameSpace)) {
+			case "Apple.Foundation.NSString":
+				apiType = "string";
+				break;
+			}
+
 			this.apiType = apiType;
 			this.glueType = glueType;
 			this.ocType = ocType;
@@ -325,7 +331,7 @@ namespace CocoaSharp {
 		// -- Public Properties --
         public string GlueType { get { return ocType == OCType.@void ? "void" : glueType.FullName; } }
 		public string ApiType { get { 
-				if (apiType.Substring (0, 1) == ".")
+				if (apiType[0] == '.')
 					return "object";
 				return apiType; } }
 		public OCType OCType { get { return ocType; } }

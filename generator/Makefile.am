@@ -16,6 +16,7 @@ EXTRA_DIST= \
 	generator-run.stamp
 
 sources = \
+	header-gen/Main.cs \
 	header-gen/Element.cs \
 	header-gen/HeaderCategory.cs \
 	header-gen/HeaderEnum.cs \
@@ -65,5 +66,5 @@ generator-run.stamp: $(ASSEMBLY)
 	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml) && touch $(srcdir)/generator-run.stamp
 
 $(ASSEMBLY): $(build_sources) 
-	$(CSC) /unsafe /out:$(ASSEMBLY) $(build_sources)
+	$(CSC) -g /unsafe /out:$(ASSEMBLY) $(build_sources)
 
