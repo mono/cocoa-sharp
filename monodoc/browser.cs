@@ -105,8 +105,8 @@ public class Controller : NSObject {
 	
 	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
-	[ObjCExport("windowDidBecomeMain:")]
-	public void UpdateModal(NSNotification aNotification) {
+	[ObjCExport("applicationWillFinishLaunching:")]
+	public void FinishLoading(NSNotification aNotification) {
 		drawer.open();
 		outlineView.target = this;
 		outlineView.doubleAction = "doubleAction";
