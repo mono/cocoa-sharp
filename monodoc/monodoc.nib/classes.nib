@@ -1,6 +1,11 @@
 {
     IBClasses = (
-        {CLASS = BrowserDataSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = BrowserDataSource; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {}; 
+            SUPERCLASS = NSObject; 
+        }, 
         {
             CLASS = Controller; 
             LANGUAGE = ObjC; 

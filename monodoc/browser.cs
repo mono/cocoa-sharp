@@ -85,15 +85,31 @@ class Driver {
 }
 
 [ObjCRegister("Controller")]
-class Browser : NSObject {
-	[ObjCConnect]
+class Controller : NSObject {
+	[ObjCConnect(Name="drawer",Type="@",Size=4)]
 	public NSDrawer drawer;
 	[ObjCConnect]
 	public NSOutlineView outlineView;
 
-	public Browser ()
-	{}
+	protected Controller (IntPtr raw, bool rel) : base(raw, rel) {}
 
+	public Controller () {}
+
+	[ObjCExport("windowDidBecomeMain:")]
+	public void UpdateModal(object aNotification) {
+		drawer.open();
+		outlineView.target = this;
+		outlineView.doubleAction = "doubleAction";
+	}
+	
+	[ObjCExport("doubleAction")]
+	public void outlineViewDoubleAction() {
+		Console.WriteLine("\n\n\n\n\nDouble clicked the OV\n\n\n\n\n");
+	}
+}
+
+class Browser {
+	public Browser() {}
 	public void Run() {
 		if(!NSBundleAppKitExtras.LoadNibNamed_owner("monodoc.nib", NSApplication.SharedApplication)) {
 			Console.WriteLine("Cant load nib");
@@ -152,9 +168,9 @@ Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 
 [ObjCRegister("BrowserDataSource")]
 class BrowserController : NSObject {
+
 	internal RootTree help_tree;
 	internal IList items = new ArrayList();
-
 
 	public BrowserController(RootTree _tree) {
 		help_tree = _tree;
