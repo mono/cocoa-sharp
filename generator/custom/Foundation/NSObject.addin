@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.29 2004/09/07 21:16:37 adhamh Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.30 2004/09/08 12:04:05 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -20,14 +20,13 @@
 			return TypeConverter.Net2NS(obj);
 		}
 	
-        public static string debugLevel = System.Environment.GetEnvironmentVariable("COCOASHARP_DEBUG_LEVEL");
+		public static int sDebugLevel = 0;
 
+		//level 1 = error
+		//level 2 = debug
 		public static void DebugLog(int debug_level, string message, params object[]args) {
-			//level 1 = error
-			//level 2 = debug
-			if (debugLevel != null  && Int32.Parse(debugLevel) >= debug_level) {
+			if (sDebugLevel >= debug_level)
 				Console.WriteLine(message,args);
-				}
 		}
 
 		private IntPtr _obj;
@@ -282,6 +281,11 @@ NSObject.DebugLog(1, "DEBUG: ClassHandler: " + className);
 		static NSObject() {
 			sClassHandler = new ClassHandlerDelegate(ClassHandler);
 			InitGlue(sClassHandler);
+			string debugLevel = System.Environment.GetEnvironmentVariable("COCOASHARP_DEBUG_LEVEL");
+			try {
+				sDebugLevel = int.Parse(debugLevel);
+			}
+			catch {}
 		}
 
 		#endregion
@@ -289,6 +293,9 @@ NSObject.DebugLog(1, "DEBUG: ClassHandler: " + className);
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.30  2004/09/08 12:04:05  urs
+// Shut up Glue if env var "COCOASHARP_DEBUG_LEVEL" is not set to at least 1.
+//
 // Revision 1.29  2004/09/07 21:16:37  adhamh
 // change ERROR messages to also call NSObject.DebugLog instead of Console.WriteLine.
 //
