@@ -117,7 +117,7 @@ namespace ObjCManagedExporter
 			mMessageParts = (string[])messageParts.ToArray(typeof(string));
 			
 			mGlueMethodName = string.Empty;
-			mCSMethodName = string.Join("_", mMessageParts);
+			mCSMethodName = MakeCSMethodName(string.Join("_", mMessageParts));
 			if (mIsClassMethod) mGlueMethodName += "_";
 			mGlueMethodName += string.Join("_",mMessageParts);
 		}
@@ -263,36 +263,72 @@ namespace ObjCManagedExporter
 			}
 		}
 
-                public void CSInterfaceMethod(string name,System.IO.TextWriter w)
-                {
-                        if (mIsUnsupported)
-                                return;
+		public void CSInterfaceMethod(string name,System.IO.TextWriter w)
+		{
+			if (mIsUnsupported)
+				return;
 
-                        string _type = convertType(mReturnDeclarationType);
-                        ArrayList _params = new ArrayList();
+			string _type = convertType(mReturnDeclarationType);
+			ArrayList _params = new ArrayList();
 
-                        for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
-                        {
-                                //string t = convertType(mArgumentDeclarationTypes[i]);
-                                _params.Add("object p" + i + "/*" + mArgumentNames[i] + "*/");
-                        }
+			for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+			{
+				//string t = convertType(mArgumentDeclarationTypes[i]);
+				_params.Add("object p" + i + "/*" + mArgumentNames[i] + "*/");
+			}
 
-                        string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
-                        w.WriteLine("        {0} {1} {2} ({3}); ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr);
-                }
+			string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
+			w.WriteLine("        {0} {1} {2} ({3}); ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr);
+		}
 
-		private static string convertTypeGlue(string type) 
+		private static string MakeCSMethodName(string name)
+		{
+			switch (name) {
+				case "delegate":
+				case "this":
+				case "base":
+				case "int":
+				case "string":
+				case "class":
+				case "object":
+					return "_" + name;
+			}
+			return name;
+		}
+
+		private static string convertTypeNative(string type)
 		{
 			switch (type) 
 			{
+				case "void": return "void";
 				case "BOOL": return "bool";
-				case "long long": return "Int64";
+				case "float": return "float";
+				case "double": return "double";
+				case "char": case "unichar": return "char";
+				case "unsigned char": return "uchar";
+				case "unsigned short": return "ushort";
+				case "short": return "short";
+				case "int": case "long int": case "int32_t":
+					return "int";
+				case "unsigned": case "unsigned int": case "unsigned long int": 
+					return "uint";
+				case "long long": case "int64_t": return "Int64";
 				case "unsigned long long": return "UInt64";
-				case "unsigned": return "uint";
-				case "id": return "IntPtr /*(" + type + ")*/";
-				case "Class": return "IntPtr /*(" + type + ")*/";
-				case "SEL": return "IntPtr /*(" + type + ")*/";
-				case "IMP": return "IntPtr /*(" + type + ")*/";
+
+				case "va_list":
+				case "IMP":
+					return "IntPtr /*(" + type + ")*/";
+			}
+			return type;
+		}
+
+		private static string convertTypeGlue(string type) 
+		{
+			type = convertTypeNative(type.Replace("const ",string.Empty));
+			switch (type) 
+			{
+				case "id": case "Class": case "SEL":
+					return "IntPtr /*(" + type + ")*/";
 				default:
 					if (type.EndsWith("*"))
 						return "IntPtr /*(" + type + ")*/";
@@ -303,18 +339,12 @@ namespace ObjCManagedExporter
 
 		private static string convertType(string type) 
 		{
+			type = convertTypeNative(type.Replace("const ",string.Empty));
 			switch (type) 
 			{
-				case "BOOL": return "bool";
-				case "unsigned int": return "uint";
-				case "unsigned short": return "ushort";
-				case "long long": return "Int64";
-				case "unsigned long long": return "UInt64";
-				case "unsigned": return "uint";
 				case "id": return "object";
 				case "Class": return "Class";
 				case "SEL": return "string";
-				case "IMP": return "IntPtr /*(" + type + ")*/";
 				default:
 					if (type.EndsWith("*"))
 						return type.StartsWith("NSString") ? "string" : type.Replace("*", "");
@@ -324,3 +354,4 @@ namespace ObjCManagedExporter
 		}
 	}
 }
+
