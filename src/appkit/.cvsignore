@@ -1,0 +1,9 @@
+*_stub.m
+*.o
+*.lo
+*.la
+*.loT
+Makefile
+Makefile.in
+.deps
+.libs

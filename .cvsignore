@@ -1,4 +1,5 @@
 Makefile.in
+Makefile
 .DS_Store
 missing
 install-sh
