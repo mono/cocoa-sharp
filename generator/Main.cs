@@ -59,7 +59,7 @@ namespace ObjCManagedExporter
 			foreach (Match m in _protocolRegex.Matches(_headerData)) 
 			{
             
-				Protocol _p = new Protocol(m.Groups[1].Value, m.Groups[3].Value);
+				Protocol _p = new Protocol(m.Groups[1].Value, m.Groups[3].Value, f.Name);
 				_p.AddMethods(m.Groups[4].Value);
 				Protocols.Add(_p.Name, _p);
 				_headerData = _headerData.Replace(m.Value, "");
@@ -104,6 +104,34 @@ namespace ObjCManagedExporter
         
 		private void OutputFramework(Framework _toprocess) 
 		{
+			IDictionaryEnumerator _protoenum = Protocols.GetEnumerator();
+			while(_protoenum.MoveNext())
+			{
+				ArrayList _addedMethods = new ArrayList();
+				Protocol p = (Protocol)_protoenum.Value;
+		  		TextWriter _cs = new StreamWriter(File.Create(String.Format("src{0}Apple.{1}{0}{2}.cs.gen", Path.DirectorySeparatorChar, p.Framework, p.Name)));
+				_cs.WriteLine("using System;");
+				_cs.WriteLine("using System.Runtime.InteropServices;");
+				if(!p.Framework.Equals("Foundation")) 
+					_cs.WriteLine("using Apple.Foundation;");
+				_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
+				_cs.WriteLine("{");
+ 				_cs.Write("    public interface {0}", p.Name);
+				_cs.WriteLine("    {");
+				IDictionaryEnumerator _methodEnum = p.Methods.GetEnumerator();
+				while(_methodEnum.MoveNext()) {
+					Method _toOutput = (Method)_methodEnum.Value;
+					String _methodSig = _toOutput.GlueMethodName;
+					if(!_addedMethods.Contains((string)_methodSig)) 
+					{ 
+						_addedMethods.Add((string)_methodSig);
+						_toOutput.CSInterfaceMethod(p.Name, _cs);
+					}
+				}
+				_cs.WriteLine("    }");
+				_cs.WriteLine("}");
+				_cs.Close();
+			}
 			IDictionaryEnumerator _enum = Interfaces.GetEnumerator();
 			while(_enum.MoveNext()) 
 			{
@@ -167,6 +195,12 @@ namespace ObjCManagedExporter
 						_cs.WriteLine("using Apple.Foundation;");
 					_cs.WriteLine("namespace Apple.{0}", _toprocess.Name);
 					_cs.WriteLine("{");
+ 					_cs.Write("    public class {0}", i.Name);
+					if(i.Child.Length > 0)
+						_cs.Write(" : {0}{1}", i.Child, (i.Protocols.Length > 0 ? "," + String.Join(",", i.Protocols) : ""));
+					if(i.Child.Length == 0 && i.Protocols.Length > 0)
+						_cs.Write(" : {0}", String.Join(",", i.Protocols));
+					_cs.WriteLine("    {");
 					foreach(string import in i.Imports)
 						_gs.WriteLine("#import <{0}>", import);
 					foreach(string import in _categoryImports)
@@ -193,6 +227,7 @@ namespace ObjCManagedExporter
 								Console.WriteLine("\t\t\tWARNING: Method {0} is duplicated.", (string)_methodSig);
 						}
 					}
+					_cs.WriteLine("    }");
 					_cs.WriteLine("}");
 					_cs.Close();
 					_gs.Close();

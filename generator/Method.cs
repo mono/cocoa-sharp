@@ -263,6 +263,24 @@ namespace ObjCManagedExporter
 			}
 		}
 
+                public void CSInterfaceMethod(string name,System.IO.TextWriter w)
+                {
+                        if (mIsUnsupported)
+                                return;
+
+                        string _type = convertType(mReturnDeclarationType);
+                        ArrayList _params = new ArrayList();
+
+                        for(int i = 0; i < mArgumentDeclarationTypes.Length; ++i) 
+                        {
+                                //string t = convertType(mArgumentDeclarationTypes[i]);
+                                _params.Add("object p" + i + "/*" + mArgumentNames[i] + "*/");
+                        }
+
+                        string paramsStr = string.Join(", ", (string[])_params.ToArray(typeof(string)));
+                        w.WriteLine("        {0} {1} {2} ({3}); ", (mIsClassMethod ? "static" : ""), _type, mCSMethodName, paramsStr);
+                }
+
 		private static string convertTypeGlue(string type) 
 		{
 			switch (type) 
