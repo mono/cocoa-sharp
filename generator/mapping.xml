@@ -3,110 +3,11 @@
   <property get="+cellClass" set="+setCellClass:" name="CellClass" getsignature="#8@0:4" setsignature="v12@0:4#8" />
   <property get="+currentContext" set="+setCurrentContext:" name="CurrentContext" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+currentOperation" set="+setCurrentOperation:" name="CurrentOperation" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+defaultFlatness" set="+setDefaultFlatness:" name="DefaultFlatness" getsignature="f8@0:4" setsignature="v12@0:4f8" />
-  <property get="+defaultLineCapStyle" set="+setDefaultLineCapStyle:" name="DefaultLineCapStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="+defaultLineJoinStyle" set="+setDefaultLineJoinStyle:" name="DefaultLineJoinStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="+defaultLineWidth" set="+setDefaultLineWidth:" name="DefaultLineWidth" getsignature="f8@0:4" setsignature="v12@0:4f8" />
-  <property get="+defaultMiterLimit" set="+setDefaultMiterLimit:" name="DefaultMiterLimit" getsignature="f8@0:4" setsignature="v12@0:4f8" />
-  <property get="+defaultPrinter" set="+setDefaultPrinter:" name="DefaultPrinter" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+defaultTimeZone" set="+setDefaultTimeZone:" name="DefaultTimeZone" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+defaultWindingRule" set="+setDefaultWindingRule:" name="DefaultWindingRule" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="+ignoresAlpha" set="+setIgnoresAlpha:" name="IgnoresAlpha" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="+menuBarVisible" set="+setMenuBarVisible:" name="MenuBarVisible" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="+menuZone" set="+setMenuZone:" name="MenuZone" getsignature="^{_NSZone=}8@0:4" setsignature="v12@0:4^{_NSZone=}8" />
-  <property get="+optionalSharedHistory" set="+setOptionalSharedHistory:" name="OptionalSharedHistory" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+poolCountHighWaterMark" set="+setPoolCountHighWaterMark:" name="PoolCountHighWaterMark" getsignature="I8@0:4" setsignature="v12@0:4I8" />
-  <property get="+poolCountHighWaterResolution" set="+setPoolCountHighWaterResolution:" name="PoolCountHighWaterResolution" getsignature="I8@0:4" setsignature="v12@0:4I8" />
-  <property get="+preferredFontNames" set="+setPreferredFontNames:" name="PreferredFontNames" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+rulerViewClass" set="+setRulerViewClass:" name="RulerViewClass" />
-  <property get="+sharedPrintInfo" set="+setSharedPrintInfo:" name="SharedPrintInfo" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+sharedScriptSuiteRegistry" set="+setSharedScriptSuiteRegistry:" name="SharedScriptSuiteRegistry" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+sharedURLCache" set="+setSharedURLCache:" name="SharedURLCache" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="+threadPriority" set="+setThreadPriority:" name="ThreadPriority" getsignature="d8@0:4" setsignature="c16@0:4d8" />
-  <property get="+usesUserKeyEquivalents" set="+setUsesUserKeyEquivalents:" name="UsesUserKeyEquivalents" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="+version" set="+setVersion:" name="Version" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-acceptsArrowKeys" set="-setAcceptsArrowKeys:" name="acceptsArrowKeys" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-acceptsGlyphInfo" set="-setAcceptsGlyphInfo:" name="acceptsGlyphInfo" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-acceptsMouseMovedEvents" set="-setAcceptsMouseMovedEvents:" name="acceptsMouseMovedEvents" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-accessoryView" set="-setAccessoryView:" name="accessoryView" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-action" set="-setAction:" name="action" getsignature=":8@0:4" setsignature="v12@0:4:8" />
   <property set="-setActionName:" name="actionName" setsignature="v12@0:4@8" />
-  <property get="-alertStyle" set="-setAlertStyle:" name="alertStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-alignment" set="-setAlignment:" name="alignment" getsignature="i8@0:4" />
-  <property get="-allowedFileTypes" set="-setAllowedFileTypes:" name="allowedFileTypes" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-allowsAnimatedImages" set="-setAllowsAnimatedImages:" name="allowsAnimatedImages" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsAnimatedImageLooping" set="-setAllowsAnimatedImageLooping:" name="allowsAnimatedImageLooping" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsBranchSelection" set="-setAllowsBranchSelection:" name="allowsBranchSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsColumnReordering" set="-setAllowsColumnReordering:" name="allowsColumnReordering" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsColumnResizing" set="-setAllowsColumnResizing:" name="allowsColumnResizing" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsColumnSelection" set="-setAllowsColumnSelection:" name="allowsColumnSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsDocumentBackgroundColorChange" set="-setAllowsDocumentBackgroundColorChange:" name="allowsDocumentBackgroundColorChange" />
-  <property get="-allowsEditingTextAttributes" set="-setAllowsEditingTextAttributes:" name="allowsEditingTextAttributes" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsEmptySelection" set="-setAllowsEmptySelection:" name="allowsEmptySelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsFloats" set="-setAllowsFloats:" name="allowsFloats" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsMixedState" set="-setAllowsMixedState:" name="allowsMixedState" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsMultipleSelection" set="-setAllowsMultipleSelection:" name="allowsMultipleSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsOtherFileTypes" set="-setAllowsOtherFileTypes:" name="allowsOtherFileTypes" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsScrolling" set="-setAllowsScrolling:" name="allowsScrolling" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsTickMarkValuesOnly" set="-setAllowsTickMarkValuesOnly:" name="allowsTickMarkValuesOnly" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsToolTipsWhenApplicationIsInactive" set="-setAllowsToolTipsWhenApplicationIsInactive:" name="allowsToolTipsWhenApplicationIsInactive" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsTruncatedLabels" set="-setAllowsTruncatedLabels:" name="allowsTruncatedLabels" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allowsUndo" set="-setAllowsUndo:" name="allowsUndo" />
-  <property get="-allowsUserCustomization" set="-setAllowsUserCustomization:" name="allowsUserCustomization" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-allHTTPHeaderFields" set="-setAllHTTPHeaderFields:" name="allHTTPHeaderFields" />
-  <property get="-alpha" set="-setAlpha:" name="alpha" getsignature="f8@0:4" />
-  <property get="-alphaValue" set="-setAlphaValue:" name="alphaValue" getsignature="f8@0:4" setsignature="v12@0:4f8" />
-  <property get="-alternateImage" set="-setAlternateImage:" name="alternateImage" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-alternateMnemonicLocation" set="-setAlternateMnemonicLocation:" name="alternateMnemonicLocation" getsignature="I8@0:4" setsignature="v12@0:4I8" />
-  <property get="-alternateTitle" set="-setAlternateTitle:" name="alternateTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property set="-setAlternateTitleWithMnemonic:" name="alternateTitleWithMnemonic" setsignature="v12@0:4@8" />
-  <property get="-altersStateOfSelectedItem" set="-setAltersStateOfSelectedItem:" name="altersStateOfSelectedItem" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-altIncrementValue" set="-setAltIncrementValue:" name="altIncrementValue" getsignature="d8@0:4" setsignature="v16@0:4d8" />
-  <property get="-animates" set="-setAnimates:" name="animates" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-animationDelay" set="-setAnimationDelay:" name="animationDelay" getsignature="d8@0:4" setsignature="v16@0:4d8" />
   <property set="-setAppleMenu:" name="appleMenu" />
-  <property get="-applicationIconImage" set="-setApplicationIconImage:" name="applicationIconImage" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-applicationNameForUserAgent" set="-setApplicationNameForUserAgent:" name="applicationNameForUserAgent" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-appliesImmediately" set="-setAppliesImmediately:" name="appliesImmediately" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-arguments" set="-setArguments:" name="arguments" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property set="-setArray:" name="array" setsignature="v12@0:4@8" />
-  <property get="-arrowsPosition" set="-setArrowsPosition:" name="arrowsPosition" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-arrowPosition" set="-setArrowPosition:" name="arrowPosition" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-aspectRatio" set="-setAspectRatio:" name="aspectRatio" getsignature="{_NSSize=ff}8@0:4" setsignature="v16@0:4{_NSSize=ff}8" />
-  <property get="-attachment" set="-setAttachment:" name="attachment" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedAlternateTitle" set="-setAttributedAlternateTitle:" name="attributedAlternateTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedString" set="-setAttributedString:" name="attributedString" setsignature="v12@0:4@8" />
-  <property get="-attributedStringForNil" set="-setAttributedStringForNil:" name="attributedStringForNil" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedStringForNotANumber" set="-setAttributedStringForNotANumber:" name="attributedStringForNotANumber" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedStringForZero" set="-setAttributedStringForZero:" name="attributedStringForZero" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedStringValue" set="-setAttributedStringValue:" name="attributedStringValue" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributedTitle" set="-setAttributedTitle:" name="attributedTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-attributes" set="-setAttributes:" name="attributes" getsignature="@8@0:4" />
-  <property get="-attributeRuns" set="-setAttributeRuns:" name="attributeRuns" />
-  <property get="-autoenablesItems" set="-setAutoenablesItems:" name="autoenablesItems" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autohidesScrollers" set="-setAutohidesScrollers:" name="autohidesScrollers" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-automaticallyPreparesContent" set="-setAutomaticallyPreparesContent:" name="automaticallyPreparesContent" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autorepeat" set="-setAutorepeat:" name="autorepeat" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autoresizesAllColumnsToFit" set="-setAutoresizesAllColumnsToFit:" name="autoresizesAllColumnsToFit" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autoresizesOutlineColumn" set="-setAutoresizesOutlineColumn:" name="autoresizesOutlineColumn" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autoresizesSubviews" set="-setAutoresizesSubviews:" name="autoresizesSubviews" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autoresizingMask" set="-setAutoresizingMask:" name="autoresizingMask" getsignature="I8@0:4" setsignature="v12@0:4I8" />
-  <property get="-autosaves" set="-setAutosaves:" name="autosaves" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autosavesConfiguration" set="-setAutosavesConfiguration:" name="autosavesConfiguration" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autosaveExpandedItems" set="-setAutosaveExpandedItems:" name="autosaveExpandedItems" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autosaveName" set="-setAutosaveName:" name="autosaveName" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-autosaveTableColumns" set="-setAutosaveTableColumns:" name="autosaveTableColumns" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-autosizesCells" set="-setAutosizesCells:" name="autosizesCells" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-avoidsEmptySelection" set="-setAvoidsEmptySelection:" name="avoidsEmptySelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-backgroundColor" set="-setBackgroundColor:" name="backgroundColor" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-backgroundLayoutEnabled" set="-setBackgroundLayoutEnabled:" name="backgroundLayoutEnabled" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-backingType" set="-setBackingType:" name="backingType" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-baseSpecifier" set="-setBaseSpecifier:" name="baseSpecifier" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property get="-baseWritingDirection" set="-setBaseWritingDirection:" name="baseWritingDirection" setsignature="v12@0:4i8" />
-  <property get="-becomesKeyOnlyIfNeeded" set="-setBecomesKeyOnlyIfNeeded:" name="becomesKeyOnlyIfNeeded" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property set="-setBezeled:" name="bezeled" setsignature="v12@0:4c8" />
-  <property get="-bezelStyle" set="-setBezelStyle:" name="bezelStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
-  <property get="-bidiProcessingEnabled" set="-setBidiProcessingEnabled:" name="bidiProcessingEnabled" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property set="-setBordered:" name="bordered" setsignature="v12@0:4c8" />
   <property set="-setBoundsOrigin:" name="boundsOrigin" setsignature="v16@0:4{_NSPoint=ff}8" />
   <property set="-setBoundsSize:" name="boundsSize" setsignature="v16@0:4{_NSSize=ff}8" />
@@ -207,14 +108,22 @@
   <property get="+defaultCStringEncoding" name="DefaultCStringEncoding" getsignature="I8@0:4" />
   <property get="+defaultDecimalNumberHandler" name="DefaultDecimalNumberHandler" getsignature="@8@0:4" />
   <property get="+defaultDepthLimit" name="DefaultDepthLimit" getsignature="i8@0:4" />
+  <property get="+defaultFlatness" set="+setDefaultFlatness:" name="DefaultFlatness" getsignature="f8@0:4" setsignature="v12@0:4f8" />
   <property get="+defaultFocusRingType" name="DefaultFocusRingType" getsignature="i8@0:4" />
+  <property get="+defaultLineCapStyle" set="+setDefaultLineCapStyle:" name="DefaultLineCapStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
+  <property get="+defaultLineJoinStyle" set="+setDefaultLineJoinStyle:" name="DefaultLineJoinStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
+  <property get="+defaultLineWidth" set="+setDefaultLineWidth:" name="DefaultLineWidth" getsignature="f8@0:4" setsignature="v12@0:4f8" />
   <property get="+defaultManager" name="DefaultManager" getsignature="@8@0:4" />
   <property get="+defaultMenu" name="DefaultMenu" getsignature="@8@0:4" />
+  <property get="+defaultMiterLimit" set="+setDefaultMiterLimit:" name="DefaultMiterLimit" getsignature="f8@0:4" setsignature="v12@0:4f8" />
   <property get="+defaultParagraphStyle" name="DefaultParagraphStyle" getsignature="@8@0:4" />
   <property get="+defaultPixelFormat" name="DefaultPixelFormat" getsignature="@8@0:4" />
+  <property get="+defaultPrinter" set="+setDefaultPrinter:" name="DefaultPrinter" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+defaultQueue" name="DefaultQueue" getsignature="@8@0:4" />
+  <property get="+defaultTimeZone" set="+setDefaultTimeZone:" name="DefaultTimeZone" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+defaultTypesetterBehavior" name="DefaultTypesetterBehavior" getsignature="i8@0:4" />
   <property get="+defaultVoice" name="DefaultVoice" getsignature="@8@0:4" />
+  <property get="+defaultWindingRule" set="+setDefaultWindingRule:" name="DefaultWindingRule" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property get="+description" name="Description" getsignature="@8@0:4" />
   <property get="+dictionary" name="Dictionary" getsignature="@8@0:4" />
   <property get="+disabledControlTextColor" name="DisabledControlTextColor" getsignature="@8@0:4" />
@@ -234,6 +143,7 @@
   <property get="+headerTextColor" name="HeaderTextColor" getsignature="@8@0:4" />
   <property get="+highlightedBranchImage" name="HighlightedBranchImage" getsignature="@8@0:4" />
   <property get="+highlightColor" name="HighlightColor" getsignature="@8@0:4" />
+  <property get="+ignoresAlpha" set="+setIgnoresAlpha:" name="IgnoresAlpha" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="+illegalCharacterSet" name="IllegalCharacterSet" getsignature="@8@0:4" />
   <property get="+imageFileTypes" name="ImageFileTypes" getsignature="@8@0:4" />
   <property get="+imagePasteboardTypes" name="ImagePasteboardTypes" getsignature="@8@0:4" />
@@ -258,6 +168,8 @@
   <property get="+mainScreen" name="MainScreen" getsignature="@8@0:4" />
   <property get="+maximumDecimalNumber" name="MaximumDecimalNumber" getsignature="@8@0:4" />
   <property get="+menuBarHeight" name="MenuBarHeight" getsignature="f8@0:4" />
+  <property get="+menuBarVisible" set="+setMenuBarVisible:" name="MenuBarVisible" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="+menuZone" set="+setMenuZone:" name="MenuZone" getsignature="^{_NSZone=}8@0:4" setsignature="v12@0:4^{_NSZone=}8" />
   <property get="+minimumDecimalNumber" name="MinimumDecimalNumber" getsignature="@8@0:4" />
   <property get="+mouseLocation" name="MouseLocation" getsignature="{_NSPoint=ff}8@0:4" />
   <property get="+movieUnfilteredFileTypes" name="MovieUnfilteredFileTypes" getsignature="@8@0:4" />
@@ -270,12 +182,16 @@
   <property get="+one" name="One" getsignature="@8@0:4" />
   <property get="+openHandCursor" name="OpenHandCursor" getsignature="@8@0:4" />
   <property get="+openPanel" name="OpenPanel" getsignature="@8@0:4" />
+  <property get="+optionalSharedHistory" set="+setOptionalSharedHistory:" name="OptionalSharedHistory" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+orangeColor" name="OrangeColor" getsignature="@8@0:4" />
   <property get="+outputStreamToMemory" name="OutputStreamToMemory" getsignature="@8@0:4" />
   <property get="+pasteboardWithUniqueName" name="PasteboardWithUniqueName" getsignature="@8@0:4" />
   <property get="+pipe" name="Pipe" getsignature="@8@0:4" />
   <property get="+pointingHandCursor" name="PointingHandCursor" getsignature="@8@0:4" />
+  <property get="+poolCountHighWaterMark" set="+setPoolCountHighWaterMark:" name="PoolCountHighWaterMark" getsignature="I8@0:4" setsignature="v12@0:4I8" />
+  <property get="+poolCountHighWaterResolution" set="+setPoolCountHighWaterResolution:" name="PoolCountHighWaterResolution" getsignature="I8@0:4" setsignature="v12@0:4I8" />
   <property get="+port" name="Port" getsignature="@8@0:4" />
+  <property get="+preferredFontNames" set="+setPreferredFontNames:" name="PreferredFontNames" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+prefersTrackingUntilMouseUp" name="PrefersTrackingUntilMouseUp" getsignature="c8@0:4" />
   <property get="+printerNames" name="PrinterNames" getsignature="@8@0:4" />
   <property get="+printerTypes" name="PrinterTypes" getsignature="@8@0:4" />
@@ -292,6 +208,7 @@
   <property get="+resizeRightCursor" name="ResizeRightCursor" getsignature="@8@0:4" />
   <property get="+resizeUpCursor" name="ResizeUpCursor" getsignature="@8@0:4" />
   <property get="+resizeUpDownCursor" name="ResizeUpDownCursor" getsignature="@8@0:4" />
+  <property get="+rulerViewClass" set="+setRulerViewClass:" name="RulerViewClass" />
   <property get="+savePanel" name="SavePanel" getsignature="@8@0:4" />
   <property get="+screens" name="Screens" getsignature="@8@0:4" />
   <property get="+scrollerWidth" name="ScrollerWidth" getsignature="f8@0:4" />
@@ -320,12 +237,15 @@
   <property get="+sharedHelpManager" name="SharedHelpManager" getsignature="@8@0:4" />
   <property get="+sharedHTTPCookieStorage" name="SharedHTTPCookieStorage" getsignature="@8@0:4" />
   <property get="+sharedInstance" name="SharedInstance" getsignature="@8@0:4" />
+  <property get="+sharedPrintInfo" set="+setSharedPrintInfo:" name="SharedPrintInfo" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+sharedScriptExecutionContext" name="SharedScriptExecutionContext" getsignature="@8@0:4" />
+  <property get="+sharedScriptSuiteRegistry" set="+setSharedScriptSuiteRegistry:" name="SharedScriptSuiteRegistry" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+sharedSpellChecker" name="SharedSpellChecker" getsignature="@8@0:4" />
   <property get="+sharedSpellCheckerExists" name="SharedSpellCheckerExists" getsignature="c8@0:4" />
   <property get="+sharedSystemTypesetter" name="SharedSystemTypesetter" getsignature="@8@0:4" />
   <property get="+sharedTypesetter" name="SharedTypesetter" getsignature="@8@0:4" />
   <property get="+sharedUserDefaultsController" name="SharedUserDefaultsController" getsignature="@8@0:4" />
+  <property get="+sharedURLCache" set="+setSharedURLCache:" name="SharedURLCache" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="+sharedWorkspace" name="SharedWorkspace" getsignature="@8@0:4" />
   <property get="+smallSystemFontSize" name="SmallSystemFontSize" getsignature="f8@0:4" />
   <property get="+soundUnfilteredFileTypes" name="SoundUnfilteredFileTypes" getsignature="@8@0:4" />
@@ -345,6 +265,7 @@
   <property get="+textPasteboardTypes" name="TextPasteboardTypes" getsignature="@8@0:4" />
   <property get="+textUnfilteredFileTypes" name="TextUnfilteredFileTypes" getsignature="@8@0:4" />
   <property get="+textUnfilteredPasteboardTypes" name="TextUnfilteredPasteboardTypes" getsignature="@8@0:4" />
+  <property get="+threadPriority" set="+setThreadPriority:" name="ThreadPriority" getsignature="d8@0:4" setsignature="c16@0:4d8" />
   <property get="+timeIntervalSinceReferenceDate" name="TimeIntervalSinceReferenceDate" getsignature="d8@0:4" />
   <property get="+topAutoreleasePoolCount" name="TopAutoreleasePoolCount" getsignature="I8@0:4" />
   <property get="+totalAutoreleasedObjects" name="TotalAutoreleasedObjects" getsignature="I8@0:4" />
@@ -352,8 +273,10 @@
   <property get="+transformedValueClass" name="TransformedValueClass" getsignature="#8@0:4" />
   <property get="+uniqueSpellDocumentTag" name="UniqueSpellDocumentTag" getsignature="i8@0:4" />
   <property get="+uppercaseLetterCharacterSet" name="UppercaseLetterCharacterSet" getsignature="@8@0:4" />
+  <property get="+usesUserKeyEquivalents" set="+setUsesUserKeyEquivalents:" name="UsesUserKeyEquivalents" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="+useStoredAccessor" name="UseStoredAccessor" getsignature="c8@0:4" />
   <property get="+valueTransformerNames" name="ValueTransformerNames" getsignature="@8@0:4" />
+  <property get="+version" set="+setVersion:" name="Version" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property get="+whitespaceAndNewlineCharacterSet" name="WhitespaceAndNewlineCharacterSet" getsignature="@8@0:4" />
   <property get="+whitespaceCharacterSet" name="WhitespaceCharacterSet" getsignature="@8@0:4" />
   <property get="+whiteColor" name="WhiteColor" getsignature="@8@0:4" />
@@ -369,61 +292,138 @@
   <property get="-absoluteString" name="absoluteString" getsignature="@8@0:4" />
   <property get="-absoluteURL" name="absoluteURL" getsignature="@8@0:4" />
   <property get="-acceptableDragTypes" name="acceptableDragTypes" />
+  <property get="-acceptsArrowKeys" set="-setAcceptsArrowKeys:" name="acceptsArrowKeys" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-acceptsBinary" name="acceptsBinary" getsignature="c8@0:4" />
   <property get="-acceptsFirstResponder" name="acceptsFirstResponder" getsignature="c8@0:4" />
+  <property get="-acceptsGlyphInfo" set="-setAcceptsGlyphInfo:" name="acceptsGlyphInfo" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-acceptsMouseMovedEvents" set="-setAcceptsMouseMovedEvents:" name="acceptsMouseMovedEvents" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-accessibilityActionNames" name="accessibilityActionNames" />
   <property get="-accessibilityAttributeNames" name="accessibilityAttributeNames" />
   <property get="-accessibilityFocusedUIElement" name="accessibilityFocusedUIElement" />
   <property get="-accessibilityIsIgnored" name="accessibilityIsIgnored" />
   <property get="-accessibilityParameterizedAttributeNames" name="accessibilityParameterizedAttributeNames" getsignature="@8@0:4" />
+  <property get="-accessoryView" set="-setAccessoryView:" name="accessoryView" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-action" set="-setAction:" name="action" getsignature=":8@0:4" setsignature="v12@0:4:8" />
   <property get="-activeApplication" name="activeApplication" getsignature="@8@0:4" />
   <property get="-address" name="address" getsignature="@8@0:4" />
   <property get="-addresses" name="addresses" getsignature="@8@0:4" />
   <property get="-aeDesc" name="aeDesc" getsignature="r^{AEDesc=I^^{OpaqueAEDataStorageType}}8@0:4" />
   <property get="-afmDictionary" name="afmDictionary" getsignature="@8@0:4" />
+  <property get="-alertStyle" set="-setAlertStyle:" name="alertStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
+  <property get="-alignment" set="-setAlignment:" name="alignment" getsignature="i8@0:4" />
+  <property get="-allowedFileTypes" set="-setAllowedFileTypes:" name="allowedFileTypes" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-allowsAnimatedImages" set="-setAllowsAnimatedImages:" name="allowsAnimatedImages" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsAnimatedImageLooping" set="-setAllowsAnimatedImageLooping:" name="allowsAnimatedImageLooping" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsBranchSelection" set="-setAllowsBranchSelection:" name="allowsBranchSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsColumnReordering" set="-setAllowsColumnReordering:" name="allowsColumnReordering" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsColumnResizing" set="-setAllowsColumnResizing:" name="allowsColumnResizing" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsColumnSelection" set="-setAllowsColumnSelection:" name="allowsColumnSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsDocumentBackgroundColorChange" set="-setAllowsDocumentBackgroundColorChange:" name="allowsDocumentBackgroundColorChange" />
   <property get="-allowsDuplicatesInToolbar" name="allowsDuplicatesInToolbar" getsignature="c8@0:4" />
+  <property get="-allowsEditingTextAttributes" set="-setAllowsEditingTextAttributes:" name="allowsEditingTextAttributes" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsEmptySelection" set="-setAllowsEmptySelection:" name="allowsEmptySelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsFloats" set="-setAllowsFloats:" name="allowsFloats" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-allowsKeyedCoding" name="allowsKeyedCoding" getsignature="c8@0:4" />
+  <property get="-allowsMixedState" set="-setAllowsMixedState:" name="allowsMixedState" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsMultipleSelection" set="-setAllowsMultipleSelection:" name="allowsMultipleSelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-allowsNaturalLanguage" name="allowsNaturalLanguage" getsignature="c8@0:4" />
+  <property get="-allowsOtherFileTypes" set="-setAllowsOtherFileTypes:" name="allowsOtherFileTypes" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsScrolling" set="-setAllowsScrolling:" name="allowsScrolling" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsTickMarkValuesOnly" set="-setAllowsTickMarkValuesOnly:" name="allowsTickMarkValuesOnly" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsToolTipsWhenApplicationIsInactive" set="-setAllowsToolTipsWhenApplicationIsInactive:" name="allowsToolTipsWhenApplicationIsInactive" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsTruncatedLabels" set="-setAllowsTruncatedLabels:" name="allowsTruncatedLabels" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-allowsUndo" set="-setAllowsUndo:" name="allowsUndo" />
+  <property get="-allowsUserCustomization" set="-setAllowsUserCustomization:" name="allowsUserCustomization" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-allCredentials" name="allCredentials" getsignature="@8@0:4" />
   <property get="-allHeaderFields" name="allHeaderFields" getsignature="@8@0:4" />
+  <property get="-allHTTPHeaderFields" set="-setAllHTTPHeaderFields:" name="allHTTPHeaderFields" />
   <property get="-allKeys" name="allKeys" getsignature="@8@0:4" />
   <property get="-allObjects" name="allObjects" getsignature="@8@0:4" />
   <property get="-allValues" name="allValues" getsignature="@8@0:4" />
+  <property get="-alpha" set="-setAlpha:" name="alpha" getsignature="f8@0:4" />
   <property get="-alphaComponent" name="alphaComponent" getsignature="f8@0:4" />
+  <property get="-alphaValue" set="-setAlphaValue:" name="alphaValue" getsignature="f8@0:4" setsignature="v12@0:4f8" />
+  <property get="-alternateImage" set="-setAlternateImage:" name="alternateImage" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="-alternateMnemonic" name="alternateMnemonic" getsignature="@8@0:4" />
+  <property get="-alternateMnemonicLocation" set="-setAlternateMnemonicLocation:" name="alternateMnemonicLocation" getsignature="I8@0:4" setsignature="v12@0:4I8" />
+  <property get="-alternateTitle" set="-setAlternateTitle:" name="alternateTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-altersStateOfSelectedItem" set="-setAltersStateOfSelectedItem:" name="altersStateOfSelectedItem" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-altIncrementValue" set="-setAltIncrementValue:" name="altIncrementValue" getsignature="d8@0:4" setsignature="v16@0:4d8" />
+  <property get="-animates" set="-setAnimates:" name="animates" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-animationDelay" set="-setAnimationDelay:" name="animationDelay" getsignature="d8@0:4" setsignature="v16@0:4d8" />
   <property get="-anyObject" name="anyObject" getsignature="@8@0:4" />
   <property get="-appleEvent" name="appleEvent" getsignature="@8@0:4" />
   <property get="-appleEventClassCode" name="appleEventClassCode" getsignature="L8@0:4" />
   <property get="-appleEventCode" name="appleEventCode" getsignature="L8@0:4" />
   <property get="-appleEventCodeForReturnType" name="appleEventCodeForReturnType" getsignature="L8@0:4" />
   <property get="-applicationHandle" name="applicationHandle" />
+  <property get="-applicationIconImage" set="-setApplicationIconImage:" name="applicationIconImage" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-applicationNameForUserAgent" set="-setApplicationNameForUserAgent:" name="applicationNameForUserAgent" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-appliesImmediately" set="-setAppliesImmediately:" name="appliesImmediately" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-archiverData" name="archiverData" getsignature="@8@0:4" />
   <property get="-areCursorRectsEnabled" name="areCursorRectsEnabled" getsignature="c8@0:4" />
   <property get="-arePlugInsEnabled" name="arePlugInsEnabled" getsignature="c8@0:4" />
+  <property get="-arguments" set="-setArguments:" name="arguments" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="-argumentsRetained" name="argumentsRetained" getsignature="c8@0:4" />
   <property get="-argumentNames" name="argumentNames" getsignature="@8@0:4" />
   <property get="-arrangedObjects" name="arrangedObjects" getsignature="@8@0:4" />
+  <property get="-arrowsPosition" set="-setArrowsPosition:" name="arrowsPosition" getsignature="i8@0:4" setsignature="v12@0:4i8" />
+  <property get="-arrowPosition" set="-setArrowPosition:" name="arrowPosition" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property get="-ascender" name="ascender" getsignature="f8@0:4" />
   <property get="-ascending" name="ascending" getsignature="c8@0:4" />
+  <property get="-aspectRatio" set="-setAspectRatio:" name="aspectRatio" getsignature="{_NSSize=ff}8@0:4" setsignature="v16@0:4{_NSSize=ff}8" />
   <property get="-attachedMenu" name="attachedMenu" getsignature="@8@0:4" />
   <property get="-attachedMenuView" name="attachedMenuView" getsignature="@8@0:4" />
   <property get="-attachedSheet" name="attachedSheet" getsignature="@8@0:4" />
+  <property get="-attachment" set="-setAttachment:" name="attachment" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedAlternateTitle" set="-setAttributedAlternateTitle:" name="attributedAlternateTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedString" set="-setAttributedString:" name="attributedString" setsignature="v12@0:4@8" />
+  <property get="-attributedStringForNil" set="-setAttributedStringForNil:" name="attributedStringForNil" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedStringForNotANumber" set="-setAttributedStringForNotANumber:" name="attributedStringForNotANumber" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedStringForZero" set="-setAttributedStringForZero:" name="attributedStringForZero" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedStringValue" set="-setAttributedStringValue:" name="attributedStringValue" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributedTitle" set="-setAttributedTitle:" name="attributedTitle" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-attributes" set="-setAttributes:" name="attributes" getsignature="@8@0:4" />
   <property get="-attributeKeys" name="attributeKeys" getsignature="@8@0:4" />
+  <property get="-attributeRuns" set="-setAttributeRuns:" name="attributeRuns" />
   <property get="-authenticationMethod" name="authenticationMethod" getsignature="@8@0:4" />
+  <property get="-autoenablesItems" set="-setAutoenablesItems:" name="autoenablesItems" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autohidesScrollers" set="-setAutohidesScrollers:" name="autohidesScrollers" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-automaticallyPreparesContent" set="-setAutomaticallyPreparesContent:" name="automaticallyPreparesContent" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-autorelease" name="autorelease" getsignature="@8@0:4" />
+  <property get="-autorepeat" set="-setAutorepeat:" name="autorepeat" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autoresizesAllColumnsToFit" set="-setAutoresizesAllColumnsToFit:" name="autoresizesAllColumnsToFit" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autoresizesOutlineColumn" set="-setAutoresizesOutlineColumn:" name="autoresizesOutlineColumn" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autoresizesSubviews" set="-setAutoresizesSubviews:" name="autoresizesSubviews" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autoresizingMask" set="-setAutoresizingMask:" name="autoresizingMask" getsignature="I8@0:4" setsignature="v12@0:4I8" />
+  <property get="-autosaves" set="-setAutosaves:" name="autosaves" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autosavesConfiguration" set="-setAutosavesConfiguration:" name="autosavesConfiguration" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autosaveExpandedItems" set="-setAutosaveExpandedItems:" name="autosaveExpandedItems" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autosaveName" set="-setAutosaveName:" name="autosaveName" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-autosaveTableColumns" set="-setAutosaveTableColumns:" name="autosaveTableColumns" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-autosizesCells" set="-setAutosizesCells:" name="autosizesCells" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-availableData" name="availableData" getsignature="@8@0:4" />
   <property get="-availableFonts" name="availableFonts" getsignature="@8@0:4" />
   <property get="-availableFontFamilies" name="availableFontFamilies" getsignature="@8@0:4" />
   <property get="-availableResourceData" name="availableResourceData" getsignature="@8@0:4" />
+  <property get="-avoidsEmptySelection" set="-setAvoidsEmptySelection:" name="avoidsEmptySelection" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-backgroundColor" set="-setBackgroundColor:" name="backgroundColor" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property get="-backgroundLayoutEnabled" set="-setBackgroundLayoutEnabled:" name="backgroundLayoutEnabled" getsignature="c8@0:4" setsignature="v12@0:4c8" />
+  <property get="-backingType" set="-setBackingType:" name="backingType" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property get="-backForwardList" name="backForwardList" getsignature="@8@0:4" />
   <property get="-backItem" name="backItem" getsignature="@8@0:4" />
   <property get="-backListCount" name="backListCount" getsignature="i8@0:4" />
   <property get="-baselineLocation" name="baselineLocation" getsignature="f8@0:4" />
   <property get="-baseOfTypesetterGlyphInfo" name="baseOfTypesetterGlyphInfo" getsignature="^{_NSTypesetterGlyphInfo={_NSPoint=ff}fffI@{_NSSize=ff}{?=b1b1b1}}8@0:4" />
+  <property get="-baseSpecifier" set="-setBaseSpecifier:" name="baseSpecifier" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property get="-baseURL" name="baseURL" getsignature="@8@0:4" />
+  <property get="-baseWritingDirection" set="-setBaseWritingDirection:" name="baseWritingDirection" setsignature="v12@0:4i8" />
+  <property get="-becomesKeyOnlyIfNeeded" set="-setBecomesKeyOnlyIfNeeded:" name="becomesKeyOnlyIfNeeded" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-becomeFirstResponder" name="becomeFirstResponder" getsignature="c8@0:4" />
+  <property get="-bezelStyle" set="-setBezelStyle:" name="bezelStyle" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property get="-bezierPathByFlatteningPath" name="bezierPathByFlatteningPath" getsignature="@8@0:4" />
   <property get="-bezierPathByReversingPath" name="bezierPathByReversingPath" getsignature="@8@0:4" />
+  <property get="-bidiProcessingEnabled" set="-setBidiProcessingEnabled:" name="bidiProcessingEnabled" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-bitmapData" name="bitmapData" getsignature="*8@0:4" />
   <property get="-bitmapRepresentation" name="bitmapRepresentation" getsignature="@8@0:4" />
   <property get="-bitsPerPixel" name="bitsPerPixel" getsignature="i8@0:4" />
@@ -993,8 +993,8 @@
   <property get="-isVertical" set="-setVertical:" name="vertical" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-isVerticallyCentered" set="-setVerticallyCentered:" name="verticallyCentered" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-isVerticallyResizable" set="-setVerticallyResizable:" name="verticallyResizable" getsignature="c8@0:4" setsignature="v12@0:4c8" />
-  <property get="-isVisible" set="-setVisible:" name="visible" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-isVisible" set="-setIsVisible:" name="isVisible" getsignature="c8@0:4" />
+  <property get="-isVisible" set="-setVisible:" name="visible" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property get="-isWellFormed" name="isWellFormed" getsignature="c8@0:4" />
   <property get="-isWindowLoaded" name="isWindowLoaded" getsignature="c8@0:4" />
   <property get="-isZoomable" name="isZoomable" />

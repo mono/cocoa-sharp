@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.7 2004/06/29 13:35:52 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.8 2004/06/29 15:24:25 gnorton Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -80,9 +80,9 @@
 					
 					object ret = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
 					if(ret != null)
-						if(ret.GetType() == typeof(int)) {
-							retVal = Marshal.AllocHGlobal(4);
-							Marshal.WriteInt32(retVal, (int)ret);
+						if(ret.IsPrimitive) {
+							retVal = Marshal.AllocHGlobal(Marshal.SizeOf(ret));
+							Marshal.StructureToPtr(ret, retVal, true);
 						} else {
 							retVal = ((NSObject)ret).Raw;
 						}
@@ -143,6 +143,9 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.8  2004/06/29 15:24:25  gnorton
+// Better support for different argument type (PtrTrStructure/StructureToPtr/SizeOf usage)
+//
 // Revision 1.7  2004/06/29 13:35:52  urs
 // make tree green again, I like green :)
 //

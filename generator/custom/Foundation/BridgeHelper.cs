@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.4 2004/06/28 19:18:31 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.5 2004/06/29 15:24:25 gnorton Exp $
 //
 
 using System;
@@ -78,6 +78,10 @@ namespace Apple.Tools
 					if ( ((ObjCExportAttribute)attr).Signature != null )
 						return ((ObjCExportAttribute)attr).Signature;
 
+			// We need to detect and generate the method signature according to:
+			// http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/4objc_runtime_overview/chapter_4_section_6.html
+			// We need to convert primitive types to the corresponding letter code and use Marshal.SizeOf()
+			// to get the correct size.
 			int totalSize = 8;
 			int curSize = 8;
 			string types = "";
@@ -164,6 +168,9 @@ namespace Apple.Tools
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.5  2004/06/29 15:24:25  gnorton
+// Better support for different argument type (PtrTrStructure/StructureToPtr/SizeOf usage)
+//
 // Revision 1.4  2004/06/28 19:18:31  urs
 // Implement latest name bindings changes, and using objective-c reflection to see is a type is a OC class
 //

@@ -2,24 +2,17 @@
         <method sel="-getArgument:atIndex:">
 		public object getArgument(int i, Type t) {
 			object retVal = null;
-#if UNSAFE
-			unsafe {
-				IntPtr argPtr = Marshal.AllocHGlobal (sizeof(IntPtr));
-#else
-				IntPtr argPtr = Marshal.AllocHGlobal (8 /* void * on 64 bit machine */);
-#endif
-				NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
-				if(t == typeof(int)) 
-					retVal = (object)Marshal.ReadInt32(argPtr);		
-				else {
-					IntPtr ret = Marshal.ReadIntPtr(argPtr);
-					retVal = (object)NS2Net(ret);
-				}
-				Marshal.FreeHGlobal(argPtr);
-				return retVal;
-#if UNSAFE
+			IntPtr argPtr = Marshal.AllocHGlobal (Marshal.SizeOf(IntPtr));
+			NSInvocation_getArgument_atIndex2(Raw, argPtr, i+2);
+			if(t.IsPrimitive) {
+
+				retVal = Marshal.PtrToStructure(argPtr, t);
+			} else {
+				IntPtr ret = Marshal.ReadIntPtr(argPtr);
+				retVal = (object)NS2Net(ret);
 			}
-#endif
+			Marshal.FreeHGlobal(argPtr);
+			return retVal;
 		}
         </method>
 </overrides>
