@@ -1,0 +1,6 @@
+2005-01-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* Glue.m (glue_initWithFrame): Implement this method to allow custom
+	NSViews to be instantiated properly.  We take care of initing the
+	super here.
+

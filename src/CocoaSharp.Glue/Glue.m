@@ -1,3 +1,4 @@
+#import <objc/objc-runtime.h>
 #import <objc/objc-class.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
@@ -18,6 +19,7 @@ typedef void (*getManagedDelegate)(id THIS);
 #endif
 #define GLUE_methodSignatureForSelector 0
 #define GLUE_forwardInvocation 1
+
 
 constructorDelegate sConstructorDelegate = nil;
 getManagedDelegate sGetManagedDelegate = nil;
@@ -76,6 +78,9 @@ void AddMethods(Class cls,int numOfMethods,const char **methods,const char **sig
 
     for (i = 0; i < numOfMethods; ++i) {
         meth->method_name = sel_getUid(methods[i]);
+	if (strcmp (meth->method_name, "initWithFrame:") == 0) {
+            meth->method_name = "INTERNAL_initWithFrame:";
+        }
         meth->method_types = (char*)strdup(signatures[i]);
         meth->method_imp = method;
         if (IsGlueVerbose())
@@ -173,7 +178,17 @@ id glue_methodSignatureForSelector(id base, SEL sel, ...) {
 
     NSMethodSignature* signature = [[base superclass] instanceMethodSignatureForSelector: aSelector];
     
-    if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
+    if (!signature && [strSel hasPrefix: @"_dotNet_INTERNAL_"]) {
+#if true
+        managedDelegate delegate = GetDelegateForBase(base);
+
+        aSelector = sel_getUid([[strSel substringFromIndex: 17] cString]);
+        signature = (NSMethodSignature*)delegate(GLUE_methodSignatureForSelector,(id)aSelector);
+#else
+        signature = MakeMethodSignature([[strSel substringFromIndex: 17] cString]);
+#endif
+    }
+    else if (!signature && [strSel hasPrefix: @"_dotNet_"]) {
 #if true
         managedDelegate delegate = GetDelegateForBase(base);
 
@@ -193,6 +208,27 @@ id glue_initToManaged(id base, SEL sel, ...) {
     sConstructorDelegate(base,GetObjectClassName(base));
     return base;
 }
+
+id glue_initWithFrameToManaged(id base, SEL sel, ...) {
+    struct objc_super superContext;
+    NSRect arg;
+    if (IsGlueVerbose())
+        NSLog(@"GLUE: glue_initWithFrameToManaged (base=%@)",base);
+
+    va_list vl;
+    va_start(vl,sel);
+    superContext.receiver = base;
+    superContext.class = [base superclass];
+    
+    arg = va_arg(vl, NSRect);
+    base = objc_msgSendSuper (&superContext, sel, arg);
+    if (!base)
+	NSLog (@"initWithFrame failed");
+    sConstructorDelegate(base,GetObjectClassName(base));
+
+    [base _dotNet_INTERNAL_initWithFrame:arg];
+    return base;
+}
     
 //- (void) forwardInvocation: (NSInvocation *) anInvocation;
 id glue_forwardInvocation(id base, SEL sel, ...) {
@@ -200,7 +236,11 @@ id glue_forwardInvocation(id base, SEL sel, ...) {
     va_start(vl,sel);
     NSInvocation * anInvocation = va_arg(vl,NSInvocation *);
 
-    SEL aSelector = sel_getUid([[[NSString stringWithCString: sel_getName([anInvocation selector])] substringFromIndex: 8] cString]);
+    NSString *selName = [[NSString stringWithCString: sel_getName([anInvocation selector])] substringFromIndex: 8];
+    NSString *internal = [NSString stringWithCString: "INTERNAL_"];
+    if ([selName hasPrefix: internal]) 
+        selName = [selName substringFromIndex: 9];
+    SEL aSelector = sel_getUid([selName cString]);
     [anInvocation setSelector: aSelector];
 
     if (IsGlueVerbose())
@@ -222,7 +262,11 @@ id glue_implementMethod(id base, SEL sel, ...) {
     Method method = class_getInstanceMethod([base class], sel);
     int numArgs = method_getNumberOfArguments(method);
     int size = method_getSizeOfArguments(method);
-    SEL forwardSel = sel_getUid([[NSString stringWithFormat: @"_dotNet_%s", sel_getName(sel)] cString]);
+    NSString *selName = [NSString stringWithFormat: @"_dotNet_%s", sel_getName (sel)];
+    NSString *internal = [NSString stringWithCString: "INTERNAL_"];
+    if ([selName hasPrefix: internal]) 
+        selName = [selName substringFromIndex: 9];
+    SEL forwardSel = sel_getUid([selName cString]);
     marg_list margs;
     marg_malloc(margs, method);
 
@@ -335,8 +379,9 @@ Class CreateClassDefinition(const char * name, const char * superclassName,
 
         AddMethods(new_class, 
                 numOfMethods, methods, signatures, glue_implementMethod,
-                4, 
+                5, 
                 @selector(init), "@8@0:4", glue_initToManaged,
+                @selector(initWithFrame:), "@12@0:4@8", glue_initWithFrameToManaged,
                 @selector(initWithManagedDelegate:), "@12@0:4^?8", glue_initWithManagedDelegate,
                 @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
                 @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
@@ -344,8 +389,9 @@ Class CreateClassDefinition(const char * name, const char * superclassName,
     else
         AddMethods(new_class, 
                 numOfMethods, methods, signatures, glue_implementMethod,
-                3, 
+                4, 
                 @selector(init), "@8@0:4", glue_initToManaged,
+                @selector(initWithFrame:), "@12@0:4@8", glue_initWithFrameToManaged,
                 @selector(methodSignatureForSelector:), "@12@0:4:8", glue_methodSignatureForSelector,
                 @selector(forwardInvocation:), "v12@0:4@8", glue_forwardInvocation);
 
