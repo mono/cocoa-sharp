@@ -1,3 +1,7 @@
+2005-01-14  Geoff Norton  <gnorton@customerdna.com>
+
+	* Makefile.am: make distcheck happiness.
+
 2005-01-13  Geoff Norton  <gnorton@customerdna.com>
 
 	* custom/Foundation/TypeConverter.cs: Walk up the className tree

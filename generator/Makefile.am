@@ -1,19 +1,20 @@
 ASSEMBLY_NAME=generator
 ASSEMBLY=$(ASSEMBLY_NAME).exe
-CLEANFILES=$(ASSEMBLY) 
-DISTCLEANFILES=
 noinst_DATA=generator-run.stamp
+	    
 EXTRA_DIST= \
-	OldCategory.cs \
-	CEnum.cs \
-	Element.cs \
-	Interface.cs \
-	Main.cs \
-	Method.cs \
-	ObjCClassInspector.cs \
-	Protocol.cs \
-	Struct.cs \
-	generator-run.stamp
+	custom/* \
+	header-gen/*.cs \
+	macho-gen/*.cs \
+	gen-out/*.cs \
+	Generator.cs \
+	mapping.xml \
+	typeconversion.xml \
+	generator-run.stamp \
+	generator.xml
+
+CLEANFILES=$(ASSEMBLY) $(EXTRA_DIST) 
+DISTCLEANFILES=$(EXTRA_DIST)
 
 sources = \
 	header-gen/Main.cs \
@@ -62,9 +63,57 @@ sources = \
 
 build_sources = $(addprefix $(srcdir)/, $(sources)) 
 
+distclean:
+	@if test $(addprefix $(srcdir)/, Generator.cs) != "./Generator.cs"; then \
+	  rm -Rf Generator.cs; \
+	fi
+	@if test $(addprefix $(srcdir)/, macho-gen) != "./macho-gen"; then \
+	  rm -Rf macho-gen; \
+	fi
+	@if test $(addprefix $(srcdir)/, header-gen) != "./header-gen"; then \
+	  rm -Rf header-gen; \
+	fi
+	@if test $(addprefix $(srcdir)/, gen-out) != "./gen-out"; then \
+	  rm -Rf gen-out; \
+	fi
+	@if test $(addprefix $(srcdir)/, custom) != "./custom"; then \
+	  rm -Rf custom; \
+	fi
+	@if test $(addprefix $(srcdir)/, generator.xml) != "./generator.xml"; then \
+	  rm -Rf generator.xml; \
+	fi
+	@if test $(addprefix $(srcdir)/, mapping.xml) != "./mapping.xml"; then \
+	  rm -Rf mapping.xml; \
+	fi
+	@if test $(addprefix $(srcdir)/, typeconversion.xml) != "./typeconversion.xml"; then \
+	  rm -Rf typeconversion.xml; \
+	fi
 generator-run.stamp: $(ASSEMBLY)
-	(cd .. ; mono --debug generator/generator.exe -xml:generator/generator.xml) && touch $(srcdir)/generator-run.stamp
+	@if test $(addprefix $(srcdir)/, Generator.cs) != "./Generator.cs"; then \
+	  cp -R $(addprefix $(srcdir)/, Generator.cs) Generator.cs; \
+	fi
+	@if test $(addprefix $(srcdir)/, macho-gen) != "./macho-gen"; then \
+	  cp -R $(addprefix $(srcdir)/, macho-gen) macho-gen; \
+	fi
+	@if test $(addprefix $(srcdir)/, header-gen) != "./header-gen"; then \
+	  cp -R $(addprefix $(srcdir)/, header-gen) header-gen; \
+	fi
+	@if test $(addprefix $(srcdir)/, gen-out) != "./gen-out"; then \
+	  cp -R $(addprefix $(srcdir)/, gen-out) gen-out; \
+	fi
+	@if test $(addprefix $(srcdir)/, custom) != "./custom"; then \
+	  cp -R $(addprefix $(srcdir)/, custom) custom; \
+	fi
+	@if test $(addprefix $(srcdir)/, generator.xml) != "./generator.xml"; then \
+	  cp $(addprefix $(srcdir)/, generator.xml) generator.xml; \
+	fi
+	@if test $(addprefix $(srcdir)/, mapping.xml) != "./mapping.xml"; then \
+	  cp -f $(addprefix $(srcdir)/, mapping.xml) mapping.xml; \
+	fi
+	@if test $(addprefix $(srcdir)/, typeconversion.xml) != "./typeconversion.xml"; then \
+	  cp -f $(addprefix $(srcdir)/, typeconversion.xml) typeconversion.xml; \
+	fi
+	(cd .. ; mono generator/generator.exe -xml:generator/generator.xml) && touch $(srcdir)/generator-run.stamp
 
 $(ASSEMBLY): $(build_sources) 
-	$(CSC) -g /unsafe /out:$(ASSEMBLY) $(build_sources)
-
+	$(CSC) /unsafe /out:$(ASSEMBLY) $(build_sources)
