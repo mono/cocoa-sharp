@@ -15,8 +15,6 @@ namespace Webbrowser {
 	}
 
 	class Webbrowser : NSObject {
-		static IntPtr Browser_class = NSRegisterClass(typeof(Webbrowser), "NSObject");
-
 		private NSApplication Application;
 		private NSWindow Window;
 		private NSBrowser Browser;
@@ -24,13 +22,8 @@ namespace Webbrowser {
 		private WebFrame Webframe;
 		private NSTextField URLBar;
 		private NSButton GoButton;
-		private BridgeDelegate BrowserDelegate;
 
-		public Webbrowser() : this(NSObject__alloc0(Browser_class), true) {}
-
-		public Webbrowser(IntPtr raw, bool release) : base(raw, release) {
-			BrowserDelegate = new BridgeDelegate(this.MethodInvoker);
-                	SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,BrowserDelegate),release);
+		public Webbrowser() {
 			Application = NSApplication.SharedApplication();
 		}
 

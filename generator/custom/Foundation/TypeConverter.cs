@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.4 2004/06/25 20:23:30 gnorton Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.5 2004/06/26 06:52:32 urs Exp $
 //
 
 using System;
@@ -20,14 +20,33 @@ using System.Runtime.InteropServices;
 namespace Apple.Foundation
 {
 	public class TypeConverter {
-		public static object NS2Net(IntPtr raw) {
+		public static IDictionary Name2Type = new Hashtable();
+		private static bool Name2Type_init = true;
+
+		public static object NS2Net(IntPtr raw) 
+		{
 			NSObject ret = new NSObject(raw,false);
 			string className = ret.ClassName;
-			Type type = Type.GetType("Apple.Foundation." + className + ", Apple.Foundation");
-			if (type == null)
-				type = Type.GetType("Apple.AppKit." + className + ", Apple.AppKit");
-			if (type == null)
-				type = Type.GetType("Apple.WebKit." + className + ", Apple.WebKit");
+			Type type = (Type)Name2Type[className];
+
+			if (type == null && Name2Type_init)
+			{
+				Name2Type_init = false;
+				foreach (Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
+					try
+					{
+						foreach (Type t in asm.GetTypes())
+							if (t.IsClass && t.IsSubclassOf(typeof(NSObject)))
+								Name2Type[t.Name] = t;
+					}
+					catch (Exception _ex)
+					{
+						System.Diagnostics.Debug.WriteLine("During GetTypes() of " + asm.FullName);
+						System.Diagnostics.Debug.WriteLine(_ex.ToString());
+					}
+				type = (Type)Name2Type[className];
+			}
+
 			if (type != null) {
 				Console.WriteLine("<Using type: " + type.FullName + ", for Objective-C class: " + className);
 				ConstructorInfo c = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,null,
@@ -39,6 +58,7 @@ namespace Apple.Foundation
 			}
 			else
 				Console.WriteLine(className + " not in Foundation or AppKit");
+
 			if((ret as Apple.Foundation.NSString) != null)
 				return ret.ToString();
 
@@ -60,6 +80,9 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.5  2004/06/26 06:52:32  urs
+// Remove hardcoding in TypeConvertor, and autoregister new classes
+//
 // Revision 1.4  2004/06/25 20:23:30  gnorton
 // WebKit support
 //

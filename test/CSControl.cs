@@ -6,24 +6,14 @@ using Apple.Foundation;
 using Apple.AppKit;
 
 class CSControl : NSObject {
-	static IntPtr CSControl_class = NSRegisterClass(typeof(CSControl), "NSObject");
-	
 	NSButton swap1;
 	CSTextControl textController;
-	BridgeDelegate CSControlDelegate;
-	public CSControl() : this(NSObject__alloc0(CSControl_class),true) {}
-
-	protected internal CSControl(IntPtr raw,bool release) : base(raw,release) {
+	public CSControl() {
 		textController = new CSTextControl();
-		CSControlDelegate = new BridgeDelegate(this.MethodInvoker);
-		SetRaw(DotNetForwarding_initWithManagedDelegate(Raw,CSControlDelegate),release);
 	}
 
 	public void displayWindow() {
-
 		NSApplication.SharedApplication().setApplicationIconImage((NSImage)NSImage.ImageNamed("mono.icns"));
-
-		NSRect contentRect = new NSRect(200, 180, 400, 300);
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 400, 300),
 					       (uint)(NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
