@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.9 2004/06/29 21:16:08 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/TypeConverter.cs,v 1.10 2004/07/01 16:01:41 urs Exp $
 //
 
 using System;
@@ -22,17 +22,20 @@ namespace Apple.Foundation
 	public class TypeConverter {
 		public static IDictionary Name2Type = new Hashtable();
 		private static bool Name2Type_init = true;
+		[DllImport("Glue")]
+		private static extern IntPtr GetObjectClassName(IntPtr /*(id)*/ THIS);
 
 		public static object NS2Net(IntPtr raw) 
 		{
 			if(raw == IntPtr.Zero)
 				return null;
 
-			if(NSObject.Objects.Contains(raw))
-				return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
+			lock (NSObject.Objects)
+				if(NSObject.Objects.Contains(raw))
+					return ((WeakReference)NSObject.Objects[raw]).Target as NSObject;
 				
-			NSObject ret = new NSObject(raw,false);
-			string className = ret.ClassName;
+			NSObject ret = null;
+			string className = Marshal.PtrToStringAnsi(GetObjectClassName(raw));
 			Type type = (Type)Name2Type[className];
 
 			if (type == null && Name2Type_init)
@@ -65,10 +68,10 @@ namespace Apple.Foundation
 			else
 				Console.WriteLine(className + " not in Foundation or AppKit");
 
-			if(ret is Apple.Foundation.NSString)
+			if(ret != null && ret is Apple.Foundation.NSString)
 				return ret.ToString();
 
-			return ret;
+			return ret != null ? ret : new NSObject(raw,false);
 		}
 		
 		public static IntPtr Net2NS(object obj) {
@@ -90,6 +93,10 @@ namespace Apple.Foundation
 //***************************************************************************
 //
 // $Log: TypeConverter.cs,v $
+// Revision 1.10  2004/07/01 16:01:41  urs
+// Fix some GC issues, but mostly just do stuff more explicit
+// Still not working with GC on
+//
 // Revision 1.9  2004/06/29 21:16:08  urs
 // fixes
 //

@@ -105,6 +105,7 @@ class Browser : NSObject {
 	// For the status bar.
 	uint context_id;
 	BrowserController browserController;
+	NSString CaptionID;
 
 	public Browser ()
 	{
@@ -153,7 +154,9 @@ class Browser : NSObject {
 		ov = new NSOutlineView(sv.documentVisibleRect);
 		ov.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		sv.documentView = ov;
-		NSTableColumn c = new NSTableColumn("Caption");
+		CaptionID = new NSString("Caption");
+		CaptionID.retain();
+		NSTableColumn c = new NSTableColumn(CaptionID);
 		c.width = sv.contentSize.width;
 		c.editable = false;
 		c.resizable = true;
@@ -246,16 +249,16 @@ class BrowserItem : NSObject {
 	internal NSString caption;
 
 	protected BrowserItem(IntPtr _ptr,bool release) : base(_ptr,release) {
-		Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8:x}", (int)_ptr);
+Console.WriteLine("ERROR: BrowserItem.ctor(IntPtr,bool) is called: bad: Raw={0,8:x}", (int)_ptr);
 	}
 	public BrowserItem(Node _node) {
 		node = _node;
 		caption = new NSString(node.Caption);
 		caption.retain();
-		Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
+Console.WriteLine("DEBUG: BrowserItem.ctor(" + node.Caption + ") is called: Raw{0,8:x}=", (int)Raw);
 	}
 	~ BrowserItem() {
-		Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
+Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 		SetRaw(IntPtr.Zero,false);
 	}
 	
@@ -278,7 +281,7 @@ class BrowserItem : NSObject {
 	}
 	public object ValueAt(object identifier)
 	{
-Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
+//Console.WriteLine("DEBUG: ValueAt: " + identifier + " for " + this);
 		return caption;
 	}
 	public override string ToString()
@@ -295,10 +298,10 @@ class BrowserController : NSObject {
 		help_tree = _tree;
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
-		Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
+Console.WriteLine("DEBUG: " + this + ".ctor Raw={0,8:x}", (int)Raw);
 	}
 	~ BrowserController () {
-		Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
+Console.WriteLine("DEBUG: ~" + this + " Raw={0,8:x}", (int)Raw);
 	}
 
 	[ObjCExport("outlineView:numberOfChildrenOfItem:")]
@@ -319,7 +322,7 @@ Console.WriteLine("DEBUG: OutlineViewNumberOfChildrenOfItem: " + item + " --> " 
 	[ObjCExport("outlineView:child:ofItem:")]
 	public object OutlineViewChildOfItem(NSOutlineView outlineView, int index, object item)
 	{
-Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item);
+//Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item);
 		BrowserItem bi = item as BrowserItem;
 		if (bi != null)
 			bi = bi.ItemAt(index);
@@ -331,7 +334,7 @@ Console.WriteLine("DEBUG: OutlineViewChildOfItem: " + index + ", item: " + item)
 	[ObjCExport("outlineView:objectValueForTableColumn:byItem:")]
 	public object OutlineViewObjectValueForTableColumnByItem(NSOutlineView outlineView, NSTableColumn tableColumn, object item)
 	{
-Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item + ", for column: " + tableColumn.identifier);
+//Console.WriteLine("DEBUG: OutlineViewObjectValueForTableColumnByItem: " + item + ", for column: " + tableColumn.identifier);
 		BrowserItem bi = item as BrowserItem;
 		
 		return bi == null ? null : bi.ValueAt(tableColumn.identifier);

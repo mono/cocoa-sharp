@@ -37,7 +37,7 @@
   <property name="paragraphStyle" noverbose="false" set="-setParagraphStyle:" setsignature="v12@0:4@8" />
   <property name="plugInsEnabled" noverbose="false" set="-setPlugInsEnabled:" setsignature="v12@0:4c8" />
   <property name="protocolForProxy" noverbose="false" set="-setProtocolForProxy:" setsignature="v12@0:4@8" />
-  <property name="returnValue" noverbose="false" set="-setReturnValue:" setsignature="v12@0:4^v8" />
+  <property name="returnValue" noverbose="true" set="-setReturnValue:" setsignature="v12@0:4^v8" />
   <property name="scrollable" noverbose="false" set="-setScrollable:" setsignature="v12@0:4c8" />
   <property name="set" noverbose="false" set="-setSet:" setsignature="v12@0:4@8" />
   <property name="textAlignment" noverbose="false" set="-setTextAlignment:" setsignature="v12@0:4i8" />
@@ -513,7 +513,7 @@
   <property name="classForCoder" noverbose="false" get="-classForCoder" getsignature="#8@0:4" />
   <property name="classForKeyedArchiver" noverbose="false" get="-classForKeyedArchiver" getsignature="#8@0:4" />
   <property name="classForPortCoder" noverbose="false" get="-classForPortCoder" getsignature="#8@0:4" />
-  <property name="className" noverbose="false" get="-className" getsignature="@8@0:4" />
+  <property name="className" noverbose="true" get="-className" getsignature="@8@0:4" />
   <property name="clickedColumn" noverbose="false" get="-clickedColumn" getsignature="i8@0:4" />
   <property name="clickedRow" noverbose="false" get="-clickedRow" getsignature="i8@0:4" />
   <property name="clickCount" noverbose="false" get="-clickCount" getsignature="i8@0:4" />
@@ -842,7 +842,7 @@
   <property name="hueComponent" noverbose="false" get="-hueComponent" getsignature="f8@0:4" />
   <property name="hyphenationFactor" noverbose="false" get="-hyphenationFactor" set="-setHyphenationFactor:" getsignature="f8@0:4" setsignature="v12@0:4f8" />
   <property name="icon" noverbose="false" get="-icon" set="-setIcon:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property name="identifier" noverbose="false" get="-identifier" set="-setIdentifier:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
+  <property name="identifier" noverbose="true" get="-identifier" set="-setIdentifier:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="ignoresMouseEvents" noverbose="false" get="-ignoresMouseEvents" set="-setIgnoresMouseEvents:" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property name="ignoresMultiClick" noverbose="false" get="-ignoresMultiClick" set="-setIgnoresMultiClick:" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property name="ignoreModifierKeysWhileDragging" noverbose="false" get="-ignoreModifierKeysWhileDragging" />
@@ -1108,9 +1108,9 @@
   <property name="menuView" noverbose="false" get="-menuView" set="-setMenuView:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="message" noverbose="false" get="-message" set="-setMessage:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="messageText" noverbose="false" get="-messageText" set="-setMessageText:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
-  <property name="methodReturnLength" noverbose="false" get="-methodReturnLength" getsignature="I8@0:4" />
+  <property name="methodReturnLength" noverbose="true" get="-methodReturnLength" getsignature="I8@0:4" />
   <property name="methodReturnType" noverbose="false" get="-methodReturnType" getsignature="r*8@0:4" />
-  <property name="methodSignature" noverbose="false" get="-methodSignature" getsignature="@8@0:4" />
+  <property name="methodSignature" noverbose="true" get="-methodSignature" getsignature="@8@0:4" />
   <property name="minimum" noverbose="false" get="-minimum" set="-setMinimum:" getsignature="@8@0:4" setsignature="v12@0:4@8" />
   <property name="minimumFontSize" noverbose="false" get="-minimumFontSize" set="-setMinimumFontSize:" getsignature="i8@0:4" setsignature="v12@0:4i8" />
   <property name="minimumLineHeight" noverbose="false" get="-minimumLineHeight" set="-setMinimumLineHeight:" getsignature="f8@0:4" />
@@ -1411,7 +1411,7 @@
   <property name="selectionGranularity" noverbose="false" get="-selectionGranularity" set="-setSelectionGranularity:" />
   <property name="selectionIndex" noverbose="false" get="-selectionIndex" set="-setSelectionIndex:" getsignature="I8@0:4" setsignature="c12@0:4I8" />
   <property name="selectionIndexes" noverbose="false" get="-selectionIndexes" set="-setSelectionIndexes:" getsignature="@8@0:4" setsignature="c12@0:4@8" />
-  <property name="selector" noverbose="false" get="-selector" set="-setSelector:" getsignature=":8@0:4" setsignature="v12@0:4:8" />
+  <property name="selector" noverbose="true" get="-selector" set="-setSelector:" getsignature=":8@0:4" setsignature="v12@0:4:8" />
   <property name="selectsInsertedObjects" noverbose="false" get="-selectsInsertedObjects" set="-setSelectsInsertedObjects:" getsignature="c8@0:4" setsignature="v12@0:4c8" />
   <property name="self" noverbose="false" get="-self" getsignature="@8@0:4" />
   <property name="sendsActionOnArrowKeys" noverbose="false" get="-sendsActionOnArrowKeys" set="-setSendsActionOnArrowKeys:" getsignature="c8@0:4" setsignature="v12@0:4c8" />
@@ -2775,6 +2775,7 @@
   <method name="frameRectForContentRect" noverbose="false" selector="-frameRectForContentRect:" signature="{_NSRect={_NSPoint=ff}{_NSSize=ff}}24@0:4{_NSRect={_NSPoint=ff}{_NSSize=ff}}8" />
   <method name="fullJustifyLineAtGlyphIndex" noverbose="false" selector="-fullJustifyLineAtGlyphIndex:" signature="v12@0:4I8" />
   <method name="fullPathForApplication" noverbose="false" selector="-fullPathForApplication:" signature="@12@0:4@8" />
+  <method name="getArgument_atIndex" noverbose="true" selector="-getArgument:atIndex:" signature="v16@0:4^v8i12" />
   <method name="getArgumentTypeAtIndex" noverbose="false" selector="-getArgumentTypeAtIndex:" signature="r*12@0:4I8" />
   <method name="getBitmapDataPlanes" noverbose="false" selector="-getBitmapDataPlanes:" signature="v12@0:4^*8" />
   <method name="getBuffer_length" noverbose="false" selector="-getBuffer:length:" signature="c16@0:4^*8^I12" />

@@ -24,7 +24,10 @@ run-gc:
 	./monodoc.app/Contents/MacOS/monodoc
 
 debug:
-	gdb --args ./monodoc.app/Contents/MacOS/monodoc
+	gdb --args ./monodoc.app/Contents/MacOS/monodoc --debug Test.exe
+
+debug-dump:
+	GC_DUMP_REGULARLY=1 GC_PRINT_STATS=1 gdb --args ./monodoc.app/Contents/MacOS/monodoc --debug Test.exe
 
 clean:
 	rm -rf monodoc.app

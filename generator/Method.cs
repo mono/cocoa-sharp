@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.46 2004/07/01 12:41:33 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/Attic/Method.cs,v 1.47 2004/07/01 16:01:41 urs Exp $
 //
 
 using System;
@@ -645,6 +645,9 @@ namespace ObjCManagedExporter
 						w.WriteLine("        //{0} is overridden", Selector);
 						w.WriteLine(_mo.Method);
 						mCSAPIDone = true;
+						// Check to see if this selector is in our map
+						if(!NameMappings.Contains(Selector))
+							NameMappings[Selector] = GenerateMethodMapping(name);
 						return;
 					}
 
@@ -933,10 +936,14 @@ namespace ObjCManagedExporter
 }
 
 //	$Log: Method.cs,v $
+//	Revision 1.47  2004/07/01 16:01:41  urs
+//	Fix some GC issues, but mostly just do stuff more explicit
+//	Still not working with GC on
+//
 //	Revision 1.46  2004/07/01 12:41:33  urs
 //	- Better verbose support, individual verbose ignore per selector and per interface
 //	- Minor improvements with monodoc
-//
+//	
 //	Revision 1.45  2004/06/30 19:29:22  urs
 //	Cleanup
 //	

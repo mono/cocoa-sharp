@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.14 2004/06/30 19:29:23 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/NSObject.addin,v 1.15 2004/07/01 16:01:41 urs Exp $
 //
 
 		public static object NS2Net(IntPtr raw) {
@@ -29,7 +29,7 @@
 
 		#region -- Glue --
 		[DllImport("/System/Library/Frameworks/Foundation.framework/Foundation")]
-        protected internal static extern IntPtr /*Method*/ class_getInstanceMethod(IntPtr /*Class*/ aClass, IntPtr /*SEL*/ aSelector);
+		protected internal static extern IntPtr /*Method*/ class_getInstanceMethod(IntPtr /*Class*/ aClass, IntPtr /*SEL*/ aSelector);
 
 		[DllImport("Glue")]
 		protected internal static extern IntPtr /*(NSMethodSignature *)*/ MakeMethodSignature(string types);
@@ -73,7 +73,7 @@
 					return MakeMethodSignature(BridgeHelper.GenerateMethodSignature(this.GetType(), NSString.FromSEL(arg).ToString()));
 				case GlueDelegateWhat.forwardInvocation:
 				{
-					NSInvocation invocation = new NSInvocation(arg,false);
+					NSInvocation invocation = (NSInvocation)NS2Net(arg);
 					object[] args = BridgeHelper.ProcessInvocation(this.GetType(),invocation);
 					
 					invocation.returnValue = BridgeHelper.InvokeMethodByObject(this, invocation.selector, args);
@@ -84,13 +84,13 @@
 		}
 
 		~NSObject() {
-			if (Raw != IntPtr.Zero)
-				Objects.Remove(Raw);
+Console.WriteLine("DEBUG: ~{0}: ptr=0x{1,8:x}", this.GetType().Name, (int) Raw);
 			// this will leak memory, but we have to synchronize managed and objc runtime
 #if RELEASE_MEM
 			if (Raw != IntPtr.Zero && _release)
 				release();
 #endif
+			SetRaw(IntPtr.Zero,false);
 		}
 
 		public NSObject() {
@@ -124,10 +124,20 @@
 		}
 
 		public void SetRaw(IntPtr raw,bool release) {
-		    if (raw != IntPtr.Zero)
-			    Objects [raw] = new WeakReference (this);
-			_obj = raw;
 			_release = release;
+			if (raw == _obj)
+				return;
+			lock (Objects) {
+				if (_obj != IntPtr.Zero) {
+Console.WriteLine("DEBUG: Remove Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
+					Objects.Remove(_obj);
+				}
+				_obj = raw;
+				if (_obj != IntPtr.Zero) {
+Console.WriteLine("DEBUG: Add Raw for {0}: ptr=0x{1,8:x}", this.GetType().Name, (int) _obj);
+					Objects.Add(_obj, new WeakReference(this));
+				}
+			}
 		}
 
 		public string ClassName {
@@ -137,6 +147,10 @@
 //***************************************************************************
 //
 // $Log: NSObject.addin,v $
+// Revision 1.15  2004/07/01 16:01:41  urs
+// Fix some GC issues, but mostly just do stuff more explicit
+// Still not working with GC on
+//
 // Revision 1.14  2004/06/30 19:29:23  urs
 // Cleanup
 //

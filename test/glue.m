@@ -234,6 +234,13 @@ Class CreateClassDefinition(const char * name, const char * superclassName,int n
     return new_class;
 }
 
+const char * GetObjectClassName(id THIS)
+{
+	return [[THIS className] cString];
+}
+
+/*
 int GetInvocationArgumentSize(NSInvocation *invocation, int index) {
 	return sizeof([[invocation methodSignature] getArgumentTypeAtIndex:index]);
 }
+*/

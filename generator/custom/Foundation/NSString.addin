@@ -12,7 +12,11 @@
 			return NSSelectorFromString(new NSString(val).Raw);
 		}
 		public static NSString FromSEL(IntPtr /*(SEL)*/ sel) {
-			return new NSString(NSStringFromSelector(sel),false);
+                        IntPtr raw = NSStringFromSelector(sel);
+                        lock (NSObject.Objects)
+                                if(NSObject.Objects.Contains(raw))
+                                        return ((WeakReference)NSObject.Objects[raw]).Target as NSString;
+                        return new NSString(raw,false);
 		}
 		
 		public override string ToString() {
@@ -22,6 +26,10 @@
 //***************************************************************************
 //
 // $Log: NSString.addin,v $
+// Revision 1.7  2004/07/01 16:01:41  urs
+// Fix some GC issues, but mostly just do stuff more explicit
+// Still not working with GC on
+//
 // Revision 1.6  2004/06/29 13:35:52  urs
 // make tree green again, I like green :)
 //
