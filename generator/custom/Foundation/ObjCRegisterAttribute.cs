@@ -2,10 +2,10 @@ using System;
 
 namespace Apple.Foundation {
 
-	public class ObjCExportAttribute : Attribute {
+	public class ObjCRegisterAttribute : Attribute {
 		protected string aName;
-		public ObjCExportAttribute() {}
-		public ObjCExportAttribute(String name) {
+		public ObjCRegisterAttribute() {}
+		public ObjCRegisterAttribute(String name) {
 			this.aName = name;
 		}
 

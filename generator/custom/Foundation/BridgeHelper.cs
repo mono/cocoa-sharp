@@ -9,7 +9,7 @@
 //
 //  Copyright (c) 2004 Quark Inc. and Collier Technologies.  All rights reserved.
 //
-//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.10 2004/07/02 21:45:58 urs Exp $
+//	$Header: /home/miguel/third-conversion/public/cocoa-sharp/generator/custom/Foundation/BridgeHelper.cs,v 1.11 2004/07/03 03:27:51 gnorton Exp $
 //
 
 using System;
@@ -215,6 +215,32 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			return types;
 		}
 
+		public static ObjCClassMemberRepresentation GenerateObjCMemberRepresentation(Type t) 
+		{
+			ObjCClassMemberRepresentation m = new ObjCClassMemberRepresentation();
+			
+			ArrayList Names = new ArrayList();
+			ArrayList Types = new ArrayList();
+			ArrayList Sizes = new ArrayList();
+			MemberInfo[] ms = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+			foreach(MemberInfo mi in ms) 
+			{
+				foreach (Attribute attr in Attribute.GetCustomAttributes(mi)) {
+					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
+					if (connectAttr != null) {
+						Names.Add(connectAttr.Name);
+						Types.Add(connectAttr.Type);
+						Sizes.Add(connectAttr.Size);
+						break;
+					}
+				}
+			}
+			m.Names = (String[])Names.ToArray(typeof(String));
+			m.Types = (String[])Types.ToArray(typeof(String));
+			m.Sizes = (int[])Sizes.ToArray(typeof(int));
+			return m;	
+		}
+
 		public static ObjCClassRepresentation GenerateObjCRepresentation(Type t) 
 		{
 			ObjCClassRepresentation r = new ObjCClassRepresentation();
@@ -309,8 +335,8 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 			ArrayList ret = new ArrayList();
 			foreach(FieldInfo f in t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				foreach (Attribute attr in Attribute.GetCustomAttributes(f)) {
-					ObjCExportAttribute exprtAttr = attr as ObjCExportAttribute;
-					if (exprtAttr != null) {
+					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
+					if (connectAttr != null) {
 						ret.Add(f);
 						break;
 					}
@@ -321,10 +347,20 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 
 		public static void UpdateMembers(NSObject obj)
 		{
-			foreach (FieldInfo f in GetMembers(obj.GetType()))
+			foreach (FieldInfo f in GetMembers(obj.GetType())) {
+				Type type = f.FieldType;
+				String name = f.Name;
+				foreach (Attribute attr in Attribute.GetCustomAttributes(f)) {
+					ObjCConnectAttribute connectAttr = attr as ObjCConnectAttribute;
+					if (connectAttr != null) {
+						if(connectAttr.Name != null)
+							name = connectAttr.Name;
+					}
+				}
 				f.SetValue(obj,
-                    obj._GetInstanceVar(f.Name,f.FieldType)
+                    obj._GetInstanceVar(name,type)
 				);
+			}
 		}
 	}
 }
@@ -332,6 +368,9 @@ catch { Console.WriteLine("ERROR: ObjectToVoidPtr"); }
 //***************************************************************************
 //
 // $Log: BridgeHelper.cs,v $
+// Revision 1.11  2004/07/03 03:27:51  gnorton
+// NIB lubbin
+//
 // Revision 1.10  2004/07/02 21:45:58  urs
 // Initial POC for NIB binding, make test/nib work
 //
