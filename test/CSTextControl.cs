@@ -18,7 +18,7 @@ class CSTextControl : NSControl {
 	}
 
 	public void controlTextDidEndEditing(NSConcreteNotification aNotification) {
-		Console.WriteLine("controlTextDidEndEditing(): Received delegate method: {0}", ((Apple.AppKit.NSTextField)aNotification.Object).StringValue);
+		Console.WriteLine("controlTextDidEndEditing(): Received delegate method: {0}", ((Apple.AppKit.NSTextField)aNotification.object_()).StringValue);
 	}
 
 }

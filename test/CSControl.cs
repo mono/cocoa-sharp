@@ -28,13 +28,13 @@ class CSControl : NSObject {
 		
 		const int NSBackingStoreBuffered	= 2;
 
-		NSApplication.sharedApplication().setApplicationIconImage(NSImage.imageNamed("mono.icns"));
+		NSApplication.SharedApplication().setApplicationIconImage((NSImage)NSImage.ImageNamed("mono.icns"));
 
 		NSRect contentRect = new NSRect(200, 180, 400, 300);
 
 		NSWindow window = new NSWindow(new NSRect(200, 180, 400, 300),
-					       NSMiniaturizableWindowMask | NSClosableWindowMask | NSTitledWindowMask,
-					       NSBackingStoreBuffered,
+					       ((uint)NSWindowMask.NSMiniaturizableWindowMask | NSWindowMask.NSClosableWindowMask | NSWindowMask.NSTitledWindowMask),
+					       NSBackingStore.NSBackingStoreBuffered,
 					       false);
 		window.Title = "Hi Mono";
 
@@ -62,7 +62,7 @@ class CSControl : NSObject {
 		window.center();
 		window.makeKeyAndOrderFront(null);
 
-		NSApplication.sharedApplication().runModalForWindow(window);
+		NSApplication.SharedApplication().runModalForWindow(window);
 	}
 
 	new public void init() {
@@ -71,7 +71,7 @@ class CSControl : NSObject {
 
 	public void _stop() {
 		Console.WriteLine("Cool ass SHIT!");
-		NSApplication.sharedApplication().stopModal();
+		NSApplication.SharedApplication().stopModal();
 	}
 
 	public void _swap() {
