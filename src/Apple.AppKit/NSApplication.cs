@@ -21,6 +21,9 @@ namespace Apple.AppKit
 		static extern int NSApplication_runModalForWindow(IntPtr THIS, IntPtr theWindow);
 
 		[DllImport("AppKitGlue")]
+		static extern int NSApplication_setApplicationIconImage(IntPtr THIS, IntPtr image);
+
+		[DllImport("AppKitGlue")]
 		static extern void NSApplication_stopModal(IntPtr THIS);
 
 		private NSApplication() : this(IntPtr.Zero) {}
@@ -31,6 +34,11 @@ namespace Apple.AppKit
 			return new NSApplication(NSApplication__sharedApplication(NSApplication_class));
 		}
 		
+		public static void setApplicationIconImage(NSImage image)
+		{
+			NSApplication_setApplicationIconImage(NSApplication__sharedApplication(NSApplication_class), image.Raw);
+		}
+
 		public static void stopModal()
 		{
 			NSApplication_stopModal(NSApplication__sharedApplication(NSApplication_class));
