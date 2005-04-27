@@ -122,7 +122,7 @@ NSObject.DebugLog(1, "DEBUG: Using type: " + type.FullName + ", for Objective-C 
 				return nsObj.Raw;
 			string str = obj as string;
 			if (str != null)
-				return ((NSString)(NSString.StringWithUTF8String(str))).Raw;
+				return new NSString(str).Raw;
 			throw new Exception("Net2NS: not handled type of object: " + obj.GetType());
 		}
 	}
