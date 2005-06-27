@@ -15,7 +15,7 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
 AC_PROG_LIBTOOL
-AM_INIT_AUTOMAKE(cocoa-sharp, 0.2)
+AM_INIT_AUTOMAKE(cocoa-sharp, 0.3)
 AM_MAINTAINER_MODE
 dnl Make Objective-C work with automake 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)

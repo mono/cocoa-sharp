@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace CocoaSharp {
 
@@ -60,6 +61,9 @@ namespace CocoaSharp {
 		public MachOType reference;
 		public MachOType[] fields;
 		public TypeUsage typeUsage;
+
+		// match "NSObject"" or "NSObject") or "NSObject"} or "NSObject"]
+		private static Regex _idHintRegex = new Regex("^(\"[-_a-zA-Z0-9]+\")?@(?<hint>\"[-_a-zA-Z0-9]+\"[})\"\\]])");
 
 		private MachOType(string nameSpace) { this.nameSpace = nameSpace; }
 
@@ -227,7 +231,30 @@ namespace CocoaSharp {
 						if (ret.name == null)
 							ret.name = "id";
 						ret.kind = OCType.id;
-						cont = ret.name == "id" && read < type.Length && type[read] == '"';
+						if (read < type.Length && type[read] == '"') {
+							/*
+							 * Tiger seems to "hint" at an object type that it might
+							 * want in a message in a way that < 10.4 did not.  It looks like this:
+							 *
+							 * "paramName"@"NSBundle"
+							 *
+							 * This is almost always followed by another name, so:
+							 *
+							 * "param"@"NSBundle""param2"I
+							 * 
+							 * but it could also come at the end of a structure, so make sure to match "} also.
+							 */
+							Match h = _idHintRegex.Match(type);
+							if (h.Success) { // found it, so skip it but not the last char
+								read += h.Groups["hint"].Value.Length - 1;
+							}
+							cont = false;
+						} else if (read < type.Length && type[read] == '{') {
+							ret.reference = ParseSubType(nameSpace, type,ref read);
+							cont = false;
+						} else {
+							cont = ret.name == "id" && read < type.Length && type[read] == '"';
+						}
 						break;
 					case '#': // Class
 						++read;
@@ -342,6 +369,14 @@ namespace CocoaSharp {
 							read = nameOff;
 							if (type[read] == '=')
 								++read;
+							/*
+							 * XXX: This handles _NSRepresentationInfo, which looks like this:
+							 * ^{_NSRepresentationInfo=#@{...stuff
+							 * ...which was getting parsed as a struct, when it should be (I think) an object.
+							 */
+							if (type[read] == '#')
+								ret.kind = OCType.Class;
+
 							while (type[read] != close)
 								fields.Add(ParseSubType(nameSpace, type,ref read));
 							if (type[read] == close)

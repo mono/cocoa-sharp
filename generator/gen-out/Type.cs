@@ -23,7 +23,7 @@ namespace CocoaSharp {
 
 		public static void AddTypedef(string name, Type refType) {
 			Type cur = (Type)mTypeByName[name];
-			if (cur != null)
+			if (cur != null || refType.ocType == OCType.@void)
 				return;
 //			Console.WriteLine("Add typedef " + refType.Name + " " + name + ";");
 			mTypeByName[name] = refType;
@@ -143,8 +143,12 @@ namespace CocoaSharp {
 				case "unsigned long long": { apiType = "ulong"; glueType = typeof(ulong); ocType = OCType.unsigned_long_long; break; }
 
 				default:
-					if (objcDecl.EndsWith("*")) {
-						apiType = objcDecl.Substring(0, objcDecl.Length-1).Trim();
+					/*
+					 * Handle unsigned int[] from NSBitmapImageRep, specifically (void)setPixel:(unsigned int[])pixelData atX:(int)x y:(int)y
+					 * Basically, translate it into unsigned int *
+					 */
+					if (objcDecl.EndsWith("*") || objcDecl.EndsWith("[]")) {
+						apiType = objcDecl.Substring(0, objcDecl.Length-(objcDecl.EndsWith("*") ? 1 : 2)).Trim();
 						found = FromDecl(apiType);
 						if (found.OCType == OCType.@char || found.OCType == OCType.unsigned_char)
 							return new Type(objcDecl, nameSpace, "string", typeof(IntPtr), OCType.char_ptr);

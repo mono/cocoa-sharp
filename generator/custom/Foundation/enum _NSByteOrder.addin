@@ -1,4 +1,0 @@
-        CFByteOrderUnknown = 0,
-        CFByteOrderLittleEndian = 1,
-        CFByteOrderBigEndian = 2,
-

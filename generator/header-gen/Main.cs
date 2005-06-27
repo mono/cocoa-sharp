@@ -26,6 +26,7 @@ namespace CocoaSharp {
 			Type.AddTypedef("uint8_t", Type.FromDecl("unsigned char"));
 			Type.AddTypedef("OSErr", Type.FromDecl("short"));
 			Type.AddTypedef("int32_t", Type.FromDecl("int"));
+			Type.AddTypedef("uint32_t", Type.FromDecl("unsigned int"));
 			Type.AddTypedef("SInt32", Type.FromDecl("long"));
 			Type.AddTypedef("UInt32", Type.FromDecl("unsigned long"));
 			Type.AddTypedef("UTF32Char", Type.FromDecl("unsigned long"));
@@ -40,11 +41,14 @@ namespace CocoaSharp {
 			Type.AddTypedef("AppleEvent",Type.FromDecl("int"));
 			Type.AddTypedef("CFRunLoopRef",Type.FromDecl("struct __CFRunLoop *"));
 			Type.AddTypedef("DescType",Type.FromDecl("unsigned long"));
-			Type.AddTypedef("NSApplicationDelegateReply",Type.FromDecl("int"));
-			Type.AddTypedef("NSRequestUserAttentionType",Type.FromDecl("int"));
 			Type.AddTypedef("SOCKET",Type.FromDecl("int"));
 			Type.AddTypedef("OSType",Type.FromDecl("unsigned long"));
 			Type.AddTypedef("va_list",Type.FromDecl("char *"));
+			Type.AddTypedef("CIContext",Type.FromDecl("void *"));
+			// new java stuff, not that it'll work.
+			Type.AddTypedef("jobject", Type.FromDecl("void *"));
+			Type.AddTypedef("jvalue", Type.FromDecl("void *"));
+			Type.AddTypedef("jmethodID", Type.FromDecl("void *"));
 		}
 
 		private string mOutputFlag = string.Empty;
@@ -95,7 +99,7 @@ namespace CocoaSharp {
 #if REGEX_COMMENT
 		static Regex _commentRegex1 = new Regex(@"(/\*([^\*]+)\*/$)", RegexOptions.Multiline | RegexOptions.Singleline);
 #endif
-		static Regex _commentRegex2 = new Regex(@"//.+");
+		static Regex _commentRegex2 = new Regex(@"//.*$", RegexOptions.Multiline);
 		static Regex _interfaceRegex = new Regex(@"@interface\s+([\w_]+)(\s*:\s*([\w_]+))?(\s*<([,\w\s]+)>\s*)?(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 		static Regex _protocolRegex = new Regex(@"@protocol\s+([\w_]+)\s*(<([\w,\s]+)>)?[^;](.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
 		static Regex _categoryRegex = new Regex(@"@interface\s+([\w_]+)\s*\(([\w_]+)\)(.+?)?@end$", RegexOptions.Multiline | RegexOptions.Singleline);
@@ -135,8 +139,7 @@ namespace CocoaSharp {
 				RemoveString(ref _headerData, comment);
 			}
 #endif
-			foreach(Match m in _commentRegex2.Matches(_headerData))
-				RemoveString(ref _headerData, m.Value);
+			_headerData = _commentRegex2.Replace(_headerData, string.Empty);
 
 			foreach (Match m in _ifdefRegex.Matches(_headerData)) {
 				RemoveString(ref _headerData, m.Value);
@@ -192,6 +195,8 @@ namespace CocoaSharp {
 			foreach (Match m in _interfaceRegex.Matches(_headerData)) {
 				HeaderInterface _i = new HeaderInterface(m.Groups[1].Value, m.Groups[3].Value, m.Groups[5].Value, f.Name);
 				//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": @interface: " + _i.Name + ", " + f.Name);
+				string inner = m.Groups[6].Value.Clone().ToString();
+				FindTypedefs(_toParse, f, ref inner, false);
 				_i.AddMethods(m.Groups[6].Value);
 				_i.Imports = (string[])new ArrayList(_imports.Keys).ToArray(typeof(string));
 				if (Interfaces.Contains(_i.Name))
@@ -200,7 +205,26 @@ namespace CocoaSharp {
 					Interfaces[_i.Name] = _i;
 				RemoveString(ref _headerData, m.Value);
 			}
+			
+			FindTypedefs(_toParse, f, ref _headerData, true);
 
+			foreach (Match m in _enumRegex.Matches(_headerData)) {
+				string subName = m.Groups["name"].Value.Trim();
+				string enumStr = m.Groups["enum"].Value.Trim();
+				AddEnum(null, subName, enumStr, f.Name, _toParse.Name);
+				RemoveString(ref _headerData, m.Value);
+			}
+
+			_headerData = _headerData.Trim();
+			if (_headerData.Length > 0) {
+				_headerData = _headerData.Trim();
+			}
+
+			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
+		}
+
+		private void FindTypedefs(FileSystemInfo _toParse, Framework f, ref string _headerData, bool shouldRemove) {
+			int pos = 0;
 			while (true) {
 				pos = _headerData.IndexOf("typedef");
 				if (pos < 0)
@@ -256,20 +280,6 @@ namespace CocoaSharp {
 					//Console.WriteLine("Ignore unknown typedef pattern: " + typedef);
 				}
 			}
-
-			foreach (Match m in _enumRegex.Matches(_headerData)) {
-				string subName = m.Groups["name"].Value.Trim();
-				string enumStr = m.Groups["enum"].Value.Trim();
-				AddEnum(null, subName, enumStr, f.Name, _toParse.Name);
-				RemoveString(ref _headerData, m.Value);
-			}
-
-			_headerData = _headerData.Trim();
-			if (_headerData.Length > 0) {
-				_headerData = _headerData.Trim();
-			}
-
-			//Console.WriteLine("DEBUG: " + f.Name + "/" + _toParse.Name + ": leftover: " + _headerData.Replace("\n","\\n"));
 		}
 		
 		static void RemoveString(ref string baseStr, string replaceStr) {
@@ -283,7 +293,8 @@ namespace CocoaSharp {
 		private void AddEnum(string name, string subName, string enumStr, string frameworkName, string fileName) {
 			if (name == null) {
 				if (subName.Length == 0)
-					subName = "_noname_" + anonymousEnum++;
+					//subName = "_noname_" + anonymousEnum++;
+					return; // don't generate noname enums
 				name = "enum " + subName;
 				subName = string.Empty;
 			}
@@ -349,6 +360,7 @@ namespace CocoaSharp {
 			catch (Exception e) {
 				Console.WriteLine("\b\b\bfailed!");
 				Console.WriteLine("Exception: " + e.Message);
+				Console.WriteLine(e.StackTrace);
 			}
 		}
 
