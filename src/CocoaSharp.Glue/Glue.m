@@ -44,7 +44,7 @@ const char * GetObjectSuperClassName(id THIS, int depth) {
     int i = 0;
     for (i = 0; i < depth; i++)
         sclass = [sclass superclass];
-	printf ("DEBUG: %s - %s\n", [[THIS className] cString], [[sclass className] cString]);
+//	printf ("DEBUG: %s - %s\n", [[THIS className] cString], [[sclass className] cString]);
     return [[sclass className] cString];
 }
 const char * GetObjectClassName(id THIS) {

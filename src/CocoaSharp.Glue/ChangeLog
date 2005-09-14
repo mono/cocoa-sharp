@@ -1,3 +1,7 @@
+2005-09-14  Geoff Norton  <gnorton@customerdna.com>
+
+	* Glue.m: Remove some debugging code.
+
 2005-01-13  Geoff Norton  <gnorton@customerdna.com>
 
 	* Glue.m (GetObjectSuperClassName): Implement this method to allow
