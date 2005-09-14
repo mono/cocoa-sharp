@@ -1,3 +1,8 @@
+2005-09-18  Geoff Norton  <gnorton@customerdna.com>
+
+	* generator/custom/Foundation/ObjCMessaging.cs: Support objc_msgSend_stret set of calls.
+	* generator/custom/AppKit/NSView.override: Fix the NSView.bounds call to send the right type.       
+
 2006-05-23  Geoff Norton  <gnorton@customerdna.com>
 
 	* BUGS: Drop me I'm ancient
