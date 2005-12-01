@@ -18,4 +18,4 @@ EXTRA_DIST=$(sources)
 build_sources = $(addprefix $(srcdir)/, $(sources))
 
 $(ASSEMBLY): $(build_soruces)
-	$(MCS) /out:$(ASSEMBLY) /r:../Cocoa/cocoa-sharp.dll /target:library $(build_sources)
+	$(MCS) /nowarn:0169 /out:$(ASSEMBLY) /r:../Cocoa/cocoa-sharp.dll /target:library $(build_sources)
