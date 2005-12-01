@@ -73,4 +73,4 @@ EXTRA_DIST=$(sources)
 build_sources = $(addprefix $(srcdir)/, $(sources))
 
 $(ASSEMBLY): $(build_sources)
-	$(MCS) /unsafe /out:$(ASSEMBLY) /target:library $(build_sources)
+	$(MCS) /nowarn:0169 /unsafe /out:$(ASSEMBLY) /target:library $(build_sources)
