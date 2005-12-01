@@ -1,9 +1,9 @@
 ASSEMBLY_NAME=cocoa-sharp
 ASSEMBLY=$(ASSEMBLY_NAME).dll
 TARGET=$(ASSEMBLY)
-noinst_DATA=$(ASSEMBLY) cocoa-sharp.snk
+noinst_DATA=$(ASSEMBLY)
 
-CLEANFILES=$(ASSEMBLY) AssemblyInfo.cs
+CLEANFILES=$(ASSEMBLY)
 
 sources= \
 	./ActionHandler.cs \
@@ -68,9 +68,7 @@ sources= \
 	./View.cs \
 	./Window.cs
 
-EXTRA_DIST=$(sources) \
-	AssemblyInfo.cs \
-	cocoa-sharp.snk
+EXTRA_DIST=$(sources)
 
 build_sources = $(addprefix $(srcdir)/, $(sources))
 

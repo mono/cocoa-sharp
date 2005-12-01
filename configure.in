@@ -59,6 +59,8 @@ AC_SUBST(OBJCFLAGS)
 AC_OUTPUT([
 Makefile
 src/Makefile
-src/Cocoa/AssemblyInfo.cs
-src/WebKit/AssemblyInfo.cs
+src/Cocoa/Makefile
+src/WebKit/Makefile
+doc/Makefile
+samples/Makefile
 ])

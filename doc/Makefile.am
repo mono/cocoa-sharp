@@ -47,6 +47,6 @@ dist-hook:
 		mkdir -p $(distdir)/en/$$i;			\
 		cp $(srcdir)/en/$$i/*.xml $(distdir)/en/$$i;	\
 	done
-all:
-	mono /Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/monodocer.exe -assembly:../src/Cocoa/cocoa-sharp.dll -assembly:../src/WebKit/webkit-sharp.dll -path:. -name:"Cocoa#"
-	mono /Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/assembler.exe --ecma . --out cocoa-sharp
+#all:
+#	mono /Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/monodocer.exe -assembly:../src/Cocoa/cocoa-sharp.dll -assembly:../src/WebKit/webkit-sharp.dll -path:. -name:"Cocoa#"
+#	mono /Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/assembler.exe --ecma . --out cocoa-sharp

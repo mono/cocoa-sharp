@@ -1,9 +1,9 @@
 ASSEMBLY_NAME=webkit-sharp
 ASSEMBLY=$(ASSEMBLY_NAME).dll
 TARGET=$(ASSEMBLY)
-noinst_DATA=$(ASSEMBLY) cocoa-sharp.snk
+noinst_DATA=$(ASSEMBLY)
 
-CLEANFILES=$(ASSEMBLY) AssemblyInfo.cs
+CLEANFILES=$(ASSEMBLY)
 
 sources= \
 	./AssemblyInfo.cs \
@@ -13,9 +13,9 @@ sources= \
 	./WebHistoryItem.cs \
 	./WebView.cs
 
-EXTRA_DIST=$(sources) \
-	AssemblyInfo.cs \
-	cocoa-sharp.snk
+EXTRA_DIST=$(sources)
+
+build_sources = $(addprefix $(srcdir)/, $(sources))
 
 $(ASSEMBLY): $(build_soruces)
-	$(MCS) /out:$(ASSEMBLY) /target:library $(build_sources)
+	$(MCS) /out:$(ASSEMBLY) /r:../Cocoa/cocoa-sharp.dll /target:library $(build_sources)

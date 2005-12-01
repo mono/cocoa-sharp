@@ -4,7 +4,7 @@ set -e
 
 PACKAGE=cocoa-sharp
 
-LIBTOOLIZE=${LIBTOOLIZE-libtoolize}
+LIBTOOLIZE=${LIBTOOLIZE-glibtoolize}
 LIBTOOLIZE_FLAGS="--copy --force"     
 AUTOHEADER=${AUTOHEADER-autoheader}
 AUTOMAKE_FLAGS="--add-missing"
