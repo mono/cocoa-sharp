@@ -1,0 +1,85 @@
+<Type Name="Control" FullName="Cocoa.Control">
+  <TypeSignature Language="C#" Value="public class Control : Cocoa.View" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.View</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Control ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Instantiates a new Control.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Control (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSControl.</param>
+        <summary>Instantiates a managed representation of the specified NSControl.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DoubleClick">
+      <MemberSignature Language="C#" Value="public event Cocoa.ActionHandler DoubleClick;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.ActionHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public string Value { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The value of this Control.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Target">
+      <MemberSignature Language="C#" Value="public Cocoa.Object Target { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Control (Cocoa.Rect frame);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="frame" Type="Cocoa.Rect" />
+      </Parameters>
+      <Docs>
+        <param name="frame">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

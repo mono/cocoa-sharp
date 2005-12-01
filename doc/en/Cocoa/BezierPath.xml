@@ -1,0 +1,44 @@
+<Type Name="BezierPath" FullName="Cocoa.BezierPath">
+  <TypeSignature Language="C#" Value="public class BezierPath : Cocoa.Object" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BezierPath (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSBezierPath.</param>
+        <summary>Instantiate a new BezierPath representing a NSBezierPath.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FillRect">
+      <MemberSignature Language="C#" Value="public static void FillRect (Cocoa.Rect bounds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bounds" Type="Cocoa.Rect" />
+      </Parameters>
+      <Docs>
+        <param name="bounds">A rectangle.</param>
+        <summary>Fills the specified rectangle along the BezierPath.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of an NSBezierPath.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

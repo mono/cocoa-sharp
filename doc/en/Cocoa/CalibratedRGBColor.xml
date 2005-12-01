@@ -1,0 +1,29 @@
+<Type Name="CalibratedRGBColor" FullName="Cocoa.CalibratedRGBColor">
+  <TypeSignature Language="C#" Value="public class CalibratedRGBColor : Cocoa.Color" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Color</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CalibratedRGBColor (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSCalibratedRGBColor.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSCalibratedRGBColor.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

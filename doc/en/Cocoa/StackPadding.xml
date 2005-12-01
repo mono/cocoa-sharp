@@ -1,0 +1,16 @@
+<Type Name="StackPadding" FullName="Cocoa.StackPadding">
+  <TypeSignature Language="C#" Value="public struct StackPadding" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

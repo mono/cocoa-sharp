@@ -1,0 +1,87 @@
+<Type Name="Bundle" FullName="Cocoa.Bundle">
+  <TypeSignature Language="C#" Value="public class Bundle : Cocoa.Object" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Bundle (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSBundle.</param>
+        <summary>Instantiate a managed representation of the specified NSBundle.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BundleWithPath">
+      <MemberSignature Language="C#" Value="public static Cocoa.Bundle BundleWithPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Bundle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A full path to a bundle.</param>
+        <summary>Returns a Bundle for the specified path or null if a bundle cannot be located at the path.</summary>
+        <returns>A Bundle or null.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadFramework">
+      <MemberSignature Language="C#" Value="public static void LoadFramework (string frameworkname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="frameworkname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="frameworkname">A framework name.</param>
+        <summary>Loads the specified framework into the application address space.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadNib">
+      <MemberSignature Language="C#" Value="public static void LoadNib (string nibname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nibname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="nibname">A nib name.</param>
+        <summary>Loads the specified nib into the application.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Dynamically load the bundle represented by this object into the address space of the program.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSBundle.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

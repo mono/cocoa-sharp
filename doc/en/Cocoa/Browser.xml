@@ -1,0 +1,62 @@
+<Type Name="Browser" FullName="Cocoa.Browser">
+  <TypeSignature Language="C#" Value="public class Browser : Cocoa.Control" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Control</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Browser (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSBrowser.</param>
+        <summary>Instantiate a managed representation of a NSBrowser.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SelectedRowInColumn">
+      <MemberSignature Language="C#" Value="public int SelectedRowInColumn (int column);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="column" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="column">The column to inspect.</param>
+        <summary>Returns the selected row in the specified column or -1 if no row is selected.</summary>
+        <returns>The selected row.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SelectRowInColumn">
+      <MemberSignature Language="C#" Value="public void SelectRowInColumn (int row, int column);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="System.Int32" />
+        <Parameter Name="column" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="row">A row.</param>
+        <param name="column">A column.</param>
+        <summary>Selected the specified row in the specified column on the Browser.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSBrowser.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

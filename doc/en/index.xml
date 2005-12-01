@@ -1,0 +1,85 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="cocoa-sharp" Version="1.9.0.0" />
+    <Assembly Name="webkit-sharp" Version="1.9.0.0" />
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Apple.AppKit">
+    </Namespace>
+    <Namespace Name="Apple.Foundation">
+    </Namespace>
+    <Namespace Name="Apple.WebKit">
+    </Namespace>
+    <Namespace Name="Cocoa">
+      <Type Name="Application" />
+      <Type Name="Object" />
+      <Type Name="Array" />
+      <Type Name="AutoreleasePool" />
+      <Type Name="Browser" />
+      <Type Name="Control" />
+      <Type Name="View" />
+      <Type Name="Responder" />
+      <Type Name="BrowserCell" />
+      <Type Name="Cell" />
+      <Type Name="Bundle" />
+      <Type Name="Color" />
+      <Type Name="ConnectAttribute" />
+      <Type Name="Dictionary" />
+      <Type Name="Drawer" />
+      <Type Name="ExportAttribute" />
+      <Type Name="FileWrapper" />
+      <Type Name="Image" />
+      <Type Name="ImageView" />
+      <Type Name="MethodSignature" />
+      <Type Name="MenuItem" />
+      <Type Name="MutableArray" />
+      <Type Name="Native" />
+      <Type Name="Native+IMPDelegate" />
+      <Type Name="Native+ClassHandlerDelegate" />
+      <Type Name="Notification" />
+      <Type Name="ObjCMessaging" />
+      <Type Name="OutlineView" />
+      <Type Name="Pasteboard" />
+      <Type Name="Point" />
+      <Type Name="ProgressIndicator" />
+      <Type Name="Rect" />
+      <Type Name="RegisterAttribute" />
+      <Type Name="RunLoop" />
+      <Type Name="Screen" />
+      <Type Name="SearchField" />
+      <Type Name="Size" />
+      <Type Name="StackPadding" />
+      <Type Name="TableColumn" />
+      <Type Name="TextField" />
+      <Type Name="Timer" />
+      <Type Name="String" />
+      <Type Name="URLRequest" />
+      <Type Name="URLResponse" />
+      <Type Name="Window" />
+      <Type Name="ActionHandler" />
+      <Type Name="BackingStoreType" />
+      <Type Name="DragOperation" />
+      <Type Name="URL" />
+      <Type Name="BezierPath" />
+      <Type Name="OpenGLView" />
+      <Type Name="CachedObject" />
+      <Type Name="CalibratedRGBColor" />
+      <Type Name="DeviceRGBColor" />
+      <Type Name="CFTimer" />
+      <Type Name="CFArray" />
+      <Type Name="CFString" />
+      <Type Name="MutableString" />
+      <Type Name="DragDestination" />
+    </Namespace>
+    <Namespace Name="WebKit">
+      <Type Name="WebBackForwardList" />
+      <Type Name="WebDataSource" />
+      <Type Name="WebFrame" />
+      <Type Name="WebHistoryItem" />
+      <Type Name="WebView" />
+    </Namespace>
+  </Types>
+  <Title>Cocoa#</Title>
+</Overview>

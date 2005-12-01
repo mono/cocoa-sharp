@@ -1,0 +1,22 @@
+<Type Name="Native+ClassHandlerDelegate" FullName="Cocoa.Native+ClassHandlerDelegate">
+  <TypeSignature Language="C#" Value="public delegate int ClassHandlerDelegate(string classname);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="classname" Type="System.String" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Int32</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="classname">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

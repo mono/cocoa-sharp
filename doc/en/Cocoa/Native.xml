@@ -1,0 +1,375 @@
+<Type Name="Native" FullName="Cocoa.Native">
+  <TypeSignature Language="C#" Value="public class Native" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Native ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RegisteredClasses">
+      <MemberSignature Language="C#" Value="protected static System.Collections.IDictionary RegisteredClasses;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClassTypeMapping">
+      <MemberSignature Language="C#" Value="protected static System.Collections.IDictionary ClassTypeMapping;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="class_handler">
+      <MemberSignature Language="C#" Value="public static Cocoa.Native+ClassHandlerDelegate class_handler;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Native+ClassHandlerDelegate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="implement_method">
+      <MemberSignature Language="C#" Value="public static Cocoa.Native+IMPDelegate implement_method;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Native+IMPDelegate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="construct_object">
+      <MemberSignature Language="C#" Value="public static Cocoa.Native+IMPDelegate construct_object;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Native+IMPDelegate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClassHandler">
+      <MemberSignature Language="C#" Value="public static int ClassHandler (string classname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="classname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="classname">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImplementMethod">
+      <MemberSignature Language="C#" Value="public static IntPtr ImplementMethod (IntPtr cls, IntPtr sel, Cocoa.StackPadding args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cls" Type="System.IntPtr" />
+        <Parameter Name="sel" Type="System.IntPtr" />
+        <Parameter Name="args" Type="Cocoa.StackPadding" />
+      </Parameters>
+      <Docs>
+        <param name="cls">To be added.</param>
+        <param name="sel">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConstructManagedObject">
+      <MemberSignature Language="C#" Value="public static IntPtr ConstructManagedObject (IntPtr cls, IntPtr sel, Cocoa.StackPadding args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cls" Type="System.IntPtr" />
+        <Parameter Name="sel" Type="System.IntPtr" />
+        <Parameter Name="args" Type="Cocoa.StackPadding" />
+      </Parameters>
+      <Docs>
+        <param name="cls">To be added.</param>
+        <param name="sel">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RegisterClass">
+      <MemberSignature Language="C#" Value="public static IntPtr RegisterClass (Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EncodedType">
+      <MemberSignature Language="C#" Value="public static string EncodedType (Type type, out int size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="size" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="size">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenerateConstructorSignature">
+      <MemberSignature Language="C#" Value="public static string GenerateConstructorSignature (System.Reflection.ConstructorInfo constructor);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="constructor" Type="System.Reflection.ConstructorInfo" />
+      </Parameters>
+      <Docs>
+        <param name="constructor">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenerateMethodSignature">
+      <MemberSignature Language="C#" Value="public static string GenerateMethodSignature (System.Reflection.MethodInfo method);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NativeToManaged">
+      <MemberSignature Language="C#" Value="public static object NativeToManaged (IntPtr native_object);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportMembers">
+      <MemberSignature Language="C#" Value="public static void ImportMembers (Cocoa.Object item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Cocoa.Object" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportMembers">
+      <MemberSignature Language="C#" Value="public static void ExportMembers (Cocoa.Object item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Cocoa.Object" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeConstructor">
+      <MemberSignature Language="C#" Value="public static Cocoa.Object InvokeConstructor (Type type, string selector, object[] arguments);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="arguments" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeMethod">
+      <MemberSignature Language="C#" Value="public static object InvokeMethod (Cocoa.Object item, string selector, object[] arguments);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Cocoa.Object" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="arguments" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="objc_setClassHandler">
+      <MemberSignature Language="C#" Value="public static void objc_setClassHandler (Cocoa.Native+ClassHandlerDelegate class_handler);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="class_handler" Type="Cocoa.Native+ClassHandlerDelegate" />
+      </Parameters>
+      <Docs>
+        <param name="class_handler">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="object_getInstanceVariable">
+      <MemberSignature Language="C#" Value="public static IntPtr object_getInstanceVariable (IntPtr id, string name, IntPtr val);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.IntPtr" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="val" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="id">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="object_setInstanceVariable">
+      <MemberSignature Language="C#" Value="public static IntPtr object_setInstanceVariable (IntPtr id, string name, IntPtr val);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.IntPtr" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="val" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="id">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="memcmp">
+      <MemberSignature Language="C#" Value="public static int memcmp (Cocoa.Native+IMPDelegate a, Cocoa.Native+IMPDelegate b, int size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Cocoa.Native+IMPDelegate" />
+        <Parameter Name="b" Type="Cocoa.Native+IMPDelegate" />
+        <Parameter Name="size" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <param name="size">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConstructorInfoCache">
+      <MemberSignature Language="C#" Value="protected static System.Collections.IDictionary ConstructorInfoCache;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,21 @@
+<Type Name="ActionHandler" FullName="Cocoa.ActionHandler">
+  <TypeSignature Language="C#" Value="public delegate void ActionHandler(Cocoa.Object sender);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="Cocoa.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">The object that raised the event.</param>
+    <summary>Defines the shape of methods that are called in response to an event.</summary>
+    <remarks>A ActionHandler instance is used to specify an ObjectiveC target:/action: pair.  It can be thought of as a Cocoa# implemention of EventHandler.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,118 @@
+<Type Name="ObjCMessaging" FullName="Cocoa.ObjCMessaging">
+  <TypeSignature Language="C#" Value="public class ObjCMessaging" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ObjCMessaging ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="sel_registerName">
+      <MemberSignature Language="C#" Value="public static IntPtr sel_registerName (string selectorName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selectorName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="selectorName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="objc_msgSend">
+      <MemberSignature Language="C#" Value="public static object objc_msgSend (IntPtr receiver, string selector, Type rettype);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="receiver" Type="System.IntPtr" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="receiver">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="rettype">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="objc_msgSend">
+      <MemberSignature Language="C#" Value="public static object objc_msgSend (IntPtr receiver, string selector, Type rettype, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="receiver" Type="System.IntPtr" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="receiver">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="rettype">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="objc_msgSendSuper">
+      <MemberSignature Language="C#" Value="public static object objc_msgSendSuper (IntPtr receiver, string selector, Type rettype, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="receiver" Type="System.IntPtr" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="receiver">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="rettype">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

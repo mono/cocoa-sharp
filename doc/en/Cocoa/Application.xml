@@ -1,0 +1,166 @@
+<Type Name="Application" FullName="Cocoa.Application">
+  <TypeSignature Language="C#" Value="public class Application : Cocoa.Object" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Application (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to the Objective C object.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Init">
+      <MemberSignature Language="C#" Value="public static void Init ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method initializes the Cocoa runtime to be ready for Cocoa#.</summary>
+        <remarks>This method will create and initialize a AutoreleasePool to deal with your managed objects as well as install the MachO Exception handler.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadNib">
+      <MemberSignature Language="C#" Value="public static void LoadNib (string nibname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nibname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="nibname">The name of the nib to load.</param>
+        <summary>Loads the specified NIB into the running instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadFramework">
+      <MemberSignature Language="C#" Value="public static void LoadFramework (string frameworkname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="frameworkname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="frameworkname">The name of the framework to load.</param>
+        <summary>Loads the specified framework into the running instance.</summary>
+        <remarks>This method will look for frameworks in the /System/Library/Frameworks directory first and the Resources section of your application bundle.  It will throw an Exception if the framework cannot be located.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public static void Run ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Start the Cocoa RunLoop.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ModalSessionForWindow">
+      <MemberSignature Language="C#" Value="public IntPtr ModalSessionForWindow (Cocoa.Window window);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="window" Type="Cocoa.Window" />
+      </Parameters>
+      <Docs>
+        <param name="window">Window to create the modal session for.</param>
+        <summary>This method initializes a modal session for the specified window.</summary>
+        <returns>A pointer to the modal session.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndModalSession">
+      <MemberSignature Language="C#" Value="public void EndModalSession (IntPtr modalsession);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="modalsession" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="modalsession">A modal session instance.</param>
+        <summary>Ends the current modal session passed.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModalSession">
+      <MemberSignature Language="C#" Value="public int RunModalSession (IntPtr modalsession);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="modalsession" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="modalsession">A modal session pointer.</param>
+        <summary>Run the specified modal session.</summary>
+        <returns>RunContinuesResponse to continue or RunStoppedResponse to stop.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunApplication">
+      <MemberSignature Language="C#" Value="public void RunApplication ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Run the RunLoop for this Application instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SharedApplication">
+      <MemberSignature Language="C#" Value="public static Cocoa.Application SharedApplication { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Application</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return the Shared Application instance for this task.</summary>
+        <value>The shared Application instance.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MainWindow">
+      <MemberSignature Language="C#" Value="public Cocoa.Window MainWindow { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Window</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return the main Window for this task.</summary>
+        <value>The main Window instance.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Application is a managed representation of the NSApplication class.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

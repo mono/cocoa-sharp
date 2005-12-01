@@ -1,0 +1,26 @@
+<Type Name="Native+IMPDelegate" FullName="Cocoa.Native+IMPDelegate">
+  <TypeSignature Language="C#" Value="public delegate IntPtr IMPDelegate(IntPtr cls, IntPtr sel, Cocoa.StackPadding args);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="cls" Type="System.IntPtr" />
+    <Parameter Name="sel" Type="System.IntPtr" />
+    <Parameter Name="args" Type="Cocoa.StackPadding" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.IntPtr</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="cls">To be added.</param>
+    <param name="sel">To be added.</param>
+    <param name="args">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,106 @@
+<Type Name="DragOperation" FullName="Cocoa.DragOperation">
+  <TypeSignature Language="C#" Value="public enum DragOperation" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="Every">
+      <MemberSignature Language="C#" Value="Every" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Move">
+      <MemberSignature Language="C#" Value="Move" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="Delete" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Link">
+      <MemberSignature Language="C#" Value="Link" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Private">
+      <MemberSignature Language="C#" Value="Private" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="All_Obsolete">
+      <MemberSignature Language="C#" Value="All_Obsolete" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Generic">
+      <MemberSignature Language="C#" Value="Generic" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="Copy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.DragOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

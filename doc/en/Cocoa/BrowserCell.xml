@@ -1,0 +1,41 @@
+<Type Name="BrowserCell" FullName="Cocoa.BrowserCell">
+  <TypeSignature Language="C#" Value="public class BrowserCell : Cocoa.Cell" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Cell</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BrowserCell (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSBrowserCell.</param>
+        <summary>Instantiates a managed representation of the specified NSBrowserCell.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeafNode">
+      <MemberSignature Language="C#" Value="public bool LeafNode { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Wether the specified BrowserCell is a Leaf node or not.</summary>
+        <value>True if the cell is a leaf node.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of NSBrowserCell.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

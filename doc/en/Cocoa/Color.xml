@@ -1,0 +1,292 @@
+<Type Name="Color" FullName="Cocoa.Color">
+  <TypeSignature Language="C#" Value="public class Color : Cocoa.Object" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Color (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSColor.</param>
+        <summary>Instantiates a managed representation of the specified NSColor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Black">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Black { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Black.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Blue">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Blue { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Blue.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Brown">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Brown { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Brown.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Clear { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Clear.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Cyan">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Cyan { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Cyan.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DarkGray">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color DarkGray { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Dark Gray.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Gray">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Gray { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Gray.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Green">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Green { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Green.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LightGray">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color LightGray { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Light Gray.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Magenta">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Magenta { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Magenta.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Orange">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Orange { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Orange.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Purple">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Purple { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Purple.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Red">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Red { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Red.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="White">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color White { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for White.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Yellow">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color Yellow { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the NSColor for Yellow.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToRGB">
+      <MemberSignature Language="C#" Value="public Cocoa.Color ToRGB ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Converts this Color to the RGB colorspace.</summary>
+        <returns>The Color in RGC colorspace.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RedComponent">
+      <MemberSignature Language="C#" Value="public float RedComponent { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The red component of this Color.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BlueComponent">
+      <MemberSignature Language="C#" Value="public float BlueComponent { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The blur component of this Color.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GreenComponent">
+      <MemberSignature Language="C#" Value="public float GreenComponent { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The green component of this Color.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AlphaComponent">
+      <MemberSignature Language="C#" Value="public float AlphaComponent { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The alpha component of this color.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromHueSaturationBrightnessAlpha">
+      <MemberSignature Language="C#" Value="public static Cocoa.Color FromHueSaturationBrightnessAlpha (float hue, float saturation, float brightness, float alpha);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Color</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hue" Type="System.Single" />
+        <Parameter Name="saturation" Type="System.Single" />
+        <Parameter Name="brightness" Type="System.Single" />
+        <Parameter Name="alpha" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="hue">A hue.</param>
+        <param name="saturation">Saturation amount.</param>
+        <param name="brightness">Brightness.</param>
+        <param name="alpha">Alpha intensity.</param>
+        <summary>Returns a new Color contructed from the specified hue, saturation, brightness and alpha.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSColor.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

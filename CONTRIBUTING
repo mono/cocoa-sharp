@@ -1,0 +1,28 @@
+Contribution Guidlines
+----------------------
+
+Last Modified: December 1/2005
+
+Patch Submission Process:
+
+	Send your patch in "svn diff" format to the Cocoa# mailing list (cocoa-sharp@lists.ximian.com).  
+	Start the subject with [PATCH].  If your patch is changing the runtime functionality take the 
+	time to explain what it is changing and why.
+
+
+Patch Submission Requirements:
+
+	All patches that change any public facing classes or add any new classes are REQUIRED to have
+	the corresponding documentation patches or they will not be accepted.
+
+Class Addition Guidelines
+-------------------------
+
+	Every class added to Cocoa# must be hand bound and tested.  The format for making a Cocoa# class
+	is quite simple:
+		1. The class must include a private static string called ObjectiveCName which is the native
+		   objc classname (ie: NSString)
+		2. The class must have a constructor that accepts a IntPtr and calls the base ctor
+		   (ie; public NSString (IntPtr native_object) : base (native_object) {})
+		3. All messages that go to the objc runtime MUST use the ObjCMessaging class.
+		4. All conversions must use the helper methods in the Native class.
