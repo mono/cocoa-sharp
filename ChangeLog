@@ -1,3 +1,17 @@
 2005-12-01  Geoff Norton  <gnorton@customerdna.com>
 
+	* Makefile.am: Include the samples in the default build
+
+2005-12-01  Geoff Norton  <gnorton@customerdna.com>
+
+	* NEWS:
+	  AUTHORS:
+	  README:  Add to the build
+	* configure.in: Dont generate AssemblyInfo.cs
+	* autogen.sh: Default to using Mac's glibtoolize.  Generate 
+	  Makefiles properly.
+	* Drop vim swap files 
+
+2005-12-01  Geoff Norton  <gnorton@customerdna.com>
+
 	* Initial import
