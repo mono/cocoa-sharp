@@ -44,6 +44,18 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public Cocoa.CellStateValue State { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.CellStateValue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the state of the Menu Item.</summary>
+        <value>A CellStateValue; NSOffState (default), NSOnState, or NSMixedState.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>To be added.</summary>

@@ -1,0 +1,111 @@
+<Type Name="PopUpButton" FullName="Cocoa.PopUpButton">
+  <TypeSignature Language="C#" Value="public class PopUpButton : Cocoa.Control" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Control</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PopUpButton (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSPopUpButton.</param>
+        <summary>Instantiate a managed representation of a NSPopUpButton.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAllItems">
+      <MemberSignature Language="C#" Value="public void RemoveAllItems ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Removes every item in the pop-up menu.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddItemWithTitle">
+      <MemberSignature Language="C#" Value="public void AddItemWithTitle (string title);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="title">The title of the menu item to be added.</param>
+        <summary>Adds an item to the pop-up menu with a name specified by the title parameter. It will be inserted as the last item in the menu.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SelectItemAtIndex">
+      <MemberSignature Language="C#" Value="public void SelectItemAtIndex (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the menu item to select.</param>
+        <summary>Selects whatever the menu item is that corresponds to the specified index parameter.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ItemTitleAtIndex">
+      <MemberSignature Language="C#" Value="public string ItemTitleAtIndex (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the menu item to be retrieved.</param>
+        <summary>Gets the title of whatever the menu item is that corresponds to the specified index parameter.</summary>
+        <returns>The title of the item.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TitleOfSelectedItem">
+      <MemberSignature Language="C#" Value="public string TitleOfSelectedItem { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the title of the currently selected item in the pop-up menu.</summary>
+        <value>The title of the currently selected item.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NumberOfItems">
+      <MemberSignature Language="C#" Value="public int NumberOfItems { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the total number of items in the pop-up menu.</summary>
+        <value>the total number of items in the pop-up menu.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSPopUpButton.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

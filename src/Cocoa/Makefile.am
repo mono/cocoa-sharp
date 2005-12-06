@@ -8,6 +8,8 @@ CLEANFILES=$(ASSEMBLY)
 sources= \
 	./ActionHandler.cs \
 	./Application.cs \
+	./Alert.cs \
+	./AlertStyle.cs \
 	./Array.cs \
 	./AssemblyInfo.cs \
 	./AutoreleasePool.cs \
@@ -16,9 +18,11 @@ sources= \
 	./Browser.cs \
 	./BrowserCell.cs \
 	./Bundle.cs \
+	./Button.cs \
 	./CachedObject.cs \
 	./CalibratedRGBColor.cs \
 	./Cell.cs \
+	./CellStateValue.cs \
 	./Color.cs \
 	./ConnectAttribute.cs \
 	./Control.cs \
@@ -49,6 +53,7 @@ sources= \
 	./OutlineView.cs \
 	./Pasteboard.cs \
 	./Point.cs \
+	./PopUpButton.cs \
 	./ProgressIndicator.cs \
 	./Rect.cs \
 	./RegisterAttribute.cs \
@@ -59,7 +64,9 @@ sources= \
 	./Size.cs \
 	./StackPadding.cs \
 	./TableColumn.cs \
+	./Text.cs \
 	./TextField.cs \
+	./TextView.cs \
 	./Timer.cs \
 	./String.cs \
 	./URL.cs \

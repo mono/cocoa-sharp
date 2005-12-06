@@ -77,6 +77,18 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+	<Member MemberName="Enabled">
+      <MemberSignature Language="C#" Value="public bool Enabled { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the control can respond to mouse or keyboard events.</summary>
+        <value>Boolean indicating whether the control responds to mouse or keyboard events.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>To be added.</summary>

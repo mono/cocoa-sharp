@@ -1,0 +1,90 @@
+<Type Name="Alert" FullName="Cocoa.Alert">
+  <TypeSignature Language="C#" Value="public class Alert : Cocoa.Object" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Alert (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSAlert.</param>
+        <summary>Instantiates a managed representation of a NSAlert.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AlertWithMessage">
+      <MemberSignature Language="C#" Value="public static Cocoa.Alert AlertWithMessage (string messageTitle, string defaultButtonTitle, string alternateButtonTitle, string otherButtonTitle, string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Alert</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageTitle" Type="System.String" />
+        <Parameter Name="defaultButtonTitle" Type="System.String" />
+        <Parameter Name="alternateButtonTitle" Type="System.String" />
+        <Parameter Name="otherButtonTitle" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="messageTitle">The message title.</param>
+        <param name="defaultButtonTitle">The title of the default button.</param>
+        <param name="alternateButtonTitle">The title of the alternate button.</param>
+        <param name="otherButtonTitle">The title of the other button.</param>
+        <param name="format">Informational text.</param>
+        <summary>Creates and returns an instance of a Alert class with the specified message title, button titles, and informational text.</summary>
+        <returns>An instance of a Alert class.</returns>
+        <remarks>Passing an empty string as a button title parameter will cause the button to be omitted from the control.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AlertStyle">
+      <MemberSignature Language="C#" Value="public Cocoa.AlertStyle AlertStyle { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.AlertStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the AlertStyle value indicating what type of alert is to be displayed.</summary>
+        <value>An AlertStyle value.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Icon">
+      <MemberSignature Language="C#" Value="public Cocoa.Image Icon { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Image</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the icon displayed in the alert dialog.</summary>
+        <value>An instance of an Image class.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModal">
+      <MemberSignature Language="C#" Value="public int RunModal ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Runs the Alert as a modal dialog.</summary>
+        <returns>Returns the value of the button that was clicked.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of a NSAlert.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

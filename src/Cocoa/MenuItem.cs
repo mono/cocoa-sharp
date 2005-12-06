@@ -38,6 +38,15 @@ namespace Cocoa {
 				// TODO: Remove the handler
 				ObjCMessaging.objc_msgSend (NativeObject, "setAction:", typeof (void), typeof (IntPtr), IntPtr.Zero);
 			}
-		} 
+		}
+			
+		public Cocoa.CellStateValue State {
+			get {
+				return(Cocoa.CellStateValue) ObjCMessaging.objc_msgSend(NativeObject, "state", typeof(System.Int32));
+			}
+			set {
+				ObjCMessaging.objc_msgSend(NativeObject, "setState:", typeof(void), typeof(System.Int32), value);
+			}
+		}
 	}
 }

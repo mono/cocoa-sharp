@@ -54,6 +54,15 @@ namespace Cocoa {
 			}
 		}
 
+		public bool Enabled {
+			get {
+				return(bool) ObjCMessaging.objc_msgSend(NativeObject, "isEnabled", typeof(System.Boolean));
+			}
+			set {
+				ObjCMessaging.objc_msgSend(NativeObject, "setEnabled:", typeof(void), typeof(System.Boolean), value);
+			}
+		}
+
 		[DllImport ("libobjc.dylib")]
 		private static extern IntPtr sel_getUid (string name);
 	}

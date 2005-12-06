@@ -1,0 +1,46 @@
+<Type Name="AlertStyle" FullName="Cocoa.AlertStyle">
+  <TypeSignature Language="C#" Value="public enum AlertStyle" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="Critical">
+      <MemberSignature Language="C#" Value="Critical" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.AlertStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>This alert style should be used for 'critical' alerts only. The icon shown will be a caution icon.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Informational">
+      <MemberSignature Language="C#" Value="Informational" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.AlertStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A purely informational alert style indicating that something has happened or is about to happen.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Warning">
+      <MemberSignature Language="C#" Value="Warning" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.AlertStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An alert style indicating that something important has happened or is about to happen, but not something important enough to be considered 'critical'.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Alert styles defined by Alert.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,46 @@
+<Type Name="CellStateValue" FullName="Cocoa.CellStateValue">
+  <TypeSignature Language="C#" Value="public enum CellStateValue" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="OnState">
+      <MemberSignature Language="C#" Value="OnState" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.CellStateValue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The cell is in the 'on' state.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MixedState">
+      <MemberSignature Language="C#" Value="MixedState" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.CellStateValue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The cell is in a 'mixed' state where the items to which the cell refers are not all on or off.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OffState">
+      <MemberSignature Language="C#" Value="OffState" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.CellStateValue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The cell is in the 'off' state.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>These values specify the state of a cell.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

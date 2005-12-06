@@ -1,3 +1,15 @@
+2005-12-5  Aaron Flynt  <aaron@aaronflynt.com>
+
+	* Alert.cs: Added
+	* AlertStyle.cs: Added
+	* Button.cs: Added
+	* CellStateValue.cs: Added
+	* Control.cs: Added property Enabled
+	* MenuItem.cs: Added property State
+	* PopUpButton.cs: Added
+	* Text.cs: Added
+	* TextView.cs: Added
+
 2005-12-01  Geoff Norton  <gnorton@customerdna.com>
 
 	* Makefile.am: Disable warnings for 0169
