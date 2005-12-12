@@ -12,7 +12,7 @@ AUTOCONF=${AUTOCONF-autoconf}
 
 automake_min_vers=1.6
 aclocal_min_vers=$automake_min_vers
-autoconf_min_vers=2.59
+autoconf_min_vers=2.57
 libtoolize_min_vers=1.5
 
 LC_ALL=C
