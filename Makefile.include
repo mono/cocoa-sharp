@@ -1,0 +1,12 @@
+SNK=cocoa-sharp.snk
+
+CLEANFILES=$(ASSEMBLY) $(ASSEMBLY).mdb $(SNK)
+
+$(SNK): $(top_srcdir)/$(SNK)
+	cp $(top_srcdir)/$(SNK) .
+
+install-data-local:
+	$(GACUTIL) /i $(ASSEMBLY) /f $(GACUTIL_FLAGS) || exit 1;
+
+uninstall-local:
+	$(GACUTIL) /u $(ASSEMBLY_NAME) $(GACUTIL_FLAGS) || exit 1;

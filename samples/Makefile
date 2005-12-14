@@ -18,7 +18,7 @@ SHELL = /bin/sh
 srcdir = .
 top_srcdir = ..
 
-prefix = /usr/local
+prefix = /Library/Frameworks/Mono.framework/Versions/Current/
 exec_prefix = ${prefix}
 
 bindir = ${exec_prefix}/bin
@@ -99,6 +99,7 @@ OBJC =
 OBJCFLAGS = 
 OBJDUMP = @OBJDUMP@
 PACKAGE = cocoa-sharp
+PACKAGE_VERSION = cocoa-sharp
 PKG_CONFIG = /Library/Frameworks/PkgConfig.framework/Commands/pkg-config
 RANLIB = ranlib
 RC = @RC@
@@ -127,7 +128,7 @@ EXTRA_DIST = \
 	HelloWorld.cs \
 	HelloWorld.nib \
 	CocoaDoc.cs \
-	CocoaDoc.nib \
+	MonoDoc.nib \
 	OpenGLViewSample.cs \
 	OpenGLView.nib \
 	ViewSample.cs \
@@ -307,8 +308,8 @@ ViewSysDraw.app: ViewSysDraw.exe View.nib
 #CocoaDoc.exe: CocoaDoc.cs
 #	$(MCS) $(top_srcdir)/samples/CocoaDoc.cs -d:SYSD -out:$(top_builddir)/samples/CocoaDoc.exe -pkg:monodoc -r:System.Web.Services -r:$(top_builddir)/src/WebKit/webkit-sharp.dll -r:$(top_builddir)/src/Cocoa/cocoa-sharp.dll
 
-#CocoaDoc.app: CocoaDoc.exe CocoaDoc.nib
-#	macpack -m:2 -r:$(top_builddir)/src/Cocoa/cocoa-sharp.dll -r:$(top_builddir)/src/WebKit/webkit-sharp.dll -r:$(top_srcdir)/samples/monodoc.xml -r:$(MONODOCDIR)/sources -r:$(top_srcdir)/samples/CocoaDoc.nib -r:$(top_srcdir)/samples/mono.png -i:$(top_srcdir)/samples/applemono.icns -n:CocoaDoc -o:$(top_builddir)/samples -a:$(top_builddir)/samples/CocoaDoc.exe
+#CocoaDoc.app: CocoaDoc.exe MonoDoc.nib
+#	macpack -m:2 -r:$(top_builddir)/src/Cocoa/cocoa-sharp.dll -r:$(top_builddir)/src/WebKit/webkit-sharp.dll -r:$(top_srcdir)/samples/monodoc.xml -r:$(MONODOCDIR)/sources -r:$(top_srcdir)/samples/MonoDoc.nib -r:$(top_srcdir)/samples/mono.png -i:$(top_srcdir)/samples/applemono.icns -n:CocoaDoc -o:$(top_builddir)/samples -a:$(top_builddir)/samples/CocoaDoc.exe
 #	cp $(top_builddir)/doc/cocoa-sharp.source $(top_builddir)/samples/CocoaDoc.app/Contents/Resources/sources
 #	cp $(top_builddir)/doc/cocoa-sharp.tree $(top_builddir)/samples/CocoaDoc.app/Contents/Resources/sources
 #	cp $(top_builddir)/doc/cocoa-sharp.zip $(top_builddir)/samples/CocoaDoc.app/Contents/Resources/sources

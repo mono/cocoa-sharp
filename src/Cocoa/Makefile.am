@@ -3,7 +3,9 @@ ASSEMBLY=$(ASSEMBLY_NAME).dll
 TARGET=$(ASSEMBLY)
 noinst_DATA=$(ASSEMBLY)
 
-CLEANFILES=$(ASSEMBLY)
+pkg=cocoa
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=cocoa-sharp.pc
 
 sources= \
 	./ActionHandler.cs \
@@ -75,9 +77,11 @@ sources= \
 	./View.cs \
 	./Window.cs
 
-EXTRA_DIST=$(sources)
+EXTRA_DIST=$(sources) cocoa-sharp.pc.in
 
 build_sources = $(addprefix $(srcdir)/, $(sources))
 
-$(ASSEMBLY): $(build_sources)
+$(ASSEMBLY): $(SNK) $(build_sources)
 	$(MCS) /nowarn:0169 /unsafe /out:$(ASSEMBLY) /target:library $(build_sources)
+
+include ../../Makefile.include

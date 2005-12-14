@@ -3,7 +3,9 @@ ASSEMBLY=$(ASSEMBLY_NAME).dll
 TARGET=$(ASSEMBLY)
 noinst_DATA=$(ASSEMBLY)
 
-CLEANFILES=$(ASSEMBLY)
+pkg=webkit
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=webkit-sharp.pc
 
 sources= \
 	./AssemblyInfo.cs \
@@ -13,9 +15,11 @@ sources= \
 	./WebHistoryItem.cs \
 	./WebView.cs
 
-EXTRA_DIST=$(sources)
+EXTRA_DIST=$(sources) webkit-sharp.pc.in
 
 build_sources = $(addprefix $(srcdir)/, $(sources))
 
-$(ASSEMBLY): $(build_soruces)
+$(ASSEMBLY): $(SNK) $(build_soruces)
 	$(MCS) /nowarn:0169 /out:$(ASSEMBLY) /r:../Cocoa/cocoa-sharp.dll /target:library $(build_sources)
+
+include ../../Makefile.include

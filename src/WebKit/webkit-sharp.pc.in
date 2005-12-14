@@ -1,0 +1,10 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+
+Name: WebKit#
+Description: WebKit# - WebKit .NET Binding
+Version: @VERSION@
+Cflags: 
+Libs: -r:${libdir}/mono/@PACKAGE_VERSION@/cocoa-sharp.dll
+Requires: cocoa-sharp 
