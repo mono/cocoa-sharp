@@ -1,5 +1,9 @@
 2005-12-14  Geoff Norton  <gnorton@customerdna.com>
 
+	* configure.in:  Bump version to 0.9.1
+
+2005-12-14  Geoff Norton  <gnorton@customerdna.com>
+
 	* Various autotools changes to allow 0.9.0 distribution 
 
 2005-12-12  Geoff Norton  <gnorton@customerdna.com>
