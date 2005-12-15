@@ -1,5 +1,9 @@
 2005-12-15  Geoff Norton  <gnorton@customerdna.com>
 
+	* Makefile.am: Fix typos
+
+2005-12-15  Geoff Norton  <gnorton@customerdna.com>
+
 	* Makefile.am: Fix for distribution
 	* cocoa-sharp.source: Add to svn
 

@@ -8,14 +8,14 @@ UPDATER=$(MONODOCER) -path:en $(UPDATE_ASSEMBLIES)
 
 if ENABLE_MONODOC
 SOURCESDIR=$(prefix)/lib/monodoc/sources
-TARGETS=cocos-sharp.zip cocoa-sharp.tree cocoa-sharp.source
+TARGETS=cocoa-sharp.zip cocoa-sharp.tree cocoa-sharp.source
 else
 SOURCESDIR=$(datadir)
 TARGETS=
 endif
 
 monodocdir=$(SOURCESDIR)
-monodocDATA=$(TARGETS)
+monodoc_DATA=$(TARGETS)
 
 assemble: cocoa-sharp.zip cocoa-sharp.tree
 
