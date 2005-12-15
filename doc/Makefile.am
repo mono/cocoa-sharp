@@ -17,13 +17,7 @@ endif
 monodocdir=$(SOURCESDIR)
 monodocDATA=$(TARGETS)
 
-cocoa-sharp.source: assemble
-
-if ENABLE_MONODOC
 assemble: cocoa-sharp.zip cocoa-sharp.tree
-else
-assemble:
-endif
 
 cocoa-sharp.zip cocoa-sharp.tree: $(srcdir)/en/*/*.xml $(srcdir)/en/*.xml
 	$(MDASSEMBLER) --ecma $(srcdir)/en -o cocoa-sharp
@@ -53,6 +47,3 @@ dist-hook:
 		mkdir -p $(distdir)/en/$$i;			\
 		cp $(srcdir)/en/$$i/*.xml $(distdir)/en/$$i;	\
 	done
-
-all: assemble
-#	mono /Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/monodocer.exe -assembly:../src/Cocoa/cocoa-sharp.dll -assembly:../src/WebKit/webkit-sharp.dll -path:. -name:"Cocoa#"
