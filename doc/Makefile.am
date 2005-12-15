@@ -41,12 +41,8 @@ update-delete: get-assemblies
 
 CLEANFILES=cocoa-sharp.zip cocoa-sharp.tree lib
 
-if ENABLE_MONODOC
 EXTRA_DIST= \
 	cocoa-sharp.source
-else
-EXTRA_DIST=
-endif
 
 NAMESPACES=Cocoa WebKit
 
