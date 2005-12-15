@@ -1,3 +1,8 @@
+2005-12-15  Geoff Norton  <gnorton@customerdna.com>
+
+	* Makefile: Drop from svn
+	* CocoaDoc.cs: Reference MonoDoc.nib not CocoaDoc.nib
+
 2005-12-02  Geoff Norton  <gnorton@customerdna.com>
 
 	* CocoaDoc.cs: Add to the samples.

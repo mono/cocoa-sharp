@@ -316,7 +316,7 @@ class DocumentBrowser {
 			p_indicator.StopAnimation ();
 			window.Close ();
 		}
-		Application.LoadNib ("CocoaDoc.nib");
+		Application.LoadNib ("MonoDoc.nib");
 		Application.Run ();
 	}
 	static void MakeIndex ()
