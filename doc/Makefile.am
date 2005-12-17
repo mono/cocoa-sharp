@@ -25,7 +25,6 @@ cocoa-sharp.zip cocoa-sharp.tree: $(srcdir)/en/*/*.xml $(srcdir)/en/*.xml
 get-assemblies:
 	mkdir -p lib
 	cp $(top_builddir)/*/*.dll lib
-	cp $(top_builddir)/*/*.dll.config lib
 
 update: get-assemblies
 	$(UPDATER)
