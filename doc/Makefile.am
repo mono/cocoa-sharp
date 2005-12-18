@@ -2,7 +2,7 @@ ASSEMBLIES= \
 	cocoa-sharp.dll \
 	webkit-sharp.dll
 
-UPDATE_ASSEMBLIES=$(addprefix -assembly:lib/, $ASSEMBLIES))
+UPDATE_ASSEMBLIES=$(addprefix -assembly:lib/, $(ASSEMBLIES))
 
 UPDATER=$(MONODOCER) -path:en $(UPDATE_ASSEMBLIES)
 
@@ -24,7 +24,7 @@ cocoa-sharp.zip cocoa-sharp.tree: $(srcdir)/en/*/*.xml $(srcdir)/en/*.xml
 
 get-assemblies:
 	mkdir -p lib
-	cp $(top_builddir)/*/*.dll lib
+	cp $(top_builddir)/src/*/*.dll lib
 
 update: get-assemblies
 	$(UPDATER)
