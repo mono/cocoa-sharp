@@ -275,6 +275,7 @@ class DocumentBrowser {
 	public void Run() {
 		Application.Init ();
 		Application.LoadFramework ("WebKit");
+		Application.LoadNib ("MonoDoc.nib");
 		if (!File.Exists ("monodoc.index")) {
 			Rect rect;
 			Image image = new Image ("mono.png");
@@ -314,7 +315,6 @@ class DocumentBrowser {
 			p_indicator.StopAnimation ();
 			window.Close ();
 		}
-		Application.LoadNib ("MonoDoc.nib");
 		Application.Run ();
 	}
 	static void MakeIndex ()
