@@ -1,0 +1,65 @@
+<Type Name="ScrollView" FullName="Cocoa.ScrollView">
+  <TypeSignature Language="C#" Value="public class ScrollView : Cocoa.View" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.View</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ScrollView (Cocoa.Rect frame);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="frame" Type="Cocoa.Rect" />
+      </Parameters>
+      <Docs>
+        <param name="frame">The display rectangle.</param>
+        <summary>Creates a new instance with the specified display rect.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ScrollView (IntPtr native);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native">A pointer to an NSScrollView.</param>
+        <summary>Creates a managed wrapper for an NSScrollView.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DocumentView">
+      <MemberSignature Language="C#" Value="public Cocoa.View DocumentView { set; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.View</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Sets the document view.</summary>
+        <value>The document view.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HasVerticalScroller">
+      <MemberSignature Language="C#" Value="public bool HasVerticalScroller { set; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Sets whether the ScrollView display a vertical scrollbar.</summary>
+        <value>Whether a vertical scrollbar is displayed.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation of an NSScrollView.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

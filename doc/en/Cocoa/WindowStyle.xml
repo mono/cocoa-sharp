@@ -1,0 +1,81 @@
+<Type Name="WindowStyle" FullName="Cocoa.WindowStyle">
+  <TypeSignature Language="C#" Value="public enum WindowStyle" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="TexturizedBackground">
+      <MemberSignature Language="C#" Value="TexturizedBackground" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Miniaturizable">
+      <MemberSignature Language="C#" Value="Miniaturizable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window can be minimized.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Closable">
+      <MemberSignature Language="C#" Value="Closable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window can be closed.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Resizable">
+      <MemberSignature Language="C#" Value="Resizable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window can be resized.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Titled">
+      <MemberSignature Language="C#" Value="Titled" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window has a title.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Borderless">
+      <MemberSignature Language="C#" Value="Borderless" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.WindowStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window has no border.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Window styles.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

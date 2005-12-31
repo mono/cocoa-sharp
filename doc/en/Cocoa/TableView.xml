@@ -1,0 +1,80 @@
+<Type Name="TableView" FullName="Cocoa.TableView">
+  <TypeSignature Language="C#" Value="public class TableView : Cocoa.Control" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Control</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TableView (Cocoa.Rect frame);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="frame" Type="Cocoa.Rect" />
+      </Parameters>
+      <Docs>
+        <param name="frame">The display rectangle.</param>
+        <summary>Creates a new instance with the specified rectangle.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TableView (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to an NSTableView.</param>
+        <summary>Creates a managed wrapper for an NSTableView.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddTableColumn">
+      <MemberSignature Language="C#" Value="public void AddTableColumn (Cocoa.TableColumn column);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="column" Type="Cocoa.TableColumn" />
+      </Parameters>
+      <Docs>
+        <param name="column">The column.</param>
+        <summary>Adds a column.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReloadData">
+      <MemberSignature Language="C#" Value="public void ReloadData ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Reloads the data.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DataSource">
+      <MemberSignature Language="C#" Value="public Cocoa.Object DataSource { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Sets the data source.</summary>
+        <value>The data source.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A managed representation for a NSTableView.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

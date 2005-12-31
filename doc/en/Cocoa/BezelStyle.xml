@@ -1,0 +1,106 @@
+<Type Name="BezelStyle" FullName="Cocoa.BezelStyle">
+  <TypeSignature Language="C#" Value="public enum BezelStyle" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="RegularSquare">
+      <MemberSignature Language="C#" Value="RegularSquare" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A regular square.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HelpButton">
+      <MemberSignature Language="C#" Value="HelpButton" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A help button.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ShadowlessSquare">
+      <MemberSignature Language="C#" Value="ShadowlessSquare" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A shadowless square.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThickSquare">
+      <MemberSignature Language="C#" Value="ThickSquare" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A thick square.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Rounded">
+      <MemberSignature Language="C#" Value="Rounded" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A rounded shape.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThickerSquare">
+      <MemberSignature Language="C#" Value="ThickerSquare" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A thicker square.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Circular">
+      <MemberSignature Language="C#" Value="Circular" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A circular shape.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TexturedSquare">
+      <MemberSignature Language="C#" Value="TexturedSquare" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A textured square.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Disclosure">
+      <MemberSignature Language="C#" Value="Disclosure" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Bezel styles.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>
