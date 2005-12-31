@@ -51,9 +51,16 @@ namespace Cocoa {
 			);
 		}
 
-		public int RunModal() {
+		public int RunModal () {
 			return(int) ObjCMessaging.objc_msgSend(NativeObject, "runModal", typeof(System.Int32));
 		}
 
+		public void BeginSheetModal (Window window, Cocoa.Object delegateObj, string selector, Cocoa.Object context) {
+		ObjCMessaging.objc_msgSend(NativeObject, "beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof(void), typeof(IntPtr), window.NativeObject, typeof(IntPtr), delegateObj.NativeObject, typeof(IntPtr), sel_getUid(selector), typeof(IntPtr), (context == null) ? IntPtr.Zero : context.NativeObject);
+		}
+
+
+		[DllImport ("libobjc.dylib")]
+		private static extern IntPtr sel_getUid (string name);
 	}
 }

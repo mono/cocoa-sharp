@@ -16,6 +16,7 @@ sources= \
 	./AssemblyInfo.cs \
 	./AutoreleasePool.cs \
 	./BackingStoreType.cs \
+	./BezelStyle.cs \
 	./BezierPath.cs \
 	./Browser.cs \
 	./BrowserCell.cs \
@@ -63,9 +64,11 @@ sources= \
 	./RunLoop.cs \
 	./Screen.cs \
 	./SearchField.cs \
+	./ScrollView.cs \
 	./Size.cs \
 	./StackPadding.cs \
 	./TableColumn.cs \
+	./TableView.cs \
 	./Text.cs \
 	./TextField.cs \
 	./TextView.cs \
@@ -75,7 +78,8 @@ sources= \
 	./URLRequest.cs \
 	./URLResponse.cs \
 	./View.cs \
-	./Window.cs
+	./Window.cs \
+	./WindowStyle.cs
 
 EXTRA_DIST=$(sources) cocoa-sharp.pc.in
 

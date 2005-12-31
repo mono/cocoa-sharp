@@ -30,17 +30,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="DoubleClick">
-      <MemberSignature Language="C#" Value="public event Cocoa.ActionHandler DoubleClick;" />
-      <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>Cocoa.ActionHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public string Value { set; get; };" />
       <MemberType>Property</MemberType>
@@ -48,19 +37,7 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The value of this Control.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Target">
-      <MemberSignature Language="C#" Value="public Cocoa.Object Target { set; get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>Cocoa.Object</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
+        <summary>The String value of this Control.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -72,12 +49,12 @@
         <Parameter Name="frame" Type="Cocoa.Rect" />
       </Parameters>
       <Docs>
-        <param name="frame">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="frame">The display rectangle.</param>
+        <summary>Creates a new instance with the specified rectangle.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
-	<Member MemberName="Enabled">
+    <Member MemberName="Enabled">
       <MemberSignature Language="C#" Value="public bool Enabled { set; get; };" />
       <MemberType>Property</MemberType>
       <ReturnValue>
@@ -89,9 +66,31 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public event EventHandler Action;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Raised when the user has clicked or otherwise performed a single action.</summary>
+        <remarks>Adding an event handler clears any previous unmanaged action target.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DoubleAction">
+      <MemberSignature Language="C#" Value="public event EventHandler DoubleAction;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Raised when the user has clicked or otherwise performed a single action.</summary>
+        <remarks>Adding an event handler clears any previous unmanaged doubleAction target.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>A managed representation of an NSControl.</summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

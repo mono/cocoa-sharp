@@ -82,6 +82,27 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="BeginSheetModal">
+      <MemberSignature Language="C#" Value="public void BeginSheetModal (Cocoa.Window window, Cocoa.Object delegateObj, string selector, Cocoa.Object context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="window" Type="Cocoa.Window" />
+        <Parameter Name="delegateObj" Type="Cocoa.Object" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="context" Type="Cocoa.Object" />
+      </Parameters>
+      <Docs>
+        <param name="window">To be added.</param>
+        <param name="delegateObj">To be added.</param>
+        <param name="selector">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>A managed representation of a NSAlert.</summary>

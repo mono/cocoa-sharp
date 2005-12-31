@@ -14,7 +14,7 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Creates a new instance.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -25,8 +25,8 @@
         <Parameter Name="native_object" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="native_object">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="native_object">A pointer to an NSView.</param>
+        <summary>Creates a new managed wrapper for an NSView.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -37,8 +37,8 @@
         <Parameter Name="frame" Type="Cocoa.Rect" />
       </Parameters>
       <Docs>
-        <param name="frame">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="frame">The display rectangle.</param>
+        <summary>Creates a new instance with the specified rectangle.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -52,8 +52,8 @@
         <Parameter Name="view" Type="Cocoa.View" />
       </Parameters>
       <Docs>
-        <param name="view">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="view">The view.</param>
+        <summary>Adds a subview.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -123,6 +123,33 @@
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveFromSuperview">
+      <MemberSignature Language="C#" Value="public void RemoveFromSuperview (bool update);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="update" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="update">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Window">
+      <MemberSignature Language="C#" Value="public Cocoa.Window Window { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Window</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

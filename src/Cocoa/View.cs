@@ -35,6 +35,10 @@ namespace Cocoa {
 			ObjCMessaging.objc_msgSend (NativeObject, "addSubview:", typeof (void), typeof (IntPtr), view.NativeObject);
 		}
 
+		public void RemoveFromSuperview (bool update) {
+			ObjCMessaging.objc_msgSend (NativeObject, (update) ? "removeFromSuperview" : "removeFromSuperviewWithoutNeedingDisplay", typeof (void));
+		}
+
 		public void Invalidate (Rect bounds) {
 			ObjCMessaging.objc_msgSend (NativeObject, "invalidate:", typeof (void), typeof (Rect), bounds);
 		}
@@ -50,6 +54,12 @@ namespace Cocoa {
 			}
 
 			ObjCMessaging.objc_msgSend (NativeObject, "registerForDraggedTypes:", typeof (void), typeof (IntPtr), array.NativeObject);
+		}
+		
+		public Window Window {
+			get {
+				return (Window)Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "window", typeof (IntPtr)));
+			}
 		}
 	}
 }

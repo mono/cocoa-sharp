@@ -72,6 +72,17 @@
       <Type Name="CFString" />
       <Type Name="MutableString" />
       <Type Name="DragDestination" />
+      <Type Name="Alert" />
+      <Type Name="Button" />
+      <Type Name="PopUpButton" />
+      <Type Name="ScrollView" />
+      <Type Name="TableView" />
+      <Type Name="Text" />
+      <Type Name="TextView" />
+      <Type Name="AlertStyle" />
+      <Type Name="BezelStyle" />
+      <Type Name="CellStateValue" />
+      <Type Name="WindowStyle" />
     </Namespace>
     <Namespace Name="WebKit">
       <Type Name="WebBackForwardList" />

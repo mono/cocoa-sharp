@@ -33,6 +33,30 @@
         <remarks>If alternate contents aren't specified, this title is shown on the button in all of it's states.</remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Button (Cocoa.Rect frame);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="frame" Type="Cocoa.Rect" />
+      </Parameters>
+      <Docs>
+        <param name="frame">The location and size.</param>
+        <summary>Creates a new instance with the specified display frame.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BezelStyle">
+      <MemberSignature Language="C#" Value="public Cocoa.BezelStyle BezelStyle { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.BezelStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the bezel styles.</summary>
+        <value>Bezel styles.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>A managed representation of a NSButton.</summary>

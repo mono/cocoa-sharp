@@ -45,5 +45,15 @@ namespace Cocoa {
 		public void Load () {
 			ObjCMessaging.objc_msgSend (NativeObject, "load", typeof (void));
 		}
+
+		public static Bundle Main {
+			get {
+				return (Bundle)Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) Cocoa.Object.NativeClasses [typeof (Bundle)], "mainBundle", typeof (IntPtr)));
+			}
+		}
+		public bool LoadNibFile (string nibname) {
+			Dictionary dict = new Dictionary ("NSOwner", Application.SharedApplication);
+			return (bool)ObjCMessaging.objc_msgSend (NativeObject, "loadNibFile:externalNameTable:withZone:", typeof (bool), typeof (System.IntPtr), new Cocoa.String (nibname).NativeObject, typeof (System.IntPtr), dict.NativeObject, typeof (System.IntPtr), Application.SharedApplication.Zone);
+		}
 	}
 }

@@ -1,4 +1,22 @@
-2005-12-5  Aaron Flynt  <aaron@aaronflynt.com>
+2005-12-30  Andreas Faerber  <andreas.faerber@web.de>
+
+	* BezelStyle.cs: Added
+	* Button.cs: Added property BezelStyle
+	* Control.cs: Added events Action and DoubleAction
+	              Changed Target property to private
+	              Added private ActionSelector and DoubleActionSelector properties
+	              Added private child class ActionReceiver to dispatch action and doubleAction events
+	              Enclosed action related code in a region
+	* Point.cs: Added constructor Point(float,float)
+	* Rect.cs: Added constructors Rect(Point,Size) and Rect(float,float,float,float)
+	* ScrollView.cs: Added
+	* Size.cs: Added constructor Size(float,float)
+	* TableColumn.cs: Added constructor TableColumn(Cocoa.Object) for initWithIdentifier:
+	* TableView.cs: Added
+	* Window.cs: Changed constructor to Window(Rect,WindowStyle,BackingStoreType,bool)
+	* WindowStyle.cs: Added
+
+2005-12-05  Aaron Flynt  <aaron@aaronflynt.com>
 
 	* Alert.cs: Added
 	* AlertStyle.cs: Added

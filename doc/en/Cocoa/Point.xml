@@ -16,7 +16,7 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The X coordinate</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -27,13 +27,27 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The Y coordinate</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Point (float x, float y);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="x" Type="System.Single" />
+        <Parameter Name="y" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="x">The X coordinate</param>
+        <param name="y">The Y coordinate</param>
+        <summary>Creates a new Point instance with the specified coordinates.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>A point.</summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

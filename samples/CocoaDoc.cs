@@ -145,8 +145,8 @@ public class Controller : Cocoa.Object {
 		drawer.Open();
 		mainWindow.Center ();
 		mainWindow.Show ();
-		indexBrowser.DoubleClick += new ActionHandler (browserDoubleAction);
-		outlineView.DoubleClick += new ActionHandler (outlineViewDoubleAction);
+		indexBrowser.DoubleAction += new EventHandler (OnBrowserDoubleAction);
+		outlineView.DoubleAction += new EventHandler (OnOutlineViewDoubleAction);
 		// use history.
 		webView.HasBackForwardList = true;
 		webView.BackForwardList.Capacity = 100;
@@ -160,8 +160,7 @@ public class Controller : Cocoa.Object {
 		addHistoryItem("root:");
 	}
 	
-	[Export("browserdoubleAction:")]
-	public void browserDoubleAction(Cocoa.Object sender) {
+	private void OnBrowserDoubleAction(System.Object sender, EventArgs e) {
 		IndexEntry entry = IndexDataSource.GetEntry(indexBrowser.SelectedRowInColumn(0));
 		if(entry != null) {
 			Topic t = entry[0];
@@ -173,8 +172,7 @@ public class Controller : Cocoa.Object {
 			addHistoryItem(t.Url);
 		}
 	}
-	[Export("doubleAction:")]
-	public void outlineViewDoubleAction(Cocoa.Object sender) {
+	private void OnOutlineViewDoubleAction(System.Object sender, EventArgs e) {
 		BrowserItem bi = outlineView.SelectedItem as BrowserItem;
 		try {
 			if(bi.node.URL != null)
@@ -193,7 +191,7 @@ public class Controller : Cocoa.Object {
 				outlineView.ExpandItem(bi);
 
 			}
-		} catch (Exception e) { Console.WriteLine("ERROR: " + e); }
+		} catch (Exception ex) { Console.WriteLine("ERROR: " + ex); }
 	}
 
 	[Export("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]

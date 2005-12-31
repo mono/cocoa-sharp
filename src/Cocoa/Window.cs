@@ -12,9 +12,9 @@ namespace Cocoa {
 
 		public Window (IntPtr native_object) : base (native_object) {}
 
-		public Window (Rect size, int stylemask, BackingStoreType backingstore, bool defer) {
+		public Window (Rect rect, WindowStyle stylemask, BackingStoreType backingstore, bool defer) {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend ((IntPtr)NativeClasses [typeof (Window)], "alloc", typeof (IntPtr));
-			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithContentRect:styleMask:backing:defer:", typeof (IntPtr), typeof (Rect), size, typeof (int), stylemask, typeof (int), backingstore, typeof (bool), defer);
+			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithContentRect:styleMask:backing:defer:", typeof (IntPtr), typeof (Rect), rect, typeof (int), stylemask, typeof (int), backingstore, typeof (bool), defer);
 			autorelease = true;
 		}
 		

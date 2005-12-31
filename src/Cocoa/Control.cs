@@ -25,8 +25,20 @@ namespace Cocoa {
 				ObjCMessaging.objc_msgSend (NativeObject, "setStringValue:", typeof (void), typeof (System.IntPtr), new Cocoa.String (value).NativeObject);
 			}
 		}
+
+		public bool Enabled {
+			get {
+				return (bool) ObjCMessaging.objc_msgSend(NativeObject, "isEnabled", typeof(System.Boolean));
+			}
+			set {
+				ObjCMessaging.objc_msgSend(NativeObject, "setEnabled:", typeof(void), typeof(System.Boolean), value);
+			}
+		}
+
+#region action handling
+		//NOTE: This technically isn't in control; but since pretty much every subclass of control has it we move it here to avoid code duplication
 		
-		public Cocoa.Object Target {
+		private Cocoa.Object Target {
 			get {
 				return (Cocoa.Object)ObjCMessaging.objc_msgSend (NativeObject, "target", typeof (void));
 			}
@@ -35,33 +47,98 @@ namespace Cocoa {
 			}
 		}
 
-		//NOTE: This technically isn't in control; but since pretty much every subclass of control has it we move it here to avoid code duplication
-		public event ActionHandler DoubleClick {
-			add {
-				Cocoa.Object target = (Cocoa.Object)((ActionHandler)value).Target;
-				MethodInfo method = ((ActionHandler)value).Method;
-				string selector = method.Name;
-				foreach (ExportAttribute export_attribute in Attribute.GetCustomAttributes (method, typeof (ExportAttribute))) {
-					if (export_attribute.Selector != null)
-						selector = export_attribute.Selector;
-				}
-				Target = target;
-				ObjCMessaging.objc_msgSend (NativeObject, "setDoubleAction:", typeof (void), typeof (IntPtr), sel_getUid (selector));
+		private string ActionSelector {
+			get {
+				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "action", typeof (IntPtr)));
 			}
-			remove {
-				// TODO: Remove the handler
-				ObjCMessaging.objc_msgSend (NativeObject, "setDoubleAction:", typeof (void), typeof (IntPtr), IntPtr.Zero);
+			set {
+				ObjCMessaging.objc_msgSend (NativeObject, "setAction:", typeof (void), typeof (IntPtr), sel_getUid (value));
 			}
 		}
 
-		public bool Enabled {
+		private string DoubleActionSelector {
 			get {
-				return(bool) ObjCMessaging.objc_msgSend(NativeObject, "isEnabled", typeof(System.Boolean));
+				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "doubleAction", typeof (IntPtr)));
 			}
 			set {
-				ObjCMessaging.objc_msgSend(NativeObject, "setEnabled:", typeof(void), typeof(System.Boolean), value);
+				ObjCMessaging.objc_msgSend (NativeObject, "setDoubleAction:", typeof (void), typeof (IntPtr), sel_getUid (value));
 			}
 		}
+
+		private ActionReceiver actionTarget = null;
+
+		public event EventHandler Action {
+			add {
+				if (actionTarget == null) {
+					actionTarget = new ActionReceiver();
+					Target = actionTarget;
+					ActionSelector = "action";
+				}
+				actionTarget.Action += value;
+			}
+			remove {
+				if (actionTarget != null) {
+					actionTarget.Action -= value;
+				}
+			}
+		}
+
+		public event EventHandler DoubleAction {
+			add {
+				if (actionTarget == null) {
+					actionTarget = new ActionReceiver();
+					Target = actionTarget;
+					DoubleActionSelector = "doubleAction";
+				}
+				actionTarget.DoubleAction += value;
+			}
+			remove {
+				if (actionTarget != null) {
+					actionTarget.DoubleAction -= value;
+				}
+			}
+		}
+
+		private class ActionReceiver : Cocoa.Object {
+			private EventHandler actionHandler = null;
+			private EventHandler doubleActionHandler = null;
+
+			public ActionReceiver () {
+			}
+
+			public ActionReceiver (IntPtr native) : base (native) {}
+
+			public event EventHandler Action {
+				add {
+					actionHandler = (EventHandler)EventHandler.Combine(actionHandler, value);
+				}
+				remove {
+					actionHandler = (EventHandler)EventHandler.Remove(actionHandler, value);
+				}
+			}
+
+			public event EventHandler DoubleAction {
+				add {
+					doubleActionHandler = (EventHandler)EventHandler.Combine(doubleActionHandler, value);
+				}
+				remove {
+					doubleActionHandler = (EventHandler)EventHandler.Remove(doubleActionHandler, value);
+				}
+			}
+			
+			[Export ("action")]
+			public void OnAction () {
+				if (actionHandler != null)
+					actionHandler(this, EventArgs.Empty);
+			}
+			
+			[Export ("doubleAction")]
+			public void OnDoubleAction () {
+				if (doubleActionHandler != null)
+					doubleActionHandler(this, EventArgs.Empty);
+			}
+		}
+#endregion
 
 		[DllImport ("libobjc.dylib")]
 		private static extern IntPtr sel_getUid (string name);
