@@ -1,0 +1,245 @@
+<Type Name="OpenPanel" FullName="Cocoa.OpenPanel">
+  <TypeSignature Language="C#" Value="public class OpenPanel : Cocoa.SavePanel" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.SavePanel</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OpenPanel ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Allocates and initializes a new OpenPanel instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OpenPanel (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSOpenPanel.</param>
+        <summary>Instantiates a managed representation of a NSOpenPanel.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModal">
+      <MemberSignature Language="C#" Value="public int RunModal (string[] fileTypes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileTypes" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="fileTypes">Allowed file types.</param>
+        <summary>Runs the OpenPanel as a modal dialog.</summary>
+        <returns>
+          <see cref="F:Cocoa.Panel.OKButton" /> or <see cref="F:Cocoa.Panel.CancelButton" />.</returns>
+        <remarks>The fileTypes parameter is a string array specifying the extensions that will be allowed in the file browser.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModal">
+      <MemberSignature Language="C#" Value="public int RunModal (string directory, string filename, string[] fileTypes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="directory" Type="System.String" />
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="fileTypes" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="directory">The directory to start the OpenPanel in.</param>
+        <param name="filename">The file that is initially selected by the OpenPanel.</param>
+        <param name="fileTypes">Allowed file types.</param>
+        <summary>Runs the OpenPanel as a modal dialog.</summary>
+        <returns>
+          <see cref="F:Cocoa.Panel.OKButton" /> or <see cref="F:Cocoa.Panel.CancelButton" />.</returns>
+        <remarks>The fileTypes parameter is a string array specifying the extensions that will be allowed in the file browser.</remarks>
+        <example>
+          <para>The following example illustrates the creation and display of an Open Panel dialog that has a specific file initially highlighted. The file named "test.pdf" will be highlighted assuming that it exists in the user's home directory.</para>
+          <code lang="c#">public string GetUserFileSelection () {
+        OpenPanel openPanel = new OpenPanel ();
+        string[] fileTypes = new string[] {"txt", "pdf"};
+        if (openPanel.RunModal ("~/", "test.pdf", fileTypes) == Panel.OKButton)
+                return openPanel.Filenames[0];
+        else
+                return "";
+}</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginSheet">
+      <MemberSignature Language="C#" Value="public void BeginSheet (Cocoa.Window docWindow, Cocoa.OpenPanelHandler modalDelegate, IntPtr contextInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="docWindow" Type="Cocoa.Window" />
+        <Parameter Name="modalDelegate" Type="Cocoa.OpenPanelHandler" />
+        <Parameter Name="contextInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="docWindow">The <see cref="T:Cocoa.Window" /> object that the OpenPanel sheet will be attached to.</param>
+        <param name="modalDelegate">An <see cref="T:Cocoa.OpenPanelHandler" /> object that points to a callback method for the openPanelDidEnd event.</param>
+        <param name="contextInfo">Contextual information to be passed to the openPanelDidEnd event handler.</param>
+        <summary>Runs the OpenPanel as a modal sheet.</summary>
+        <remarks>
+          <para>This is an alternate way of displaying your OpenPanel to <see cref="M:Cocoa.OpenPanel.RunModal" />.</para>
+          <para>The OpenPanelHandler's callback method should have the signature:</para>
+          <c>
+            <para>MethodName (OpenPanel openPanel, int returnCode, System.IntPtr contextInfo)</para>
+          </c>
+          <para>See the <see cref="T:Cocoa.OpenPanelHandler" /> documentation for more info.</para>
+          <para>You should decorate your handler with an "Export" attribute in the following format:</para>
+          <c>
+            <para>[Export ("methodName:returnCode:contextInfo:")]</para>
+          </c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginSheet">
+      <MemberSignature Language="C#" Value="public void BeginSheet (string directory, string filename, string[] fileTypes, Cocoa.Window docWindow, Cocoa.OpenPanelHandler modalDelegate, IntPtr contextInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="directory" Type="System.String" />
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="fileTypes" Type="System.String[]" />
+        <Parameter Name="docWindow" Type="Cocoa.Window" />
+        <Parameter Name="modalDelegate" Type="Cocoa.OpenPanelHandler" />
+        <Parameter Name="contextInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="directory">The directory to start the OpenPanel in.</param>
+        <param name="filename">The file that is initially selected by the OpenPanel.</param>
+        <param name="fileTypes">Allowed file types.</param>
+        <param name="docWindow">The <see cref="T:Cocoa.Window" /> object that the OpenPanel sheet will be attached to.</param>
+        <param name="modalDelegate">An <see cref="T:Cocoa.OpenPanelHandler" /> object that points to a callback method for the openPanelDidEnd event.</param>
+        <param name="contextInfo">Contextual information to be passed to the openPanelDidEnd event handler.</param>
+        <summary>Runs the OpenPanel as a modal sheet.</summary>
+        <remarks>
+          <para>This is an alternate way of displaying your OpenPanel to <see cref="M:Cocoa.OpenPanel.RunModal" />.</para>
+          <para>The OpenPanelHandler's callback method should have the signature:</para>
+          <c>
+            <para>MethodName (OpenPanel openPanel, int returnCode, System.IntPtr contextInfo)</para>
+          </c>
+          <para>See the <see cref="T:Cocoa.OpenPanelHandler" /> documentation for more info.</para>
+          <para>You should decorate your handler with an "Export" attribute in the following format:</para>
+          <c>
+            <para>[Export ("methodName:returnCode:contextInfo:")]</para>
+          </c>
+          <para>The fileTypes parameter is a string array specifying the extensions that will be allowed in the file browser.</para>
+        </remarks>
+        <example>
+          <para>The following example illustrates the creation and display of an OpenPanel sheet.</para>
+          <code lang="c#">public void GetUserFileSelection () {
+        OpenPanel openPanel = new OpenPanel ();
+        string[] fileTypes = new string[] {"txt", "pdf"};
+        OpenPanelHandler openPanelHandler = new OpenPanelHandler (openPanelDidEnd);
+        openPanel.BeginSheet ("", "", fileTypes, mainWindow, openPanelHandler, IntPtr.Zero);
+}
+
+[Export ("openPanelDidEnd:returnCode:contextInfo:")]
+public void openPanelDidEnd (OpenPanel sheet, int returnCode, System.IntPtr contextInfo) {
+        if (returnCode == Panel.OKButton) {
+                string selectedFile = sheet.Filenames[0];
+                // Do something with the selected file...
+        }
+}</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowsMultipleSelection">
+      <MemberSignature Language="C#" Value="public bool AllowsMultipleSelection { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the OpenPanel allows multiple selections.</summary>
+        <value>True if multiple selections are allowed, otherwise false.</value>
+        <remarks>This property controls the behavior of the OpenPanel's file browser with regards to allowing the selection of multiple files.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanChooseDirectories">
+      <MemberSignature Language="C#" Value="public bool CanChooseDirectories { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the OpenPanel allows choosing directories.</summary>
+        <value>True if the selection of directories is allowed, otherwise false.</value>
+        <remarks>This property controls the behavior of the OpenPanel's file browser with regards to allowing the selection of entire directories.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanChooseFiles">
+      <MemberSignature Language="C#" Value="public bool CanChooseFiles { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the OpenPanel allows choosing files.</summary>
+        <value>True if file selection is allowed, otherwise false.</value>
+        <remarks>This property controls the behavior of the OpenPanel's file browser with regards to allowing the selection of individual files.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="URLs">
+      <MemberSignature Language="C#" Value="public Cocoa.URL[] URLs { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.URL[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the URLs selected.</summary>
+        <value>The selected URLs.</value>
+        <remarks>This property returns an array of URLs currently selected in the OpenPanel's file browser. The URLs are the absolute paths to the selected files and/or directories.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Filenames">
+      <MemberSignature Language="C#" Value="public string[] Filenames { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the selected files.</summary>
+        <value>The selected files.</value>
+        <remarks>This property returns an array of the absolute path of all files and/or directories selected in the OpenPanel's file browser.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A window for choosing files or directories.</summary>
+    <remarks>
+      <para>An OpenPanel is a Window for choosing files or directories. It can be displayed as a modal dialog or sheet.</para>
+      <para>You create an OpenPanel instance using the default constructor. To display the OpenPanel, you need to call one of the <see cref="M:Cocoa.OpenPanel.BeginSheet" /> or <see cref="M:Cocoa.OpenPanel.RunModal" /> methods.</para>
+    </remarks>
+    <example>
+      <para>The following example illustrates how to create a modal OpenPanel dialog and return the user's chosen file.</para>
+      <code lang="c#">public string GetUserFileSelection () {
+        OpenPanel openPanel = new OpenPanel ();
+        string[] fileTypes = new string[] {"txt", "pdf"};
+        if (openPanel.RunModal (fileTypes) == Panel.OKButton)
+                return openPanel.Filenames[0];
+        else
+                return "";
+}</code>
+    </example>
+  </Docs>
+</Type>

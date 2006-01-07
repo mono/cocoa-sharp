@@ -22,7 +22,7 @@
       </Docs>
     </Member>
     <Member MemberName="AlertWithMessage">
-      <MemberSignature Language="C#" Value="public static Cocoa.Alert AlertWithMessage (string messageTitle, string defaultButtonTitle, string alternateButtonTitle, string otherButtonTitle, string format);" />
+      <MemberSignature Language="C#" Value="public static Cocoa.Alert AlertWithMessage (string messageTitle, string defaultButtonTitle, string alternateButtonTitle, string otherButtonTitle, string informativeText);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Cocoa.Alert</ReturnType>
@@ -32,14 +32,14 @@
         <Parameter Name="defaultButtonTitle" Type="System.String" />
         <Parameter Name="alternateButtonTitle" Type="System.String" />
         <Parameter Name="otherButtonTitle" Type="System.String" />
-        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="informativeText" Type="System.String" />
       </Parameters>
       <Docs>
         <param name="messageTitle">The message title.</param>
         <param name="defaultButtonTitle">The title of the default button.</param>
         <param name="alternateButtonTitle">The title of the alternate button.</param>
         <param name="otherButtonTitle">The title of the other button.</param>
-        <param name="format">Informational text.</param>
+        <param name="informativeText">The informational text displayed below the message title.</param>
         <summary>Creates and returns an instance of a Alert class with the specified message title, button titles, and informational text.</summary>
         <returns>An instance of a Alert class.</returns>
         <remarks>Passing an empty string as a button title parameter will cause the button to be omitted from the control.</remarks>
@@ -52,9 +52,9 @@
         <ReturnType>Cocoa.AlertStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets or sets the AlertStyle value indicating what type of alert is to be displayed.</summary>
-        <value>An AlertStyle value.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets or sets the <see cref="T:Cocoa.AlertStyle" /> value indicating what type of alert is to be displayed.</summary>
+        <value>An <see cref="T:Cocoa.AlertStyle" /> value.</value>
+        <remarks>When using a macpack generated bundle, the icon shown for each of these alert styles will be a 'Generic' applciation icon with the exception of the Critical style which will show a caution icon with a 'Generic' application icon inside of it. To show the real application icon instead of the 'Generic' one, you should set it explicitly using the <see cref="P:Cocoa.Alert.Icon" /> property.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Icon">
@@ -65,8 +65,8 @@
       </ReturnValue>
       <Docs>
         <summary>Gets or sets the icon displayed in the alert dialog.</summary>
-        <value>An instance of an Image class.</value>
-        <remarks>To be added.</remarks>
+        <value>An instance of an <see cref="T:Cocoa.Image" /> class. This defaults to whatever <see cref="P:Application.Icon" /> is set to.</value>
+        <remarks>When using a macpack generated bundle, the icon will be a 'generic' application icon, so you might want to set this explicitly.</remarks>
       </Docs>
     </Member>
     <Member MemberName="RunModal">
@@ -79,33 +79,170 @@
       <Docs>
         <summary>Runs the Alert as a modal dialog.</summary>
         <returns>Returns the value of the button that was clicked.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>The value returned will be 1 (Default Button), 0 (Alternate Button), or -1 (Other Button) if you use the static <see cref="M:Cocoa.Alert.AlertWithMessage" /> method for instantiating the Alert. If you use the <see cref="M:Cocoa.Alert.AddButtonWithTitle" /> method the return values will start with 1000 for the first button added and increment by one for each new button.</remarks>
+        <example>
+          <para>The following example illustrates how to display an alert as a modal dialog with seven buttons.</para>
+          <code lang="c#">private string DisplayAlertDialog () {
+        Alert alertDialog = new Alert ();
+        for (int counter = 1; counter &lt;= 7; counter++) {
+                alertDialog.AddButtonWithTitle ("Button " + counter.ToString());
+        }
+        alertDialog.AlertStyle = AlertStyle.Informational;
+        alertDialog.Icon = new Image ("/path/to/icon");
+        alertDialog.MessageTitle = "Choose a button.";
+        alertDialog.InformativeText = "Please press one of the buttons below.";
+        int alertResult = alertDialog.RunModal ();
+        string buttonChoosen = "unknown";
+        switch (alertResult) {
+        case 1000:
+                buttonChoosen = "Button 1";
+                break;
+        case 1001:
+                buttonChoosen = "Button 2";
+                break;
+        case 1002:
+                buttonChoosen = "Button 3";
+                break;
+        case 1003:
+                buttonChoosen = "Button 4";
+                break;
+        case 1004:
+                buttonChoosen = "Button 5";
+                break;
+        case 1005:
+                buttonChoosen = "Button 6";
+                break;
+        case 1006:
+                buttonChoosen = "Button 7";
+                break;
+        }
+        return buttonChoosen;
+}
+</code>
+        </example>
       </Docs>
     </Member>
-    <Member MemberName="BeginSheetModal">
-      <MemberSignature Language="C#" Value="public void BeginSheetModal (Cocoa.Window window, Cocoa.Object delegateObj, string selector, Cocoa.Object context);" />
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Alert ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Allocates and initializes a new Alert.</summary>
+        <remarks>Use this constructor if you need to manually add buttons and set properties of your Alert, otherwise you should use the <see cref="M:Cocoa.Alert.AlertWithMessage" /> static method instantiate your Alert</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddButtonWithTitle">
+      <MemberSignature Language="C#" Value="public Cocoa.Button AddButtonWithTitle (string buttonTitle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Button</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buttonTitle" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="buttonTitle">The text that appears on the added button.</param>
+        <summary>Adds a new button to the alert dialog.</summary>
+        <returns>The button that was added.</returns>
+        <remarks>You can use this method to manually add buttons to the Alert dialog.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginSheet">
+      <MemberSignature Language="C#" Value="public void BeginSheet (Cocoa.Window theWindow, Cocoa.AlertHandler modalDelegate, IntPtr contextInfo);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="window" Type="Cocoa.Window" />
-        <Parameter Name="delegateObj" Type="Cocoa.Object" />
-        <Parameter Name="selector" Type="System.String" />
-        <Parameter Name="context" Type="Cocoa.Object" />
+        <Parameter Name="theWindow" Type="Cocoa.Window" />
+        <Parameter Name="modalDelegate" Type="Cocoa.AlertHandler" />
+        <Parameter Name="contextInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="window">To be added.</param>
-        <param name="delegateObj">To be added.</param>
-        <param name="selector">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="theWindow">The <see cref="Cocoa.Window" /> object that the alert sheet will be attached to.</param>
+        <param name="modalDelegate">An <see cref="T:Cocoa.AlertHandler" /> object that points to a callback method for the alertDidEnd event.</param>
+        <param name="contextInfo">Contextual information passed to the alertDidEnd event handler.</param>
+        <summary>Runs the Alert as a modal sheet.</summary>
+        <remarks>
+          <para>This is an alternate way of displaying your alert to <see cref="M:Cocoa.Alert.RunModal" />.</para>
+          <para>The AlertHandler's callback method should have the signature:</para>
+          <c>
+            <para>MethodName (Alert alert, int returnCode, System.IntPtr contextInfo)</para>
+          </c>
+          <para>See the <see cref="T:Cocoa.AlertHandler" /> documentation for more info.</para>
+          <para>You should decorate your handler with an "Export" attribute in the following format:</para>
+          <c>
+            <para>[Export ("methodName:returnCode:contextInfo:")]</para>
+          </c>
+        </remarks>
+        <example>
+          <para>The following example illustrates how to display an alert as a sheet.</para>
+          <code lang="c#">private void DisplayAlertSheet () {
+        Alert alertSheet = new Alert ();
+        alertSheet.AlertStyle = AlertStyle.Informational;
+        alertSheet.Icon = new Image ("/path/to/icon");
+        alertSheet.MessageTitle = "This is the title of my alert.";
+        alertSheet.InformativeText = "This is informative text.";
+        AlertHandler alertSheetHandler = new AlertHandler (alertDidEnd);
+        alertSheet.BeginSheet (mainWindow, alertSheetHandler, IntPtr.Zero);
+}
+
+[Export ("alertDidEnd:returnCode:contextInfo:")]
+public void alertDidEnd (Alert alert, int returnCode, System.IntPtr contextInfo) {
+        // Handle the end of the alert sheet.
+}
+</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageTitle">
+      <MemberSignature Language="C#" Value="public string MessageTitle { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The title of your Alert message.</summary>
+        <value>The message title.</value>
+        <remarks>This text will be displayed in a large bold font at the top of your Alert dialog or sheet.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InformativeText">
+      <MemberSignature Language="C#" Value="public string InformativeText { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The actual descriptive text of the Alert.</summary>
+        <value>Informational text.</value>
+        <remarks>This text will be displayed below the <see cref="P:Cocoa.Alert.MessageTitle" /> in a smaller non-bold font.</remarks>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>A managed representation of a NSAlert.</summary>
-    <remarks>To be added.</remarks>
+    <summary>An Alert window that can be displayed as a modal dialog or sheet.</summary>
+    <remarks>
+      <para>An Alert is a window with an icon, text, and buttons. It can be displayed as a modal dialog or sheet.</para>
+      <para>You can create an alert instance by using the default constructor or by using the <see cref="M:Cocoa.Alert.AlertWithMessage" /> helper method. To display the alert you need to call either the <see cref="M:Cocoa.Alert.RunModal" /> method or the <see cref="M:Cocoa.Alert.BeginSheet" /> method.</para>
+    </remarks>
+    <example>
+      <para>The following example illustrates how to create a simple modal alert dialog with OK and Cancel buttons.</para>
+      <code lang="c#">private string DisplayAlertDialog () {
+        Alert alertDialog = AlertWithMessage ("This is my message title.", "OK", 
+                "Cancel", "", "This is my message text.");
+        alertDialog.AlertStyle = AlertStyle.Informational;
+        alertDialog.Icon = new Image ("/path/to/icon");
+        int alertResult = alertDialog.RunModal ();
+        string buttonChoosen = "unknown";
+        switch (alertResult) {
+        case 1:
+                buttonChoosen = "OK";
+        case 0:
+                buttonChoosen = "Cancel";
+        }
+        return buttonChoosen;
+}</code>
+    </example>
   </Docs>
 </Type>

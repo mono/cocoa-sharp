@@ -41,6 +41,6 @@
   </Members>
   <Docs>
     <summary>Alert styles defined by Alert.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>See the <see cref="P:Cocoa.Alert.AlertStyle" /> documentation for more information.</remarks>
   </Docs>
 </Type>

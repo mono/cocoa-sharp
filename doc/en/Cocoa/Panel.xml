@@ -1,0 +1,98 @@
+<Type Name="Panel" FullName="Cocoa.Panel">
+  <TypeSignature Language="C#" Value="public class Panel : Cocoa.Window" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Window</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Panel ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Allocates a new instance of a Panel class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Panel (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSPanel.</param>
+        <summary>Instantiates a managed representation of a NSPanel.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OKButton">
+      <MemberSignature Language="C#" Value="public const int OKButton = 1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>Constant for indicating that the OK button was clicked.</summary>
+        <remarks>Used by classes derived from panel like <see cref="T:Cocoa.SavePanel" /> and <see cref="T:Cocoa.OpenPanel" />.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelButton">
+      <MemberSignature Language="C#" Value="public const int CancelButton = 0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>Constant for indicating that the Cancel button was clicked.</summary>
+        <remarks>Used by classes derived from panel like <see cref="T:Cocoa.SavePanel" /> and <see cref="T:Cocoa.OpenPanel" />.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FloatingPanel">
+      <MemberSignature Language="C#" Value="public bool FloatingPanel { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the panel is a floating panel.</summary>
+        <value>True if the panel is a floating panel, otherwise false. The default value is false.</value>
+        <remarks>Making this true will cause the panel to always appear on top of all other windows in the application.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BecomesKeyOnlyIfNeeded">
+      <MemberSignature Language="C#" Value="public bool BecomesKeyOnlyIfNeeded { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the panel becomes the key panel only when needed.</summary>
+        <value>True if the panel only becomes the key panel when needed, otherwise false. The default value is false.</value>
+        <remarks>If set to true, the panel only will accept keyboard input when necessary.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WorksWhenModal">
+      <MemberSignature Language="C#" Value="public bool WorksWhenModal { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets whether the panel works when another window is being run modally.</summary>
+        <value>True if the panel works when another window is being run modally, otherwise false. The default is false.</value>
+        <remarks>This property controls the behavior of a panel in cases where another window in the application is being run modally. If set to true, the panel will respond to keyboard and mouse input. If set to false, it won't.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A window that is commonly used to perform secondary functions in an application.</summary>
+    <remarks>Although a panel can be used directly, it is usually accessed through it's derived classes such as <see cref="Cocoa.SavePanel" /> or <see cref="Cocoa.OpenPanel" />.</remarks>
+  </Docs>
+</Type>

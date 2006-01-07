@@ -1,3 +1,28 @@
+2006-01-02  Aaron Flynt  <aaron@aaronflynt.com>
+	* Alert.cs:
+		(.ctor): Added default calling Cocoa.Object for alloc. Added init.
+		(BeginSheet): Added method.
+		(AddButtonWithTitle): Added method.
+		(InformativeText): Added property.
+		(MessageTitle): Added property.
+	* AlertHandler.cs: Added.
+	* Application.cs:
+		(Icon): Added property.
+		(BeginSheet): Added method.
+		(EndSheet): Added methods.
+	* MutableArray.cs: Added .ctor public MutableArray (string [] stringArray).
+	* Native.cs:
+		(ToSelector): Added method.
+		(sel_getUid): Added overload taking string argument.
+	* OpenPanel.cs: Added.
+	* OpenPanelHandler.cs: Added.
+	* Panel.cs: Added.
+	* SavePanel.cs: Added.
+	* SavePanelHandler.cs: Added.
+	* SheetHandler.cs: Added.
+	* Window.cs: Addeded default .ctor for alloc and init of itself and 
+	derived classes.
+
 2005-12-30  Andreas Faerber  <andreas.faerber@web.de>
 
 	* BezelStyle.cs: Added

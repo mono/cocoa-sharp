@@ -12,6 +12,13 @@ namespace Cocoa {
 
 		public MutableArray (IntPtr native_object) : base (native_object) {}
 
+		public MutableArray (string [] stringArray) : base () {
+			Initialize();
+			foreach (string stringElement in stringArray) {
+				Add (new Cocoa.String (stringElement));
+			}
+		}
+		
 		public void Add (Object o) {
 			ObjCMessaging.objc_msgSend (NativeObject, "addObject:", typeof (void), typeof (IntPtr), o.NativeObject);
 		}

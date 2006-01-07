@@ -1,0 +1,25 @@
+<Type Name="SheetHandler" FullName="Cocoa.SheetHandler">
+  <TypeSignature Language="C#" Value="public delegate void SheetHandler(Cocoa.Window sheet, int returnCode, IntPtr contextInfo);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sheet" Type="Cocoa.Window" />
+    <Parameter Name="returnCode" Type="System.Int32" />
+    <Parameter Name="contextInfo" Type="System.IntPtr" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sheet">The <see cref="T:Cocoa.Window" /> object that raised the event.</param>
+    <param name="returnCode">The return code passed from the <see cref="M:Cocoa.Application.EndSheet" /> method.</param>
+    <param name="contextInfo">The contextInfo object that was specified.</param>
+    <summary>Defines the shape of methods that are called in response to a sheetDidEnd event.</summary>
+    <remarks>The return code is only relevant when the <see cref="M:Cocoa.Application.EndSheet" /> overloaded method that takes a return code is called.</remarks>
+  </Docs>
+</Type>

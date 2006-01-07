@@ -123,6 +123,15 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Window ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Allocates and initializes a Window object.</summary>
+        <remarks>This constructor is also called by Panel, SavePanel, and OpenPanel.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>A managed wrapper for an NSWindow.</summary>

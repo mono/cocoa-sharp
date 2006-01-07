@@ -367,6 +367,22 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="ToSelector">
+      <MemberSignature Language="C#" Value="public static IntPtr ToSelector (string selector);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="selector">The name of the selector.</param>
+        <summary>Gets the ID of a named selector.</summary>
+        <returns>An IntPtr to the native selector ID.</returns>
+        <remarks>Use this in cases where you need to pass an IntPtr version of a selector for a binding.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>To be added.</summary>

@@ -45,6 +45,18 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MutableArray (string[] stringArray);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="stringArray" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="stringArray">A string array to initialize the Mutable array with.</param>
+        <summary>Initializes a new MutableArray instance with the contents of a string array.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>To be added.</summary>

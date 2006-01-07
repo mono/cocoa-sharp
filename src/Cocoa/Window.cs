@@ -10,6 +10,10 @@ namespace Cocoa {
 			NativeClasses [typeof (Window)] = Native.RegisterClass (typeof (Window)); 
 		}
 
+		public Window () : base () {
+			Initialize ();
+		}
+		
 		public Window (IntPtr native_object) : base (native_object) {}
 
 		public Window (Rect rect, WindowStyle stylemask, BackingStoreType backingstore, bool defer) {
@@ -57,6 +61,5 @@ namespace Cocoa {
 		public void Close () {
 			ObjCMessaging.objc_msgSend (NativeObject, "close", typeof (void));
 		}
-	
 	}
 }

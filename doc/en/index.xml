@@ -83,6 +83,13 @@
       <Type Name="BezelStyle" />
       <Type Name="CellStateValue" />
       <Type Name="WindowStyle" />
+      <Type Name="OpenPanel" />
+      <Type Name="SavePanel" />
+      <Type Name="Panel" />
+      <Type Name="AlertHandler" />
+      <Type Name="OpenPanelHandler" />
+      <Type Name="SavePanelHandler" />
+      <Type Name="SheetHandler" />
     </Namespace>
     <Namespace Name="WebKit">
       <Type Name="WebBackForwardList" />

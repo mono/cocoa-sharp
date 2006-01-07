@@ -1,0 +1,25 @@
+<Type Name="OpenPanelHandler" FullName="Cocoa.OpenPanelHandler">
+  <TypeSignature Language="C#" Value="public delegate void OpenPanelHandler(Cocoa.OpenPanel sheet, int returnCode, IntPtr contextInfo);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sheet" Type="Cocoa.OpenPanel" />
+    <Parameter Name="returnCode" Type="System.Int32" />
+    <Parameter Name="contextInfo" Type="System.IntPtr" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sheet">The OpenPanel object that raised the event.</param>
+    <param name="returnCode">The return code indicating which button was clicked.</param>
+    <param name="contextInfo">The contextInfo object that was specified.</param>
+    <summary>Defines the shape of methods that are called in response to an openPanelDidEnd event.</summary>
+    <remarks>The return code will be <see cref="M:Cocoa.Panel.OKButton" /> if the OK buton was selected. It will be <see cref="M:Cocoa.Panel.CancelButton" /> if the Cancel button was clicked.</remarks>
+  </Docs>
+</Type>

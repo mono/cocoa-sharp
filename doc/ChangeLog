@@ -1,3 +1,6 @@
+2005-12-30  Aaron Flynt  <aaron@aaronflynt.com>
+	* cocoa-sharp.source: Changed basefile attribute to cocoa-sharp.
+
 2005-12-18  Geoff Norton  <gnorton@customerdna.com>
 
 	* Makefile.am: Fix the commit from yesterday to include

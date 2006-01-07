@@ -143,7 +143,6 @@ public class Controller : Cocoa.Object {
 	public void FinishLoading(Notification aNotification) {
 
 		drawer.Open();
-		mainWindow.Center ();
 		mainWindow.Show ();
 		indexBrowser.DoubleAction += new EventHandler (OnBrowserDoubleAction);
 		outlineView.DoubleAction += new EventHandler (OnOutlineViewDoubleAction);

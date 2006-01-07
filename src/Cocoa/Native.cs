@@ -732,6 +732,10 @@ namespace Cocoa {
 			return constructor;
 		}
 
+		public static IntPtr ToSelector (string selector) {
+			return sel_getUid (selector);
+		}
+		
 		[DllImport("libobjc.dylib")]
 		public static extern void objc_setClassHandler(ClassHandlerDelegate class_handler);
 
@@ -743,6 +747,9 @@ namespace Cocoa {
 
 		[DllImport ("libobjc.dylib")]
 		private static extern IntPtr objc_lookUpClass (string name);
+
+		[DllImport ("libobjc.dylib")]
+		private static extern IntPtr sel_getUid (string name);
 		
 		[DllImport ("libobjc.dylib")]
 		private static extern IntPtr sel_getUid (IntPtr name);

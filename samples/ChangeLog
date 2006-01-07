@@ -1,3 +1,11 @@
+2006-01-01  Aaron Flynt  <aaron@aaronflynt.com>
+
+	* CocoaDoc.cs:
+	(FinishLoading): Removed the mainWindow.Center () call.
+	* CocoaDoc.nib: Added AutoSaveName to retain window settings between
+	launches. Changed menu references from Monodoc to CocoaDoc. Fixed Web 
+	Browser View placement in MainWindow.
+
 2005-12-15  Geoff Norton  <gnorton@customerdna.com>
 
 	* Makefile: Drop from svn

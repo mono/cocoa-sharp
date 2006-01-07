@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Cocoa;
 
@@ -32,6 +33,15 @@ namespace Cocoa {
 			}
 		}
 
+		public Cocoa.Image Icon {
+			get {
+				return(Cocoa.Image) Native.NativeToManaged ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "applicationIconImage", typeof(System.IntPtr)));
+			}
+			set {
+				ObjCMessaging.objc_msgSend (NativeObject, "setApplicationIconImage:", typeof(void), typeof(System.IntPtr), (value == null) ? IntPtr.Zero : ((Cocoa.Image) value).NativeObject);
+			}
+		}
+
 		public static void LoadNib (string nibname) {
 			Dictionary dict = new Dictionary ("NSOwner", Application.SharedApplication);
 
@@ -60,6 +70,33 @@ namespace Cocoa {
 
 		public void RunApplication () {
 			ObjCMessaging.objc_msgSend (NativeObject, "run", typeof (void));
+		}
+
+		public void BeginSheet (Cocoa.Window sheet, Cocoa.Window docWindow, SheetHandler modalDelegate, System.IntPtr contextInfo) {
+			if (sheet == null)
+				throw new ArgumentNullException ("sheet");
+			if (modalDelegate == null)
+				throw new ArgumentNullException ("modalDelegate");
+			Cocoa.Object target = (Cocoa.Object) modalDelegate.Target;
+			MethodInfo method = modalDelegate.Method;
+			string selector = method.Name;
+			foreach (ExportAttribute export_attribute in Attribute.GetCustomAttributes (method, typeof (ExportAttribute))) {
+				if (export_attribute.Selector != null)
+					selector = export_attribute.Selector;
+			}
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheet:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof(void), typeof(System.IntPtr), sheet.NativeObject, typeof(System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof(System.IntPtr), target.NativeObject, typeof(System.IntPtr), Native.ToSelector (selector), typeof(System.IntPtr), contextInfo);
+		}
+
+		public void EndSheet (Cocoa.Window sheet) {
+			if (sheet == null)
+				throw new ArgumentNullException ("sheet");
+			ObjCMessaging.objc_msgSend (NativeObject, "endSheet:", typeof (void), typeof (System.IntPtr), sheet.NativeObject);
+		}
+
+		public void EndSheet (Cocoa.Window sheet, int returnCode) {
+			if (sheet == null)
+				throw new ArgumentNullException ("sheet");
+			ObjCMessaging.objc_msgSend (NativeObject, "endSheet:returnCode:", typeof (void), typeof (System.IntPtr), sheet.NativeObject, typeof (int), returnCode);
 		}
 		
 		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]

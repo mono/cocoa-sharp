@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <monodoc>
-  <source provider="ecma" basefile="cocoa-sharp-docs" path="classlib-cocoa"/>
+  <source provider="ecma" basefile="cocoa-sharp" path="classlib-cocoa"/>
 </monodoc>

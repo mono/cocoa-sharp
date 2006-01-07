@@ -1,0 +1,327 @@
+<Type Name="SavePanel" FullName="Cocoa.SavePanel">
+  <TypeSignature Language="C#" Value="public class SavePanel : Cocoa.Panel" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cocoa.Panel</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SavePanel ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Allocates an initializes a new SavePanel instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SavePanel (IntPtr native_object);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="native_object" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="native_object">A pointer to a NSSavePanel.</param>
+        <summary>Instantiates a managed representation of a NSSavePanel.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModal">
+      <MemberSignature Language="C#" Value="public int RunModal ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Runs the SavePanel as a modal dialog.</summary>
+        <returns>
+          <see cref="F:Cocoa.Panel.OKButton" /> or <see cref="F:Cocoa.Panel.CancelButton" />.</returns>
+        <remarks>The save panel browser will begin in the current working directory, or the last directory selected.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModal">
+      <MemberSignature Language="C#" Value="public int RunModal (string directory, string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="directory" Type="System.String" />
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="directory">The directory to start the SavePanel in.</param>
+        <param name="filename">The file that is initially selected by the SavePanel.</param>
+        <summary>Runs the SavePanel as a modal dialog.</summary>
+        <returns>
+          <see cref="F:Cocoa.Panel.OKButton" /> or <see cref="F:Cocoa.Panel.CancelButton" />.</returns>
+        <remarks>If you pass an empty string for the directory parameter, the save panel browser will begin in the current working directory, or the last directory selected.</remarks>
+        <example>
+          <para>The following example illustrates the creation and display of a Save Panel dialog that has a specific file initially chosen. The file named "test.pdf" will be chosen in the file name text box.</para>
+          <code lang="c#">public string GetUserFileSelection () {
+        SavePanel savePanel = new SavePanel ();
+        string[] fileTypes = new string[] {"txt", "pdf"};
+        savePanel.AllowedFileTypes = fileTypes;
+        if (savePanel.RunModal ("~/", "test.pdf") == Panel.OKButton)
+                return savePanel.Filename;
+        else
+                return "";
+}</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginSheet">
+      <MemberSignature Language="C#" Value="public void BeginSheet (string directory, string filename, Cocoa.Window docWindow, Cocoa.SavePanelHandler modalDelegate, IntPtr contextInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="directory" Type="System.String" />
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="docWindow" Type="Cocoa.Window" />
+        <Parameter Name="modalDelegate" Type="Cocoa.SavePanelHandler" />
+        <Parameter Name="contextInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="directory">The directory to start the SavePanel in.</param>
+        <param name="filename">The file that is initially selected by the SavePanel.</param>
+        <param name="docWindow">The <see cref="T:Cocoa.Window" /> object that the SavePanel sheet will be attached to.</param>
+        <param name="modalDelegate">An <see cref="T:Cocoa.SavePanelHandler" /> object that points to a callback method for the savePanelDidEnd event.</param>
+        <param name="contextInfo">Contextual information to be passed to the savePanelDidEnd event handler.</param>
+        <summary>Runs the SavePanel as a modal sheet.</summary>
+        <remarks>
+          <para>This is an alternate way of displaying your SavePanel to <see cref="M:Cocoa.SavePanel.RunModal" />.</para>
+          <para>The SavePanelHandler's callback method should have the signature:</para>
+          <c>
+            <para>MethodName (SavePanel savePanel, int returnCode, System.IntPtr contextInfo)</para>
+          </c>
+          <para>See the <see cref="T:Cocoa.SavePanelHandler" /> documentation for more info.</para>
+          <para>You should decorate your handler with an "Export" attribute in the following format:</para>
+          <c>
+            <para>[Export ("methodName:returnCode:contextInfo:")]</para>
+          </c>
+        </remarks>
+        <example>
+          <para>The following example illustrates the creation and display of a SavePanel sheet.</para>
+          <code lang="c#">public void GetUserFileSelection () {
+        SavePanel savePanel = new SavePanel ();
+        SavePanelHandler savePanelHandler = new SavePanelHandler (savePanelDidEnd);
+        savePanel.BeginSheet ("", "", mainWindow, savePanelHandler, IntPtr.Zero);
+}
+
+[Export("savePanelDidEnd:returnCode:contextInfo:")]
+public void savePanelDidEnd(SavePanel sheet, int returnCode, System.IntPtr contextInfo)
+{
+        if (returnCode == Panel.OKButton) {
+                string selectedFile = sheet.Filename;
+                // Do something with the selected file...
+        }
+}</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessoryView">
+      <MemberSignature Language="C#" Value="public Cocoa.View AccessoryView { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.View</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Custom interface elements to display along with the SavePanel.</summary>
+        <value>A <see cref="T:Cocoa.View" /> object.</value>
+        <remarks>The AccessoryView allows you to add custom controls to your SavePanel so you may extend it's functionality.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Prompt">
+      <MemberSignature Language="C#" Value="public string Prompt { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The default button label.</summary>
+        <value>Text label of the default OpenPanel button.</value>
+        <remarks>This is normally "Save" for a SavePanel or "Open" for an OpenPanel.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NameFieldLabel">
+      <MemberSignature Language="C#" Value="public string NameFieldLabel { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Label for the file name field.</summary>
+        <value>Textual label for the file name field. Defaults to "Save as:".</value>
+        <remarks>This property controls the text that appears to the left the file name text field. If you set this to more characters than the default, the text may be truncated on the screen.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public string Message { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A message displayed on the SavePanel.</summary>
+        <value>The textual message displayed on the SavePanel. By default the message is blank.</value>
+        <remarks>This property controls the display of the textual message displayed at the top of the SavePanel in small text.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanSelectHiddenExtension">
+      <MemberSignature Language="C#" Value="public bool CanSelectHiddenExtension { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Controls the display of the "Hide Extension" checkbox.</summary>
+        <value>True if the "Hide Extension" checkbox is shown to the user. Otherwise, false.</value>
+        <remarks>This property controls whether or not the "Hide Extension" checkbox is shown to the user. Setting this to true allows the user to set the value of the <see cref="P:Cocoa.SavePanel.ExtensionHidden" /> property.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ExtensionHidden">
+      <MemberSignature Language="C#" Value="public bool ExtensionHidden { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Controls the display of the file extension in the filename text field.</summary>
+        <value>True if the the required file extension is hidden. Otherwise, false.</value>
+        <remarks>This setting only has effect if the <see cref="P:Cocoa.SavePanel.RequiredFileType" /> or <see cref="P:Cocoa.SavePanel.AllowedFileTypes" /> property has been set.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Directory">
+      <MemberSignature Language="C#" Value="public string Directory { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The path of the directory shown in the SavePanel browser.</summary>
+        <value>A string representation of the selected directory.</value>
+        <remarks>This will return the full filesystem path of whatever directory is currently selected in the SavePanel file browser window.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RequiredFileType">
+      <MemberSignature Language="C#" Value="public string RequiredFileType { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The extension of the required file type.</summary>
+        <value>A string representation of the required file type.</value>
+        <remarks>This should be the file extension of whatever type the user is required to save the file as. Do not prefix this with a period. If the user has not selected a file of this type, they will be prompted to append this extension.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowedFileTypes">
+      <MemberSignature Language="C#" Value="public string[] AllowedFileTypes { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The allowed file types.</summary>
+        <value>A string array of allowed file types.</value>
+        <remarks>Do not prefix any of these extensions with a period.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowsOtherFileTypes">
+      <MemberSignature Language="C#" Value="public bool AllowsOtherFileTypes { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Controls whether or not the user can save files with extensions that aren't in <see cref="P:Cocoa.SavePanel.AllowedFileTypes" />.</summary>
+        <value>True if the user is allowed to save files with extensions that aren't in <see cref="P:Cocoa.SavePanel.AllowedFileTypes" />. Otherwise false. The default value is false.</value>
+        <remarks>If a file is selected that doesn't have an extension matching one specified in <see cref="P:Cocoa.SavePanel.AllowedFileTypes" /> they will be prompted to change it.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TreatsFilePackagesAsDirectories">
+      <MemberSignature Language="C#" Value="public bool TreatsFilePackagesAsDirectories { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Controls whether or not the file browser will allow the selection of files within bundles.</summary>
+        <value>True if the file browser allows the selection of files within bundles. Otherwise false. The default value is false.</value>
+        <remarks>Setting this to true allows the user to descend into bundles and packages to select files.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanCreateDirectories">
+      <MemberSignature Language="C#" Value="public bool CanCreateDirectories { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Controls whether or not the user is allowed to create directories.</summary>
+        <value>True if the user is allowed to create directories. Otherwise false. The default value is false.</value>
+        <remarks>When set to true a "New Folder" button will appear at the bottom of the SavePanel.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Filename">
+      <MemberSignature Language="C#" Value="public string Filename { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The path of the selected file.</summary>
+        <value>A string representation of the selected file.</value>
+        <remarks>This property holds the absolute path of the currently selected file in the SavePanel file browser.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="URL">
+      <MemberSignature Language="C#" Value="public Cocoa.URL URL { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.URL</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The path of the selected file.</summary>
+        <value>A URL representation of the selected file.</value>
+        <remarks>This property holds the absolute path of the currently selected file in the SavePanel file browser.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Expanded">
+      <MemberSignature Language="C#" Value="public bool Expanded { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets a value indicating if the SavePanel is in an expanded state.</summary>
+        <value>True if the SavePanel is in an expanded state. Otherwise false.</value>
+        <remarks>When in it's expanded state, a SavePanel will show a detailed file selection browser. In it's contracted state, it just shows the filename textbox and a drowdown for choosing common directories.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>A window for saving files.</summary>
+    <remarks>
+      <para>A SavePanel is a window for saving files. It can be displayed as a modal dialog or sheet.</para>
+      <para>You create a SavePanel instance using the default constructor. To display the SavePanel, you need to call one of the <see cref="M:Cocoa.SavePanel.BeginSheet" /> or <see cref="M:Cocoa.SavePanel.RunModal" /> methods.</para>
+    </remarks>
+    <example>
+      <para>The following example illustrates how to create a modal SavePanel dialog and return the user's chosen file.</para>
+      <code lang="c#">public string GetUserFileSelection () {
+        SavePanel savePanel = new SavePanel ();
+        if (savePanel.RunModal () == Panel.OKButton)
+                return savePanel.Filename;
+        else
+                return "";
+}</code>
+    </example>
+  </Docs>
+</Type>

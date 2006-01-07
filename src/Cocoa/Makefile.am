@@ -11,6 +11,7 @@ sources= \
 	./ActionHandler.cs \
 	./Application.cs \
 	./Alert.cs \
+	./AlertHandler.cs \
 	./AlertStyle.cs \
 	./Array.cs \
 	./AssemblyInfo.cs \
@@ -53,7 +54,10 @@ sources= \
 	./ObjCMessaging.cs \
 	./Object.cs \
 	./OpenGLView.cs \
+	./OpenPanel.cs \
+	./OpenPanelHandler.cs \
 	./OutlineView.cs \
+	./Panel.cs \
 	./Pasteboard.cs \
 	./Point.cs \
 	./PopUpButton.cs \
@@ -62,8 +66,11 @@ sources= \
 	./RegisterAttribute.cs \
 	./Responder.cs \
 	./RunLoop.cs \
+	./SavePanel.cs \
+	./SavePanelHandler.cs \
 	./Screen.cs \
 	./SearchField.cs \
+	./SheetHandler.cs \
 	./ScrollView.cs \
 	./Size.cs \
 	./StackPadding.cs \

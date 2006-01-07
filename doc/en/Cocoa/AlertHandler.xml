@@ -1,0 +1,28 @@
+<Type Name="AlertHandler" FullName="Cocoa.AlertHandler">
+  <TypeSignature Language="C#" Value="public delegate void AlertHandler(Cocoa.Alert alert, int returnCode, IntPtr contextInfo);" />
+  <AssemblyInfo>
+    <AssemblyName>cocoa-sharp</AssemblyName>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="alert" Type="Cocoa.Alert" />
+    <Parameter Name="returnCode" Type="System.Int32" />
+    <Parameter Name="contextInfo" Type="System.IntPtr" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="alert">The alert object that raised the event.</param>
+    <param name="returnCode">The return code indicating which button was clicked.</param>
+    <param name="contextInfo">The contextInfo object that was specified.</param>
+    <summary>Defines the shape of methods that are called in response to an alertDidEnd event.</summary>
+    <remarks>
+      <para>The method will be called as the result of clicking on a dialog button on an <see cref="T:Cocoa.Alert" /> sheet.</para>
+      <para>The returnCode will be 1 (Default Button), 0 (Alternate Button), or -1 (Other Button) if you use the static <see cref="M:Cocoa.Alert.AlertWithMessage" /> method for instantiating the Alert. If you use the <see cref="M:Cocoa.Alert.AddButtonWithTitle" /> the returnCode value will start with 1000 for the first button added and increment by one for each new button.</para>
+    </remarks>
+  </Docs>
+</Type>

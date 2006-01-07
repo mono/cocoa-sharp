@@ -158,6 +158,80 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="BeginSheet">
+      <MemberSignature Language="C#" Value="public void BeginSheet (Cocoa.Window sheet, Cocoa.Window docWindow, Cocoa.SheetHandler modalDelegate, IntPtr contextInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sheet" Type="Cocoa.Window" />
+        <Parameter Name="docWindow" Type="Cocoa.Window" />
+        <Parameter Name="modalDelegate" Type="Cocoa.SheetHandler" />
+        <Parameter Name="contextInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="sheet">The <see cref="T:Cocoa.Panel" /> or <see cref="T:Cocoa.Window" /> object to be displayed as the sheet.</param>
+        <param name="docWindow">The <see cref="T:Cocoa.Window" /> object that the resulting sheet will be attached to.</param>
+        <param name="modalDelegate">A <see cref="T:Cocoa.SheetHandler" /> instance that points to the callback method for the sheet ending event.</param>
+        <param name="contextInfo">Contextual information that will be passed to the <see cref="T:Cocoa.SheetHandler" /> callback method.</param>
+        <summary>Displays a <see cref="T:Cocoa.Panel" /> or <see cref="T:Cocoa.Window" /> object as a modal sheet attached to the specified window.</summary>
+        <remarks>
+          <para>The callback method should have the signature:</para>
+          <c>
+            <para>MethodName (Window sheet, int returnCode, System.IntPtr contextInfo)</para>
+          </c>
+          <para>The method should be decorated with an Export attribute in the following format:</para>
+          <c>
+            <para>[Export ("methodName:returnCode:contextInfo:")]</para>
+          </c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndSheet">
+      <MemberSignature Language="C#" Value="public void EndSheet (Cocoa.Window sheet);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sheet" Type="Cocoa.Window" />
+      </Parameters>
+      <Docs>
+        <param name="sheet">The <see cref="T:Cocoa.Window" /> or <see cref="T:Cocoa.Panel" /> that should no longer be displayed as a sheet.</param>
+        <summary>Ends the display of a sheet.</summary>
+        <remarks>Consider using the overloaded method that takes a return code parameter if you need to pass information back to the <see cref="T:Cocoa.SheetHandler" /> callback method.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndSheet">
+      <MemberSignature Language="C#" Value="public void EndSheet (Cocoa.Window sheet, int returnCode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sheet" Type="Cocoa.Window" />
+        <Parameter Name="returnCode" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="sheet">The <see cref="T:Cocoa.Window" /> or <see cref="T:Cocoa.Panel" /> that should no longer be displayed as a sheet.</param>
+        <param name="returnCode">The integer return code to pass to the sheeDidEnd <see cref="T:Cocoa.SheetHandler" /> delegate method for the ending sheet.</param>
+        <summary>Ends the display of a sheet.</summary>
+        <remarks>Consider using the overloaded method that doesn't take a return code parameter if you don't need to pass information back to the <see cref="T:Cocoa.SheetHandler" /> callback method.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Icon">
+      <MemberSignature Language="C#" Value="public Cocoa.Image Icon { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Image</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The image that will be displayed in the dock and the finder.</summary>
+        <value>A <see cref="T:Cocoa.Image" /> icon. This will default to the bundle icon if one is found, otherwise it will display a 'generic' application icon.</value>
+        <remarks>When using a macpack generated bundle, this will return the 'generic' application icon not the icon specified in the bundle's info.plist.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>Application is a managed representation of the NSApplication class.</summary>
