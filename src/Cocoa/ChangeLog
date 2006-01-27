@@ -1,3 +1,10 @@
+2006-01-26  Geoff Norton  <gnorton@customerdna.com>
+
+	* Application.cs:
+		Added setting the process type to a foreground process
+		to support running from the command line without the need
+		to macpack.
+
 2006-01-02  Aaron Flynt  <aaron@aaronflynt.com>
 	* Alert.cs:
 		(.ctor): Added default calling Cocoa.Object for alloc. Added init.

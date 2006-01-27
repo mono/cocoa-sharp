@@ -18,7 +18,11 @@ namespace Cocoa {
 		private static AutoreleasePool pool;
 	
 		public static void Init () {
+			IntPtr psn = IntPtr.Zero;
 			pool = new AutoreleasePool ();
+			GetCurrentProcess (ref psn);
+			TransformProcessType (ref psn, 1);
+			SetFrontProcess (ref psn);
 		}
 
 		public static Application SharedApplication {
@@ -101,5 +105,11 @@ namespace Cocoa {
 		
 		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
 		private static extern int strlen (string str);
+		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
+		private static extern void GetCurrentProcess (ref IntPtr psn);
+		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
+		private static extern void TransformProcessType (ref IntPtr psn, uint type);
+		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
+		private static extern void SetFrontProcess (ref IntPtr psn);
 	}
 }
