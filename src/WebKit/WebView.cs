@@ -5,11 +5,6 @@ using Cocoa;
 namespace WebKit {
 	public class WebView : Cocoa.Object {
 		private static string ObjectiveCName = "WebView";                                                                                      
-
-		static WebView () {
-			NativeClasses [typeof (WebView)] = Native.RegisterClass (typeof (WebView)); 
-		}
-
 		public WebView (IntPtr native_object) {
 			NativeObject = native_object;
 		}
@@ -22,13 +17,13 @@ namespace WebKit {
 
 		public WebBackForwardList BackForwardList {
 			get {
-				return (WebBackForwardList) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "backForwardList", typeof (IntPtr)));
+				return (WebBackForwardList) Cocoa.Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "backForwardList", typeof (IntPtr)));
 			}
 		}
 
 		public WebFrame MainFrame {
 			get {
-				return (WebFrame) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "mainFrame", typeof (IntPtr)));
+				return (WebFrame) Cocoa.Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "mainFrame", typeof (IntPtr)));
 			}
 		}
 

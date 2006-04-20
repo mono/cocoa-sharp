@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class Drawer : Cocoa.Object {
 		private static string ObjectiveCName = "NSDrawer";                                                                                      
-
-		static Drawer () {
-			NativeClasses [typeof (Drawer)] = Native.RegisterClass (typeof (Drawer)); 
-		}
-
 		public Drawer (IntPtr native_object) : base (native_object) {}
 
 		public void Open () {

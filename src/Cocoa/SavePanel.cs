@@ -7,18 +7,13 @@ namespace Cocoa {
 	public class SavePanel : Panel {
 		private static string ObjectiveCName = "NSSavePanel";
 		
-
-		static SavePanel () {
-			NativeClasses [typeof (SavePanel)] = Native.RegisterClass (typeof (SavePanel)); 
-		}
-
 		public SavePanel () : base () {}
 		
 		public SavePanel (IntPtr native_object) : base (native_object) {}
 
 		public Cocoa.View AccessoryView {
 			get {
-				return (Cocoa.View) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "accessoryView", typeof (System.IntPtr)));
+				return (Cocoa.View) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "accessoryView", typeof (System.IntPtr)));
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setAccessoryView:", typeof (void), typeof (System.IntPtr), (value == null) ? IntPtr.Zero : value.NativeObject);
@@ -27,7 +22,7 @@ namespace Cocoa {
 		
 		public string Prompt {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "prompt", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "prompt", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setPrompt:", typeof (void), typeof (System.IntPtr), new Cocoa.String ((value == null) ? "" : value).NativeObject);
@@ -36,7 +31,7 @@ namespace Cocoa {
 
 		public string NameFieldLabel {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "nameFieldLabel", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "nameFieldLabel", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setNameFieldLabel:", typeof (void), typeof (System.IntPtr), new Cocoa.String ((value == null) ? "" : value).NativeObject);
@@ -45,7 +40,7 @@ namespace Cocoa {
 
 		public string Message {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "message", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "message", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setMessage:", typeof (void), typeof (System.IntPtr), new Cocoa.String ((value == null) ? "" : value).NativeObject);
@@ -72,7 +67,7 @@ namespace Cocoa {
 
 		public string Directory {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "directory", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "directory", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setDirectory:", typeof (void), typeof (System.IntPtr), (value == null) ? IntPtr.Zero : new Cocoa.String (value).NativeObject);
@@ -81,7 +76,7 @@ namespace Cocoa {
 
 		public string RequiredFileType {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "requiredFileType", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "requiredFileType", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setRequiredFileType:", typeof (void), typeof (System.IntPtr), (value == null) ? IntPtr.Zero : new Cocoa.String (value).NativeObject);
@@ -90,7 +85,7 @@ namespace Cocoa {
 
 		public string [] AllowedFileTypes {
 			get {
-				return (string []) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "allowedFileTypes", typeof (System.IntPtr)));
+				return (string []) ((Array)Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "allowedFileTypes", typeof (System.IntPtr)))).ToArray ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setAllowedFileTypes:", typeof (void), typeof (System.IntPtr), (value == null) ? IntPtr.Zero : new MutableArray (value).NativeObject);
@@ -126,13 +121,13 @@ namespace Cocoa {
 
 		public string Filename {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "filename", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "filename", typeof (System.IntPtr))).ToString ();
 			}
 		}
 
 		public Cocoa.URL URL {
 			get {
-				return (Cocoa.URL) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "URL", typeof (System.IntPtr)));
+				return (Cocoa.URL) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "URL", typeof (System.IntPtr)));
 			}
 		}
 
@@ -160,7 +155,7 @@ namespace Cocoa {
 				if (export_attribute.Selector != null)
 					selector = export_attribute.Selector;
 			}
-			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (directory == null) ? IntPtr.Zero : new Cocoa.String (directory).NativeObject, typeof (System.IntPtr), (filename == null) ? IntPtr.Zero : new Cocoa.String (filename).NativeObject, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), Native.ToSelector (selector), typeof (System.IntPtr), contextInfo);
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (directory == null) ? IntPtr.Zero : new Cocoa.String (directory).NativeObject, typeof (System.IntPtr), (filename == null) ? IntPtr.Zero : new Cocoa.String (filename).NativeObject, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), ObjCMethods.sel_getUid (selector), typeof (System.IntPtr), contextInfo);
 		}
 	}
 }

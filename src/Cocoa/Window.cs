@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class Window : Responder {
 		private static string ObjectiveCName = "NSWindow";                                                                                      
-
-		static Window () {
-			NativeClasses [typeof (Window)] = Native.RegisterClass (typeof (Window)); 
-		}
-
 		public Window () : base () {
 			Initialize ();
 		}
@@ -17,9 +12,8 @@ namespace Cocoa {
 		public Window (IntPtr native_object) : base (native_object) {}
 
 		public Window (Rect rect, WindowStyle stylemask, BackingStoreType backingstore, bool defer) {
-			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend ((IntPtr)NativeClasses [typeof (Window)], "alloc", typeof (IntPtr));
+			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeClass.ToIntPtr (), "alloc", typeof (IntPtr));
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithContentRect:styleMask:backing:defer:", typeof (IntPtr), typeof (Rect), rect, typeof (int), stylemask, typeof (int), backingstore, typeof (bool), defer);
-			autorelease = true;
 		}
 		
 		public Rect Frame {
@@ -33,7 +27,7 @@ namespace Cocoa {
 
 		public string Title {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "title", typeof (IntPtr)));	
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "title", typeof (IntPtr))).ToString ();	
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setTitle:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String (value).NativeObject);
@@ -42,7 +36,7 @@ namespace Cocoa {
 		
 		public View View {
 			get {
-				return (View) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "contentView", typeof (IntPtr)));
+				return (View) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "contentView", typeof (IntPtr)));
 			}
 		}
 

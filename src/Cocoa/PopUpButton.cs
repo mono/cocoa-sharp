@@ -5,16 +5,11 @@ using Cocoa;
 namespace Cocoa {
 	public class PopUpButton : Control {
 		private static string ObjectiveCName = "NSPopUpButton";                                                                                      
-
-		static PopUpButton () {
-			NativeClasses [typeof (PopUpButton)] = Native.RegisterClass (typeof (PopUpButton)); 
-		}
-
 		public PopUpButton (IntPtr native_object) : base (native_object) {}
 
 		public string TitleOfSelectedItem {
 			get {
-				return(string) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "titleOfSelectedItem", typeof(System.IntPtr)));
+				return Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "titleOfSelectedItem", typeof(System.IntPtr))).ToString ();
 			}
 		}
 
@@ -37,7 +32,7 @@ namespace Cocoa {
 		}
 
 		public string ItemTitleAtIndex (int index) {
-			return(string) Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "itemTitleAtIndex:", typeof(System.IntPtr), typeof(System.Int32), index));
+			return Object.FromIntPtr((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "itemTitleAtIndex:", typeof(System.IntPtr), typeof(System.Int32), index)).ToString ();
 		}
 
 	}

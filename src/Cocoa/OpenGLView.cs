@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class OpenGLView : View {
 		private static string ObjectiveCName = "NSOpenGLView";                                                                                      
-
-		static OpenGLView () {
-			NativeClasses [typeof (OpenGLView)] = Native.RegisterClass (typeof (OpenGLView)); 
-		}
-
 		public OpenGLView () : base () {}
 
 		public OpenGLView (Rect frame) : base (frame) {}

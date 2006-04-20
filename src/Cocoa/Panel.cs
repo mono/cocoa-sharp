@@ -6,14 +6,9 @@ namespace Cocoa {
 	public class Panel : Window {
 		private static string ObjectiveCName = "NSPanel";
 
-		
 		public const int OKButton = 1;
 		public const int CancelButton = 0;
 
-		static Panel () {
-			NativeClasses [typeof (Panel)] = Native.RegisterClass (typeof (Panel)); 
-		}
-		
 		public Panel () : base () {}
 		
 		public Panel (IntPtr native_object) : base (native_object) {}

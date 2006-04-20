@@ -25,21 +25,17 @@ namespace Cocoa {
 		public const string FilesPromise = "NSFilesPromisePboardType";
 		public const string InkText = "NSInkTextPboardType";
 
-		static Pasteboard () {
-			NativeClasses [typeof (Pasteboard)] = Native.RegisterClass (typeof (Pasteboard)); 
-		}
-
 		public Pasteboard () : base () {}
 
 		public Pasteboard (IntPtr native_object) : base (native_object) {}
 
 		public string [] ListForType (string type) {
-				return (string []) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "propertyListForType:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String (type).NativeObject));
+				return (string []) ((Array) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "propertyListForType:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String (type).NativeObject))).ToArray ();
 		}
 
 		public string [] Types {
 			get {
-				return (string []) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "types", typeof (IntPtr)));
+				return (string []) ((Array) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "types", typeof (IntPtr)))).ToArray ();
 			}
 		}
 	}

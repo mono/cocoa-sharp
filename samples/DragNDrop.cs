@@ -66,6 +66,7 @@ public class Controller : View {
 	}
 
 	private string ValidateDrag (DragDestination sender) {
+Console.WriteLine ("validatedrag");
 		if (sender.Source != this) {
 			Pasteboard pb = sender.Pasteboard;
 			if (pb.Types.Length > 0) {

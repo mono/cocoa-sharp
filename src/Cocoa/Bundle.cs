@@ -6,15 +6,10 @@ using Cocoa;
 namespace Cocoa {
 	public class Bundle : Cocoa.Object {
 		private static string ObjectiveCName = "NSBundle";                                                                                      
-
-		static Bundle () {
-			NativeClasses [typeof (Bundle)] = Native.RegisterClass (typeof (Bundle)); 
-		}
-
 		public Bundle (IntPtr native_object) : base (native_object) {}
 
 		public static Bundle BundleWithPath (string path) {
-			return (Bundle) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Bundle)], "bundleWithPath:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String (path).NativeObject));
+			return (Bundle) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Bundle)).ToIntPtr (), "bundleWithPath:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String (path).NativeObject));
 		}
 
 		public static void LoadFramework (string frameworkname) {
@@ -38,8 +33,8 @@ namespace Cocoa {
 
 		public static void LoadNib (string nibname) {
 			Dictionary dict = new Dictionary ("NSOwner", Application.SharedApplication);
-			ObjCMessaging.objc_msgSend ((IntPtr) Cocoa.Object.NativeClasses [typeof (Bundle)], "loadNibFile:externalNameTable:withZone:", typeof (bool), typeof (System.IntPtr), new Cocoa.String (nibname).NativeObject, typeof (System.IntPtr), dict.NativeObject, typeof (System.IntPtr), Application.SharedApplication.Zone);
-			ObjCMessaging.objc_msgSend ((IntPtr) Cocoa.Object.NativeClasses [typeof (Bundle)], "loadNibNamed:owner:", typeof (bool), typeof (System.IntPtr), new Cocoa.String (nibname).NativeObject, typeof (System.IntPtr), Application.SharedApplication.NativeObject);
+			ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Bundle)).ToIntPtr (), "loadNibFile:externalNameTable:withZone:", typeof (bool), typeof (System.IntPtr), new Cocoa.String (nibname).NativeObject, typeof (System.IntPtr), dict.NativeObject, typeof (System.IntPtr), Application.SharedApplication.Zone);
+			ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Bundle)).ToIntPtr (), "loadNibNamed:owner:", typeof (bool), typeof (System.IntPtr), new Cocoa.String (nibname).NativeObject, typeof (System.IntPtr), Application.SharedApplication.NativeObject);
 		}
 
 		public void Load () {
@@ -48,7 +43,7 @@ namespace Cocoa {
 
 		public static Bundle Main {
 			get {
-				return (Bundle)Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) Cocoa.Object.NativeClasses [typeof (Bundle)], "mainBundle", typeof (IntPtr)));
+				return (Bundle)Object.FromIntPtr((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Bundle)).ToIntPtr (), "mainBundle", typeof (IntPtr)));
 			}
 		}
 		public bool LoadNibFile (string nibname) {

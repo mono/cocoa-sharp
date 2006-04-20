@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class View : Responder {
 		private static string ObjectiveCName = "NSView";                                                                                      
-
-		static View () {
-			NativeClasses [typeof (View)] = Native.RegisterClass (typeof (View)); 
-		}
-
 		public View () : base () {}
 
 		public View (IntPtr native_object) : base (native_object) {}
@@ -58,7 +53,7 @@ namespace Cocoa {
 		
 		public Window Window {
 			get {
-				return (Window)Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "window", typeof (IntPtr)));
+				return (Window)Object.FromIntPtr((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "window", typeof (IntPtr)));
 			}
 		}
 	}

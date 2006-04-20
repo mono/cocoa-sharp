@@ -3,10 +3,9 @@ using Cocoa;
 
 [Register ("ApplicationController")]
 public class HelloWorld : Cocoa.Object {
-
 	[Connect] public TextField textBox1;
 
-	protected HelloWorld (IntPtr native_object) : base (native_object) {}
+	public HelloWorld (IntPtr native_object) : base (native_object) {}
 
 	[Export("applicationWillFinishLaunching:")]
 	public void FinishLoading(Notification notification) {
@@ -17,10 +16,13 @@ public class HelloWorld : Cocoa.Object {
 	public void buttonClick(Cocoa.Object sender) {
 		textBox1.Value = "Button Pushed";
 	}
+}
 
+public class WorldRunner {
 	static void Main (string [] args) {
 		Application.Init ();
 		Application.LoadNib ("HelloWorld.nib");
+		Application.SharedApplication.Icon = new Cocoa.Image ("applemono.icns");
 		Application.Run ();
 	}
 } 

@@ -44,7 +44,7 @@ namespace Cocoa {
 
 		internal const int MSG_SIZE = 512;
 
-		internal static Thread exc_thread;
+		internal static System.Threading.Thread exc_thread;
 		internal static IntPtr exception_port = IntPtr.Zero;
 
 		internal static void InstallExceptionHandler () {
@@ -77,7 +77,7 @@ namespace Cocoa {
 			if (rc != KERN_SUCCESS)
 				throw new Exception ("task_set_exception_ports returned: " + rc);
 			
-			exc_thread = new Thread (new ThreadStart (ExceptionHandler));
+			exc_thread = new System.Threading.Thread (new ThreadStart (ExceptionHandler));
 			exc_thread.Start ();
 		}
 

@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class Browser : Control {
 		private static string ObjectiveCName = "NSBrowser";                                                                                      
-
-		static Browser () {
-			NativeClasses [typeof (Browser)] = Native.RegisterClass (typeof (Browser)); 
-		}
-
 		public Browser (IntPtr native_object) : base (native_object) {}
 		
 		public int SelectedRowInColumn (int column) {

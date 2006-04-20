@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class TextView : Text {
 		private static string ObjectiveCName = "NSTextView";                                                                                      
-
-		static TextView () {
-			NativeClasses [typeof (TextView)] = Native.RegisterClass (typeof (TextView)); 
-		}
-
 		public TextView (IntPtr native_object) : base (native_object) {}
 
 		public bool FieldEditor {

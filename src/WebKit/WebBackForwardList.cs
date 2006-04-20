@@ -6,10 +6,6 @@ namespace WebKit {
 	public class WebBackForwardList : Cocoa.Object {
 		private static string ObjectiveCName = "WebBackForwardList";                                                                                      
 
-		static WebBackForwardList () {
-			NativeClasses [typeof (WebBackForwardList)] = Native.RegisterClass (typeof (WebBackForwardList)); 
-		}
-
 		public WebBackForwardList (IntPtr native_object) {
 			NativeObject = native_object;
 		}
@@ -37,7 +33,7 @@ namespace WebKit {
 		
 		public WebHistoryItem CurrentItem {
 			get {
-				return (WebHistoryItem) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "currentItem", typeof (IntPtr)));
+				return (WebHistoryItem) Cocoa.Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "currentItem", typeof (IntPtr)));
 			}
 		}
 

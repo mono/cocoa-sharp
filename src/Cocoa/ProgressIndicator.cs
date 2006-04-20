@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class ProgressIndicator : View {
 		private static string ObjectiveCName = "NSProgressIndicator";                                                                                      
-
-		static ProgressIndicator () {
-			NativeClasses [typeof (ProgressIndicator)] = Native.RegisterClass (typeof (ProgressIndicator)); 
-		}
-
 		public ProgressIndicator (Rect rect) {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithFrame:", typeof (IntPtr), typeof (Rect), rect);
 		}

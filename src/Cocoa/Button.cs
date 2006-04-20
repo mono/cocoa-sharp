@@ -6,11 +6,6 @@ namespace Cocoa {
 	public class Button : Control {
 		private static string ObjectiveCName = "NSButton";
 		
-
-		static Button () {
-			NativeClasses [typeof (Button)] = Native.RegisterClass (typeof (Button)); 
-		}
-
 		public Button (Rect frame) : base (frame) {
 		}
 
@@ -18,7 +13,7 @@ namespace Cocoa {
 
 		public string Title {
 			get {
-				return(string) Native.NativeToManaged((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "title", typeof(System.IntPtr)));
+				return Object.FromIntPtr((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "title", typeof(System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend(NativeObject, "setTitle:", typeof(void), typeof(System.IntPtr), new Cocoa.String (value).NativeObject);

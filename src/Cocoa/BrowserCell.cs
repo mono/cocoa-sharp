@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class BrowserCell : Cell {
 		private static string ObjectiveCName = "NSBrowserCell";                                                                                      
-
-		static BrowserCell () {
-			NativeClasses [typeof (BrowserCell)] = Native.RegisterClass (typeof (BrowserCell)); 
-		}
-
 		public BrowserCell (IntPtr native_object) : base (native_object) {}
 
 		public bool LeafNode {

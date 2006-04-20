@@ -8,6 +8,17 @@ pkgconfigdir=$(libdir)/pkgconfig
 pkgconfig_DATA=cocoa-sharp.pc
 
 sources= \
+	./Interop/ConnectAttribute.cs \
+	./Interop/ExportAttribute.cs \
+	./Interop/MethodImplementation.cs \
+	./Interop/ObjCClass.cs \
+	./Interop/ObjCInterop.cs \
+	./Interop/ObjCMessaging.cs \
+	./Interop/ObjCMethod.cs \
+	./Interop/ObjCMethods.cs \
+	./Interop/ObjCStructs.cs \
+	./Interop/ObjCTypes.cs \
+	./Interop/RegisterAttribute.cs \
 	./ActionHandler.cs \
 	./Application.cs \
 	./Alert.cs \
@@ -23,12 +34,10 @@ sources= \
 	./BrowserCell.cs \
 	./Bundle.cs \
 	./Button.cs \
-	./CachedObject.cs \
 	./CalibratedRGBColor.cs \
 	./Cell.cs \
 	./CellStateValue.cs \
 	./Color.cs \
-	./ConnectAttribute.cs \
 	./Control.cs \
 	./CFArray.cs \
 	./CFString.cs \
@@ -38,20 +47,15 @@ sources= \
 	./Drawer.cs \
 	./DragDestination.cs \
 	./DragOperation.cs \
-	./ExportAttribute.cs \
 	./FileWrapper.cs \
 	./Image.cs \
 	./ImageView.cs \
-	./Mach.cs \
-	./MethodSignature.cs \
+	./Menu.cs \
 	./MenuItem.cs \
+	./MethodSignature.cs \
 	./MutableArray.cs \
 	./MutableString.cs \
-	./Native.cs \
-	./NativeMember.cs \
-	./NativeRepresentation.cs \
 	./Notification.cs \
-	./ObjCMessaging.cs \
 	./Object.cs \
 	./OpenGLView.cs \
 	./OpenPanel.cs \
@@ -63,7 +67,6 @@ sources= \
 	./PopUpButton.cs \
 	./ProgressIndicator.cs \
 	./Rect.cs \
-	./RegisterAttribute.cs \
 	./Responder.cs \
 	./RunLoop.cs \
 	./SavePanel.cs \
@@ -73,7 +76,8 @@ sources= \
 	./SheetHandler.cs \
 	./ScrollView.cs \
 	./Size.cs \
-	./StackPadding.cs \
+	./StatusBar.cs \
+	./StatusItem.cs \
 	./TableColumn.cs \
 	./TableView.cs \
 	./Text.cs \
@@ -93,6 +97,6 @@ EXTRA_DIST=$(sources) cocoa-sharp.pc.in
 build_sources = $(addprefix $(srcdir)/, $(sources))
 
 $(ASSEMBLY): $(SNK) $(build_sources)
-	$(MCS) /nowarn:0169 /unsafe /out:$(ASSEMBLY) /target:library $(build_sources)
+	$(MCS) /nowarn:0169 /out:$(ASSEMBLY) /target:library $(build_sources)
 
 include ../../Makefile.include

@@ -1,101 +1,85 @@
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Runtime.InteropServices;
 using Cocoa;
 
 namespace Cocoa {
 
-	public class Object {	
-		public static IDictionary NativeObjects = new Hashtable ();
-		public static IDictionary ManagedObjects = new Hashtable ();
-		public static IDictionary NativeClasses = new Hashtable ();
-
-		private static string ObjectiveCName = "NSObject";
+	public class Object : IDisposable {	
+		private static string ObjectiveCName = "CSObject";
+		private static Hashtable instances = new Hashtable ();
 
 		private IntPtr objc_object;
-		protected bool autorelease = false;
+		private ObjCClass native_class;
 
-		#region Constructors
 		static Object () {
-			// This is a hideous hack to load the dylib into our address space
-			strlen ("Load Foundation Into My Addressspace.");
-			NativeClasses [typeof (Object)] = Native.RegisterClass (typeof (Object)); 
+			ObjCMethods.dlopen ("/System/Library/Frameworks/Foundation.framework/Foundation", 0x1);
+			ObjCMethods.dlopen ("/System/Library/Frameworks/AppKit.framework/AppKit", 0x1);
+			ObjCMethods.class_poseAs (ObjCClass.FromType (typeof (Object)).ToIntPtr (), ObjCMethods.objc_getClass ("NSObject"));
 		}
 
 		public Object () {
-			objc_object = IntPtr.Zero;
-
-			if (NativeClasses [this.GetType ()] == null)
-				NativeClasses [this.GetType ()] = Native.RegisterClass (this.GetType ());
-
-			NativeObject = (IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [this.GetType ()], "alloc", typeof (IntPtr));
-			autorelease = true;
+			native_class = ToObjCClass (); 
+			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (native_class.ToIntPtr (), "alloc", typeof (IntPtr));
 		}
 
 		public Object (IntPtr native_object) {
 			NativeObject = native_object;
 		}
-		#endregion
 
-		#region Deconstructor
 		~ Object () {
-		/*
-		 * The objc object might be collected at this point in which case this causes a mach_exception
-			if (NativeObject != IntPtr.Zero && autorelease == true) {
-				if ((uint)ObjCMessaging.objc_msgSend (NativeObject, "retainCount", typeof (uint)) == 0) 
-					ObjCMessaging.objc_msgSend (NativeObject, "release", typeof (void));
-			}
-		*/
-			lock (NativeObjects) {
-				if (NativeObjects.Contains (objc_object)) {
-					NativeObjects.Remove (objc_object);
-				}
-			}
-			lock (ManagedObjects) {
-				if (ManagedObjects.Contains (objc_object)) {
-					ManagedObjects.Remove (objc_object);
-				}
+		}
+
+		public void Dispose () {
+			lock (instances) {
+				if (objc_object != IntPtr.Zero)
+					instances.Remove (objc_object);
 			}
 		}
-		#endregion
 
-		#region Properties
+		public ObjCClass NativeClass {
+			get {
+				return native_class;
+			}
+		}
+
 		public IntPtr NativeObject {
 			get {
 				return objc_object;
 			}
 			set {
-				if (objc_object == value) return;
-				if (objc_object != IntPtr.Zero) {
-					lock (NativeObjects) {
-						if (!NativeObjects.Contains (objc_object)) 
-							throw new ArgumentException ("Attempt to change an object from an unknown value.");
-						NativeObjects.Remove (objc_object);
-					}
-				}
+				if (value == IntPtr.Zero)
+					throw new InvalidOperationException ("A native object cannot be null");
 
-				objc_object = value;
+				lock (instances) {
+					if (objc_object != IntPtr.Zero)
+						instances.Remove (objc_object);
 
-				lock (NativeObjects) {
-					if (NativeObjects.Contains (objc_object)) {
-						NativeObjects.Remove (objc_object);
-					}
-					NativeObjects.Add (objc_object, new CachedObject (new WeakReference (this), this.GetType ()));
+					objc_object = value;
+					
+					/*
+					 * This doesn't work until dealloc is fixed
+					 * if (instances.ContainsKey (objc_object) && instances [objc_object] != this)
+					 * 	throw new InvalidOperationException ("Two objects are attempting to map to the same id.");
+					 */
+					instances [objc_object] = this;
 				}
 			}
 		}
 
-		// AUDIT ME
 		public IntPtr Zone {
 			get {
 				return (IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "zone", typeof (System.IntPtr));
 			}
 		}
 
+		[Export ("dealloc")]
+		public void Dealloc () {
+			this.Dispose ();
+			ObjCMessaging.objc_msgSend (ObjCClass.FromType (typeof (Object)).ToNativeClass ().super_class, "dealloc", typeof (void));
+		}
 
-		#endregion
-		
-		#region Methods
 		public void Initialize () {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "init", typeof (IntPtr));
 		}  
@@ -103,15 +87,76 @@ namespace Cocoa {
 		public void Retain () {
 			ObjCMessaging.objc_msgSend (NativeObject, "retain", typeof (void));
 		}
-		#endregion
 
-		#region PInvokes
-		[DllImport ("/System/Library/Frameworks/Foundation.framework/Foundation")]
-		private static extern int strlen (string str);
-		
-		[DllImport ("/System/Library/Frameworks/Foundation.framework/Foundation")]
-		private static extern IntPtr sel_getUid (string str);
-		#endregion
+		public static Object FromIntPtr (IntPtr from) {
+			lock (instances) {
+				if (instances.ContainsKey (from))
+					return (Object) instances [from];
+
+				Type type = ObjCClass.TypeForIntPtr (from);
+
+				if (type == typeof (void))
+					return null;
+
+				return (Object) Activator.CreateInstance (type, new object [] {from});
+			}
+		}
+
+		private ObjCClass ToObjCClass () {
+			if (native_class != null)
+				return native_class;
+
+			native_class = ObjCClass.FromObject (this);
+
+			return native_class;
+		}
+
+		public void ImportMembers () {
+			foreach (FieldInfo field in this.GetType ().GetFields (BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+				ConnectAttribute attr = (ConnectAttribute) Attribute.GetCustomAttribute (field, typeof (ConnectAttribute));
+				if (attr != null) {
+					string name = (attr.Name != null ? attr.Name : field.Name);
+					IntPtr native_value = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (IntPtr)));
+					ObjCMethods.object_getInstanceVariable (this.NativeObject, name, native_value);
+					field.SetValue (this, field.FieldType.IsPrimitive ? Marshal.PtrToStructure (native_value, field.FieldType) : Object.FromIntPtr (Marshal.ReadIntPtr (native_value)));
+					Marshal.FreeHGlobal (native_value);
+				}
+			}
+		}
+
+		public void ExportMembers () {
+			foreach (FieldInfo field in this.GetType ().GetFields (BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+				ConnectAttribute attr = (ConnectAttribute) Attribute.GetCustomAttribute (field, typeof (ConnectAttribute));
+				if (attr != null) {
+					string name = (attr.Name != null ? attr.Name : field.Name);
+					object value = field.GetValue (this);
+					bool is_null = value == null;
+					Type type = is_null ? null : value.GetType ();
+					bool is_value_type = !is_null && type.IsPrimitive;
+
+					IntPtr native_value = Marshal.AllocHGlobal (is_value_type ? Math.Max (8, Marshal.SizeOf (value)) : Marshal.SizeOf (typeof (IntPtr)));
+
+                                        if (is_null) {
+                                                Marshal.WriteIntPtr (native_value, IntPtr.Zero);
+                                                ObjCMethods.object_setInstanceVariable (this.NativeObject, name, native_value);
+                                                Marshal.FreeHGlobal (native_value);
+                                        } else if (is_value_type) {
+                                                Marshal.WriteIntPtr (native_value, IntPtr.Zero);
+                                                Marshal.StructureToPtr (value, native_value, false);
+                                                ObjCMethods.object_setInstanceVariable (this.NativeObject, name, native_value);
+                                                Marshal.FreeHGlobal (native_value);
+                                        } else if (value is Object) {
+                                                Marshal.FreeHGlobal (native_value);
+                                                native_value = ((Object)value).NativeObject;
+                                                ObjCMethods.object_setInstanceVariable (this.NativeObject, name, native_value);
+                                        } else {
+                                                throw new ArgumentException ("Unhandled exporting of {0}" + value.GetType ());
+                                        }    
+				}
+			}
+		}
+
+
 	}
 
 }

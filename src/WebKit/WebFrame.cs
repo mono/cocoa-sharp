@@ -5,11 +5,6 @@ using Cocoa;
 namespace WebKit {
 	public class WebFrame : Cocoa.Object {
 		private static string ObjectiveCName = "WebFrame";                                                                                      
-
-		static WebFrame () {
-			NativeClasses [typeof (WebFrame)] = Native.RegisterClass (typeof (WebFrame)); 
-		}
-
 		public WebFrame (IntPtr native_object) {
 			NativeObject = native_object;
 		}

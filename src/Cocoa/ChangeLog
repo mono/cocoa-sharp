@@ -1,3 +1,16 @@
+2006-02-16  Geoff Norton <gnorton@customerdna.com>
+
+	* Refactored everything to the new Object and backend APIs.  There is no more
+	unsafe code.  We use the idea developed by Andreas Farber to dynamically
+	create delegates on a per-IMP basis.  This removes all the mono-specific hacks.
+
+2006-02-16  Geoff Norton  <gnorton@customerdna.com>
+
+	* Menu.cs: Added Menu support from David Mitchell
+	* SearchField.cs: Inherit from TextField; not control.  Thanks to Kevin Wojniak.
+	* StatusBar.cs:
+	  StatusItem.cs: Implementation from Kevin Wojniak.
+
 2006-01-26  Geoff Norton  <gnorton@customerdna.com>
 
 	* Application.cs:

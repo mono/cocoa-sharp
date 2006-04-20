@@ -14,7 +14,7 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Creates a new Object and allocates an underlying NSObject.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -25,8 +25,8 @@
         <Parameter Name="native_object" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="native_object">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="native_object">An NSObject in need of a managed wrapper</param>
+        <summary>Creates a new Cocoa.Object as a wrapper around the specified NSObject.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -82,7 +82,7 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Initializes an allocated NSObject without arguments.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -122,9 +122,143 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="SendMessage">
+      <MemberSignature Language="C#" Value="public object SendMessage (string selector, Type rettype);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="selector">The message that should be sent to the underlying NSObject.</param>
+        <param name="rettype">The expected return type for the message.</param>
+        <summary>Sends a parameter-less message to the underlying NSObject.</summary>
+        <returns>The NSObject's response to the message.</returns>
+        <remarks>object.SendMessage(selector, rettype) is simply a convenient shorthand for ObjCMessaging.objc_msgSend(object, selector, rettype).  It doesn't do anything special, but can make code much more readable.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendMessage">
+      <MemberSignature Language="C#" Value="public object SendMessage (string selector, Type rettype, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="selector">The message that should be sent to the underlying NSObject.</param>
+        <param name="rettype">The expected return type for the message.</param>
+        <param name="args">A list of parameter types and parameters that should be sent to the NSObject.  Parameter types are at even indices, while the actual parameters follow each parameter type.</param>
+        <summary>Sends a message with parameters to the underlying NSObject.</summary>
+        <returns>The NSObject's response to the message.</returns>
+        <remarks>This is simply a convenient shorthand for a function in ObjCMessaging (see the other SendMessage() for details).</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendMessageToSuper">
+      <MemberSignature Language="C#" Value="public object SendMessageToSuper (string selector, Type rettype, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="selector">The message that should be sent to the super-type of the underlying NSObject.</param>
+        <param name="rettype">The expected return type for the message.</param>
+        <param name="args">A list of parameter types and parameters that should be sent to the NSObject.  Parameter types are at even indices, while the actual parameters follow each parameter type.</param>
+        <summary>Sends a message to the super-type of the underlying NSObject.</summary>
+        <returns>The super-type's response to the message.</returns>
+        <remarks>This function is similar in nature to SendMessage()</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Allocate">
+      <MemberSignature Language="C#" Value="public static IntPtr Allocate (Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">Allocates space for an object of the specified type, but does not initialize the object.</param>
+        <summary>To be added.</summary>
+        <returns>A pointer to the space that was allocated.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendMessageToClass">
+      <MemberSignature Language="C#" Value="public static object SendMessageToClass (Type type, string selector, Type rettype);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">The type that will be the receiver of the message.</param>
+        <param name="selector">The message that should be sent to the class.</param>
+        <param name="rettype">The expected return type for the message.</param>
+        <summary>Sends a message to the specified class.</summary>
+        <returns>The class' response to the message.</returns>
+        <remarks>SendMessageToClass(type) is simply a convenient shorthand for ObjCMessaging.objc_msgSend((IntPtr)NativeClasses[type]).  It is included in order to enhance code clarity.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendMessageToClass">
+      <MemberSignature Language="C#" Value="public static object SendMessageToClass (Type type, string selector, Type rettype, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="selector" Type="System.String" />
+        <Parameter Name="rettype" Type="System.Type" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="type">The type that will be the receiver of the message.</param>
+        <param name="selector">The message that should be sent to the class.</param>
+        <param name="rettype">The expected return type for the message.</param>
+        <param name="args">Additional arguments that should be sent with the message.</param>
+        <summary>Sends a message to the specified class.</summary>
+        <returns>The class' response to the message.</returns>
+        <remarks>See SendMessageToClass(type, selector, rettype) for details.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>Object is a managed representation of the NSObject class.</summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

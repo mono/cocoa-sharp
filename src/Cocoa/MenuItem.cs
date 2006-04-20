@@ -6,11 +6,6 @@ using Cocoa;
 namespace Cocoa {
 	public class MenuItem : Cocoa.Object {
 		private static string ObjectiveCName = "NSMenuItem";                                                                                      
-
-		static MenuItem () {
-			NativeClasses [typeof (MenuItem)] = Native.RegisterClass (typeof (MenuItem)); 
-		}
-
 		public MenuItem (IntPtr native_object) : base (native_object) {}
 
 		public Cocoa.Object Target {

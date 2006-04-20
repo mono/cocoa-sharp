@@ -51,7 +51,8 @@
       <Docs>
         <param name="frame">The display rectangle.</param>
         <summary>Creates a new instance with the specified rectangle.</summary>
-        <remarks></remarks>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Enabled">

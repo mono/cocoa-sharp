@@ -6,13 +6,6 @@ using Cocoa;
 namespace Cocoa {
 	public class Application : Cocoa.Object {
 		private static string ObjectiveCName = "NSApplication";                                                                                      
-
-		static Application () {
-			NativeClasses [typeof (Application)] = Native.RegisterClass (typeof (Application)); 
-			// This is a hideous hack to load the dylib into our address space
-			strlen ("Load AppKit Into My Addressspace.");
-		}
-
 		public Application (IntPtr native_object) : base (native_object) {}
 
 		private static AutoreleasePool pool;
@@ -27,19 +20,19 @@ namespace Cocoa {
 
 		public static Application SharedApplication {
 			get {
-				return (Application)Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) Cocoa.Object.NativeClasses [typeof (Application)], "sharedApplication", typeof (IntPtr)));
+				return (Application)Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (ObjCClass.FromType (typeof (Application)).ToIntPtr (), "sharedApplication", typeof (IntPtr)));
 			}
 		}
 
 		public Window MainWindow {
 			get {
-				return (Window)Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "mainWindow", typeof (IntPtr)));
+				return (Window)Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "mainWindow", typeof (IntPtr)));
 			}
 		}
 
 		public Cocoa.Image Icon {
 			get {
-				return(Cocoa.Image) Native.NativeToManaged ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "applicationIconImage", typeof(System.IntPtr)));
+				return(Cocoa.Image) Object.FromIntPtr ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "applicationIconImage", typeof(System.IntPtr)));
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setApplicationIconImage:", typeof(void), typeof(System.IntPtr), (value == null) ? IntPtr.Zero : ((Cocoa.Image) value).NativeObject);
@@ -47,8 +40,6 @@ namespace Cocoa {
 		}
 
 		public static void LoadNib (string nibname) {
-			Dictionary dict = new Dictionary ("NSOwner", Application.SharedApplication);
-
 			Bundle.LoadNib (nibname);
 		}
 
@@ -88,7 +79,7 @@ namespace Cocoa {
 				if (export_attribute.Selector != null)
 					selector = export_attribute.Selector;
 			}
-			ObjCMessaging.objc_msgSend (NativeObject, "beginSheet:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof(void), typeof(System.IntPtr), sheet.NativeObject, typeof(System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof(System.IntPtr), target.NativeObject, typeof(System.IntPtr), Native.ToSelector (selector), typeof(System.IntPtr), contextInfo);
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheet:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof(void), typeof(System.IntPtr), sheet.NativeObject, typeof(System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof(System.IntPtr), target.NativeObject, typeof(System.IntPtr), ObjCMethods.sel_getUid (selector), typeof(System.IntPtr), contextInfo);
 		}
 
 		public void EndSheet (Cocoa.Window sheet) {
@@ -102,9 +93,20 @@ namespace Cocoa {
 				throw new ArgumentNullException ("sheet");
 			ObjCMessaging.objc_msgSend (NativeObject, "endSheet:returnCode:", typeof (void), typeof (System.IntPtr), sheet.NativeObject, typeof (int), returnCode);
 		}
+
+		public void SetAppleMenu (Menu menu) {
+			ObjCMessaging.objc_msgSend (NativeObject, "setAppleMenu:", typeof(void), typeof(IntPtr), menu.NativeObject);
+		}
+
+		public Menu MainMenu {
+			get {
+				return (Menu) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "mainMenu", typeof(IntPtr)));
+			}
+			set {
+				ObjCMessaging.objc_msgSend (NativeObject, "setMainMenu:", typeof(void), typeof(IntPtr), value.NativeObject);
+			}
+		}
 		
-		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
-		private static extern int strlen (string str);
 		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]
 		private static extern void GetCurrentProcess (ref IntPtr psn);
 		[DllImport ("/System/Library/Frameworks/AppKit.framework/AppKit")]

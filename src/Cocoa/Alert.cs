@@ -7,11 +7,6 @@ namespace Cocoa {
 	public class Alert : Cocoa.Object {
 		private static string ObjectiveCName = "NSAlert";
 
-		
-		static Alert () {
-			NativeClasses [typeof (Alert)] = Native.RegisterClass (typeof (Alert)); 
-		}
-
 		public Alert () : base () {
 			Initialize ();
 		}
@@ -20,7 +15,7 @@ namespace Cocoa {
 
 		public string MessageTitle {
 			get {
-				return (string) Native.NativeToManaged ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "messageText", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "messageText", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setMessageText:", typeof (void), typeof (System.IntPtr), new Cocoa.String ((value == null) ? "" : value).NativeObject);
@@ -29,7 +24,7 @@ namespace Cocoa {
 
 		public string InformativeText {
 			get {
-				return (string) Native.NativeToManaged ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "informativeText", typeof (System.IntPtr)));
+				return Object.FromIntPtr ((System.IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "informativeText", typeof (System.IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setInformativeText:", typeof (void), typeof (System.IntPtr), new Cocoa.String ((value == null) ? "" : value).NativeObject);
@@ -47,7 +42,7 @@ namespace Cocoa {
 
 		public Image Icon {
 			get {
-				return(Image) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "icon", typeof (System.IntPtr)));
+				return(Image) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "icon", typeof (System.IntPtr)));
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setIcon:", typeof (void), typeof (System.IntPtr), (value == null) ? IntPtr.Zero : ((Image) value).NativeObject);
@@ -59,7 +54,7 @@ namespace Cocoa {
 				throw new ArgumentNullException ("buttonTitle");
 			if (buttonTitle.Length == 0)
 				throw new ArgumentException ("buttonTitle: The buttonTitle parameter must be a non-empty string.");
-			return (Cocoa.Button) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "addButtonWithTitle:", typeof (System.IntPtr), typeof (System.IntPtr), new Cocoa.String (buttonTitle).NativeObject));
+			return (Cocoa.Button) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "addButtonWithTitle:", typeof (System.IntPtr), typeof (System.IntPtr), new Cocoa.String (buttonTitle).NativeObject));
 		}
 
 		public static Alert AlertWithMessage (string messageTitle, string defaultButtonTitle, string alternateButtonTitle, string otherButtonTitle, string informativeText) {
@@ -70,7 +65,7 @@ namespace Cocoa {
 			if (otherButtonTitle == null) otherButtonTitle = "";
 			if (informativeText == null) informativeText = "";
 
-			return(Alert) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Alert)], "alertWithMessageText:defaultButton:alternateButton:otherButton:informativeTextWithFormat:", typeof (System.IntPtr), typeof (System.IntPtr), new Cocoa.String (messageTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (defaultButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (alternateButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (otherButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (informativeText).NativeObject));
+			return(Alert) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (ObjCClass.FromType (typeof (Alert)).ToIntPtr (), "alertWithMessageText:defaultButton:alternateButton:otherButton:informativeTextWithFormat:", typeof (System.IntPtr), typeof (System.IntPtr), new Cocoa.String (messageTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (defaultButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (alternateButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (otherButtonTitle).NativeObject, typeof (System.IntPtr), new Cocoa.String (informativeText).NativeObject));
 		}
 
 		public int RunModal () {
@@ -87,7 +82,7 @@ namespace Cocoa {
 				if (export_attribute.Selector != null)
 					selector = export_attribute.Selector;
 			}
-			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (theWindow == null) ? IntPtr.Zero : theWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), Native.ToSelector (selector), typeof (System.IntPtr), contextInfo);
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (theWindow == null) ? IntPtr.Zero : theWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), ObjCMethods.sel_getUid (selector), typeof (System.IntPtr), contextInfo);
 		}  
 	}
 }

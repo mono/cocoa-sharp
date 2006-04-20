@@ -90,6 +90,7 @@
       <Type Name="OpenPanelHandler" />
       <Type Name="SavePanelHandler" />
       <Type Name="SheetHandler" />
+      <Type Name="Menu" />
     </Namespace>
     <Namespace Name="WebKit">
       <Type Name="WebBackForwardList" />

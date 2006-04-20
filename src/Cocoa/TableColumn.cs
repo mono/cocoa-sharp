@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class TableColumn : Cocoa.Object {
 		private static string ObjectiveCName = "NSTableColumn";                                                                                      
-
-		static TableColumn () {
-			NativeClasses [typeof (TableColumn)] = Native.RegisterClass (typeof (TableColumn)); 
-		}
-
 		public TableColumn (Cocoa.Object identifier) : base () {
 				NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithIdentifier:", typeof (IntPtr), typeof (IntPtr), identifier.NativeObject);
 		}
@@ -18,7 +13,7 @@ namespace Cocoa {
 
 		public Cocoa.Object Identifier {
 			get {
-				return (Cocoa.Object) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "identifier", typeof (IntPtr)));
+				return (Cocoa.Object) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "identifier", typeof (IntPtr)));
 			}
 		}
 
@@ -30,7 +25,7 @@ namespace Cocoa {
 
 		public Cell HeaderCell {
 			get {
-				return (Cell) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "headerCell", typeof (IntPtr)));
+				return (Cell) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "headerCell", typeof (IntPtr)));
 			}
 		}
 	}

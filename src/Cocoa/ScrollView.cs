@@ -4,10 +4,6 @@ namespace Cocoa {
 	public class ScrollView : View {
 		private static string ObjectiveCName = "NSScrollView";
 
-		static ScrollView () {
-			NativeClasses [typeof (ScrollView)] = Native.RegisterClass (typeof (ScrollView)); 
-		}
-
 		public ScrollView (Rect frame) {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithFrame:", typeof (IntPtr), typeof (Rect), frame);
 }

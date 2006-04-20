@@ -26,7 +26,7 @@ namespace CocoaSharp.Samples {
 		public Controller (IntPtr raw) : base(raw) { }
 
 		[Export ("endTimer:")]
-		public void EndTimer (object sender) {
+		public void EndTimer (Cocoa.Object sender) {
 			if (timer != null) {
 				timer.Stop ();
 				timer = null;
@@ -34,7 +34,7 @@ namespace CocoaSharp.Samples {
 		}
 
 		[Export ("startTimer:")]
-		public void StartTimer (object sender) {
+		public void StartTimer (Cocoa.Object sender) {
 			if (timer == null) {
 				timer = new Timer ();
 				timer.Interval = 0.0; //0.025;
@@ -44,9 +44,8 @@ namespace CocoaSharp.Samples {
 		}
 
 		[Export ("interfaceChanged:")]
-		public object InterfaceChanged (Cocoa.Object sender) {
+		public void InterfaceChanged (Cocoa.Object sender) {
 			itsView.Display ();
-			return null;
 		}
 	}
 

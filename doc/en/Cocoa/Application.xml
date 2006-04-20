@@ -232,6 +232,33 @@
         <remarks>When using a macpack generated bundle, this will return the 'generic' application icon not the icon specified in the bundle's info.plist.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="SetAppleMenu">
+      <MemberSignature Language="C#" Value="public void SetAppleMenu (Cocoa.Menu menu);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="menu" Type="Cocoa.Menu" />
+      </Parameters>
+      <Docs>
+        <param name="menu">The menu to set as the "Apple Menu"</param>
+        <summary>Sets the "Apple Menu" for the application</summary>
+        <remarks>The "Apple Menu" is the first menu item in the Application's Main Menu (after the apple icon).  It is always overridden to show the name of the currently executing application, and usually contains options such as "About Application", "Preferences...", "Services", Hide/Show options, and of course, the all-important "Quit Application".  It should be noted that simply calling SetAppleMenu() is not enough to override the "Apple Menu" for your application; the menu that is chosen as the "Apple Menu" must also be the submenu for the first item in the Application's main menu (for details, see remarks on the MainMenu property).</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MainMenu">
+      <MemberSignature Language="C#" Value="public Cocoa.Menu MainMenu { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Menu</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets/Sets the Main Menu for the Application.</summary>
+        <value>The Main Menu for the application.</value>
+        <remarks>The Main Menu is the menu that is displayed at the top of the screen while the Application is active.  The first item/submenu in this menu is known as the "Apple Menu", and its title is always overridden to show the name of the Application.  In order for the "Apple Menu" to display properly, you must call SetAppleMenu() on the submenu for the first item of the Main Menu.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
     <summary>Application is a managed representation of the NSApplication class.</summary>

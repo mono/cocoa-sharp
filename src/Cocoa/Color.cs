@@ -5,90 +5,85 @@ using Cocoa;
 namespace Cocoa {
 	public class Color : Cocoa.Object {
 		private static string ObjectiveCName = "NSColor";                                                                                      
-
-		static Color () {
-			NativeClasses [typeof (Color)] = Native.RegisterClass (typeof (Color)); 
-		}
-
 		public Color (IntPtr native_object) : base (native_object) {}
 		
 		public static Color FromHueSaturationBrightnessAlpha (float hue, float saturation, float brightness, float alpha) {
-			return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "colorWithDeviceHue:saturation:brightness:alpha:", typeof (IntPtr), typeof (float), hue, typeof (float), saturation, typeof (float), brightness, typeof (float), alpha));
+			return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "colorWithDeviceHue:saturation:brightness:alpha:", typeof (IntPtr), typeof (float), hue, typeof (float), saturation, typeof (float), brightness, typeof (float), alpha));
 		}
 
 		public static Color Black {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "blackColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "blackColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Blue {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "blueColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "blueColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Brown {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "brownColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "brownColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Clear {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "clearColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "clearColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Cyan {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "cyanColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "cyanColor", typeof (IntPtr)));
 			}
 		}
 		public static Color DarkGray {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "darkGrayColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "darkGrayColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Gray {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "grayColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "grayColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Green {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "greenColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "greenColor", typeof (IntPtr)));
 			}
 		}
 		public static Color LightGray {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "lightGrayColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "lightGrayColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Magenta {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "magentaColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "magentaColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Orange {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "orangeColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "orangeColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Purple {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "purpleColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "purpleColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Red {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "redColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "redColor", typeof (IntPtr)));
 			}
 		}
 		public static Color White {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "whiteColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "whiteColor", typeof (IntPtr)));
 			}
 		}
 		public static Color Yellow {
 			get {
-				return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (Color)], "yellowColor", typeof (IntPtr)));
+				return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (Color)).ToIntPtr (), "yellowColor", typeof (IntPtr)));
 			}
 		}
 
@@ -117,7 +112,7 @@ namespace Cocoa {
 		}
 
 		public Color ToRGB () {
-			return (Color) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "colorUsingColorSpaceName:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String ("NSDeviceRGBColorSpace").NativeObject));
+			return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "colorUsingColorSpaceName:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String ("NSDeviceRGBColorSpace").NativeObject));
 		}
 	}
 }

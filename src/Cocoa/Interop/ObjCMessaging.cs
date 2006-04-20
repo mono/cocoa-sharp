@@ -113,7 +113,7 @@ namespace Cocoa {
 			}
 			Type t = TypeResolve(type.ToString(), false).GetType(type.ToString());
 
-			object o = Activator.CreateInstance(t);
+			object o = Activator.CreateInstance (t);
 			object ret;
 			if (rettype.IsValueType && rettype.Namespace != "System") {
 				IntPtr ptr = Marshal.AllocHGlobal (Marshal.SizeOf (rettype));
@@ -163,6 +163,7 @@ namespace Cocoa {
 			objc_super target;
 			target.receiver = receiver;
 			target.superclass = (IntPtr) objc_msgSend (receiver, "superclass", typeof (IntPtr));
+
 			IntPtr supertarget = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (objc_super)));
 			Marshal.StructureToPtr (target, supertarget, true);
 
@@ -201,10 +202,5 @@ namespace Cocoa {
 				ret = Marshal.PtrToStringAuto ((IntPtr)ret);
 			return ret;
 		}
-	}
-
-	internal struct objc_super {
-		internal IntPtr receiver;
-		internal IntPtr superclass;
 	}
 }

@@ -5,11 +5,6 @@ using Cocoa;
 namespace Cocoa {
 	public class ImageView : Control {
 		private static string ObjectiveCName = "NSImageView";                                                                                      
-
-		static ImageView () {
-			NativeClasses [typeof (ImageView)] = Native.RegisterClass (typeof (ImageView)); 
-		}
-
 		public ImageView (Rect rect) {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithFrame:", typeof (IntPtr), typeof (Rect), rect);
 		}
@@ -18,7 +13,7 @@ namespace Cocoa {
 
 		public Image Image {
 			get {
-				return (Image) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "image", typeof (IntPtr)));
+				return (Image) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "image", typeof (IntPtr)));
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setImage:", typeof (IntPtr), typeof(IntPtr), ((Image)value).NativeObject);

@@ -4,10 +4,6 @@ namespace Cocoa {
 	public class TableView : Control {
 		private static string ObjectiveCName = "NSTableView";
 
-		static TableView() {
-			NativeClasses [typeof (TableView)] = Native.RegisterClass (typeof (TableView)); 
-		}
-
 		public TableView (Rect frame) {
 			NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithFrame:", typeof (IntPtr), typeof (Rect), frame);
 		}
@@ -16,7 +12,7 @@ namespace Cocoa {
 
 		public Cocoa.Object DataSource {
 			get {
-				return(Cocoa.Object) Native.NativeToManaged ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "dataSource", typeof(System.IntPtr)));
+				return(Cocoa.Object) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "dataSource", typeof(System.IntPtr)));
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setDataSource:", typeof (void), typeof (System.IntPtr), value.NativeObject);

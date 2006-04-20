@@ -7,11 +7,6 @@ namespace Cocoa {
 	public class OpenPanel : SavePanel {
 		private static string ObjectiveCName = "NSOpenPanel";
 		
-
-		static OpenPanel () {
-			NativeClasses [typeof (OpenPanel)] = Native.RegisterClass (typeof (OpenPanel)); 
-		}
-
 		public OpenPanel () : base () {}
 		
 		public OpenPanel (IntPtr native_object) : base (native_object) {}
@@ -45,13 +40,13 @@ namespace Cocoa {
 
 		public Cocoa.URL [] URLs {
 			get {
-				return (Cocoa.URL []) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "URLs",typeof (System.IntPtr)));
+				return (Cocoa.URL []) ((Array)Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "URLs",typeof (System.IntPtr)))).ToArray ();
 			}
 		}
 
 		public string [] Filenames {
 			get {
-				return (string []) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "filenames", typeof (System.IntPtr)));
+				return (string []) ((Array) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "filenames", typeof (System.IntPtr)))).ToArray ();
 			}
 		}
 
@@ -73,7 +68,7 @@ namespace Cocoa {
 				if (export_attribute.Selector != null)
 					selector = export_attribute.Selector;
 			}
-			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:types:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), Native.ToSelector (selector), typeof (System.IntPtr), contextInfo);
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:types:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), IntPtr.Zero, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), ObjCMethods.sel_getUid (selector), typeof (System.IntPtr), contextInfo);
 		}
 		
 		public void BeginSheet (string directory, string filename, string [] fileTypes, Cocoa.Window docWindow, OpenPanelHandler modalDelegate, System.IntPtr contextInfo) {
@@ -86,7 +81,7 @@ namespace Cocoa {
 				if (export_attribute.Selector != null)
 					selector = export_attribute.Selector;
 			}
-			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:types:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (directory == null) ? IntPtr.Zero : new Cocoa.String (directory).NativeObject, typeof (System.IntPtr), (filename == null) ? IntPtr.Zero : new Cocoa.String (filename).NativeObject, typeof (System.IntPtr), (fileTypes == null) ? IntPtr.Zero : new MutableArray (fileTypes).NativeObject, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), Native.ToSelector (selector), typeof (System.IntPtr), contextInfo);
+			ObjCMessaging.objc_msgSend (NativeObject, "beginSheetForDirectory:file:types:modalForWindow:modalDelegate:didEndSelector:contextInfo:", typeof (void), typeof (System.IntPtr), (directory == null) ? IntPtr.Zero : new Cocoa.String (directory).NativeObject, typeof (System.IntPtr), (filename == null) ? IntPtr.Zero : new Cocoa.String (filename).NativeObject, typeof (System.IntPtr), (fileTypes == null) ? IntPtr.Zero : new MutableArray (fileTypes).NativeObject, typeof (System.IntPtr), (docWindow == null) ? IntPtr.Zero : docWindow.NativeObject, typeof (System.IntPtr), target.NativeObject, typeof (System.IntPtr), ObjCMethods.sel_getUid (selector), typeof (System.IntPtr), contextInfo);
 		}
 	}
 }

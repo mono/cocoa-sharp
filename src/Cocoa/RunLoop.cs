@@ -5,18 +5,13 @@ using Cocoa;
 namespace Cocoa {
 	public class RunLoop : Cocoa.Object {
 		private static string ObjectiveCName = "NSRunLoop";                                                                                      
-
-		static RunLoop () {
-			NativeClasses [typeof (RunLoop)] = Native.RegisterClass (typeof (RunLoop)); 
-		}
-
 		public RunLoop () : base () {}
 
 		public RunLoop (IntPtr native_object) : base (native_object) {}
 
 		public static RunLoop Current {
 			get {
-				return (RunLoop) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend ((IntPtr) NativeClasses [typeof (RunLoop)], "currentRunLoop", typeof (IntPtr)));
+				return (RunLoop) Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend ((IntPtr) ObjCClass.FromType (typeof (RunLoop)).ToIntPtr (), "currentRunLoop", typeof (IntPtr)));
 			}
 		}
 		

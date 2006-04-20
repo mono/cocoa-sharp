@@ -16,7 +16,7 @@
         <Parameter Name="native_object" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="native_object">To be added.</param>
+        <param name="native_object">A pointer to the Objective C object.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -28,8 +28,8 @@
         <ReturnType>Cocoa.ActionHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>The event handler for the MenuItem's click event.</summary>
+        <remarks>Event handlers for MenuItem's click event can either be specified using C#'s delegate/event model or by using the SetAction() function and Target property.  The former looks more natural in C#, while the latter provides a more accurate view of the underlying model.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -39,9 +39,9 @@
         <ReturnType>Cocoa.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets/Sets the Target of the MenuItem.</summary>
+        <value>The Target of the MenuItem.</value>
+        <remarks>When the MenuItem's Click event is fired, a message is sent to the Target requesting the Action specified by SetAction() or the Click event.</remarks>
       </Docs>
     </Member>
     <Member MemberName="State">
@@ -56,9 +56,64 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MenuItem (string title, Cocoa.ActionHandler action, string keyEquivalent);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="action" Type="Cocoa.ActionHandler" />
+        <Parameter Name="keyEquivalent" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="title">The title of the new MenuItem.</param>
+        <param name="action">The ActionHandler that will respond to the MenuItem's Click event.</param>
+        <param name="keyEquivalent">The accelerator key for the MenuItem.  Lower-case letters will be associated with Apple+letter, while upper-case letters will be associated with Shift+Apple+letter.</param>
+        <summary>Creates a new MenuItem with the specified title, event handler, and accelerator.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAction">
+      <MemberSignature Language="C#" Value="public void SetAction (string selector);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="selector">The name of the selector that will respond to the MenuItem's Click event.</param>
+        <summary>Sets the MenuItem's Action to the specified selector.</summary>
+        <remarks>The specified selector will be sent to the Target object whenever the MenuItem is clicked.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SubMenu">
+      <MemberSignature Language="C#" Value="public Cocoa.Menu SubMenu { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cocoa.Menu</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets/Sets the submenu for the MenuItem.</summary>
+        <value>The submenu attached to the MenuItem.</value>
+        <remarks>If a submenu is specified, selecting the MenuItem will cause the attached submenu to be displayed.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Enabled">
+      <MemberSignature Language="C#" Value="public bool Enabled { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets/Sets a value indicating whether or not the MenuItem is enabled.</summary>
+        <value>true if the MenuItem is enabled; otherwise, false.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>MenuItem is a managed representation of the NSMenuItem class.</summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

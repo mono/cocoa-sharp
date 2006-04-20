@@ -6,11 +6,6 @@ using Cocoa;
 namespace Cocoa {
 	public class Control : View {
 		private static string ObjectiveCName = "NSControl";                                                                                      
-
-		static Control () {
-			NativeClasses [typeof (Control)] = Native.RegisterClass (typeof (Control)); 
-		}
-
 		public Control () : base () {}
 
 		public Control (Rect frame) : base (frame) {} 
@@ -19,7 +14,7 @@ namespace Cocoa {
 
 		public string Value {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "stringValue", typeof (IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "stringValue", typeof (IntPtr))).ToString ();
 			}
 			set {
 				ObjCMessaging.objc_msgSend (NativeObject, "setStringValue:", typeof (void), typeof (System.IntPtr), new Cocoa.String (value).NativeObject);
@@ -49,19 +44,19 @@ namespace Cocoa {
 
 		private string ActionSelector {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "action", typeof (IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "action", typeof (IntPtr))).ToString ();
 			}
 			set {
-				ObjCMessaging.objc_msgSend (NativeObject, "setAction:", typeof (void), typeof (IntPtr), sel_getUid (value));
+				ObjCMessaging.objc_msgSend (NativeObject, "setAction:", typeof (void), typeof (IntPtr), ObjCMethods.sel_getUid (value));
 			}
 		}
 
 		private string DoubleActionSelector {
 			get {
-				return (string) Native.NativeToManaged ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "doubleAction", typeof (IntPtr)));
+				return Object.FromIntPtr ((IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "doubleAction", typeof (IntPtr))).ToString ();
 			}
 			set {
-				ObjCMessaging.objc_msgSend (NativeObject, "setDoubleAction:", typeof (void), typeof (IntPtr), sel_getUid (value));
+				ObjCMessaging.objc_msgSend (NativeObject, "setDoubleAction:", typeof (void), typeof (IntPtr), ObjCMethods.sel_getUid (value));
 			}
 		}
 
@@ -139,8 +134,5 @@ namespace Cocoa {
 			}
 		}
 #endregion
-
-		[DllImport ("libobjc.dylib")]
-		private static extern IntPtr sel_getUid (string name);
 	}
 }

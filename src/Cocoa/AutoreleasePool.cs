@@ -8,10 +8,6 @@ namespace Cocoa {
 		private static string ObjectiveCName = "NSAutoreleasePool";
 
 		#region Constructors
-		static AutoreleasePool () {
-			NativeClasses [typeof (AutoreleasePool)] = Native.RegisterClass (typeof (AutoreleasePool));
-		} 
-
 		public AutoreleasePool () : base () { Initialize (); }
 
 		public AutoreleasePool (IntPtr native_object) : base (native_object) {}

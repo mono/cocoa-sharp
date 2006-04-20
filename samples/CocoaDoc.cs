@@ -120,10 +120,10 @@ public class Controller : Cocoa.Object {
 		help_tree = RootTree.LoadTree();
 	}
 	
-	protected Controller (IntPtr native_object) : base (native_object) {}
+	public Controller (IntPtr native_object) : base (native_object) {}
 
 	[Export("userDidSearch:")]
-	public void UserDidSearch(object sender) {
+	public void UserDidSearch(Cocoa.Object sender) {
 		string value = searchBox.Value;
 		int index=indexBrowser.SelectedRowInColumn (0);
 		if (value != null) {
@@ -194,7 +194,7 @@ public class Controller : Cocoa.Object {
 	}
 
 	[Export("webView:resource:willSendRequest:redirectResponse:fromDataSource:")]
-	public URLRequest RequestHandler(WebView sender, object identifier, URLRequest initialRequest, URLResponse urlResponse, WebDataSource datasource) {
+	public URLRequest RequestHandler(WebView sender, Cocoa.Object identifier, URLRequest initialRequest, URLResponse urlResponse, WebDataSource datasource) {
 //		if ( ((URL)(initialRequest.urL)).relativeString.ToString().IndexOf("http://monodoc/load?") == 0) {
 		// FIXME
 		if (initialRequest.URL.AbsoluteString.IndexOf ("http://monodoc/load?") == 0) {
@@ -243,7 +243,7 @@ public class Controller : Cocoa.Object {
 	}
 	
 	[Export("validateMenuItem:")]
-	public bool validateMenuItem(object sender) {
+	public bool validateMenuItem(Cocoa.Object sender) {
 		MenuItem item = (MenuItem) sender;
 //		if (item.Action.Equals("goBack:")) return webView.canGoBack;
 //		if (item.Action.Equals("goForward:")) return webView.canGoForward;
@@ -251,7 +251,7 @@ public class Controller : Cocoa.Object {
 	}
 	
 	[Export("goBack:")]
-	public void goBack(object sender) {
+	public void goBack(Cocoa.Object sender) {
 		WebBackForwardList history = webView.BackForwardList;
 		if (history.BackListCount > 0) {
 			history.GoBack();
@@ -260,7 +260,7 @@ public class Controller : Cocoa.Object {
 	}
 	
 	[Export("goForward:")]
-	public void goForward(object sender) {
+	public void goForward(Cocoa.Object sender) {
 		WebBackForwardList history = webView.BackForwardList;
 		if (history.ForwardListCount > 0) {
 			history.GoForward();
@@ -275,7 +275,7 @@ class DocumentBrowser {
 		Application.Init ();
 		Application.LoadFramework ("WebKit");
 		Application.LoadNib ("MonoDoc.nib");
-		if (!File.Exists ("monodoc.index")) {
+		if (File.Exists ("monodoc.index")) {
 			Rect rect;
 			Image image = new Image ("mono.png");
 			image.BackgroundColor = Color.Red;
@@ -302,7 +302,7 @@ class DocumentBrowser {
 			window.View.AddSubview (imageview);
 
 			p_indicator.StartAnimation ();
-			Thread t = new Thread (new ThreadStart (MakeIndex));
+			System.Threading.Thread t = new System.Threading.Thread (new ThreadStart (MakeIndex));
 			t.Start ();
 			IntPtr session = Application.SharedApplication.ModalSessionForWindow (window);
 			window.Show ();
@@ -327,9 +327,9 @@ class BrowserItem : Cocoa.Object {
 	internal IList items = null;
 	internal Cocoa.String caption;
 
-	protected BrowserItem (IntPtr native_object) : base (native_object) {}
+	public BrowserItem (IntPtr native_object) : base (native_object) {}
 
-	public BrowserItem(Node _node) {
+	public BrowserItem(Node _node) : base () {
 		node = _node;
 		caption = new Cocoa.String (node.Caption);
 		caption.Retain ();
@@ -337,7 +337,7 @@ class BrowserItem : Cocoa.Object {
 	
 	public int Count { 
 		get { 
-			if(node.Nodes == null)
+			if(node == null || node.Nodes == null)
 				return 0;
 			return node != null ? node.Nodes.Count : 0; 
 		} 
@@ -352,7 +352,7 @@ class BrowserItem : Cocoa.Object {
 		}
 		return (BrowserItem)items[ndx];
 	}
-	public object ValueAt(object identifier)
+	public Cocoa.Object ValueAt(object identifier)
 	{
 		return caption;
 	}
@@ -371,7 +371,7 @@ class IndexDataSource : Cocoa.Object {
 		index_reader = RootTree.LoadTree().GetIndex();
 	}
 
-	protected IndexDataSource (IntPtr native_object) : base (native_object) {}
+	public IndexDataSource (IntPtr native_object) : base (native_object) {}
 
 	public static IndexEntry GetEntry(int entry) {
 		if(index_reader != null)
@@ -508,7 +508,7 @@ class BrowserDataSource : Cocoa.Object {
 			items.Add(new BrowserItem(node));
 	}
 
-	protected BrowserDataSource (IntPtr native_object) : base (native_object) {
+	public BrowserDataSource (IntPtr native_object) : base (native_object) {
 		help_tree = RootTree.LoadTree();
 		foreach (Node node in help_tree.Nodes)
 			items.Add(new BrowserItem(node));
@@ -518,7 +518,7 @@ class BrowserDataSource : Cocoa.Object {
 	}
 
 	[Export("outlineView:numberOfChildrenOfItem:")]
-	public int OutlineViewNumberOfChildrenOfItem(OutlineView outlineView, BrowserItem item)
+	public int OutlineViewNumberOfChildrenOfItem(OutlineView outlineView, Cocoa.Object item)
 	{
 		BrowserItem bi = item as BrowserItem;
 		int count = bi != null ? bi.Count : help_tree.Nodes.Count;
@@ -526,13 +526,13 @@ class BrowserDataSource : Cocoa.Object {
 	}
 
 	[Export("outlineView:isItemExpandable:")]
-	public bool OutlineViewIsItemExpandable(OutlineView outlineView, BrowserItem item)
+	public bool OutlineViewIsItemExpandable(OutlineView outlineView, Cocoa.Object item)
 	{
 		return OutlineViewNumberOfChildrenOfItem(outlineView,item) > 0;
 	}
 
 	[Export("outlineView:child:ofItem:")]
-	public object OutlineViewChildOfItem(OutlineView outlineView, int index, BrowserItem item)
+	public BrowserItem OutlineViewChildOfItem(OutlineView outlineView, int index, Cocoa.Object item)
 	{
 		BrowserItem bi = item as BrowserItem;
 		if (bi != null)
@@ -543,7 +543,7 @@ class BrowserDataSource : Cocoa.Object {
 	}
 
 	[Export("outlineView:objectValueForTableColumn:byItem:")]
-	public object OutlineViewObjectValueForTableColumnByItem(OutlineView outlineView, TableColumn tableColumn, BrowserItem item)
+	public Cocoa.Object OutlineViewObjectValueForTableColumnByItem(OutlineView outlineView, TableColumn tableColumn, Cocoa.Object item)
 	{
 		BrowserItem bi = item as BrowserItem;
 		
