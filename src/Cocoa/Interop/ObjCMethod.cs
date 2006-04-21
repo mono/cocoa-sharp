@@ -143,7 +143,7 @@ namespace Cocoa {
 		}
 
 		private static MethodInfo BuildMethodProxy (MethodInfo target) {
-			TypeBuilder type = module.DefineType (Guid.NewGuid ().ToString ());
+			TypeBuilder type = module.DefineType (Guid.NewGuid ().ToString (), TypeAttributes.Public | TypeAttributes.Class);
 
 			ParameterInfo [] parameters = target.GetParameters ();
 			Type [] parameter_types = new Type [parameters.Length + 2];
@@ -185,7 +185,7 @@ namespace Cocoa {
 			ilg.Emit (OpCodes.Ldarg_1);
 			ilg.Emit (OpCodes.Ldloc_0);
 
-			ilg.Emit (OpCodes.Call, typeof (ObjCInterop).GetMethod ("Dispatch", BindingFlags.NonPublic | BindingFlags.Static, null, new Type [] {typeof (IntPtr), typeof (IntPtr), typeof (object [])}, null));
+			ilg.Emit (OpCodes.Call, typeof (ObjCInterop).GetMethod ("Dispatch", BindingFlags.Public | BindingFlags.Static, null, new Type [] {typeof (IntPtr), typeof (IntPtr), typeof (object [])}, null));
 			ilg.Emit (OpCodes.Ret);
 
 			return type.CreateType ().GetMethod ("Dispatch", BindingFlags.Public | BindingFlags.Static);

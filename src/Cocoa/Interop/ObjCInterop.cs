@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Cocoa {
 
 	public class ObjCInterop {
-		private static IntPtr Dispatch (IntPtr objc_class_ptr, IntPtr objc_selector, object [] arguments) {
+		public static IntPtr Dispatch (IntPtr objc_class_ptr, IntPtr objc_selector, object [] arguments) {
 			Object target = Object.FromIntPtr (objc_class_ptr);
 			string selector = Marshal.PtrToStringAuto (objc_selector);
 			MethodInfo method = MethodInfoFromSelector (selector, target.GetType ());
