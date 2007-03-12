@@ -1,3 +1,9 @@
+2007-04-11 Todd Schavey <schaveyt@gmail.com>
+
+	* ViewSample.cs:
+	Because the Cocoa namespace has a Font class now, this
+        example must use the fully qualified name System.Drawing.Font.
+
 2006-01-01  Aaron Flynt  <aaron@aaronflynt.com>
 
 	* CocoaDoc.cs:
