@@ -16,7 +16,13 @@ namespace Cocoa {
 		}
 
 		public override string ToString () {
-			return (string) ObjCMessaging.objc_msgSend (NativeObject, "cString", typeof (string));
+            
+            /// This function used to be just cal NSString's cString, however this cause some downstream
+            /// character encoding issues. Especially in the Event class. The fix for this was to
+            /// tell this function to encode the string using UTF-8.
+            /// Todd Schavey - schaveyt@gmail.com
+            ///
+			return (string) ObjCMessaging.objc_msgSend (NativeObject, "cStringUsingEncoding:", typeof (string), typeof(int), 4 /*NSUTF8StringEncoding*/ );
 		}
 	}
 }
