@@ -1,3 +1,30 @@
+2007-04-11 Todd Schavey <schaveyt@gmail.com>
+
+	* Cursor.cs: Added to repository
+	* Font.cs:   Added to repository
+	* Event.cs:  Added to repository
+	* Makefile.am: Updated to have make include the above files.
+	* Color.cs: 
+		Added Set, SetFill, SetStroke, and DrawSwatchInRect.
+	* BezierPath.cs:
+		Added enumerations for drawing. Added StrokeRect method
+		as well as some documentation.
+	* Point.cs:
+		Added Equals, ==, != operator overloads, and GetHashCode()
+	* Rect.cs:
+		Added Contains and ToString methods
+	* String.cs:
+		Updated ToString() to use UTF-8 encoding as it was the straight
+		c string was causing down stream problems. For what it is worth.
+       		This encoding is recommended by Apply post 10.3
+	* View.cs:
+		Added a bunch of event handlers for mouse and keyboard interaction.
+		Added OnDrawRect as virtual method for client to override as necessary.
+		Added AcceptsFirstReponder virtual method in order to get keyboard
+		interactivity working.
+	* Window.cs:
+		Added InvalidateCursorRectsForView, Display, and OrderFront methods
+
 2006-04-20  Geoff Norton  <gnorton@customerdna.com>
 
 	* Interop/ObjCInterop.cs (Dispatch): Make public so that the new
