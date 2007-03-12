@@ -38,7 +38,9 @@ sources= \
 	./Cell.cs \
 	./CellStateValue.cs \
 	./Color.cs \
+	./ColorWell.cs \
 	./Control.cs \
+	./Cursor.cs \
 	./CFArray.cs \
 	./CFString.cs \
 	./CFTimer.cs \
@@ -47,7 +49,9 @@ sources= \
 	./Drawer.cs \
 	./DragDestination.cs \
 	./DragOperation.cs \
+	./Event.cs \
 	./FileWrapper.cs \
+	./Font.cs \
 	./Image.cs \
 	./ImageView.cs \
 	./Menu.cs \
