@@ -114,5 +114,21 @@ namespace Cocoa {
 		public Color ToRGB () {
 			return (Color) Object.FromIntPtr ((IntPtr)ObjCMessaging.objc_msgSend (NativeObject, "colorUsingColorSpaceName:", typeof (IntPtr), typeof (IntPtr), new Cocoa.String ("NSDeviceRGBColorSpace").NativeObject));
 		}
+        
+        public void Set(){
+            ObjCMessaging.objc_msgSend (NativeObject, "set", typeof (void));
+        }
+        
+        public void SetFill(){
+            ObjCMessaging.objc_msgSend (NativeObject, "setFill", typeof (void));
+        }
+        
+        public void SetStroke(){
+            ObjCMessaging.objc_msgSend (NativeObject, "setStroke", typeof (void));
+        }
+        
+        public void DrawSwatchInRect( Rect rect ){
+            ObjCMessaging.objc_msgSend (NativeObject, "drawSwatchInRect:", typeof (void), typeof (Rect), rect);
+        }
 	}
 }
