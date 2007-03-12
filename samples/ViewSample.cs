@@ -45,13 +45,13 @@ namespace CocoaSharp.Samples {
 			Rectangle r = new Rectangle ((int)this.Bounds.Origin.X, (int)this.Bounds.Origin.Y, (int)this.Bounds.Size.Width, (int)this.Bounds.Size.Height);
 			Brush b = new SolidBrush (System.Drawing.Color.Red);
 			g.FillRectangle (b, r);
-			Font f = new Font ("Times New Roman", (int)(this.Bounds.Size.Height/15));
+			System.Drawing.Font f = new System.Drawing.Font ("Times New Roman", (int)(this.Bounds.Size.Height/15));
 			b = new SolidBrush (System.Drawing.Color.White);
 			g.DrawString ("This is System.Drawing Text\non a g.FillRectangle background!\nTry Resizing the Window!", f, b, 10, 10);
 #else
 			BezierPath.FillRect (this.Bounds);
 			Graphics g = Graphics.FromHwnd (this.NativeObject);
-			Font f = new Font ("Times New Roman", (int)(this.Bounds.Size.Height/15));
+			System.Drawing.Font f = new System.Drawing.Font ("Times New Roman", (int)(this.Bounds.Size.Height/15));
 			Brush b = new SolidBrush (System.Drawing.Color.White);
 			g.DrawString ("This is System.Drawing Text\non a NSBezierPath background!\nTry Resizing the Window!", f, b, 10, 10);
 #endif
