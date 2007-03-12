@@ -55,5 +55,17 @@ namespace Cocoa {
 		public void Close () {
 			ObjCMessaging.objc_msgSend (NativeObject, "close", typeof (void));
 		}
+        
+        public void InvalidateCursorRectsForView( View aView ) {
+			ObjCMessaging.objc_msgSend (NativeObject, "invalidateCursorRectsForView:", typeof (void), typeof (IntPtr), aView.NativeObject);
+		}
+        
+        public void Display () {
+			ObjCMessaging.objc_msgSend (NativeObject, "display", typeof (void));
+		}
+        
+        public void OrderFront (Cocoa.Object aSender) {
+			ObjCMessaging.objc_msgSend (NativeObject, "orderFront:", typeof (void), typeof (IntPtr), aSender.NativeObject);
+		}
 	}
 }
