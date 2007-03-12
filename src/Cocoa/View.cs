@@ -3,11 +3,20 @@ using System.Runtime.InteropServices;
 using Cocoa;
 
 namespace Cocoa {
-	public class View : Responder {
-		private static string ObjectiveCName = "NSView";                                                                                      
-		public View () : base () {}
+    
+	public class View : Responder 
+    {
+		private static string ObjectiveCName = "NSView";
+        
+		public View () 
+            : base ()
+        {
+        }
 
-		public View (IntPtr native_object) : base (native_object) {}
+		public View (IntPtr native_object) 
+            : base (native_object) 
+        {
+        }
 
 		public View (Rect frame) : base () {
 			if (this.GetType ().IsSubclassOf (typeof (View))) 
