@@ -1,3 +1,9 @@
+2007-03-12  David Hudson <jendave@yahoo.com>
+	
+	* samples/DragNDrop.cs:
+	  samples/HelloWorld.cs: fix namespace and reformat.
+	* Ignore build directories
+
 2006-04-20  Geoff Norton  <gnorton@customerdna.com>
 
 	* configure.in:  Sync to local 0.9.3 tree.
