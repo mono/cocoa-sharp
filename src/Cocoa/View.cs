@@ -127,6 +127,18 @@ namespace Cocoa {
         }
         
         /// <summary>
+        /// A view object is opaque if it completely covers its frame rectangle
+        /// when drawing itself. NSView, being an abstract class, performs no
+        //  drawing at all and so returns false
+        /// </summary>
+        /// <return>true if the reciever is opaque.</return>
+        [Export ("isOpaque")]
+        public virtual bool IsOpaque() 
+        {		
+            return false;
+        }
+        
+        /// <summary>
         /// Override to specify custom drawing primitives.
         /// </summary>
         /// <param name"aRect">The view's display area.</param>
