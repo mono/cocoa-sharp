@@ -1,3 +1,8 @@
+
+2007-04-13 Todd Schavey <schaveyt@gmail.com>
+
+	* View.cs: Added IsOpaque() event handler method
+
 2007-04-11 Todd Schavey <schaveyt@gmail.com>
 
 	* Cursor.cs: Added to repository
