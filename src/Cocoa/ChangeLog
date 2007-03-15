@@ -1,4 +1,10 @@
 
+
+2007-04-15 Todd Schavey <schaveyt@gmail.com>
+
+	* SpeechSynthesizer.cs: Added to repository
+	* Range.cs:   Added to repository
+
 2007-04-13 Todd Schavey <schaveyt@gmail.com>
 
 	* View.cs: Added IsOpaque() event handler method
