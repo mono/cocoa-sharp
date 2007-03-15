@@ -1,4 +1,7 @@
 
+2007-04-15 Todd Schavey <schaveyt@gmail.com>
+
+	* SpeechSynthesizer.cs: Inherits from Cocoa.Object rather than Cocoa.Window
 
 2007-04-15 Todd Schavey <schaveyt@gmail.com>
 
