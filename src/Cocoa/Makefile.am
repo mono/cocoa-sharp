@@ -70,6 +70,7 @@ sources= \
 	./Point.cs \
 	./PopUpButton.cs \
 	./ProgressIndicator.cs \
+	./Range.cs \
 	./Rect.cs \
 	./Responder.cs \
 	./RunLoop.cs \
@@ -78,6 +79,7 @@ sources= \
 	./Screen.cs \
 	./SearchField.cs \
 	./SheetHandler.cs \
+	./SpeechSynthesizer.cs \
 	./ScrollView.cs \
 	./Size.cs \
 	./StatusBar.cs \
