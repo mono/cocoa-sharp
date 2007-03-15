@@ -15,7 +15,7 @@ using Cocoa;
 namespace Cocoa
 {
     
-	public class SpeechSynthesizer : Window 
+	public class SpeechSynthesizer : Cocoa.Object 
     {
         public class SpeechSynthesizerListener : Cocoa.Object
         {
@@ -28,7 +28,7 @@ namespace Cocoa
             }
             
             public SpeechSynthesizerListener (IntPtr native_object) 
-            : base (native_object)
+                : base (native_object)
             {
             }
             
@@ -81,13 +81,14 @@ namespace Cocoa
         public SpeechSynthesizer () 
             : base () 
         {
-                mSpeechSynthesizerListener = new SpeechSynthesizerListener( this );
+            Initialize();
+            mSpeechSynthesizerListener = new SpeechSynthesizerListener( this );
         }
         
         public SpeechSynthesizer (IntPtr native_object) 
             : base (native_object)
         {
-                NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithVoice:", typeof (IntPtr), typeof (IntPtr), null );
+            NativeObject = (IntPtr) ObjCMessaging.objc_msgSend (NativeObject, "initWithVoice:", typeof (IntPtr), typeof (IntPtr), null );
         }
         
         #endregion
