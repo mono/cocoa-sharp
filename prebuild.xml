@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Prebuild xmlns="http://dnpb.sourceforge.net/schemas/prebuild-1.7.xsd" version="1.7">
+    <Solution name="cocoa-sharp">
+	<Configuration name="Debug">
+	    <Options>
+		<CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		<OptimizeCode>false</OptimizeCode>
+		<AllowUnsafe>true</AllowUnsafe>
+		<OutputPath>bin/Debug</OutputPath>
+		<DebugInformation>true</DebugInformation>
+		<WarningLevel>4</WarningLevel>
+		<SuppressWarnings>1595</SuppressWarnings>
+	    </Options>
+	</Configuration>
+	<Configuration name="Release">
+	    <Options>
+		<CompilerDefines>TRACE</CompilerDefines>
+		<OptimizeCode>true</OptimizeCode>
+		<AllowUnsafe>true</AllowUnsafe>
+		<OutputPath>bin/Release</OutputPath>
+		<DebugInformation>false</DebugInformation>
+		<WarningLevel>1</WarningLevel>
+		<SuppressWarnings>1595</SuppressWarnings>
+	    </Options>
+	</Configuration>
+	<Files>
+	    <File buildAction="Content">prebuild.xml</File>
+	</Files>
+	<Project name="cocoa-sharp" path="src/Cocoa" language="C#" type="Library" assemblyName="cocoa-sharp" rootNamespace="Cocoa" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>true</AllowUnsafe>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		    <KeyFile>../../cocoa-sharp.snk</KeyFile>
+		    <WarningLevel>4</WarningLevel>
+		    <SuppressWarnings>1595</SuppressWarnings>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>true</AllowUnsafe>
+		    <OutputPath>bin/Release</OutputPath>
+		    <KeyFile>../../cocoa-sharp.snk</KeyFile>
+		    <DebugInformation>false</DebugInformation>
+		    <WarningLevel>1</WarningLevel>
+		    <SuppressWarnings>1595</SuppressWarnings>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" />
+	    <Files>
+		<Match pattern="*.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="webkit-sharp" path="src/WebKit" language="C#" type="Library" assemblyName="webkit-sharp" rootNamespace="WebKit" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		    <KeyFile>../../cocoa-sharp.snk</KeyFile>
+		    <WarningLevel>4</WarningLevel>
+		    <SuppressWarnings>1595</SuppressWarnings>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <OutputPath>bin/Release</OutputPath>
+		    <KeyFile>../../cocoa-sharp.snk</KeyFile>
+		    <DebugInformation>false</DebugInformation>
+		    <WarningLevel>1</WarningLevel>
+		    <SuppressWarnings>1595</SuppressWarnings>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" />
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match pattern="*.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="DragNDrop" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="DragNDrop.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="HelloWorld" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="HelloWorld.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="Rectangle" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE;RECTANGLE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE;RECTANGLE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="System.Drawing" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="OpenGLViewSample.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="Cube" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE;CUBE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE;CUBE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="System.Drawing" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="OpenGLViewSample.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="ViewDraw" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="System.Drawing" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="ViewSample.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+	<Project name="ViewSysDraw" path="samples" language="C#" type="WinExe" startupObject="" designerFolder="Properties">
+	    <Configuration name="Debug">
+		<Options>
+		    <CompilerDefines>DEBUG;TRACE;SYSD</CompilerDefines>
+		    <OptimizeCode>false</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Debug</OutputPath>
+		    <DebugInformation>true</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Configuration name="Release">
+		<Options>
+		    <CompilerDefines>TRACE;SYSD</CompilerDefines>
+		    <OptimizeCode>true</OptimizeCode>
+		    <AllowUnsafe>false</AllowUnsafe>
+		    <KeyFile>../cocoa-sharp.snk</KeyFile>
+		    <OutputPath>bin/Release</OutputPath>
+		    <DebugInformation>false</DebugInformation>
+		</Options>
+	    </Configuration>
+	    <Reference name="System" /> 
+	    <Reference name="System.Drawing" /> 
+	    <Reference name="cocoa-sharp" />
+	    <Files>
+		<Match path="." pattern="ViewSample.cs" recurse="true">
+		</Match>
+	    </Files>
+	</Project>
+    </Solution>
+</Prebuild>
