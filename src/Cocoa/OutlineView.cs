@@ -26,5 +26,11 @@ namespace Cocoa {
 		public void ExpandItem (Cocoa.Object item) {
 			ObjCMessaging.objc_msgSend (NativeObject, "expandItem:", typeof (void), typeof (IntPtr), item.NativeObject);
 		}
+
+        public void ReloadData()
+        {
+            ObjCMessaging.objc_msgSend(NativeObject, "reloadData", typeof(void));
+        }
+
 	}
 }
