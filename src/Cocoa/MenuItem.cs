@@ -16,6 +16,7 @@ namespace Cocoa {
 				ObjCMessaging.objc_msgSend (NativeObject, "setTarget:", typeof (void), typeof (System.IntPtr), ((Cocoa.Object)value).NativeObject);
 			}
 		} 
+		
 
 		public event ActionHandler Click {
 			add {
@@ -43,5 +44,37 @@ namespace Cocoa {
 				ObjCMessaging.objc_msgSend(NativeObject, "setState:", typeof(void), typeof(System.Int32), value);
 			}
 		}
+
+        public Menu SubMenu {
+            get
+            {
+                return ObjCMessaging.objc_msgSend(NativeObject, "submenu", typeof(void)) as Menu;
+            }
+            set
+            {
+                ObjCMessaging.objc_msgSend(NativeObject, "setSubmenu:", typeof(void), typeof(System.IntPtr), ((Cocoa.Object)value).NativeObject);
+            }
+        }
+
+        public bool HasSubMenu
+        {
+            get
+            {
+                return (bool)ObjCMessaging.objc_msgSend(NativeObject, "hasSubmenu", typeof(System.Boolean));
+            }
+
+        }
+
+        public string Title
+        {
+            get
+            {
+                return Object.FromIntPtr((IntPtr)ObjCMessaging.objc_msgSend(NativeObject, "title", typeof(IntPtr))).ToString();
+            }
+            set
+            {
+                ObjCMessaging.objc_msgSend(NativeObject, "setTitle:", typeof(IntPtr), typeof(IntPtr), new Cocoa.String(value).NativeObject);
+            }
+        }
 	}
 }
