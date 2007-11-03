@@ -1,0 +1,144 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2CBBE1B6-445F-4462-A000-32ABF508F944}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>cocoasharp</RootNamespace>
+    <AssemblyName>cocoasharp</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cocoa\ActionHandler.cs" />
+    <Compile Include="Cocoa\Alert.cs" />
+    <Compile Include="Cocoa\AlertHandler.cs" />
+    <Compile Include="Cocoa\AlertStyle.cs" />
+    <Compile Include="Cocoa\Application.cs" />
+    <Compile Include="Cocoa\Array.cs" />
+    <Compile Include="Cocoa\AssemblyInfo.cs" />
+    <Compile Include="Cocoa\AutoreleasePool.cs" />
+    <Compile Include="Cocoa\BackingStoreType.cs" />
+    <Compile Include="Cocoa\BezelStyle.cs" />
+    <Compile Include="Cocoa\BezierPath.cs" />
+    <Compile Include="Cocoa\Browser.cs" />
+    <Compile Include="Cocoa\BrowserCell.cs" />
+    <Compile Include="Cocoa\Bundle.cs" />
+    <Compile Include="Cocoa\Button.cs" />
+    <Compile Include="Cocoa\CalibratedRGBColor.cs" />
+    <Compile Include="Cocoa\Cell.cs" />
+    <Compile Include="Cocoa\CellStateValue.cs" />
+    <Compile Include="Cocoa\CFArray.cs" />
+    <Compile Include="Cocoa\CFString.cs" />
+    <Compile Include="Cocoa\CFTimer.cs" />
+    <Compile Include="Cocoa\Color.cs" />
+    <Compile Include="Cocoa\ColorWell.cs" />
+    <Compile Include="Cocoa\Control.cs" />
+    <Compile Include="Cocoa\Cursor.cs" />
+    <Compile Include="Cocoa\DeviceRGBColor.cs" />
+    <Compile Include="Cocoa\Dictionary.cs" />
+    <Compile Include="Cocoa\DragDestination.cs" />
+    <Compile Include="Cocoa\DragOperation.cs" />
+    <Compile Include="Cocoa\Drawer.cs" />
+    <Compile Include="Cocoa\Event.cs" />
+    <Compile Include="Cocoa\FileWrapper.cs" />
+    <Compile Include="Cocoa\Font.cs" />
+    <Compile Include="Cocoa\Image.cs" />
+    <Compile Include="Cocoa\ImageView.cs" />
+    <Compile Include="Cocoa\Interop\CachedObject.cs" />
+    <Compile Include="Cocoa\Interop\ConnectAttribute.cs" />
+    <Compile Include="Cocoa\Interop\ExportAttribute.cs" />
+    <Compile Include="Cocoa\Interop\Mach.cs" />
+    <Compile Include="Cocoa\Interop\MethodImplementation.cs" />
+    <Compile Include="Cocoa\Interop\ObjCClass.cs" />
+    <Compile Include="Cocoa\Interop\ObjCInterop.cs" />
+    <Compile Include="Cocoa\Interop\ObjCMessaging.cs" />
+    <Compile Include="Cocoa\Interop\ObjCMethod.cs" />
+    <Compile Include="Cocoa\Interop\ObjCMethods.cs" />
+    <Compile Include="Cocoa\Interop\ObjCStructs.cs" />
+    <Compile Include="Cocoa\Interop\ObjCTypes.cs" />
+    <Compile Include="Cocoa\Interop\RegisterAttribute.cs" />
+    <Compile Include="Cocoa\Menu.cs" />
+    <Compile Include="Cocoa\MenuItem.cs" />
+    <Compile Include="Cocoa\MethodSignature.cs" />
+    <Compile Include="Cocoa\MutableArray.cs" />
+    <Compile Include="Cocoa\MutableString.cs" />
+    <Compile Include="Cocoa\Notification.cs" />
+    <Compile Include="Cocoa\Object.cs" />
+    <Compile Include="Cocoa\OpenGLView.cs" />
+    <Compile Include="Cocoa\OpenPanel.cs" />
+    <Compile Include="Cocoa\OpenPanelHandler.cs" />
+    <Compile Include="Cocoa\OutlineView.cs" />
+    <Compile Include="Cocoa\Panel.cs" />
+    <Compile Include="Cocoa\Pasteboard.cs" />
+    <Compile Include="Cocoa\Point.cs" />
+    <Compile Include="Cocoa\PopUpButton.cs" />
+    <Compile Include="Cocoa\ProgressIndicator.cs" />
+    <Compile Include="Cocoa\Range.cs" />
+    <Compile Include="Cocoa\Rect.cs" />
+    <Compile Include="Cocoa\Responder.cs" />
+    <Compile Include="Cocoa\RunLoop.cs" />
+    <Compile Include="Cocoa\SavePanel.cs" />
+    <Compile Include="Cocoa\SavePanelHandler.cs" />
+    <Compile Include="Cocoa\Screen.cs" />
+    <Compile Include="Cocoa\ScrollView.cs" />
+    <Compile Include="Cocoa\SearchField.cs" />
+    <Compile Include="Cocoa\SheetHandler.cs" />
+    <Compile Include="Cocoa\Size.cs" />
+    <Compile Include="Cocoa\SpeechSynthesizer.cs" />
+    <Compile Include="Cocoa\StatusBar.cs" />
+    <Compile Include="Cocoa\StatusItem.cs" />
+    <Compile Include="Cocoa\String.cs" />
+    <Compile Include="Cocoa\TableColumn.cs" />
+    <Compile Include="Cocoa\TableView.cs" />
+    <Compile Include="Cocoa\Text.cs" />
+    <Compile Include="Cocoa\TextField.cs" />
+    <Compile Include="Cocoa\TextView.cs" />
+    <Compile Include="Cocoa\Timer.cs" />
+    <Compile Include="Cocoa\URL.cs" />
+    <Compile Include="Cocoa\URLRequest.cs" />
+    <Compile Include="Cocoa\URLResponse.cs" />
+    <Compile Include="Cocoa\View.cs" />
+    <Compile Include="Cocoa\Window.cs" />
+    <Compile Include="Cocoa\WindowStyle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Cocoa\cocoa-sharp.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
